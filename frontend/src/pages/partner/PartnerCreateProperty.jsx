@@ -13,11 +13,11 @@ export default function PartnerCreateProperty() {
     const [image, setImage] = useState(null);
     const [preview, setPreview] = useState(null);
 
-    const email = localStorage.getItem("email");
-    const [category, setCategory] = useState("Hotel");
     function handleFile(e) {
+
         const file = e.target.files[0];
         setImage(file);
+
         if (file) setPreview(URL.createObjectURL(file));
     }
 
@@ -27,8 +27,8 @@ export default function PartnerCreateProperty() {
 
         let filename = null;
 
-        /* upload image first */
         if (image) {
+
             const form = new FormData();
             form.append("image", image);
 
@@ -41,8 +41,6 @@ export default function PartnerCreateProperty() {
             filename = uploadData.filename;
         }
 
-        /* create property */
-
         const res = await fetch(`${API}/listings`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -50,7 +48,6 @@ export default function PartnerCreateProperty() {
                 title,
                 location,
                 price,
-                ownerEmail: email,
                 image: filename
             })
         });
@@ -58,7 +55,7 @@ export default function PartnerCreateProperty() {
         const data = await res.json();
 
         if (data.ok) {
-            navigate("/partner-listings");
+            navigate("/partner/properties");
         } else {
             alert("Failed to create property");
         }
@@ -66,32 +63,35 @@ export default function PartnerCreateProperty() {
 
     return (
 
-        <div style={{ padding: 40, maxWidth: 420, fontFamily: "system-ui" }}>
+        <div style={{ padding: 40, maxWidth: 420 }}>
 
             <h2>Create Property</h2>
 
-            <input placeholder="Property name" value={title}
-                onChange={e => setTitle(e.target.value)} style={input} />
+            <input
+                placeholder="Property name"
+                value={title}
+                onChange={e => setTitle(e.target.value)}
+                style={input}
+            />
 
-            <input placeholder="Location" value={location}
-                onChange={e => setLocation(e.target.value)} style={input} />
+            <input
+                placeholder="Location"
+                value={location}
+                onChange={e => setLocation(e.target.value)}
+                style={input}
+            />
 
-            <input placeholder="Base price" value={price}
-                onChange={e => setPrice(e.target.value)} style={input} />
+            <input
+                placeholder="Base price"
+                value={price}
+                onChange={e => setPrice(e.target.value)}
+                style={input}
+            />
 
-            <input type="file" onChange={handleFile} style={{ marginBottom: 12 }} />
+            <input type="file" onChange={handleFile} />
 
             {preview && (
-                <img
-                    src={preview}
-                    style={{
-                        width: "100%",
-                        height: 180,
-                        objectFit: "cover",
-                        borderRadius: 8,
-                        marginBottom: 12
-                    }}
-                />
+                <img src={preview} style={previewImg} />
             )}
 
             <button onClick={create} style={btn}>
@@ -99,7 +99,6 @@ export default function PartnerCreateProperty() {
             </button>
 
         </div>
-
     );
 }
 
@@ -107,16 +106,19 @@ const input = {
     display: "block",
     width: "100%",
     marginBottom: 12,
-    padding: 10,
-    borderRadius: 6,
-    border: "1px solid #ddd"
+    padding: 10
+};
+
+const previewImg = {
+    width: "100%",
+    height: 180,
+    objectFit: "cover",
+    marginBottom: 12
 };
 
 const btn = {
     padding: "12px 20px",
     background: "#0f172a",
     color: "white",
-    border: "none",
-    borderRadius: 6,
-    cursor: "pointer"
+    border: "none"
 };

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { WayzaLayout, WayzaCard } from "../../WayzaUI.jsx"
-import { useAuth } from "../../AuthContext.jsx"
+import { WayzaLayout, WayzaCard } from "../../WayzaUI.jsx";
+import { useAuth } from "../../AuthContext.jsx";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
@@ -20,6 +20,7 @@ export default function MyBookings() {
         }
 
         async function load() {
+
             try {
 
                 const res = await fetch(`${API}/my-bookings`, {
@@ -29,9 +30,11 @@ export default function MyBookings() {
                 });
 
                 const data = await res.json();
+
                 console.log("MY BOOKINGS:", data);
 
-                setRows(Array.isArray(data) ? data : []);
+                // ✅ FIXED: backend returns { ok:true, data:[...] }
+                setRows(Array.isArray(data.data) ? data.data : []);
 
             } catch (err) {
 
@@ -46,6 +49,8 @@ export default function MyBookings() {
         load();
 
     }, [realToken]);
+
+
 
     async function cancelBooking(id) {
 
@@ -67,13 +72,14 @@ export default function MyBookings() {
             return;
         }
 
-        // reload bookings after cancel
         setRows(prev =>
             prev.map(b =>
                 b._id === id ? { ...b, status: "cancelled" } : b
             )
         );
     }
+
+
 
     return (
 
@@ -87,35 +93,45 @@ export default function MyBookings() {
                 <p>No bookings yet.</p>
             )}
 
+
+
             {!loading && rows.map(b => {
 
-                // ✅ SUPPORT BOTH FIELD TYPES
-                const start = b.startDate || b.checkIn;
-                const end = b.endDate || b.checkOut;
+                const start = b.checkIn || b.startDate;
+                const end = b.checkOut || b.endDate;
 
                 const color =
-                    b.status === "paid" ? "#16a34a" :
-                        b.status === "pending" ? "#f59e0b" :
-                            "#dc2626";
+                    b.status === "paid"
+                        ? "#16a34a"
+                        : b.status === "pending"
+                            ? "#f59e0b"
+                            : "#dc2626";
 
                 const isFuture = start && new Date(start) > new Date();
+
+
 
                 return (
                     <WayzaCard key={b._id} style={{ marginBottom: 18 }}>
 
                         <h3>{b.title || `Listing ${b.listingId}`}</h3>
 
-                        <div>📅 {start || "—"} → {end || "—"}</div>
+                        <div>
+                            📅 {start || "—"} → {end || "—"}
+                        </div>
 
-                        <div style={{
-                            marginTop: 6,
-                            fontWeight: 700,
-                            color
-                        }}>
+                        <div
+                            style={{
+                                marginTop: 6,
+                                fontWeight: 700,
+                                color
+                            }}
+                        >
                             Status: {b.status}
                         </div>
 
-                        {/* ✅ CANCEL BUTTON */}
+
+
                         {b.status !== "cancelled" && isFuture && (
                             <button
                                 onClick={() => cancelBooking(b._id)}

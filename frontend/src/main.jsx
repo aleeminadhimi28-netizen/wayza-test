@@ -15,6 +15,7 @@ import Booking from "./pages/public/Booking.jsx";
 import Payment from "./pages/public/Payment.jsx";
 import PaymentSuccess from "./pages/public/PaymentSuccess.jsx";
 import Wishlist from "./pages/public/Wishlist.jsx";
+import SearchMap from "./pages/public/SearchMap.jsx";
 
 /* ================= PARTNER ================= */
 
@@ -32,6 +33,8 @@ import PartnerAnalytics from "./pages/partner/PartnerAnalytics.jsx";
 import PartnerChat from "./pages/partner/PartnerChat.jsx";
 import PartnerCalendar from "./pages/partner/PartnerCalendar.jsx";
 import PartnerEarnings from "./pages/partner/PartnerEarnings.jsx";
+import "leaflet/dist/leaflet.css";
+import "./utils/fixLeafletIcon";
 
 /* ================= ADMIN ================= */
 
@@ -64,11 +67,13 @@ function AnimatedRoutes() {
                 <Route path="/payment-success" element={<PaymentSuccess />} />
                 <Route path="/my-bookings" element={<MyBookings />} />
                 <Route path="/wishlist" element={<Wishlist />} />
+                <Route path="/map-search" element={<SearchMap />} />
 
                 {/* ===== PARTNER AUTH ===== */}
                 <Route path="/partner-login" element={<PartnerLogin />} />
                 <Route path="/partner-onboarding" element={<PartnerOnboarding />} />
-
+                import PartnerCreateProperty from "./pages/partner/PartnerCreateProperty.jsx";
+                import PartnerProperty from "./pages/partner/PartnerProperty.jsx";
                 {/* ===== PARTNER DASHBOARD (NESTED) ===== */}
                 <Route path="/partner" element={<PartnerLayout />}>
 

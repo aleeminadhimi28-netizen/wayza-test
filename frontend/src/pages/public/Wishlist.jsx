@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { WayzaLayout, WayzaCard } from "../../WayzaUI.jsx";
-import { useAuth } from "../../AuthContext.jsx"
+import { useAuth } from "../../AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
@@ -21,35 +21,54 @@ export default function Wishlist() {
     };
 
     async function load() {
-        try {
-            const res = await fetch(`${API}/wishlist`, {
-                headers: { Authorization: `Bearer ${realToken}` }
-            });
-            const saved = await res.json();
 
-            // fetch listing details for each saved item
+        try {
+
+            const res = await fetch(`${API}/wishlist`, {
+                headers: {
+                    Authorization: `Bearer ${realToken}`
+                }
+            });
+
+            const data = await res.json();
+
+            // ✅ FIX: backend returns { ok:true, data:[...] }
+            const saved = Array.isArray(data.data) ? data.data : [];
+
             const detailed = await Promise.all(
-                saved.map(async s => {
+                saved.map(async (s) => {
+
                     const r = await fetch(`${API}/listings/${s.listingId}`);
                     const listing = await r.json();
-                    return listing ? { ...listing, savedId: s._id } : null;
+
+                    return listing?.data
+                        ? { ...listing.data, savedId: s._id }
+                        : null;
+
                 })
             );
 
             setRows(detailed.filter(Boolean));
 
         } catch (err) {
-            console.error(err);
+
+            console.error("Wishlist load error:", err);
             setRows([]);
+
         } finally {
+
             setLoading(false);
+
         }
     }
 
     useEffect(() => {
+
         if (realToken) load();
         else setLoading(false);
+
     }, []);
+
 
     async function toggle(listingId) {
 
@@ -62,37 +81,55 @@ export default function Wishlist() {
             body: JSON.stringify({ listingId })
         });
 
-        // instant UI refresh
-        setRows(r => r.filter(x => x._id !== listingId));
+        // remove instantly from UI
+        setRows((r) => r.filter((x) => x._id !== listingId));
     }
 
+
+
     return (
+
         <WayzaLayout>
 
             <h2 style={{ marginBottom: 20 }}>❤️ Saved homes</h2>
 
             {loading && <p>Loading...</p>}
-            {!loading && rows.length === 0 && <p>No saved homes yet.</p>}
 
-            <div style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill,minmax(280px,1fr))",
-                gap: 20
-            }}>
+            {!loading && rows.length === 0 && (
+                <p>No saved homes yet.</p>
+            )}
 
-                {rows.map(l => (
+            <div
+                style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fill,minmax(280px,1fr))",
+                    gap: 20
+                }}
+            >
 
-                    <WayzaCard key={l._id} style={{ padding: 0, overflow: "hidden" }}>
+                {rows.map((l) => (
+
+                    <WayzaCard
+                        key={l._id}
+                        style={{ padding: 0, overflow: "hidden" }}
+                    >
 
                         <div style={{ position: "relative" }}>
 
                             <img
                                 src={fixImg(l.image)}
-                                style={{ width: "100%", height: 200, objectFit: "cover" }}
-                                onClick={() => navigate(`/listing/${l._id}`)}
+                                style={{
+                                    width: "100%",
+                                    height: 200,
+                                    objectFit: "cover"
+                                }}
+                                onClick={() =>
+                                    navigate(`/listing/${l._id}`)
+                                }
                             />
 
                             {/* REMOVE HEART */}
+
                             <div
                                 onClick={() => toggle(l._id)}
                                 style={{
@@ -117,9 +154,29 @@ export default function Wishlist() {
                         </div>
 
                         <div style={{ padding: 16 }}>
-                            <div style={{ fontWeight: 700 }}>{l.title}</div>
-                            <div style={{ color: "#666", fontSize: 14 }}>{l.location}</div>
-                            <div style={{ marginTop: 8, fontWeight: 700 }}>₹{l.price}</div>
+
+                            <div style={{ fontWeight: 700 }}>
+                                {l.title}
+                            </div>
+
+                            <div
+                                style={{
+                                    color: "#666",
+                                    fontSize: 14
+                                }}
+                            >
+                                {l.location}
+                            </div>
+
+                            <div
+                                style={{
+                                    marginTop: 8,
+                                    fontWeight: 700
+                                }}
+                            >
+                                ₹{l.price}
+                            </div>
+
                         </div>
 
                     </WayzaCard>
@@ -129,5 +186,6 @@ export default function Wishlist() {
             </div>
 
         </WayzaLayout>
+
     );
 }

@@ -6,7 +6,6 @@ const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
 export default function PartnerProperty() {
 
     const { id } = useParams();
-
     const [listing, setListing] = useState(null);
 
     const [type, setType] = useState("Room");
@@ -44,6 +43,7 @@ export default function PartnerProperty() {
     }
 
     async function uploadImage() {
+
         if (!file) return null;
 
         const fd = new FormData();
@@ -101,6 +101,7 @@ export default function PartnerProperty() {
     }
 
     function startEdit(v, i) {
+
         setEditIndex(i);
         setType(v.type || "Room");
         setName(v.name || "");
@@ -111,8 +112,13 @@ export default function PartnerProperty() {
     }
 
     async function remove(i) {
+
         if (!confirm("Delete this item?")) return;
-        await fetch(`${API}/listings/${id}/variant/${i}`, { method: "DELETE" });
+
+        await fetch(`${API}/listings/${id}/variant/${i}`, {
+            method: "DELETE"
+        });
+
         load();
     }
 
@@ -134,7 +140,8 @@ export default function PartnerProperty() {
 
     if (!listing) return <div style={{ padding: 40 }}>Loading...</div>;
 
-    const fixImg = (img) => img ? `${API}/${img}` : "https://picsum.photos/400/300";
+    const fixImg = (img) =>
+        img ? `${API}/${img}` : "https://picsum.photos/400/300";
 
     return (
 
@@ -144,6 +151,7 @@ export default function PartnerProperty() {
             <p>Manage your rooms, bikes, cars & availability</p>
 
             {/* FORM */}
+
             <div style={formCard}>
 
                 <h3>{editIndex === null ? "Add Item" : "Edit Item"}</h3>
@@ -154,8 +162,11 @@ export default function PartnerProperty() {
                     <option>Car</option>
                 </select>
 
-                <input placeholder="Name" value={name} onChange={e => setName(e.target.value)} style={input} />
-                <input placeholder="Price" value={price} onChange={e => setPrice(e.target.value)} style={input} />
+                <input placeholder="Name" value={name}
+                    onChange={e => setName(e.target.value)} style={input} />
+
+                <input placeholder="Price" value={price}
+                    onChange={e => setPrice(e.target.value)} style={input} />
 
                 <textarea placeholder="Description"
                     value={desc}
@@ -164,7 +175,8 @@ export default function PartnerProperty() {
                 />
 
                 <label style={{ display: "block", marginBottom: 10 }}>
-                    <input type="checkbox"
+                    <input
+                        type="checkbox"
                         checked={available}
                         onChange={e => setAvailable(e.target.checked)}
                     /> Available for booking
@@ -189,9 +201,11 @@ export default function PartnerProperty() {
             </div>
 
             {/* ITEMS */}
+
             <div style={grid}>
 
                 {(listing.variants || []).map((v, i) => (
+
                     <div key={i} style={card}>
 
                         <img src={fixImg(v.image)} style={cardImg} />
@@ -201,47 +215,11 @@ export default function PartnerProperty() {
 
                         {v.desc && <div style={descText}>{v.desc}</div>}
 
-                        {/* TOGGLE SWITCH */}
-                        <div
-                            onClick={() => toggleAvailable(i, v.available)}
-                            style={{
-                                width: 46,
-                                height: 26,
-                                borderRadius: 20,
-                                background: v.available ? "#22c55e" : "#d1d5db",
-                                position: "relative",
-                                margin: "12px auto",
-                                cursor: "pointer",
-                                transition: "0.2s"
-                            }}
-                        >
-                            <div style={{
-                                width: 20,
-                                height: 20,
-                                borderRadius: "50%",
-                                background: "white",
-                                position: "absolute",
-                                top: 3,
-                                left: v.available ? 23 : 3,
-                                transition: "0.2s",
-                                boxShadow: "0 2px 6px rgba(0,0,0,0.3)"
-                            }} />
-                        </div>
-
-                        <div style={{
-                            fontSize: 13,
-                            color: v.available ? "#16a34a" : "#dc2626",
-                            fontWeight: 600
-                        }}>
-                            {v.available ? "Available" : "Not available"}
-                        </div>
-
-                        <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
-                            <button onClick={() => startEdit(v, i)} style={editBtn}>Edit</button>
-                            <button onClick={() => remove(i)} style={delBtn}>Delete</button>
-                        </div>
+                        <button onClick={() => startEdit(v, i)} style={editBtn}>Edit</button>
+                        <button onClick={() => remove(i)} style={delBtn}>Delete</button>
 
                     </div>
+
                 ))}
 
             </div>
@@ -250,23 +228,20 @@ export default function PartnerProperty() {
     );
 }
 
-/* ---------- STYLES ---------- */
+/* styles */
 
 const formCard = {
     background: "white",
     padding: 20,
     borderRadius: 12,
     maxWidth: 420,
-    boxShadow: "0 8px 30px rgba(0,0,0,0.1)",
     marginBottom: 30
 };
 
 const input = {
     width: "100%",
     padding: 12,
-    marginBottom: 10,
-    borderRadius: 8,
-    border: "1px solid #ddd"
+    marginBottom: 10
 };
 
 const previewImg = {
@@ -285,9 +260,8 @@ const grid = {
 
 const card = {
     background: "white",
-    borderRadius: 12,
     padding: 14,
-    boxShadow: "0 6px 20px rgba(0,0,0,0.08)",
+    borderRadius: 12,
     textAlign: "center"
 };
 
@@ -295,54 +269,44 @@ const cardImg = {
     width: "100%",
     height: 150,
     objectFit: "cover",
-    borderRadius: 8,
-    marginBottom: 10
+    borderRadius: 8
 };
 
 const descText = {
     fontSize: 13,
-    color: "#555",
     marginTop: 6
 };
 
 const primaryBtn = {
     width: "100%",
     padding: 12,
-    marginTop: 12,
     background: "#2563eb",
     color: "white",
-    border: "none",
-    borderRadius: 8,
-    cursor: "pointer"
+    border: "none"
 };
 
 const secondaryBtn = {
     width: "100%",
     padding: 12,
-    marginTop: 8,
     background: "#64748b",
     color: "white",
-    border: "none",
-    borderRadius: 8,
-    cursor: "pointer"
+    border: "none"
 };
 
 const editBtn = {
-    flex: 1,
+    marginTop: 10,
     background: "#0284c7",
     color: "white",
     border: "none",
-    padding: "8px 0",
-    borderRadius: 8,
-    cursor: "pointer"
+    padding: 8,
+    borderRadius: 6
 };
 
 const delBtn = {
-    flex: 1,
+    marginTop: 8,
     background: "#ef4444",
     color: "white",
     border: "none",
-    padding: "8px 0",
-    borderRadius: 8,
-    cursor: "pointer"
+    padding: 8,
+    borderRadius: 6
 };

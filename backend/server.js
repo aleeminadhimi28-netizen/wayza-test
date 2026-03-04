@@ -1,6 +1,5 @@
 import express from "express";
-import cors from "cors";
-import jwt from "jsonwebtoken";
+
 import bcrypt from "bcrypt";
 import { MongoClient, ObjectId } from "mongodb";
 import multer from "multer";
@@ -8,43 +7,54 @@ import path from "path";
 import rateLimit from "express-rate-limit";
 import { requireAuth } from "./middleware/auth.js";
 import nodemailer from "nodemailer";
+import helmet from "helmet";
+import dotenv from "dotenv";
+dotenv.config();
+import cors from "cors";
+import jwt from "jsonwebtoken";
 
 const app = express();
 
+/* ---------------- ENV VALIDATION ---------------- */
+
+if (!process.env.JWT_SECRET) throw new Error("JWT_SECRET is not configured");
+if (!process.env.MONGO_URL) throw new Error("MONGO_URL is not configured");
+if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS)
+  throw new Error("Email credentials are not configured");
+
+const SECRET = process.env.JWT_SECRET;
+const MONGO_URL = process.env.MONGO_URL;
+
 /* ---------------- MIDDLEWARE ---------------- */
 
-app.use(cors({ origin: "*" }));
+app.use(helmet());
+
+app.use(cors({
+  origin: ["http://localhost:5173"],
+  credentials: true
+}));
+
 app.use(express.json());
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 200,
-  standardHeaders: true,
-  legacyHeaders: false
+  max: 200
 });
 
 app.use(limiter);
 app.use("/uploads", express.static("uploads"));
-
-/* ---------------- ENV CHECK ---------------- */
-
-if (!process.env.JWT_SECRET) {
-  console.warn("⚠ Using fallback JWT secret (development only)");
-}
-
-const SECRET = process.env.JWT_SECRET || "wayza-dev-secret";
 
 /* ---------------- NODEMAILER ---------------- */
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER || "yourgmail@gmail.com",
-    pass: process.env.EMAIL_PASS || "your_app_password"
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
   }
 });
 
-/* ---------------- UPLOAD CONFIG ---------------- */
+/* ---------------- FILE UPLOAD ---------------- */
 
 const storage = multer.diskStorage({
   destination: "uploads/",
@@ -56,14 +66,15 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-/* ---------------- DB CONNECTION ---------------- */
+/* ---------------- DB ---------------- */
 
-const MONGO_URL = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/wayza";
 const client = new MongoClient(MONGO_URL);
 await client.connect();
+
 console.log("Mongo connected");
 
 const db = client.db();
+
 const users = db.collection("users");
 const listings = db.collection("listings");
 const bookings = db.collection("bookings");
@@ -71,6 +82,8 @@ const partners = db.collection("partners");
 const blockedDates = db.collection("blockedDates");
 const reviews = db.collection("reviews");
 const wishlists = db.collection("wishlists");
+const owners = db.collection("owners");
+const notifications = db.collection("notifications");
 
 /* ---------------- INDEXES ---------------- */
 
@@ -82,22 +95,24 @@ await listings.createIndex({ ownerEmail: 1 });
 
 /* ---------------- HEALTH ---------------- */
 
-app.get("/", (_, res) =>
-  res.json({ ok: true, data: { status: "running" } })
-);
+app.get("/", (_, res) => {
+  res.json({ ok: true, status: "running" });
+});
 
-/* ---------------- AUTH ROUTES ---------------- */
+/* ---------------- AUTH ---------------- */
 
 app.post("/signup", async (req, res, next) => {
   try {
+
     const { email, password, role } = req.body;
 
     if (!email || !password)
-      return res.status(400).json({ ok: false, message: "Missing fields" });
+      return res.status(400).json({ ok: false });
 
     const exists = await users.findOne({ email });
+
     if (exists)
-      return res.status(400).json({ ok: false, message: "User exists" });
+      return res.status(400).json({ ok: false });
 
     const hash = await bcrypt.hash(password, 10);
 
@@ -117,15 +132,18 @@ app.post("/signup", async (req, res, next) => {
 
 app.post("/login", async (req, res, next) => {
   try {
+
     const { email, password } = req.body;
+
     const user = await users.findOne({ email });
 
     if (!user)
-      return res.status(401).json({ ok: false, message: "Invalid credentials" });
+      return res.status(401).json({ ok: false });
 
     const ok = await bcrypt.compare(password, user.password);
+
     if (!ok)
-      return res.status(401).json({ ok: false, message: "Invalid credentials" });
+      return res.status(401).json({ ok: false });
 
     const token = jwt.sign(
       { email: user.email, role: user.role },
@@ -143,88 +161,16 @@ app.post("/login", async (req, res, next) => {
   }
 });
 
-/* ---------------- PARTNER ANALYTICS ---------------- */
+/* ---------------- LISTINGS ---------------- */
 
-app.get("/partner/monthly-revenue", requireAuth, async (req, res, next) => {
+app.get("/listings", async (req, res, next) => {
   try {
-    const partnerEmail = req.user.email;
 
-    const revenueData = await bookings.aggregate([
-      {
-        $match: {
-          ownerEmail: partnerEmail,
-          status: "paid"
-        }
-      },
-      {
-        $group: {
-          _id: { $month: "$checkIn" },
-          revenue: { $sum: "$totalPrice" }
-        }
-      },
-      { $sort: { _id: 1 } }
-    ]).toArray();
-
-    const months = [
-      "", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-    ];
-
-    const formatted = revenueData.map(item => ({
-      month: months[item._id],
-      revenue: item.revenue
-    }));
-
-    res.json({ ok: true, data: formatted });
-
-  } catch (err) {
-    next(err);
-  }
-});
-
-app.get("/partner/dashboard-summary", requireAuth, async (req, res, next) => {
-  try {
-    const partnerEmail = req.user.email;
-
-    const ownerBookings = await bookings.find({
-      ownerEmail: partnerEmail
-    }).sort({ createdAt: -1 }).toArray();
-
-    const paid = ownerBookings.filter(b => b.status === "paid");
-
-    const totalRevenue = paid.reduce(
-      (sum, b) => sum + (b.totalPrice || 0),
-      0
-    );
-
-    const monthlyRevenue = await bookings.aggregate([
-      {
-        $match: {
-          ownerEmail: partnerEmail,
-          status: "paid"
-        }
-      },
-      {
-        $group: {
-          _id: { $month: "$checkIn" },
-          revenue: { $sum: "$totalPrice" }
-        }
-      },
-      { $sort: { _id: 1 } }
-    ]).toArray();
+    const rows = await listings.find().toArray();
 
     res.json({
       ok: true,
-      data: {
-        kpis: {
-          totalRevenue,
-          totalBookings: ownerBookings.length,
-          pending: ownerBookings.filter(b => b.status === "pending").length,
-          cancelled: ownerBookings.filter(b => b.status === "cancelled").length
-        },
-        monthlyRevenue,
-        recentBookings: ownerBookings.slice(0, 5)
-      }
+      rows
     });
 
   } catch (err) {
@@ -232,18 +178,347 @@ app.get("/partner/dashboard-summary", requireAuth, async (req, res, next) => {
   }
 });
 
+app.get("/listings/:id", async (req, res, next) => {
+  try {
+
+    if (!ObjectId.isValid(req.params.id))
+      return res.status(400).json({ ok: false });
+
+    const listing = await listings.findOne({
+      _id: new ObjectId(req.params.id)
+    });
+
+    if (!listing)
+      return res.status(404).json({ ok: false });
+
+    res.json({
+      ok: true,
+      data: listing
+    });
+
+  } catch (err) {
+    next(err);
+  }
+});
+
+/* ---------------- ADD VARIANT ---------------- */
+
+app.post("/listings/:id/variant", requireAuth, async (req, res, next) => {
+  try {
+
+    const { name, price, qty } = req.body;
+
+    if (!name || !price || !qty)
+      return res.status(400).json({ ok: false });
+
+    if (!ObjectId.isValid(req.params.id))
+      return res.status(400).json({ ok: false });
+
+    await listings.updateOne(
+      { _id: new ObjectId(req.params.id) },
+      {
+        $push: {
+          variants: {
+            name,
+            price: Number(price),
+            qty: Number(qty),
+            available: true,
+            createdAt: new Date()
+          }
+        }
+      }
+    );
+
+    res.json({ ok: true });
+
+  } catch (err) {
+    next(err);
+  }
+});
+
+/* ---------------- DELETE VARIANT ---------------- */
+
+app.delete("/listing/:id/variant/:index", requireAuth, async (req, res, next) => {
+  try {
+
+    const { id, index } = req.params;
+
+    await listings.updateOne(
+      { _id: new ObjectId(id) },
+      { $unset: { [`variants.${index}`]: 1 } }
+    );
+
+    await listings.updateOne(
+      { _id: new ObjectId(id) },
+      { $pull: { variants: null } }
+    );
+
+    res.json({ ok: true });
+
+  } catch (err) {
+    next(err);
+  }
+});
+
+/* ---------------- UPDATE VARIANT ---------------- */
+
+app.put("/listing/:id/variant/:index", requireAuth, async (req, res, next) => {
+  try {
+
+    const { id, index } = req.params;
+
+    const updates = {};
+
+    if (req.body.price !== undefined)
+      updates[`variants.${index}.price`] = req.body.price;
+
+    if (req.body.available !== undefined)
+      updates[`variants.${index}.available`] = req.body.available;
+
+    await listings.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: updates }
+    );
+
+    res.json({ ok: true });
+
+  } catch (err) {
+    next(err);
+  }
+});
+
+/* ---------------- BOOKING AVAILABILITY ---------------- */
+
+app.get("/bookings/:listingId", async (req, res, next) => {
+  try {
+
+    const rows = await bookings.find({
+      listingId: req.params.listingId,
+      status: { $in: ["pending", "paid"] }
+    }).toArray();
+
+    res.json(rows);
+
+  } catch (err) {
+    next(err);
+  }
+});
+
+/* ---------------- CREATE BOOKING ---------------- */
+
+app.post("/book", requireAuth, async (req, res) => {
+
+  try {
+
+    const {
+      listingId,
+      variantIndex,
+      checkIn,
+      checkOut,
+      title,
+      ownerEmail
+    } = req.body;
+
+    if (!listingId || !checkIn || !checkOut) {
+      return res.status(400).json({
+        ok: false,
+        message: "Missing booking data"
+      });
+    }
+
+    const listing = await listings.findOne({
+      _id: new ObjectId(listingId)
+    });
+
+    if (!listing) {
+      return res.status(404).json({
+        ok: false,
+        message: "Listing not found"
+      });
+    }
+
+    const variant = listing.variants?.[variantIndex || 0];
+
+    const nights = Math.ceil(
+      (new Date(checkOut) - new Date(checkIn)) / 86400000
+    );
+
+    const pricePerNight = Number(variant?.price || 0);
+
+    const baseAmount = pricePerNight * nights;
+    const gst = Math.round(baseAmount * 0.12);
+    const serviceFee = 99;
+
+    const totalPrice = baseAmount + gst + serviceFee;
+
+    const booking = await bookings.insertOne({
+      listingId,
+      variantIndex: variantIndex || 0,
+      variantName: variant?.name,
+      title,
+      ownerEmail,
+      guestEmail: req.user.email,
+      checkIn,
+      checkOut,
+      nights,
+      pricePerNight,
+      totalPrice,
+      status: "pending",
+      createdAt: new Date()
+    });
+
+    res.json({
+      ok: true,
+      bookingId: booking.insertedId
+    });
+
+  } catch (err) {
+
+    console.error("BOOK ERROR:", err);
+
+    res.status(500).json({
+      ok: false,
+      message: "Booking failed"
+    });
+
+  }
+
+});
+
+/* ---------------- CONFIRM BOOKING ---------------- */
+
+app.post("/confirm-booking", requireAuth, async (req, res, next) => {
+  try {
+
+    const { bookingId, paymentId } = req.body;
+
+    await bookings.updateOne(
+      { _id: new ObjectId(bookingId) },
+      {
+        $set: {
+          status: "paid",
+          paymentId
+        }
+      }
+    );
+
+    res.json({ ok: true });
+
+  } catch (err) {
+    next(err);
+  }
+});
+
+/* ---------------- MY BOOKINGS ---------------- */
+
+app.get("/my-bookings", requireAuth, async (req, res, next) => {
+  try {
+
+    const rows = await bookings.find({
+      guestEmail: req.user.email,
+      status: "paid"
+    }).sort({ createdAt: -1 }).toArray();
+
+    res.json({
+      ok: true,
+      data: rows
+    });
+
+  } catch (err) {
+    next(err);
+  }
+});
+
+
+/* ---------------- WISHLIST ---------------- */
+
+app.get("/wishlist", requireAuth, async (req, res, next) => {
+  try {
+
+    const rows = await wishlists.find({
+      email: req.user.email
+    }).toArray();
+
+    res.json({
+      ok: true,
+      data: rows
+    });
+
+  } catch (err) {
+    next(err);
+  }
+});
+
+
+/* ---------------- REVIEWS ---------------- */
+
+app.get("/reviews/:listingId", async (req, res, next) => {
+  try {
+
+    const rows = await reviews.find({
+      listingId: req.params.listingId
+    }).toArray();
+
+    res.json({
+      ok: true,
+      data: rows
+    });
+
+  } catch (err) {
+    next(err);
+  }
+});
+/* ---------------- TOGGLE WISHLIST ---------------- */
+
+app.post("/wishlist/toggle", requireAuth, async (req, res, next) => {
+  try {
+
+    const { listingId, title } = req.body;
+    const email = req.user.email;
+
+    const existing = await wishlists.findOne({ email, listingId });
+
+    if (existing) {
+
+      await wishlists.deleteOne({ _id: existing._id });
+
+      return res.json({
+        ok: true,
+        saved: false
+      });
+
+    } else {
+
+      await wishlists.insertOne({
+        email,
+        listingId,
+        title,
+        createdAt: new Date()
+      });
+
+      return res.json({
+        ok: true,
+        saved: true
+      });
+
+    }
+
+  } catch (err) {
+    next(err);
+  }
+});
 /* ---------------- GLOBAL ERROR HANDLER ---------------- */
 
 app.use((err, req, res, next) => {
-  console.error("SERVER ERROR:", err);
+  console.error(err);
   res.status(500).json({
     ok: false,
-    message: err.message || "Internal Server Error"
+    message: "Internal Server Error"
   });
 });
 
 /* ---------------- START SERVER ---------------- */
 
-app.listen(5000, () =>
-  console.log("Wayza backend running on http://localhost:5000")
-);
+app.listen(5000, () => {
+  console.log("Wayza backend running on http://localhost:5000");
+});

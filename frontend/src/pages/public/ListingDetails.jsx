@@ -3,60 +3,82 @@ import { useEffect, useState } from "react";
 import { WayzaLayout, WayzaCard, WayzaButton } from "../../WayzaUI.jsx";
 import { useAuth } from "../../AuthContext.jsx";
 
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import MapView from "../../components/MapView.jsx";
+
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export default function ListingDetails() {
+
     const { id } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
     const { user } = useAuth();
 
     const [listing, setListing] = useState(null);
-    const [mainImage, setMainImage] = useState("");
-    const [reviews, setReviews] = useState([]);
-    const [avg, setAvg] = useState(0);
     const [saved, setSaved] = useState(false);
 
+    const [galleryOpen, setGalleryOpen] = useState(false);
+    const [galleryIndex, setGalleryIndex] = useState(0);
+
+    const [checkIn, setCheckIn] = useState(null);
+    const [checkOut, setCheckOut] = useState(null);
+
+
+    /* ---------------- IMAGE FIX ---------------- */
+
     const fixImg = (img) => {
-        if (!img) return "";
+
+        if (!img) return "https://picsum.photos/900/600";
         if (img.startsWith("http")) return img;
-        return `${API}/${img}`;
+        if (img.startsWith("uploads/")) return `${API}/${img}`;
+
+        return `${API}/uploads/${img}`;
+
     };
 
-    useEffect(() => {
-        fetch(`${API}/listings/${id}`)
-            .then(res => res.json())
-            .then(data => {
-                setListing(data);
-                if (data.images && data.images.length > 0) {
-                    setMainImage(fixImg(data.images[0]));
-                } else {
-                    setMainImage("https://picsum.photos/900/600");
-                }
-            });
 
-        fetch(`${API}/reviews/${id}`)
+    /* ---------------- FETCH DATA ---------------- */
+
+    useEffect(() => {
+
+        fetch(`${API}/listings/${id}`)
             .then(r => r.json())
-            .then(d => {
-                setReviews(d.reviews || []);
-                setAvg(d.average || 0);
+            .then(json => {
+
+                const data = json.data || json;
+                setListing(data);
+
             });
 
         const token = localStorage.getItem("token");
+
         if (token) {
+
             fetch(`${API}/wishlist`, {
                 headers: { Authorization: `Bearer ${token}` }
             })
                 .then(r => r.json())
-                .then(list => {
-                    const found = list.some(w => w.listingId === id);
+                .then(json => {
+
+                    const list = Array.isArray(json.data) ? json.data : [];
+                    const found = list.some(x => x.listingId === id);
                     setSaved(found);
+
                 });
+
         }
+
     }, [id]);
 
+
+    /* ---------------- WISHLIST ---------------- */
+
     const toggleWishlist = async () => {
+
         const token = localStorage.getItem("token");
+
         if (!token) {
             navigate("/login", { state: { from: location } });
             return;
@@ -73,459 +95,320 @@ export default function ListingDetails() {
 
         const data = await res.json();
         setSaved(data.saved);
+
     };
 
+
+    /* ---------------- BOOKING ---------------- */
+
     const handleReserve = () => {
+
         if (!user) {
             navigate("/login", { state: { from: location } });
             return;
         }
+
         navigate(`/booking/${id}`);
+
     };
 
+
+    /* ---------------- LOADING ---------------- */
+
     if (!listing) {
+
         return (
             <WayzaLayout>
                 <div style={{ padding: 40 }}>Loading...</div>
             </WayzaLayout>
         );
+
     }
 
-    const amenities = listing.amenities?.length
-        ? listing.amenities
-        : ["Free WiFi", "Parking", "Air conditioning", "24h reception"];
+
+    /* ---------------- IMAGES ---------------- */
+
+    let images = (listing.images || []).map(fixImg);
+
+    while (images.length < 5) {
+        images.push(`https://picsum.photos/800/600?random=${images.length}`);
+    }
+
+    const next = () => setGalleryIndex((galleryIndex + 1) % images.length);
+    const prev = () => setGalleryIndex((galleryIndex - 1 + images.length) % images.length);
+
+
+    /* ---------------- PRICE CALC ---------------- */
+
+    let nights = 0;
+
+    if (checkIn && checkOut) {
+        nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+    }
+
+    const totalPrice = nights * listing.price;
+
+
+    /* ---------------- UI ---------------- */
 
     return (
+
         <WayzaLayout>
-            <div
-                style={{
-                    maxWidth: 1200,
-                    margin: "60px auto",
-                    padding: "0 20px",
+
+            <div style={{
+                maxWidth: 1200,
+                margin: "60px auto",
+                padding: "0 20px"
+            }}>
+
+                <h1 style={{ fontSize: 34, fontWeight: 800 }}>
+                    {listing.title}
+                </h1>
+
+                <div style={{ color: "#6b7280", marginTop: 6 }}>
+                    📍 {listing.location}
+                </div>
+
+
+                {/* ⭐ IMAGE GALLERY */}
+
+                <div style={{
                     display: "grid",
-                    gridTemplateColumns: "minmax(0,1fr) 380px",
-                    gap: 60
-                }}
-            >
+                    gridTemplateColumns: "2fr 1fr 1fr",
+                    gridTemplateRows: "200px 200px",
+                    gap: 10,
+                    marginTop: 30,
+                    position: "relative"
+                }}>
 
-                {/* ================= LEFT COLUMN ================= */}
-                <div>
-
-                    {/* TITLE */}
-                    <h1 style={{ fontSize: 34, fontWeight: 800 }}>
-                        {listing.title}
-                    </h1>
-
-                    <div style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 10,
-                        marginTop: 8,
-                        fontSize: 14,
-                        color: "#6b7280"
-                    }}>
-                        📍 {listing.location}
-                        <span>•</span>
-                        <span>{reviews.length} reviews</span>
-                        <div style={{
-                            background: "#2563eb",
-                            color: "white",
-                            padding: "4px 8px",
-                            borderRadius: 8,
-                            fontWeight: 700
-                        }}>
-                            {Number(avg).toFixed(1)}
-                        </div>
-                    </div>
-
-                    {/* SECTION NAV */}
-                    <div
+                    <img
+                        src={images[0]}
+                        onClick={() => { setGalleryOpen(true); setGalleryIndex(0) }}
                         style={{
-                            display: "flex",
-                            gap: 30,
-                            marginTop: 24,
-                            fontSize: 14,
-                            fontWeight: 600,
-                            color: "#6b7280",
-                            paddingBottom: 16,
-                            borderBottom: "1px solid #e5e7eb"
-                        }}
-                    >
-                        <span style={{ cursor: "pointer" }}>Overview</span>
-                        <span style={{ cursor: "pointer" }}>Rooms</span>
-                        <span style={{ cursor: "pointer" }}>Amenities</span>
-                        <span style={{ cursor: "pointer" }}>Reviews</span>
-                    </div>
-                    <div
-                        style={{
-                            height: 1,
-                            background: "#f1f5f9",
-                            marginTop: 24
+                            gridRow: "1 / span 2",
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                            borderRadius: 16,
+                            cursor: "pointer"
                         }}
                     />
-                    {/* IMAGE GRID */}
-                    {/* IMAGE GRID */}
-                    <div
-                        style={{
-                            display: "grid",
-                            gridTemplateColumns: "2fr 1fr",
-                            gap: 12,
-                            marginTop: 30,
-                            position: "relative"
-                        }}
-                    >
-                        {/* MAIN IMAGE */}
+
+                    {images.slice(1, 5).map((img, i) => (
+
                         <img
-                            src={mainImage || "https://picsum.photos/900/600"}
-                            onError={(e) => {
-                                e.target.src = "https://picsum.photos/900/600";
-                            }}
+                            key={i}
+                            src={img}
+                            onClick={() => { setGalleryOpen(true); setGalleryIndex(i + 1) }}
                             style={{
                                 width: "100%",
-                                height: 420,
+                                height: "100%",
                                 objectFit: "cover",
-                                borderRadius: 20,
-                                background: "#f3f4f6"
+                                borderRadius: 16,
+                                cursor: "pointer"
                             }}
                         />
 
-                        {/* SIDE IMAGES */}
-                        <div style={{ display: "grid", gap: 12 }}>
-                            {(listing.images?.slice(1, 3) || []).map((img, i) => {
-                                const src = fixImg(img);
-                                return (
-                                    <img
-                                        key={i}
-                                        src={src}
-                                        onClick={() => setMainImage(src)}
-                                        onError={(e) => {
-                                            e.target.src = "https://picsum.photos/400/300";
-                                        }}
-                                        style={{
-                                            width: "100%",
-                                            height: 204,
-                                            objectFit: "cover",
-                                            borderRadius: 20,
-                                            cursor: "pointer",
-                                            background: "#f3f4f6"
-                                        }}
-                                    />
-                                );
-                            })}
-                        </div>
+                    ))}
 
-                        {/* WISHLIST */}
-                        <button
-                            onClick={toggleWishlist}
-                            style={{
-                                position: "absolute",
-                                top: 20,
-                                right: 20,
-                                width: 48,
-                                height: 48,
-                                borderRadius: "50%",
-                                border: "none",
-                                background: "white",
-                                fontSize: 22,
-                                cursor: "pointer",
-                                boxShadow: "0 10px 30px rgba(0,0,0,0.25)"
-                            }}
-                        >
-                            {saved ? "❤️" : "🤍"}
-                        </button>
-                    </div>
-
-                    {/* FEATURE PILLS */}
-                    <div style={{
-                        display: "flex",
-                        flexWrap: "wrap",
-                        gap: 10,
-                        marginTop: 20
-                    }}>
-                        {[
-                            "Free cancellation",
-                            "Pay at hotel",
-                            "Non-smoking",
-                            "King bed",
-                            "Balcony"
-                        ].map((f, i) => (
-                            <div key={i} style={{
-                                padding: "8px 14px",
-                                borderRadius: 999,
-                                background: "#eef2ff",
-                                color: "#1d4ed8",
-                                fontSize: 13,
-                                fontWeight: 600
-                            }}>
-                                {f}
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* HIGHLIGHTS */}
-                    <WayzaCard style={{ marginTop: 60 }}>
-                        <h3>Highlights</h3>
-                        <div style={{
-                            display: "grid",
-                            gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))",
-                            gap: 16,
-                            marginTop: 20
-                        }}>
-                            {[
-                                "Professional guest services",
-                                "Rated highly by couples",
-                                "Excellent room comfort",
-                                "Highly rated by families",
-                                "Great location"
-                            ].map((item, i) => (
-                                <div key={i} style={{
-                                    background: "#f8fafc",
-                                    padding: 14,
-                                    borderRadius: 12,
-                                    fontSize: 14
-                                }}>
-                                    ✔ {item}
-                                </div>
-                            ))}
-                        </div>
-                    </WayzaCard>
-
-                    {/* REVIEW BREAKDOWN */}
-                    <WayzaCard style={{ marginTop: 60 }}>
-                        <h3>Guest Reviews</h3>
-                        {[
-                            { label: "Cleanliness", value: 4.8 },
-                            { label: "Location", value: 4.9 },
-                            { label: "Service", value: 4.7 },
-                            { label: "Value", value: 4.6 }
-                        ].map((item, i) => (
-                            <div key={i} style={{ marginTop: 18 }}>
-                                <div style={{
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    fontSize: 14,
-                                    marginBottom: 6
-                                }}>
-                                    <span>{item.label}</span>
-                                    <strong>{item.value}</strong>
-                                </div>
-                                <div style={{
-                                    height: 6,
-                                    background: "#e5e7eb",
-                                    borderRadius: 999
-                                }}>
-                                    <div style={{
-                                        width: `${(item.value / 5) * 100}%`,
-                                        height: "100%",
-                                        background: "#2563eb",
-                                        borderRadius: 999
-                                    }} />
-                                </div>
-                            </div>
-                        ))}
-                    </WayzaCard>
-                    <div
+                    <button
+                        onClick={() => { setGalleryOpen(true); setGalleryIndex(0) }}
                         style={{
-                            height: 1,
-                            background: "linear-gradient(to right, transparent, #e5e7eb, transparent)",
-                            margin: "70px 0"
+                            position: "absolute",
+                            bottom: 20,
+                            right: 20,
+                            background: "white",
+                            border: "none",
+                            padding: "10px 16px",
+                            borderRadius: 10,
+                            fontWeight: 600,
+                            cursor: "pointer",
+                            boxShadow: "0 10px 20px rgba(0,0,0,0.2)"
                         }}
-                    />
-                    {/* ABOUT */}
-                    <WayzaCard style={{ marginTop: 60 }}>
-                        <h3>About this property</h3>
-                        <p style={{ marginTop: 14, lineHeight: 1.7 }}>
-                            {listing.description}
-                        </p>
-                    </WayzaCard>
-                    <div
-                        style={{
-                            height: 1,
-                            background: "linear-gradient(to right, transparent, #e5e7eb, transparent)",
-                            margin: "70px 0"
-                        }}
-                    />
-                    {/* AMENITIES */}
-                    <WayzaCard style={{ marginTop: 60 }}>
-                        <h3>Amenities</h3>
-                        <div style={{
-                            display: "grid",
-                            gridTemplateColumns: "repeat(auto-fill,minmax(180px,1fr))",
-                            gap: 14,
-                            marginTop: 20
-                        }}>
-                            {amenities.map((a, i) => (
-                                <div key={i} style={{
-                                    background: "#f3f4f6",
-                                    padding: "12px 14px",
-                                    borderRadius: 10,
-                                    fontSize: 14
-                                }}>
-                                    ✓ {a}
-                                </div>
-                            ))}
-                        </div>
-                    </WayzaCard>
-                    <div
-                        style={{
-                            height: 1,
-                            background: "linear-gradient(to right, transparent, #e5e7eb, transparent)",
-                            margin: "70px 0"
-                        }}
-                    />
-                    {/* ROOMS */}
-                    <h2 style={{ marginTop: 60 }}>Select your room</h2>
-
-                    <WayzaCard style={{ marginTop: 20 }}>
-                        <div style={{
-                            display: "grid",
-                            gridTemplateColumns: "2fr 1fr 1fr",
-                            alignItems: "center",
-                            gap: 20
-                        }}>
-                            <div>
-                                <strong>Deluxe Room</strong>
-                                <div style={{ fontSize: 13, color: "#6b7280" }}>
-                                    King bed • 28m² • Balcony • Free WiFi
-                                </div>
-                            </div>
-
-                            <div style={{ fontWeight: 700 }}>
-                                ₹{listing.price}
-                            </div>
-
-                            <WayzaButton onClick={handleReserve}>
-                                Reserve
-                            </WayzaButton>
-                        </div>
-                    </WayzaCard>
-                    <div
-                        style={{
-                            height: 1,
-                            background: "linear-gradient(to right, transparent, #e5e7eb, transparent)",
-                            margin: "70px 0"
-                        }}
-                    />
-                    {/* POLICIES */}
-                    <WayzaCard style={{ marginTop: 60 }}>
-                        <h3>Property Policies</h3>
-                        <div style={{ marginTop: 14, fontSize: 14 }}>
-                            ✔ Check-in: 2:00 PM – 11:00 PM <br />
-                            ✔ Check-out: Before 12:00 PM <br />
-                            ✔ No smoking <br />
-                            ✔ Pets not allowed
-                        </div>
-                    </WayzaCard>
-                    <div
-                        style={{
-                            height: 1,
-                            background: "linear-gradient(to right, transparent, #e5e7eb, transparent)",
-                            margin: "70px 0"
-                        }}
-                    />
-                    {/* HOST */}
-                    <WayzaCard style={{ marginTop: 60 }}>
-                        <h3>Host</h3>
-                        <div style={{ marginTop: 12 }}>
-                            <strong>Verified Host</strong>
-                            <div style={{ fontSize: 13, color: "#6b7280" }}>
-                                Joined in 2024
-                            </div>
-                        </div>
-                    </WayzaCard>
+                    >
+                        Show all photos
+                    </button>
 
                 </div>
 
-                {/* ================= RIGHT BOOKING CARD ================= */}
-                <div style={{ position: "sticky", top: 120 }}>
+
+                {/* ⭐ DATE PICKER */}
+
+                <WayzaCard style={{ marginTop: 40 }}>
+
+                    <h3>Select dates</h3>
+
+                    <div style={{ display: "flex", gap: 20, marginTop: 20 }}>
+
+                        <div>
+                            <label>Check‑in</label>
+
+                            <DatePicker
+                                selected={checkIn}
+                                onChange={(date) => setCheckIn(date)}
+                                minDate={new Date()}
+                                placeholderText="Select date"
+                            />
+
+                        </div>
+
+                        <div>
+                            <label>Check‑out</label>
+
+                            <DatePicker
+                                selected={checkOut}
+                                onChange={(date) => setCheckOut(date)}
+                                minDate={checkIn || new Date()}
+                                placeholderText="Select date"
+                            />
+
+                        </div>
+
+                    </div>
+
+                    {nights > 0 && (
+
+                        <div style={{ marginTop: 20, fontWeight: 600 }}>
+                            {nights} nights × ₹{listing.price} = ₹{totalPrice}
+                        </div>
+
+                    )}
+
+                </WayzaCard>
+
+
+                {/* ⭐ MAP */}
+
+                {/* ⭐ MAP */}
+
+                <WayzaCard style={{ marginTop: 40 }}>
+
+                    <h3>Location</h3>
+
+                    <MapView
+                        lat={listing?.lat || 8.7379}
+                        lng={listing?.lng || 76.7163}
+                        title={listing?.title}
+                    />
+
+                </WayzaCard>
+
+                {/* ROOM */}
+
+                <h2 style={{ marginTop: 40 }}>Select your room</h2>
+
+                <WayzaCard style={{ marginTop: 20 }}>
+
                     <div style={{
-                        background: "white",
-                        borderRadius: 24,
-                        padding: 36,
-                        boxShadow: "0 40px 100px rgba(0,0,0,0.12)"
+                        display: "grid",
+                        gridTemplateColumns: "2fr 1fr 1fr",
+                        alignItems: "center",
+                        gap: 20
                     }}>
 
-                        <div style={{ fontSize: 13, fontWeight: 700, color: "#ef4444" }}>
-                            🔥 20% OFF Today
+                        <div>
+
+                            <strong>Deluxe Room</strong>
+
+                            <div style={{ fontSize: 13, color: "#6b7280" }}>
+                                King bed • Balcony • Free WiFi
+                            </div>
+
                         </div>
 
-                        <div style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 12,
-                            marginTop: 8
-                        }}>
-                            <span style={{
-                                fontSize: 16,
-                                textDecoration: "line-through",
-                                color: "#9ca3af"
-                            }}>
-                                ₹{listing.price + 700}
-                            </span>
-
-                            <span style={{
-                                background: "#dc2626",
-                                color: "white",
-                                fontSize: 12,
-                                padding: "4px 8px",
-                                borderRadius: 6,
-                                fontWeight: 600
-                            }}>
-                                SAVE ₹700
-                            </span>
-                        </div>
-
-                        <div style={{
-                            fontSize: 36,
-                            fontWeight: 800,
-                            marginTop: 6
-                        }}>
+                        <div style={{ fontWeight: 700 }}>
                             ₹{listing.price}
-                            <span style={{ fontSize: 14, color: "#6b7280" }}>
-                                {" "} / night
-                            </span>
                         </div>
 
-                        <div style={{
-                            marginTop: 14,
-                            background: "#fff7ed",
-                            padding: 14,
-                            borderRadius: 14,
-                            fontSize: 13,
-                            color: "#92400e"
-                        }}>
-                            ⚡ Only 1 room left at this price!
-                        </div>
-
-                        <WayzaButton
-                            full
-                            onClick={handleReserve}
-                            style={{
-                                marginTop: 24,
-                                fontWeight: 700,
-                                fontSize: 16,
-                                padding: "16px 0",
-                                borderRadius: 14
-                            }}
-                        >
-                            Reserve Now – Free Cancellation
+                        <WayzaButton onClick={handleReserve}>
+                            Reserve
                         </WayzaButton>
 
-                        <div style={{
-                            marginTop: 18,
-                            fontSize: 12,
-                            textAlign: "center",
-                            color: "#6b7280"
-                        }}>
-                            ✔ Free cancellation <br />
-                            ✔ No prepayment required <br />
-                            ✔ Verified property
-                        </div>
-
                     </div>
-                </div>
+
+                </WayzaCard>
 
             </div>
+
+
+            {/* ⭐ FULLSCREEN GALLERY */}
+
+            {galleryOpen && (
+
+                <div style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    background: "rgba(0,0,0,0.95)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    zIndex: 9999
+                }}>
+
+                    <button
+                        onClick={() => setGalleryOpen(false)}
+                        style={{
+                            position: "absolute",
+                            top: 30,
+                            right: 40,
+                            fontSize: 32,
+                            background: "none",
+                            border: "none",
+                            color: "white",
+                            cursor: "pointer"
+                        }}
+                    >
+                        ✕
+                    </button>
+
+                    <button
+                        onClick={prev}
+                        style={{
+                            position: "absolute",
+                            left: 40,
+                            fontSize: 40,
+                            background: "none",
+                            border: "none",
+                            color: "white",
+                            cursor: "pointer"
+                        }}
+                    >
+                        ‹
+                    </button>
+
+                    <img
+                        src={images[galleryIndex]}
+                        style={{
+                            maxWidth: "90%",
+                            maxHeight: "90%",
+                            borderRadius: 10
+                        }}
+                    />
+
+                    <button
+                        onClick={next}
+                        style={{
+                            position: "absolute",
+                            right: 40,
+                            fontSize: 40,
+                            background: "none",
+                            border: "none",
+                            color: "white",
+                            cursor: "pointer"
+                        }}
+                    >
+                        ›
+                    </button>
+
+                </div>
+
+            )}
+
         </WayzaLayout>
+
     );
+
 }

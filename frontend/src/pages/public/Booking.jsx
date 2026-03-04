@@ -53,9 +53,9 @@ export default function Booking() {
     const [endDate, setEndDate] = useState("");
     const [blocked, setBlocked] = useState([]);
     const [loading, setLoading] = useState(true);
+
     const todayStr = new Date().toISOString().split("T")[0];
     const minStay = 1;
-
 
     /* ================= FETCH ================= */
 
@@ -67,7 +67,11 @@ export default function Booking() {
             fetch(`${API}/bookings/${id}`).then(r => r.json())
         ])
             .then(([listingData, blockedData]) => {
-                setListing(listingData || null);
+
+                // handle {ok:true,data:{}} format
+                const l = listingData?.data || listingData;
+
+                setListing(l || null);
                 setBlocked(Array.isArray(blockedData) ? blockedData : []);
                 setLoading(false);
             })
@@ -76,6 +80,7 @@ export default function Booking() {
                 setBlocked([]);
                 setLoading(false);
             });
+
     }, [id]);
 
     /* ================= BLOCK CHECK ================= */
@@ -96,7 +101,10 @@ export default function Booking() {
 
     /* ================= PRICE LOGIC ================= */
 
-    const pricePerNight = listing?.price || 0;
+    const variant = listing?.variants?.[0];
+
+    const pricePerNight =
+        variant?.price || listing?.price || 0;
 
     const nights =
         startDate && endDate
@@ -112,12 +120,14 @@ export default function Booking() {
     const gst = Math.round(baseAmount * 0.12);
     const serviceFee = nights > 0 ? 99 : 0;
     const totalAmount = baseAmount + gst + serviceFee;
+
     const stayInvalid = nights > 0 && nights < minStay;
     const blockedDates = isBlocked(startDate, endDate);
 
     /* ================= RESERVE ================= */
 
     async function reserve() {
+
         if (!user?.email) {
             showToast("Please login first", "error");
             navigate("/login");
@@ -128,11 +138,13 @@ export default function Booking() {
             showToast("Select dates first", "error");
             return;
         }
+
         if (stayInvalid) {
             showToast(`Minimum stay is ${minStay} night`, "error");
             return;
         }
-        if (blockedDates || stayInvalid) {
+
+        if (blockedDates) {
             showToast("Selected dates unavailable", "error");
             return;
         }
@@ -147,6 +159,7 @@ export default function Booking() {
             },
             body: JSON.stringify({
                 listingId: id,
+                variantIndex: 0,
                 title: listing?.title,
                 ownerEmail: listing?.ownerEmail,
                 checkIn: startDate,
@@ -188,7 +201,9 @@ export default function Booking() {
                     gap: 60
                 }}
             >
-                {/* LEFT COLUMN */}
+
+                {/* LEFT */}
+
                 <div
                     style={{
                         background: "white",
@@ -197,14 +212,18 @@ export default function Booking() {
                         boxShadow: "0 25px 70px rgba(0,0,0,0.08)"
                     }}
                 >
+
                     <h2>{listing.title}</h2>
+
                     <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 30 }}>
                         ₹{pricePerNight} / night
                     </div>
 
                     <div style={{ display: "flex", gap: 20 }}>
+
                         <div style={{ flex: 1 }}>
                             <label>Check-in</label>
+
                             <input
                                 type="date"
                                 min={todayStr}
@@ -213,17 +232,18 @@ export default function Booking() {
                                     const newStart = e.target.value;
                                     setStartDate(newStart);
 
-                                    // Auto reset checkout if invalid
                                     if (endDate && newStart >= endDate) {
                                         setEndDate("");
                                     }
                                 }}
                                 style={input}
                             />
+
                         </div>
 
                         <div style={{ flex: 1 }}>
                             <label>Check-out</label>
+
                             <input
                                 type="date"
                                 min={startDate || todayStr}
@@ -231,7 +251,9 @@ export default function Booking() {
                                 onChange={e => setEndDate(e.target.value)}
                                 style={input}
                             />
+
                         </div>
+
                     </div>
 
                     {blockedDates && (
@@ -250,10 +272,13 @@ export default function Booking() {
                     >
                         Continue to Payment
                     </button>
+
                 </div>
 
-                {/* RIGHT COLUMN */}
+                {/* RIGHT */}
+
                 <div style={{ position: "sticky", top: 120 }}>
+
                     <div
                         style={{
                             background: "white",
@@ -262,14 +287,6 @@ export default function Booking() {
                             boxShadow: "0 25px 70px rgba(0,0,0,0.1)"
                         }}
                     >
-                        <div
-                            style={{
-                                height: 80,
-                                background: "#f3f4f6",
-                                borderRadius: 12,
-                                marginBottom: 14
-                            }}
-                        />
 
                         <h3>{listing.title}</h3>
 
@@ -278,11 +295,14 @@ export default function Booking() {
                         </div>
 
                         {nights > 0 ? (
+
                             <div style={{ marginTop: 20 }}>
+
                                 <Row
                                     left={`₹${pricePerNight} × ${nights} night${nights > 1 ? "s" : ""}`}
                                     right={`₹${baseAmount}`}
                                 />
+
                                 <Row left="GST (12%)" right={`₹${gst}`} />
                                 <Row left="Service fee" right={`₹${serviceFee}`} />
 
@@ -292,8 +312,11 @@ export default function Booking() {
                                     left={<strong>Total</strong>}
                                     right={<strong>₹{totalAmount}</strong>}
                                 />
+
                             </div>
+
                         ) : (
+
                             <div
                                 style={{
                                     marginTop: 20,
@@ -306,25 +329,13 @@ export default function Booking() {
                             >
                                 Select your dates to see total price
                             </div>
+
                         )}
 
-                        {/* Trust Section */}
-                        <div
-                            style={{
-                                marginTop: 20,
-                                paddingTop: 18,
-                                borderTop: "1px solid #e5e7eb",
-                                fontSize: 13,
-                                color: "#6b7280",
-                                lineHeight: 1.7
-                            }}
-                        >
-                            ✔ Free cancellation <br />
-                            ✔ Secure payment <br />
-                            ✔ Instant confirmation
-                        </div>
                     </div>
+
                 </div>
+
             </div>
         </div>
     );
