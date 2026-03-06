@@ -278,6 +278,8 @@ export function Layout({ children, noPadding = false }) {
                         <ul className="space-y-5 text-[15px] font-bold text-center">
                             <li><Link to="/support" className="text-emerald-400">Support</Link></li>
                             <li><Link to="/about">Our Story</Link></li>
+                            <li><Link to="/privacy">Privacy Policy</Link></li>
+                            <li><Link to="/terms">Terms of Service</Link></li>
                         </ul>
                     </div>
                 </div>

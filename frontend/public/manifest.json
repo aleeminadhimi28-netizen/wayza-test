@@ -1,0 +1,17 @@
+{
+    "short_name": "Wayza",
+    "name": "Wayza — Discover Your Next Escape",
+    "description": "Discover hotels, bikes, cars & experiences. Book your next adventure in one place.",
+    "icons": [
+        {
+            "src": "https://cdn-icons-png.flaticon.com/512/3126/3126435.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "start_url": ".",
+    "display": "standalone",
+    "theme_color": "#0ea5e9",
+    "background_color": "#ffffff"
+}

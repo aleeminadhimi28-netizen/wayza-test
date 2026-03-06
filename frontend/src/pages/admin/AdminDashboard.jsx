@@ -200,7 +200,7 @@ export default function AdminDashboard() {
         { id: 'partners', icon: Briefcase, label: 'Partners' },
         { id: 'listings', icon: Home, label: 'Properties' },
         { id: 'bookings', icon: CalendarCheck, label: 'Bookings' },
-        { id: 'withdrawals', icon: Banknote, label: 'Payouts' },
+        { id: 'withdrawals', icon: Banknote, label: 'Finance' },
         { id: 'support', icon: MessageSquare, label: 'Support' }
     ];
 
@@ -683,15 +683,21 @@ export default function AdminDashboard() {
                                 <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
                                     <div className="p-6 border-b border-slate-100 flex items-center justify-between">
                                         <div>
-                                            <h3 className="text-lg font-bold text-slate-900">Partner Withdrawal Requests</h3>
-                                            <p className="text-xs text-slate-500 mt-0.5">Review and process payout transfers to partners.</p>
+                                            <h3 className="text-lg font-bold text-slate-900">Finance Center</h3>
+                                            <p className="text-xs text-slate-500 mt-0.5">Track platform earnings and partner payout requests.</p>
                                         </div>
-                                        <div className="flex items-center gap-3">
-                                            {pendingWithdrawals > 0 && (
-                                                <span className="flex items-center gap-1.5 text-xs font-bold text-amber-700 bg-amber-50 border border-amber-100 px-3 py-1.5 rounded-xl">
-                                                    <Clock size={12} /> {pendingWithdrawals} Pending
-                                                </span>
-                                            )}
+                                        <div className="flex items-center gap-4">
+                                            <div className="text-right border-r border-slate-100 pr-6 hidden md:block">
+                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Platform Earned (10%)</p>
+                                                <p className="text-xl font-bold text-emerald-600">₹{(stats.platformCommission || 0).toLocaleString()}</p>
+                                            </div>
+                                            <div className="flex items-center gap-3">
+                                                {pendingWithdrawals > 0 && (
+                                                    <span className="flex items-center gap-1.5 text-xs font-bold text-amber-700 bg-amber-50 border border-amber-100 px-4 py-2 rounded-2xl animate-pulse">
+                                                        <Clock size={12} /> {pendingWithdrawals} New Requests
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="overflow-x-auto">
@@ -720,8 +726,8 @@ export default function AdminDashboard() {
                                                         </td>
                                                         <td className="px-6 py-4">
                                                             <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${w.status === "completed" ? "bg-emerald-50 text-emerald-700 border-emerald-100"
-                                                                    : w.status === "rejected" ? "bg-rose-50 text-rose-700 border-rose-100"
-                                                                        : "bg-amber-50 text-amber-700 border-amber-100"
+                                                                : w.status === "rejected" ? "bg-rose-50 text-rose-700 border-rose-100"
+                                                                    : "bg-amber-50 text-amber-700 border-amber-100"
                                                                 }`}>
                                                                 {w.status === "completed" ? <CheckCircle size={10} /> : w.status === "rejected" ? <XCircle size={10} /> : <Clock size={10} />}
                                                                 {w.status}
