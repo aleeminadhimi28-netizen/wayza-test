@@ -3,19 +3,42 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../AuthContext.jsx";
 import { motion, AnimatePresence } from "framer-motion";
 import { PageTransition } from "./PageTransition.jsx";
-import { Bell, X } from "lucide-react";
+import { Bell, X, Moon, Sun, Sparkles, Globe } from "lucide-react";
 import { api } from "../../utils/api.js";
+import { useCurrency, CURRENCIES } from "../../CurrencyContext.jsx";
 
 export function Layout({ children, noPadding = false }) {
     const navigate = useNavigate();
     const { user, logout } = useAuth();
     const [open, setOpen] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const boxRef = useRef(null);
+    const currRef = useRef(null);
+    const { currency, changeCurrency } = useCurrency();
+    const [showCurr, setShowCurr] = useState(false);
 
     // NOTIFICATIONS
     const [notifs, setNotifs] = useState([]);
     const [showNotifs, setShowNotifs] = useState(false);
+
+    // THEME
+    const [isDarkMode, setIsDarkMode] = useState(false);
+
+    useEffect(() => {
+        setIsDarkMode(document.documentElement.classList.contains('wayza-dark'));
+    }, []);
+
+    const toggleTheme = () => {
+        const root = document.documentElement;
+        if (root.classList.contains('wayza-dark')) {
+            root.classList.remove('wayza-dark');
+            setIsDarkMode(false);
+        } else {
+            root.classList.add('wayza-dark');
+            setIsDarkMode(true);
+        }
+    };
 
     useEffect(() => {
         if (!user) return;
@@ -47,6 +70,7 @@ export function Layout({ children, noPadding = false }) {
     useEffect(() => {
         function handleClick(e) {
             if (boxRef.current && !boxRef.current.contains(e.target)) setOpen(false);
+            if (currRef.current && !currRef.current.contains(e.target)) setShowCurr(false);
         }
         document.addEventListener("mousedown", handleClick);
         return () => document.removeEventListener("mousedown", handleClick);
@@ -54,25 +78,74 @@ export function Layout({ children, noPadding = false }) {
 
     const navLinks = [
         { name: "Stays", to: "/listings?category=hotel" },
+        { name: "Experiences", to: "/experiences" },
         { name: "Bikes", to: "/listings?category=bike" },
         { name: "Cars", to: "/listings?category=car" },
-        { name: "Experiences", to: "/listings?category=activity" },
+        { name: "AI Trip", to: "/ai-trip-planner", icon: Sparkles },
     ];
+
+    const isHomePage = location.pathname === "/";
+    const headerBg = (scrolled || !isHomePage || mobileMenuOpen) ? 'bg-white/95 backdrop-blur-xl shadow-sm border-b border-slate-100' : 'bg-transparent';
+    const textColor = (scrolled || !isHomePage || mobileMenuOpen) ? 'text-slate-900' : 'text-white';
+    const subTextColor = (scrolled || !isHomePage || mobileMenuOpen) ? 'text-slate-500' : 'text-white/60';
 
     return (
         <div className="bg-white min-h-screen font-sans selection:bg-emerald-100 selection:text-emerald-900">
-            <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${scrolled ? 'bg-white/95 backdrop-blur-xl shadow-sm py-4 border-b border-slate-100' : 'bg-transparent py-7'}`}>
+            <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 py-4 ${headerBg}`}>
                 <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between">
-                    <Link to="/" className={`text-3xl font-bold transition-all duration-500 tracking-tight uppercase ${scrolled ? 'text-slate-900' : 'text-white'}`}>Wayza<span className="text-emerald-500">.</span></Link>
-                    <div className={`hidden lg:flex gap-10 font-bold uppercase tracking-widest text-[10px] ${scrolled ? 'text-slate-500' : 'text-white/60'}`}>
+                    <Link to="/" className={`text-2xl md:text-3xl font-bold transition-all duration-500 tracking-tight uppercase ${textColor}`}>Wayza<span className="text-emerald-500">.</span></Link>
+                    <div className={`hidden lg:flex gap-10 font-bold uppercase tracking-widest text-[10px] ${subTextColor}`}>
                         {navLinks.map(link => (
-                            <Link key={link.name} to={link.to} className="hover:text-emerald-500 transition-colors relative group">
+                            <Link key={link.name} to={link.to} className={`hover:text-emerald-500 transition-colors relative group flex items-center gap-1.5 ${link.icon ? 'text-emerald-500 font-extrabold' : ''}`}>
+                                {link.icon && <link.icon size={12} />}
                                 {link.name}
                                 <span className={`absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-1 bg-emerald-500 rounded-full transition-all duration-300 group-hover:w-full`} />
                             </Link>
                         ))}
                     </div>
-                    <div className="flex items-center gap-4 md:gap-8">
+                    <div className="flex items-center gap-3 md:gap-6">
+                        {/* CURRENCY SELECTOR */}
+                        <div className="relative" ref={currRef}>
+                            <button
+                                onClick={() => setShowCurr(!showCurr)}
+                                className={`h-10 px-3 md:h-11 md:px-4 rounded-xl md:rounded-2xl flex items-center gap-2 transition-all font-bold text-[9px] md:text-[10px] uppercase tracking-widest ${(scrolled || !isHomePage || mobileMenuOpen) ? 'bg-slate-100 text-slate-700 hover:bg-slate-200' : 'bg-white/10 text-white hover:bg-white/20'}`}
+                            >
+                                <Globe size={13} className="text-emerald-500" />
+                                <span className="hidden xs:inline">{currency.code}</span>
+                                <span className="xs:hidden">{currency.symbol}</span>
+                            </button>
+                            <AnimatePresence>
+                                {showCurr && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                        className="absolute right-0 mt-4 w-56 bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden z-50 p-2"
+                                    >
+                                        <div className="px-4 py-3 border-b border-slate-50 mb-1">
+                                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Select Currency</span>
+                                        </div>
+                                        {CURRENCIES.map(c => (
+                                            <button
+                                                key={c.code}
+                                                onClick={() => { changeCurrency(c.code); setShowCurr(false); }}
+                                                className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl transition-colors ${currency.code === c.code ? 'bg-emerald-50 text-emerald-700' : 'hover:bg-slate-50 text-slate-600'}`}
+                                            >
+                                                <span className="font-bold text-xs">{c.label}</span>
+                                                <span className="font-bold text-[10px] text-slate-400">{c.symbol} {c.code}</span>
+                                            </button>
+                                        ))}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+
+                        {/* THEME TOGGLE */}
+                        <button
+                            onClick={toggleTheme}
+                            className={`w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all ${(scrolled || !isHomePage || mobileMenuOpen) ? (isDarkMode ? 'bg-indigo-50 text-indigo-500 hover:bg-indigo-100' : 'bg-slate-50 text-slate-400 hover:bg-slate-100') : 'bg-white/10 text-white hover:bg-white/20'}`}
+                            title="Toggle Theme"
+                        >
+                            {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
+                        </button>
                         {!user ? (
                             <div className="hidden sm:flex items-center gap-8">
                                 <Link to="/login" className={`font-bold text-[10px] tracking-widest uppercase ${scrolled ? 'text-slate-900' : 'text-white'}`}>Sign In</Link>
@@ -84,11 +157,11 @@ export function Layout({ children, noPadding = false }) {
                                 <div className="relative">
                                     <button
                                         onClick={openNotifs}
-                                        className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors relative ${scrolled ? 'bg-slate-100 text-slate-700 hover:bg-slate-200' : 'bg-white/10 text-white hover:bg-white/20'}`}
+                                        className={`w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center transition-colors relative ${(scrolled || !isHomePage || mobileMenuOpen) ? 'bg-slate-100 text-slate-700 hover:bg-slate-200' : 'bg-white/10 text-white hover:bg-white/20'}`}
                                     >
-                                        <Bell size={20} />
+                                        <Bell size={18} />
                                         {notifs.filter(n => !n.read).length > 0 && (
-                                            <span className="absolute top-2.5 right-3 w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse border-2 border-slate-900" />
+                                            <span className="absolute top-2 right-2 md:top-2.5 md:right-3 w-2 h-2 md:w-2.5 md:h-2.5 bg-emerald-500 rounded-full animate-pulse border-2 border-slate-900" />
                                         )}
                                     </button>
 
@@ -120,7 +193,7 @@ export function Layout({ children, noPadding = false }) {
                                 </div>
 
                                 <div ref={boxRef} className="relative">
-                                    <button onClick={() => setOpen(!open)} className="w-12 h-12 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-bold shadow-xl hover:bg-emerald-600 transition-all active:scale-95 group overflow-hidden border border-white/10">
+                                    <button onClick={() => setOpen(!open)} className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-slate-900 text-white flex items-center justify-center font-bold shadow-xl hover:bg-emerald-600 transition-all active:scale-95 group overflow-hidden border border-white/10">
                                         {user.email.charAt(0).toUpperCase()}
                                     </button>
                                     <AnimatePresence>
@@ -149,11 +222,43 @@ export function Layout({ children, noPadding = false }) {
                                 </div>
                             </div>
                         )}
-                        <button onClick={() => setOpen(!open)} className={`lg:hidden p-2 rounded-xl ${scrolled ? 'bg-slate-100 text-slate-900' : 'bg-white/10 text-white'}`}>
-                            <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d={open ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16m-7 6h7"} /></svg>
+                        <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className={`lg:hidden p-2 rounded-xl transition-all ${scrolled ? 'bg-slate-100 text-slate-900' : 'bg-white/10 text-white'}`}>
+                            <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d={mobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16m-7 6h7"} /></svg>
                         </button>
                     </div>
                 </div>
+
+                {/* MOBILE MENU PANEL */}
+                <AnimatePresence>
+                    {mobileMenuOpen && (
+                        <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            className="lg:hidden bg-white border-b border-slate-100 overflow-hidden"
+                        >
+                            <div className="flex flex-col p-6 space-y-1">
+                                {navLinks.map(link => (
+                                    <Link
+                                        key={link.name}
+                                        to={link.to}
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className={`flex items-center gap-4 p-4 rounded-2xl font-bold text-sm uppercase tracking-widest ${link.icon ? 'bg-emerald-50 text-emerald-600' : 'text-slate-600 hover:bg-slate-50'}`}
+                                    >
+                                        {link.icon && <link.icon size={18} />}
+                                        {link.name}
+                                    </Link>
+                                ))}
+                                {!user && (
+                                    <div className="grid grid-cols-2 gap-4 pt-6">
+                                        <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="h-14 bg-slate-50 text-slate-900 rounded-2xl flex items-center justify-center font-bold text-xs uppercase tracking-widest">Sign In</Link>
+                                        <Link to="/signup" onClick={() => setMobileMenuOpen(false)} className="h-14 bg-emerald-600 text-white rounded-2xl flex items-center justify-center font-bold text-xs uppercase tracking-widest">Join Now</Link>
+                                    </div>
+                                )}
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </nav>
 
             <PageTransition>

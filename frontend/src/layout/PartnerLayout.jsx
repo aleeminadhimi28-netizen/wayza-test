@@ -1,10 +1,10 @@
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../AuthContext.jsx";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Home, CalendarCheck, Calendar, Wallet, TrendingUp, Star, MessageSquare, Plus,
-  LogOut, Globe, ChevronLeft, ChevronRight, Activity, ShieldCheck, Zap, Layers, HardDrive, Sparkles, Navigation, Banknote, Bell, X
+  LogOut, Globe, ChevronLeft, ChevronRight, Activity, ShieldCheck, Zap, Layers, HardDrive, Sparkles, Navigation, Banknote, Bell, X, Moon, Sun
 } from "lucide-react";
 import { api } from "../utils/api.js";
 
@@ -26,23 +26,35 @@ export default function PartnerLayout() {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
 
-  // NOTIFICATIONS
-  const [notifs, setNotifs] = useState([]);
-  const [showNotifs, setShowNotifs] = useState(false);
+  // THEME
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
-  import("react").then(({ useEffect }) => {
-    useEffect(() => {
-      async function fetchNotifs() {
-        try {
-          const res = await api.getNotifications();
-          if (res.ok) setNotifs(res.data || []);
-        } catch (_) { }
-      }
-      fetchNotifs();
-      const int = setInterval(fetchNotifs, 10000);
-      return () => clearInterval(int);
-    }, []);
-  });
+  useEffect(() => {
+    setIsDarkMode(document.documentElement.classList.contains('wayza-dark'));
+  }, []);
+
+  const toggleTheme = () => {
+    const root = document.documentElement;
+    if (root.classList.contains('wayza-dark')) {
+      root.classList.remove('wayza-dark');
+      setIsDarkMode(false);
+    } else {
+      root.classList.add('wayza-dark');
+      setIsDarkMode(true);
+    }
+  };
+
+  useEffect(() => {
+    async function fetchNotifs() {
+      try {
+        const res = await api.getNotifications();
+        if (res.ok) setNotifs(res.data || []);
+      } catch (_) { }
+    }
+    fetchNotifs();
+    const int = setInterval(fetchNotifs, 10000);
+    return () => clearInterval(int);
+  }, []);
 
   async function openNotifs() {
     setShowNotifs(!showNotifs);
@@ -85,6 +97,17 @@ export default function PartnerLayout() {
             className={`w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors flex items-center justify-center shrink-0 ${collapsed ? "hidden" : "block"}`}
           >
             <ChevronLeft size={16} />
+          </button>
+        </div>
+
+        {/* Theme & Meta */}
+        <div className={`px-6 py-4 border-b border-slate-800 flex items-center ${collapsed ? "justify-center" : "justify-between"}`}>
+          {!collapsed && <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">Settings</span>}
+          <button
+            onClick={toggleTheme}
+            className={`w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center transition-all ${isDarkMode ? 'text-amber-400' : 'text-slate-400 hover:text-white'}`}
+          >
+            {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
           </button>
         </div>
 

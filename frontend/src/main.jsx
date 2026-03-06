@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import VerificationSpinner from "./components/VerificationSpinner.jsx";
+import { CurrencyProvider } from "./CurrencyContext.jsx";
 
 /* ================= PUBLIC ================= */
 
@@ -26,6 +27,8 @@ const NotFound = lazy(() => import("./pages/public/NotFound.jsx"));
 const StaticPages = lazy(() => import("./pages/public/StaticPages.jsx"));
 const CustomerSupport = lazy(() => import("./pages/public/CustomerSupport.jsx"));
 const ExploreMap = lazy(() => import("./pages/public/ExploreMap.jsx"));
+const AITripPlanner = lazy(() => import("./pages/public/AITripPlanner.jsx"));
+const Experiences = lazy(() => import("./pages/public/Experiences.jsx"));
 // Destructure after lazy import if possible or lazy import the specific ones
 const PrivacyPolicy = lazy(() => import("./pages/public/StaticPages.jsx").then(module => ({ default: module.PrivacyPolicy })));
 const TermsOfService = lazy(() => import("./pages/public/StaticPages.jsx").then(module => ({ default: module.TermsOfService })));
@@ -108,6 +111,8 @@ function AnimatedRoutes() {
                     <Route path="/terms" element={<TermsOfService />} />
                     <Route path="/support" element={<AuthGuard><CustomerSupport /></AuthGuard>} />
                     <Route path="/explore-map" element={<ExploreMap />} />
+                    <Route path="/ai-trip-planner" element={<AITripPlanner />} />
+                    <Route path="/experiences" element={<Experiences />} />
                     <Route path="*" element={<NotFound />} />
 
                     {/* ===== PARTNER AUTH ===== */}
@@ -151,11 +156,13 @@ function App() {
     return (
         <ErrorBoundary>
             <AuthProvider>
-                <ToastProvider>
-                    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-                        <AnimatedRoutes />
-                    </BrowserRouter>
-                </ToastProvider>
+                <CurrencyProvider>
+                    <ToastProvider>
+                        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+                            <AnimatedRoutes />
+                        </BrowserRouter>
+                    </ToastProvider>
+                </CurrencyProvider>
             </AuthProvider>
         </ErrorBoundary>
     );

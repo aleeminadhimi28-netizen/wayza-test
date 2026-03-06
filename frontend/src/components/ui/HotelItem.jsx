@@ -1,7 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useCurrency } from "../../CurrencyContext.jsx";
+import { Sparkles } from "lucide-react";
 
 export function HotelItem({ hotel, isSaved, onToggleWishlist }) {
+    const { formatPrice } = useCurrency();
     const isRare = hotel.price > 5000;
 
     return (
@@ -24,9 +27,17 @@ export function HotelItem({ hotel, isSaved, onToggleWishlist }) {
                     <div className="relative aspect-[4/5] overflow-hidden rounded-[32px] shadow-sm bg-slate-100">
                         <img src={hotel.image} alt={hotel.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                         <div className="absolute top-6 left-6 flex flex-col gap-2">
-                            {isRare ? (
+                            {isRare && (
                                 <span className="bg-white/95 backdrop-blur-md text-slate-950 text-[9px] font-bold px-4 py-2 rounded-full uppercase tracking-widest border border-white shadow-md">Rare Find</span>
-                            ) : (
+                            )}
+                            {/* Superhost Badge simulation based on price/rating logic for demo */}
+                            {hotel.price > 8000 && (
+                                <span className="bg-gradient-to-r from-amber-400 to-orange-400 text-slate-900 text-[9px] font-bold px-4 py-2 rounded-full uppercase tracking-widest shadow-lg flex items-center gap-1.5 w-max">
+                                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" /></svg>
+                                    Superhost
+                                </span>
+                            )}
+                            {!isRare && hotel.price <= 8000 && (
                                 <span className="bg-emerald-500 text-white text-[9px] font-bold px-4 py-2 rounded-full uppercase tracking-widest shadow-lg shadow-emerald-500/10">Trending</span>
                             )}
                         </div>
@@ -43,7 +54,7 @@ export function HotelItem({ hotel, isSaved, onToggleWishlist }) {
                         <div className="flex items-baseline gap-2">
                             <div className="flex flex-col">
                                 <span className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Starting from</span>
-                                <span className="text-2xl font-bold text-slate-900 tracking-tight">₹{hotel.price.toLocaleString()}</span>
+                                <span className="text-2xl font-bold text-slate-900 tracking-tight">{formatPrice(hotel.price)}</span>
                             </div>
                             <span className="text-xs font-bold text-slate-300">/ night</span>
                         </div>

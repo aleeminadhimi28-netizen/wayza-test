@@ -4,12 +4,13 @@ import { WayzaLayout, WayzaSkeleton } from "../../WayzaUI.jsx";
 import { useAuth } from "../../AuthContext.jsx";
 import { useToast } from "../../ToastContext.jsx";
 import { motion, AnimatePresence } from "framer-motion";
+import { useCurrency } from "../../CurrencyContext.jsx";
 import {
   ChevronLeft, ChevronRight, X, Star, Share2, Heart, MapPin,
   CheckCircle, Shield, Info, Wifi, Coffee, Wind, Tv,
   Utensils, Zap, Phone, Send, MessageSquare, ArrowRight,
   Grid3x3, Users, Calendar, Car, Bike, Anchor, Hotel,
-  Clock, CreditCard, ChevronDown, ChevronUp
+  Clock, CreditCard, ChevronDown, ChevronUp, Sparkles
 } from "lucide-react";
 import MapView from "../../components/MapView.jsx";
 
@@ -53,6 +54,7 @@ export default function ListingDetails() {
   const location = useLocation();
   const { user } = useAuth();
   const { showToast } = useToast();
+  const { formatPrice } = useCurrency();
 
   const [listing, setListing] = useState(null);
   const [saved, setSaved] = useState(false);
@@ -189,10 +191,18 @@ export default function ListingDetails() {
           </div>
 
           {/* ─── TITLE ROW ─── */}
-          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-5">
-            <div className="space-y-2">
-              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 leading-tight">{listing.title}</h1>
-              <div className="flex flex-wrap items-center gap-3 text-sm">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+            <div className="space-y-3">
+              <div className="flex flex-wrap gap-2 items-center">
+                <span className="bg-slate-900 text-white text-[9px] font-bold px-3 py-1.5 rounded-lg uppercase tracking-widest">{listing.category || "Hotel"}</span>
+                {listing.price > 8000 && (
+                  <span className="bg-gradient-to-r from-amber-400 to-orange-400 text-slate-900 text-[9px] font-bold px-3 py-1.5 rounded-lg uppercase tracking-widest flex items-center gap-1.5 shadow-sm">
+                    <Sparkles size={11} /> Superhost
+                  </span>
+                )}
+              </div>
+              <h1 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tighter uppercase leading-none">{listing.title}</h1>
+              <div className="flex flex-wrap items-center gap-6 text-sm font-medium">
                 {/* Rating */}
                 <div className="flex items-center gap-1.5">
                   <StarRow rating={Math.round(parseFloat(avgRating))} size={15} />
@@ -237,16 +247,16 @@ export default function ListingDetails() {
           </div>
 
           {/* ─── PHOTO GRID ─── */}
-          <div className="relative mb-8 rounded-2xl overflow-hidden bg-slate-200 h-[380px] sm:h-[440px] grid grid-cols-4 grid-rows-2 gap-1.5 cursor-pointer">
+          <div className="relative mb-8 rounded-2xl overflow-hidden bg-slate-200 h-[280px] sm:h-[440px] grid grid-cols-1 sm:grid-cols-4 sm:grid-rows-2 gap-1.5 cursor-pointer">
             {/* Main large image */}
-            <div className="col-span-2 row-span-2 overflow-hidden" onClick={() => { setGalleryIndex(0); setGalleryOpen(true); }}>
+            <div className="col-span-1 sm:col-span-2 sm:row-span-2 overflow-hidden" onClick={() => { setGalleryIndex(0); setGalleryOpen(true); }}>
               <img src={images[0]} alt="Main" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             </div>
-            {/* 4 smaller images */}
+            {/* 4 smaller images - HIDDEN ON MOBILE */}
             {[1, 2, 3, 4].map(i => (
-              <div key={i} className="overflow-hidden relative" onClick={() => { setGalleryIndex(i); setGalleryOpen(true); }}>
+              <div key={i} className="hidden sm:block overflow-hidden relative" onClick={() => { setGalleryIndex(i); setGalleryOpen(true); }}>
                 <img src={images[i]} alt={`Photo ${i + 1}`} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
-                {i === 4 && (
+                {i === 4 && images.length > 5 && (
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                     <span className="text-white text-sm font-bold">+{images.length - 4} more</span>
                   </div>
@@ -503,7 +513,7 @@ export default function ListingDetails() {
                           </div>
                           <div className="text-right shrink-0 ml-3">
                             <p className={`text-base font-bold ${selectedVariant === i ? "text-emerald-700" : "text-slate-900"}`}>
-                              ₹{v.price.toLocaleString()}
+                              {formatPrice(v.price)}
                             </p>
                             <p className="text-[10px] text-slate-400">/ night</p>
                           </div>
@@ -544,20 +554,20 @@ export default function ListingDetails() {
                 {nights > 0 && (
                   <div className="space-y-2.5 py-3 border-y border-slate-100 text-sm">
                     <div className="flex justify-between text-slate-600">
-                      <span>₹{basePrice.toLocaleString()} × {nights} night{nights > 1 ? "s" : ""}</span>
-                      <span className="font-semibold text-slate-900">₹{(basePrice * nights).toLocaleString()}</span>
+                      <span>{formatPrice(basePrice)} × {nights} night{nights > 1 ? "s" : ""}</span>
+                      <span className="font-semibold text-slate-900">{formatPrice(basePrice * nights)}</span>
                     </div>
                     <div className="flex justify-between text-slate-600">
                       <span>Taxes & GST (12%)</span>
-                      <span className="font-semibold text-slate-900">₹{gst.toLocaleString()}</span>
+                      <span className="font-semibold text-slate-900">{formatPrice(gst)}</span>
                     </div>
                     <div className="flex justify-between text-slate-600">
                       <span>Service fee</span>
-                      <span className="font-semibold text-slate-900">₹{serviceFee.toLocaleString()}</span>
+                      <span className="font-semibold text-slate-900">{formatPrice(serviceFee)}</span>
                     </div>
                     <div className="flex justify-between font-bold text-slate-900 pt-1 border-t border-slate-200">
                       <span>Total</span>
-                      <span>₹{total.toLocaleString()}</span>
+                      <span>{formatPrice(total)}</span>
                     </div>
                   </div>
                 )}
@@ -568,7 +578,7 @@ export default function ListingDetails() {
                   className="w-full h-12 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl transition-all active:scale-95 flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20"
                 >
                   <CreditCard size={18} />
-                  {nights > 0 ? `Reserve · ₹${total.toLocaleString()}` : "Reserve"}
+                  {nights > 0 ? `Reserve · ${formatPrice(total)}` : "Reserve"}
                 </button>
 
                 <p className="text-center text-xs text-slate-400">You won't be charged yet</p>

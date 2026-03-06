@@ -137,11 +137,14 @@ export default function LandingPage() {
                                 { label: "Stays", key: "hotel", icon: Tent },
                                 { label: "Bikes & Scooters", key: "bike", icon: Bike },
                                 { label: "Car Rentals", key: "car", icon: Car },
-                                { label: "Experiences", key: "activity", icon: Music }
+                                { label: "Experiences", key: "experience", icon: Music }
                             ].map((t) => (
                                 <button
                                     key={t.key}
-                                    onClick={() => setTab(t.key)}
+                                    onClick={() => {
+                                        if (t.key === 'experience') navigate('/experiences');
+                                        else setTab(t.key);
+                                    }}
                                     className={`px-8 py-4 rounded-2xl font-bold text-[10px] uppercase tracking-widest transition-all flex items-center gap-3 ${tab === t.key ? 'bg-slate-900 text-white shadow-xl translate-y-[-2px]' : 'bg-slate-50 text-slate-400 hover:text-slate-900'}`}
                                 >
                                     <t.icon size={16} />
@@ -254,6 +257,54 @@ export default function LandingPage() {
                                     </div>
                                 </motion.div>
                             ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* NEW: AI TRIP PLANNER CTA */}
+                <section className="py-48 px-6 bg-slate-50 overflow-hidden relative">
+                    <div className="absolute top-0 right-0 w-1/2 h-full bg-emerald-500/5 blur-[120px] pointer-events-none" />
+                    <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-20">
+                        <div className="flex-1 space-y-10">
+                            <div className="inline-flex items-center gap-3 bg-emerald-100 text-emerald-700 px-6 py-2.5 rounded-full font-bold text-[10px] uppercase tracking-widest">
+                                <Sparkles size={14} /> New Feature
+                            </div>
+                            <h2 className="text-5xl md:text-7xl font-bold text-slate-900 tracking-tighter uppercase leading-none">
+                                Meet your <br /><span className="text-emerald-500 italic font-serif lowercase">AI Trip Architect.</span>
+                            </h2>
+                            <p className="text-slate-500 text-lg md:text-xl font-medium leading-relaxed italic border-l-4 border-slate-200 pl-8">
+                                "Simply tell us your destination and vibe. Our intelligence engine will craft a perfect itinerary with Stays, Wheels, and Experiences in seconds."
+                            </p>
+                            <button onClick={() => navigate('/ai-trip-planner')} className="h-20 px-12 bg-slate-900 text-white hover:bg-emerald-600 rounded-[24px] font-bold text-[10px] uppercase tracking-[0.3em] transition-all flex items-center gap-6 shadow-2xl active:scale-95 group">
+                                Try AI Planner <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
+                            </button>
+                        </div>
+                        <div className="flex-1 relative">
+                            <motion.div
+                                initial={{ opacity: 0, x: 50 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                className="bg-white rounded-[48px] shadow-3xl border border-slate-100 p-8 md:p-12 space-y-8"
+                            >
+                                <div className="flex justify-between items-center pb-6 border-b border-slate-50">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center text-white font-bold">W</div>
+                                        <div>
+                                            <h4 className="font-bold text-slate-900 uppercase text-xs tracking-tighter">Wayza AI</h4>
+                                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Architect V1.0</p>
+                                        </div>
+                                    </div>
+                                    <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse" />
+                                </div>
+                                <div className="space-y-4">
+                                    <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 italic text-slate-500 text-sm">"Planning a chill soul-trip to Bali for 5 days..."</div>
+                                    <div className="bg-emerald-50 p-6 rounded-3xl border border-emerald-100 text-emerald-900 text-sm font-bold">"Generating your bespoke Bali Sanctuary journey..."</div>
+                                </div>
+                                <div className="flex gap-3">
+                                    <div className="h-2 flex-1 bg-slate-100 rounded-full overflow-hidden">
+                                        <motion.div initial={{ width: 0 }} whileInView={{ width: '100%' }} transition={{ duration: 2 }} className="h-full bg-emerald-500" />
+                                    </div>
+                                </div>
+                            </motion.div>
                         </div>
                     </div>
                 </section>

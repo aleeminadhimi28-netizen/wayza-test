@@ -37,3 +37,15 @@
         box-shadow: 0 8px 25px rgba(251, 191, 36, 0.25);
     }
 }
+
+/* Instant Cinematic Dark Mode */
+html.wayza-dark {
+    filter: invert(1) hue-rotate(180deg);
+    background-color: #020617; /* Very dark slate */
+}
+html.wayza-dark img, 
+html.wayza-dark video, 
+html.wayza-dark .leaflet-container,
+html.wayza-dark .recharts-wrapper {
+    filter: invert(1) hue-rotate(180deg);
+}

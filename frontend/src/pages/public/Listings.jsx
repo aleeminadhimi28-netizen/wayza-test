@@ -144,10 +144,9 @@ export default function Listings() {
                 <div className="bg-white border-b border-slate-200 sticky top-24 z-40 shadow-sm">
                     <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
 
-                        {/* Search row */}
-                        <div className="py-3 flex flex-col sm:flex-row gap-2">
-                            <div className="flex flex-1 gap-2 flex-wrap">
-                                <div className="relative flex-[2] min-w-[160px]">
+                        <div className="py-3">
+                            <div className="grid grid-cols-1 sm:flex sm:flex-row gap-2">
+                                <div className="relative flex-[2] min-w-0">
                                     <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                                     <input
                                         value={searchInput}
@@ -157,38 +156,43 @@ export default function Listings() {
                                         className="w-full h-11 pl-9 pr-3 text-sm border border-slate-300 rounded-xl focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 bg-white transition-all"
                                     />
                                 </div>
-                                <div className="relative flex-1 min-w-[120px]">
-                                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                                    <input
-                                        type="date"
-                                        value={checkInInput}
-                                        onChange={e => setCheckInInput(e.target.value)}
-                                        className="w-full h-11 pl-9 pr-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 bg-white transition-all"
-                                    />
+                                <div className="grid grid-cols-2 sm:contents gap-2">
+                                    <div className="relative min-w-0">
+                                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                                        <input
+                                            type="date"
+                                            value={checkInInput}
+                                            onChange={e => setCheckInInput(e.target.value)}
+                                            className="w-full h-11 pl-9 pr-2 text-[11px] sm:text-sm border border-slate-300 rounded-xl focus:outline-none focus:border-emerald-500 bg-white transition-all"
+                                        />
+                                    </div>
+                                    <div className="relative min-w-0">
+                                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                                        <input
+                                            type="date"
+                                            value={checkOutInput}
+                                            onChange={e => setCheckOutInput(e.target.value)}
+                                            className="w-full h-11 pl-9 pr-2 text-[11px] sm:text-sm border border-slate-300 rounded-xl focus:outline-none focus:border-emerald-500 bg-white transition-all"
+                                        />
+                                    </div>
                                 </div>
-                                <div className="relative flex-1 min-w-[120px]">
-                                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                                    <input
-                                        type="date"
-                                        value={checkOutInput}
-                                        onChange={e => setCheckOutInput(e.target.value)}
-                                        className="w-full h-11 pl-9 pr-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 bg-white transition-all"
-                                    />
+                                <div className="grid grid-cols-2 sm:flex gap-2">
+                                    <button
+                                        onClick={handleSearch}
+                                        className="h-11 px-6 bg-slate-900 hover:bg-emerald-600 text-white text-sm font-semibold rounded-xl transition-all flex items-center justify-center gap-2 whitespace-nowrap shadow-md active:scale-95"
+                                    >
+                                        <Search size={16} />
+                                        Search
+                                    </button>
+                                    <Link
+                                        to="/explore-map"
+                                        className="h-11 px-6 bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 text-sm font-semibold rounded-xl transition-all flex items-center justify-center gap-2 whitespace-nowrap shadow-sm active:scale-95"
+                                    >
+                                        <Navigation size={16} className="text-emerald-500" />
+                                        <span className="hidden xs:inline">Map</span>
+                                        <span className="xs:hidden">Map</span>
+                                    </Link>
                                 </div>
-                                <button
-                                    onClick={handleSearch}
-                                    className="h-11 px-6 bg-slate-900 hover:bg-emerald-600 text-white text-sm font-semibold rounded-xl transition-all flex items-center gap-2 whitespace-nowrap shadow-md active:scale-95"
-                                >
-                                    <Search size={16} />
-                                    Search
-                                </button>
-                                <Link
-                                    to="/explore-map"
-                                    className="h-11 px-6 bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 text-sm font-semibold rounded-xl transition-all flex items-center gap-2 whitespace-nowrap shadow-sm active:scale-95"
-                                >
-                                    <Navigation size={16} className="text-emerald-500" />
-                                    Explore Map
-                                </Link>
                             </div>
                         </div>
 
@@ -347,9 +351,17 @@ export default function Listings() {
                                                         <CheckCircle size={11} /> Verified
                                                     </div>
                                                 )}
-                                                {/* Category label */}
-                                                <div className="absolute top-3 left-3 bg-black/50 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wide">
-                                                    {CATEGORIES.find(c => c.id === l.category)?.label || "Stay"}
+                                                <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
+                                                    {/* Category label */}
+                                                    <div className="bg-black/50 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wide w-max shadow-sm">
+                                                        {CATEGORIES.find(c => c.id === l.category)?.label || "Stay"}
+                                                    </div>
+                                                    {/* Superhost */}
+                                                    {score >= 8.5 && reviewCount > 50 && (
+                                                        <div className="bg-gradient-to-r from-amber-400 to-orange-400 text-slate-900 text-[10px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-md w-max">
+                                                            <Sparkles size={11} className="text-slate-900" /> Superhost
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
 
