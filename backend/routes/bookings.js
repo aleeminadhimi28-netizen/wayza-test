@@ -3,6 +3,7 @@ import { ObjectId } from "mongodb";
 import { getDB } from "../config/db.js";
 import { requireAuth } from "../middleware/auth.js";
 import { getTransporter, guestBookingEmail, ownerBookingEmail } from "../utils/emailTemplates.js";
+import { sendWhatsAppAlert, formatWhatsAppBookingMsg } from "../utils/whatsapp.js";
 
 const router = express.Router();
 
@@ -115,6 +116,19 @@ router.post("/confirm", requireAuth, async (req, res, next) => {
                     ? transporter.sendMail(ownerBookingEmail(emailData)).catch(e => console.error("Owner email error:", e))
                     : Promise.resolve()
             ]);
+
+            // WhatsApp Alert for Owner
+            (async () => {
+                try {
+                    const owner = await db.collection("users").findOne({ email: booking.ownerEmail });
+                    if (owner?.phone) {
+                        const message = formatWhatsAppBookingMsg(emailData);
+                        await sendWhatsAppAlert(owner.phone, message, [
+                            { title: "View Booking" }
+                        ]);
+                    }
+                } catch (e) { console.error("WhatsApp error:", e); }
+            })();
         }
 
         res.json({ ok: true });

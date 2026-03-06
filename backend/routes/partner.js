@@ -237,4 +237,66 @@ router.get("/wallet/requests", requireAuth, async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
+/* ================= CALENDAR SYNC (ICS) ================= */
+
+router.get("/calendar-feed/:token", async (req, res, next) => {
+    try {
+        const db = getDB();
+        const partners = db.collection("partners");
+        const bookings = db.collection("bookings");
+
+        // The token is the partner's unique ID for security
+        const partner = await partners.findOne({ _id: new ObjectId(req.params.token) });
+        if (!partner) return res.status(404).send("Invalid Calendar Token");
+
+        const rows = await bookings.find({
+            ownerEmail: partner.email,
+            status: "paid"
+        }).toArray();
+
+        let ics = [
+            "BEGIN:VCALENDAR",
+            "VERSION:2.0",
+            "PRODID:-//Wayza//Partner Calendar//EN",
+            "CALSCALE:GREGORIAN",
+            "METHOD:PUBLISH"
+        ];
+
+        rows.forEach(b => {
+            const start = new Date(b.checkIn).toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+            const end = new Date(b.checkOut).toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+            const created = new Date(b.createdAt || new Date()).toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+
+            ics.push("BEGIN:VEVENT");
+            ics.push(`UID:${b._id}@wayza.com`);
+            ics.push(`DTSTAMP:${created}`);
+            ics.push(`DTSTART;VALUE=DATE:${start.substring(0, 8)}`);
+            ics.push(`DTEND;VALUE=DATE:${end.substring(0, 8)}`);
+            ics.push(`SUMMARY:Wayza Booking - ${b.title || "Stay"}`);
+            ics.push(`DESCRIPTION:Guest: ${b.guestEmail}\\nTotal: ₹${b.totalPrice}\\nNights: ${b.nights}`);
+            ics.push("END:VEVENT");
+        });
+
+        ics.push("END:VCALENDAR");
+
+        res.setHeader("Content-Type", "text/calendar");
+        res.setHeader("Content-Disposition", `attachment; filename="wayza_${partner.email}.ics"`);
+        res.send(ics.join("\r\n"));
+    } catch (err) { next(err); }
+});
+
+router.get("/calendar-settings", requireAuth, async (req, res, next) => {
+    try {
+        const db = getDB();
+        const partners = db.collection("partners");
+        const partner = await partners.findOne({ email: req.user.email });
+        if (!partner) return res.status(404).json({ ok: false });
+
+        const baseUrl = process.env.API_URL || "http://localhost:5000";
+        const feedUrl = `${baseUrl}/api/v1/partner/calendar-feed/${partner._id}`;
+
+        res.json({ ok: true, feedUrl });
+    } catch (err) { next(err); }
+});
+
 export default router;

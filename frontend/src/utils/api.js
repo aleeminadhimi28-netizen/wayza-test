@@ -158,7 +158,10 @@ export const api = {
         body: JSON.stringify({ amount })
     }).then(r => r.json()),
 
-    getWithdrawalRequests: () => fetch(`${API_URL}/partner/wallet/requests`, {
+    getWithdrawals: () => fetch(`${API_URL}/partner/wallet/requests`, {
+        headers: getAuthHeaders()
+    }).then(r => r.json()),
+    getCalendarSettings: () => fetch(`${API_URL}/partner/calendar-settings`, {
         headers: getAuthHeaders()
     }).then(r => r.json()),
 

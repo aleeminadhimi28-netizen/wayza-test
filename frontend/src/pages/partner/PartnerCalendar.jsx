@@ -3,7 +3,8 @@ import { useAuth } from "../../AuthContext.jsx";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Calendar, CheckCircle, Clock, MapPin, ArrowRight,
-    CalendarDays, ChevronLeft, ChevronRight, X, Users, Zap
+    CalendarDays, ChevronLeft, ChevronRight, X, Users, Zap,
+    Share2, Copy, Check, MessageSquare
 } from "lucide-react";
 import { api } from "../../utils/api.js";
 
@@ -11,7 +12,6 @@ const MONTH_NAMES = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"];
 const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-// Each booking gets a theme
 const THEMES = [
     { bar: "bg-emerald-400", barMid: "bg-emerald-300", label: "text-emerald-900", badge: "bg-emerald-100 text-emerald-800 border-emerald-200" },
     { bar: "bg-blue-400", barMid: "bg-blue-300", label: "text-blue-900", badge: "bg-blue-100 text-blue-800 border-blue-200" },
@@ -40,15 +40,26 @@ export default function PartnerCalendar() {
     const [viewYear, setViewYear] = useState(today.getFullYear());
     const [viewMonth, setViewMonth] = useState(today.getMonth());
     const [selected, setSelected] = useState(null);
+    const [feedUrl, setFeedUrl] = useState("");
+    const [copied, setCopied] = useState(false);
 
     useEffect(() => {
         if (!user?.email) return;
         api.getPartnerBookings()
             .then(d => { setBookings(Array.isArray(d) ? d : []); setLoading(false); })
             .catch(() => setLoading(false));
+
+        api.getCalendarSettings().then(d => {
+            if (d.ok) setFeedUrl(d.feedUrl);
+        });
     }, [user?.email]);
 
-    // Processed bookings with parsed dates + assigned theme
+    const handleCopy = () => {
+        navigator.clipboard.writeText(feedUrl);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
     const processed = bookings
         .filter(b => b.status !== "cancelled")
         .map((b, i) => ({
@@ -68,9 +79,8 @@ export default function PartnerCalendar() {
         else setViewMonth(m => m + 1);
     }
 
-    // Build calendar weeks (array of 7-day arrays)
     const firstOfMonth = new Date(viewYear, viewMonth, 1);
-    const startOffset = firstOfMonth.getDay(); // 0=Sun
+    const startOffset = firstOfMonth.getDay();
     const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
     const totalCells = Math.ceil((startOffset + daysInMonth) / 7) * 7;
 
@@ -83,20 +93,17 @@ export default function PartnerCalendar() {
             inMonth,
         };
     });
-    // Split into weeks
     const weeks = [];
     for (let w = 0; w < allCells.length / 7; w++) {
         weeks.push(allCells.slice(w * 7, w * 7 + 7));
     }
 
-    // For each cell, get bookings that overlap this day
     function bookingsForDay(date) {
         if (!date) return [];
         const d = date.getTime();
         return processed.filter(b => d >= b.ciDate.getTime() && d <= b.coDate.getTime());
     }
 
-    // Upcoming stays (from today onward)
     const upcoming = processed
         .filter(b => b.coDate >= today)
         .sort((a, b) => a.ciDate - b.ciDate);
@@ -117,258 +124,199 @@ export default function PartnerCalendar() {
                         <CalendarDays size={14} /> Schedule
                     </div>
                     <h1 className="text-2xl font-bold text-slate-900">Booking Calendar</h1>
-                    <p className="text-sm text-slate-500 mt-1">Manage your property occupancy and upcoming guest arrivals.</p>
+                    <p className="text-sm text-slate-500 mt-1">Manage occupancy and configure external notifications.</p>
                 </div>
-                <span className="text-sm font-semibold text-slate-700 bg-white border border-slate-200 px-4 py-2 rounded-xl flex items-center gap-2 shadow-sm">
-                    <Users size={14} className="text-emerald-500" />
-                    {upcoming.length} Upcoming
-                </span>
+                <div className="flex items-center gap-3">
+                    <span className="text-sm font-semibold text-slate-700 bg-white border border-slate-200 px-4 py-2 rounded-xl flex items-center gap-2 shadow-sm">
+                        <Users size={14} className="text-emerald-500" />
+                        {upcoming.length} Upcoming
+                    </span>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
 
-                {/* ════ CALENDAR ════ */}
-                <div className="xl:col-span-2 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-
-                    {/* Month Nav */}
-                    <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/60">
-                        <button onClick={prevMonth}
-                            className="w-9 h-9 rounded-xl bg-white border border-slate-200 hover:bg-emerald-50 hover:border-emerald-200 text-slate-600 hover:text-emerald-700 flex items-center justify-center transition-all shadow-sm">
-                            <ChevronLeft size={16} />
-                        </button>
-                        <div className="text-center">
-                            <h2 className="text-lg font-bold text-slate-900">{MONTH_NAMES[viewMonth]}</h2>
-                            <p className="text-xs text-slate-400 font-semibold">{viewYear}</p>
+                {/* ════ LEFT: CALENDAR ════ */}
+                <div className="xl:col-span-2 space-y-6">
+                    <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+                        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/60">
+                            <button onClick={prevMonth} className="w-9 h-9 rounded-xl bg-white border border-slate-200 hover:bg-emerald-50 text-slate-600 flex items-center justify-center transition-all shadow-sm">
+                                <ChevronLeft size={16} />
+                            </button>
+                            <div className="text-center">
+                                <h2 className="text-lg font-bold text-slate-900">{MONTH_NAMES[viewMonth]}</h2>
+                                <p className="text-xs text-slate-400 font-semibold">{viewYear}</p>
+                            </div>
+                            <button onClick={nextMonth} className="w-9 h-9 rounded-xl bg-white border border-slate-200 hover:bg-emerald-50 text-slate-600 flex items-center justify-center transition-all shadow-sm">
+                                <ChevronRight size={16} />
+                            </button>
                         </div>
-                        <button onClick={nextMonth}
-                            className="w-9 h-9 rounded-xl bg-white border border-slate-200 hover:bg-emerald-50 hover:border-emerald-200 text-slate-600 hover:text-emerald-700 flex items-center justify-center transition-all shadow-sm">
-                            <ChevronRight size={16} />
-                        </button>
-                    </div>
 
-                    {/* Day-of-week headers */}
-                    <div className="grid grid-cols-7 border-b border-slate-100">
-                        {DAY_NAMES.map(d => (
-                            <div key={d} className="py-2.5 text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                                {d}
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Weeks */}
-                    <div className="divide-y divide-slate-50">
-                        {weeks.map((week, wi) => (
-                            <div key={wi} className="grid grid-cols-7 relative" style={{ minHeight: 90 }}>
-                                {week.map((cell, di) => {
-                                    const isToday = cell.date && sameDay(cell.date, today);
-                                    const dayBookings = bookingsForDay(cell.date);
-
-                                    return (
-                                        <div key={di}
-                                            className={`relative min-h-[90px] border-r border-slate-50 last:border-r-0 transition-colors group
-                                                ${cell.inMonth ? "bg-white hover:bg-slate-50/60" : "bg-slate-50/40"}
-                                            `}
-                                        >
-                                            {/* Day number */}
-                                            <div className="pt-2 pl-2 pr-1">
-                                                <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold transition-colors
-                                                    ${isToday
-                                                        ? "bg-emerald-500 text-white shadow"
-                                                        : cell.inMonth
-                                                            ? "text-slate-700 group-hover:bg-slate-100"
-                                                            : "text-slate-300"
-                                                    }`}>
-                                                    {cell.inMonth ? cell.dayNum : ""}
-                                                </span>
-                                            </div>
-
-                                            {/* Booking bars */}
-                                            <div className="mt-1 space-y-0.5 px-0 overflow-hidden">
-                                                {dayBookings.slice(0, 3).map(b => {
-                                                    if (!cell.date) return null;
-                                                    const isStart = sameDay(cell.date, b.ciDate);
-                                                    const isEnd = sameDay(cell.date, b.coDate);
-                                                    const isMid = !isStart && !isEnd;
-                                                    const isLastCol = di === 6;
-                                                    const isFirstCol = di === 0;
-
-                                                    return (
-                                                        <button
-                                                            key={b._id}
-                                                            onClick={() => setSelected(b)}
-                                                            className={`
-                                                                w-full h-6 flex items-center transition-opacity hover:opacity-80
-                                                                ${isMid ? b.theme.barMid : b.theme.bar}
-                                                                ${isStart ? "rounded-l-full pl-2" : "pl-1"}
-                                                                ${isEnd ? "rounded-r-full pr-1" : "pr-0"}
-                                                                ${isStart && isFirstCol ? "ml-1" : ""}
-                                                                ${isEnd && isLastCol ? "mr-1" : ""}
-                                                            `}
-                                                            style={{
-                                                                marginLeft: isStart ? "4px" : "0",
-                                                                marginRight: isEnd ? "4px" : "0",
-                                                                borderRadius: isStart && isEnd ? "9999px" : isStart ? "9999px 0 0 9999px" : isEnd ? "0 9999px 9999px 0" : "0",
-                                                            }}
-                                                        >
-                                                            {isStart && (
-                                                                <span className={`text-[9px] font-bold truncate ${b.theme.label} ml-1`}>
-                                                                    {b.guestEmail?.split("@")[0]}
-                                                                </span>
-                                                            )}
-                                                        </button>
-                                                    );
-                                                })}
-                                                {dayBookings.length > 3 && (
-                                                    <div className="text-[9px] font-bold text-slate-400 pl-2">
-                                                        +{dayBookings.length - 3}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Legend */}
-                    {processed.length > 0 && (
-                        <div className="px-5 py-3 border-t border-slate-100 bg-slate-50/40 flex flex-wrap gap-2 items-center">
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Active:</span>
-                            {processed.map(b => (
-                                <button key={b._id} onClick={() => setSelected(b)}
-                                    className={`flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-lg border ${b.theme.badge}`}>
-                                    <span className={`w-1.5 h-1.5 rounded-full ${b.theme.bar}`} />
-                                    {b.guestEmail?.split("@")[0]} · {b.checkIn} → {b.checkOut}
-                                </button>
+                        <div className="grid grid-cols-7 border-b border-slate-100">
+                            {DAY_NAMES.map(d => (
+                                <div key={d} className="py-2.5 text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">{d}</div>
                             ))}
                         </div>
-                    )}
+
+                        <div className="divide-y divide-slate-50">
+                            {weeks.map((week, wi) => (
+                                <div key={wi} className="grid grid-cols-7 relative" style={{ minHeight: 95 }}>
+                                    {week.map((cell, di) => {
+                                        const isToday = cell.date && sameDay(cell.date, today);
+                                        const dayBookings = bookingsForDay(cell.date);
+                                        return (
+                                            <div key={di} className={`relative min-h-[95px] border-r border-slate-50 last:border-r-0 transition-colors ${cell.inMonth ? "bg-white" : "bg-slate-50/40"}`}>
+                                                <div className="pt-2 pl-2">
+                                                    <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold ${isToday ? "bg-emerald-500 text-white shadow" : cell.inMonth ? "text-slate-700" : "text-slate-300"}`}>
+                                                        {cell.inMonth ? cell.dayNum : ""}
+                                                    </span>
+                                                </div>
+                                                <div className="mt-1 space-y-0.5 px-0.5 overflow-hidden">
+                                                    {dayBookings.slice(0, 3).map(b => {
+                                                        const isStart = sameDay(cell.date, b.ciDate);
+                                                        const isEnd = sameDay(cell.date, b.coDate);
+                                                        return (
+                                                            <button key={b._id} onClick={() => setSelected(b)} className={`w-full h-5 flex items-center ${isStart && !isEnd ? "rounded-l-full" : isEnd && !isStart ? "rounded-r-full" : isStart && isEnd ? "rounded-full" : ""} ${b.theme.bar} px-2 hover:opacity-80 transition-opacity`}>
+                                                                {isStart && <span className={`text-[8px] font-bold truncate ${b.theme.label}`}>{b.guestEmail?.split("@")[0]}</span>}
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* CALENDAR SYNC CARD */}
+                    <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
+                                <Share2 size={20} />
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-slate-900">Native Calendar Sync</h3>
+                                <p className="text-xs text-slate-500 font-medium">Add your Wayza schedule to Google or Apple Calendar.</p>
+                            </div>
+                        </div>
+                        <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between gap-4">
+                            <div className="truncate flex-1">
+                                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Personal iCal Feed URL</p>
+                                <p className="text-xs text-slate-900 font-mono truncate">{feedUrl || "Generating feed..."}</p>
+                            </div>
+                            <button onClick={handleCopy} className="h-10 px-4 bg-white border border-slate-200 rounded-lg flex items-center gap-2 text-slate-600 font-bold text-xs hover:text-emerald-600 transition-all shadow-sm shrink-0">
+                                {copied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
+                                {copied ? "Copied" : "Copy Link"}
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
-                {/* ════ UPCOMING SIDEBAR ════ */}
-                <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                    <div className="px-5 py-4 border-b border-slate-100 bg-slate-50/60">
-                        <h3 className="font-bold text-slate-900">Upcoming Stays</h3>
-                        <p className="text-xs text-slate-400 mt-0.5">All active and future bookings</p>
-                    </div>
-                    <div className="divide-y divide-slate-50 max-h-[520px] overflow-y-auto">
-                        {upcoming.length === 0 ? (
-                            <div className="py-16 text-center px-6">
-                                <Calendar size={28} className="text-slate-200 mx-auto mb-3" />
-                                <p className="text-sm font-bold text-slate-700 mb-1">No upcoming stays</p>
-                                <p className="text-xs text-slate-400">Bookings will appear here as guests reserve.</p>
+                {/* ════ RIGHT: ALERTS & UPCOMING ════ */}
+                <div className="space-y-6">
+                    {/* WHATSAPP CARD */}
+                    <div className="bg-slate-900 rounded-2xl p-6 text-white shadow-xl shadow-slate-900/20 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-8 opacity-10">
+                            <MessageSquare size={80} />
+                        </div>
+                        <div className="relative z-10">
+                            <h3 className="text-lg font-bold mb-1 flex items-center gap-2">
+                                <Zap className="text-emerald-400" size={18} />
+                                WhatsApp Notifications
+                            </h3>
+                            <p className="text-slate-400 text-xs mb-6 font-medium leading-relaxed">Get instant confirmation alerts directly to your WhatsApp.</p>
+
+                            <div className="space-y-4">
+                                <div className="p-4 bg-white/5 rounded-xl border border-white/10">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="text-[10px] font-bold text-emerald-400 uppercase bg-emerald-400/10 px-2 py-0.5 rounded-md italic">Online</span>
+                                    </div>
+                                    <p className="text-xs text-white/80 font-medium">Primary Number: <br /><span className="text-white font-bold text-sm tracking-wide">+91 ********89</span></p>
+                                </div>
+                                <button className="w-full h-11 bg-emerald-500 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-emerald-400 transition-colors shadow-lg shadow-emerald-500/20">
+                                    Configure Alerts
+                                </button>
                             </div>
-                        ) : upcoming.map((b, i) => {
-                            const isActive = b.ciDate <= today && b.coDate >= today;
-                            return (
-                                <motion.button key={b._id}
-                                    initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}
-                                    onClick={() => setSelected(b)}
-                                    className="w-full text-left p-4 hover:bg-slate-50 transition-colors"
-                                >
-                                    <div className="flex items-start gap-3">
-                                        <div className={`w-1.5 self-stretch rounded-full shrink-0 ${b.theme.bar}`} />
+                        </div>
+                    </div>
+
+                    {/* UPCOMING LIST */}
+                    <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+                        <div className="px-5 py-4 border-b border-slate-100 bg-slate-50/60">
+                            <h3 className="font-bold text-slate-900">Upcoming Arrivals</h3>
+                        </div>
+                        <div className="divide-y divide-slate-50 max-h-[400px] overflow-y-auto">
+                            {upcoming.length === 0 ? (
+                                <div className="py-12 text-center px-6">
+                                    <Calendar size={24} className="text-slate-200 mx-auto mb-2" />
+                                    <p className="text-xs font-bold text-slate-500">No upcoming stays</p>
+                                </div>
+                            ) : upcoming.map((b) => (
+                                <button key={b._id} onClick={() => setSelected(b)} className="w-full text-left p-4 hover:bg-slate-50 transition-colors">
+                                    <div className="flex items-center gap-3">
+                                        <div className={`w-1 h-10 rounded-full ${b.theme.bar}`} />
                                         <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-2 justify-between mb-0.5">
-                                                <p className="font-bold text-sm text-slate-900 truncate">
-                                                    {b.guestEmail?.split("@")[0]}
-                                                </p>
-                                                {isActive && (
-                                                    <span className="text-[9px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded-md shrink-0 flex items-center gap-1">
-                                                        <Zap size={9} /> LIVE
-                                                    </span>
-                                                )}
-                                            </div>
-                                            <p className="text-[10px] text-slate-500 font-semibold truncate mb-1.5">{b.title}</p>
-                                            <div className="flex items-center gap-1 text-xs text-slate-400 font-medium">
-                                                <span className="font-bold text-slate-700">{b.checkIn}</span>
-                                                <ArrowRight size={10} className="text-slate-300" />
-                                                <span className="font-bold text-slate-700">{b.checkOut}</span>
-                                            </div>
-                                            <div className="flex items-center justify-between mt-2">
-                                                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1 border ${b.status === "paid" ? "bg-emerald-50 text-emerald-700 border-emerald-100" : "bg-amber-50 text-amber-700 border-amber-100"}`}>
-                                                    {b.status === "paid" ? <><CheckCircle size={9} /> Confirmed</> : <><Clock size={9} /> Pending</>}
-                                                </span>
-                                                <span className="text-xs font-bold text-slate-900">₹{(b.totalPrice || 0).toLocaleString()}</span>
+                                            <p className="font-bold text-sm text-slate-900 truncate">{b.guestEmail?.split("@")[0]}</p>
+                                            <p className="text-[10px] text-slate-500 font-medium truncate mb-1">{b.title}</p>
+                                            <div className="flex items-center gap-1 text-[10px] text-slate-400 font-bold">
+                                                <span>{b.checkIn}</span>
+                                                <ArrowRight size={10} />
+                                                <span>{b.checkOut}</span>
                                             </div>
                                         </div>
                                     </div>
-                                </motion.button>
-                            );
-                        })}
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {/* ════ DETAIL MODAL ════ */}
+            {/* DETAIL MODAL */}
             <AnimatePresence>
                 {selected && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                         onClick={() => setSelected(null)}
                         className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
                     >
-                        <motion.div initial={{ opacity: 0, scale: 0.93, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }}
+                        <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }}
                             onClick={e => e.stopPropagation()}
                             className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden"
                         >
-                            {/* Header stripe */}
-                            <div className={`h-2 w-full ${selected.theme.bar}`} />
-                            <div className="px-6 pt-5 pb-4 border-b border-slate-100 flex items-start justify-between gap-3">
+                            <div className={`h-1.5 w-full ${selected.theme.bar}`} />
+                            <div className="px-6 py-5 border-b border-slate-100 flex items-start justify-between">
                                 <div>
-                                    <h3 className="font-bold text-slate-900 text-lg leading-tight">{selected.title}</h3>
-                                    {selected.location && (
-                                        <p className="text-xs text-slate-400 flex items-center gap-1 mt-1">
-                                            <MapPin size={11} /> {selected.location}
-                                        </p>
-                                    )}
+                                    <h3 className="font-bold text-slate-900">{selected.title}</h3>
+                                    <p className="text-xs text-slate-500 mt-1">{selected.guestEmail}</p>
                                 </div>
-                                <button onClick={() => setSelected(null)}
-                                    className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 transition-colors shrink-0 mt-0.5">
-                                    <X size={15} />
-                                </button>
+                                <button onClick={() => setSelected(null)} className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500"><X size={15} /></button>
                             </div>
-
-                            <div className="p-6 space-y-5">
-                                {/* Date range */}
-                                <div className="flex items-center justify-around bg-slate-50 rounded-xl p-4 border border-slate-100">
-                                    <div className="text-center">
-                                        <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-1">Check-In</p>
-                                        <p className="font-bold text-base text-slate-900">{selected.checkIn}</p>
+                            <div className="p-6 space-y-6">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                                        <p className="text-[9px] font-bold text-slate-400 uppercase mb-1">Check-In</p>
+                                        <p className="font-bold text-sm text-slate-900">{selected.checkIn}</p>
                                     </div>
-                                    <div className="flex flex-col items-center gap-0.5">
-                                        <ArrowRight size={18} className="text-slate-300" />
-                                        <span className="text-[9px] font-bold text-slate-400">{selected.nights || "—"} nights</span>
-                                    </div>
-                                    <div className="text-center">
-                                        <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-1">Check-Out</p>
-                                        <p className="font-bold text-base text-slate-900">{selected.checkOut}</p>
+                                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                                        <p className="text-[9px] font-bold text-slate-400 uppercase mb-1">Check-Out</p>
+                                        <p className="font-bold text-sm text-slate-900">{selected.checkOut}</p>
                                     </div>
                                 </div>
-
-                                {/* Details list */}
                                 <div className="space-y-3">
-                                    {[
-                                        { label: "Guest", value: selected.guestEmail },
-                                        { label: "Room / Variant", value: selected.variantName || "Standard" },
-                                        { label: "Total Revenue", value: `₹${(selected.totalPrice || 0).toLocaleString()}` },
-                                        { label: "Your Net (90%)", value: `₹${(selected.netEarnings || Math.round((selected.totalPrice || 0) * 0.9)).toLocaleString()}` },
-                                    ].map(row => (
-                                        <div key={row.label} className="flex items-center justify-between text-sm border-b border-slate-50 pb-2 last:border-0">
-                                            <span className="text-slate-500 font-medium">{row.label}</span>
-                                            <span className="font-bold text-slate-900">{row.value}</span>
-                                        </div>
-                                    ))}
+                                    <div className="flex justify-between text-xs font-medium">
+                                        <span className="text-slate-500">Nights</span>
+                                        <span className="text-slate-900">{selected.nights}</span>
+                                    </div>
+                                    <div className="flex justify-between text-xs font-medium">
+                                        <span className="text-slate-500">Net Earnings</span>
+                                        <span className="text-slate-900 font-bold">₹{Math.round(selected.totalPrice * 0.9).toLocaleString()}</span>
+                                    </div>
                                 </div>
-
-                                {/* Status badges */}
-                                <div className="flex items-center justify-between pt-1">
-                                    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border ${selected.status === "paid" ? "bg-emerald-50 text-emerald-700 border-emerald-100" : "bg-amber-50 text-amber-700 border-amber-100"}`}>
-                                        {selected.status === "paid" ? <CheckCircle size={11} /> : <Clock size={11} />}
-                                        {selected.status === "paid" ? "Confirmed" : "Pending"}
-                                    </span>
-                                    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border ${selected.payoutStatus === "paid_out" ? "bg-blue-50 text-blue-700 border-blue-100" : "bg-amber-50 text-amber-700 border-amber-100"}`}>
-                                        Payout: {selected.payoutStatus === "paid_out" ? "Settled ✓" : "Pending"}
+                                <div className="flex items-center gap-2">
+                                    <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full border border-emerald-100 flex items-center gap-1">
+                                        <CheckCircle size={10} /> Paid & Confirmed
                                     </span>
                                 </div>
                             </div>
