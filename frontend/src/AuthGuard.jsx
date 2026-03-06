@@ -1,14 +1,19 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "./AuthContext.jsx";
+import VerificationSpinner from "./components/VerificationSpinner.jsx";
 
 export default function AuthGuard({ children }) {
 
     const { user, loading } = useAuth();
     const location = useLocation();
 
-    // ✅ wait until auth is restored from localStorage
     if (loading) {
-        return null; // or spinner component
+        return (
+            <VerificationSpinner
+                message="Synchronizing Identity..."
+                subtext="Verifying Active Session"
+            />
+        );
     }
 
     // ✅ not logged in → go login and remember full URL

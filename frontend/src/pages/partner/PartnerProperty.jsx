@@ -1,11 +1,19 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+    Plus, Edit2, Trash2, Image as ImageIcon, CheckCircle2, X,
+    Settings2, Activity, Database, ShieldCheck, Zap, Layers,
+    ChevronLeft, ArrowRight, Target, HardDrive, Cpu, Sparkles, Navigation, History
+} from "lucide-react";
+import { useToast } from "../../ToastContext.jsx";
 
-const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
+import { api } from "../../utils/api.js";
 
 export default function PartnerProperty() {
-
     const { id } = useParams();
+    const navigate = useNavigate();
+    const { showToast } = useToast();
     const [listing, setListing] = useState(null);
 
     const [type, setType] = useState("Room");
@@ -18,15 +26,27 @@ export default function PartnerProperty() {
     const [preview, setPreview] = useState("");
 
     const [editIndex, setEditIndex] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => { load(); }, [id]);
 
     async function load() {
-        const r = await fetch(`${API}/listings/${id}`);
-        setListing(await r.json());
+        try {
+            const data = await api.getListing(id);
+            const l = data.data || data;
+            setListing(l);
+
+            if (editIndex === null) {
+                setType((l.category === "bike" || l.category === "car") ? "Vehicle" : "Room");
+            }
+        } catch (err) {
+            console.error("Failed to load property:", err);
+            showToast("Protocol failure: Data retrieval interrupted.", "error");
+        }
     }
 
     function resetForm() {
+        setType((listing?.category === "bike" || listing?.category === "car") ? "Vehicle" : "Room");
         setName("");
         setPrice("");
         setDesc("");
@@ -42,271 +62,364 @@ export default function PartnerProperty() {
         if (f) setPreview(URL.createObjectURL(f));
     }
 
+    function removeImage() {
+        setFile(null);
+        setPreview("");
+    }
+
     async function uploadImage() {
-
         if (!file) return null;
-
         const fd = new FormData();
         fd.append("image", file);
-
-        const r = await fetch(`${API}/upload`, {
-            method: "POST",
-            body: fd
-        });
-
-        const d = await r.json();
+        const d = await api.uploadImage(fd);
         return d.filename;
     }
 
-    async function save() {
-
-        if (!name) return alert("Enter name");
-
-        let image = null;
-
-        if (file) {
-            const uploaded = await uploadImage();
-            if (uploaded) image = `uploads/${uploaded}`;
+    async function save(e) {
+        e.preventDefault();
+        if (!name || !price) {
+            showToast("Authorization required: Missing primary designative data.", "warning");
+            return;
         }
 
-        const payload = {
-            type,
-            name,
-            price: Number(price) || 0,
-            desc,
-            available,
-            ...(image && { image })
-        };
+        setLoading(true);
+        try {
+            let image = null;
+            if (file) {
+                const uploaded = await uploadImage();
+                if (uploaded) image = uploaded;
+            }
 
-        if (editIndex === null) {
+            const payload = {
+                type,
+                name,
+                price: Number(price) || 0,
+                desc,
+                available,
+                ...(image ? { image } : {})
+            };
 
-            await fetch(`${API}/listings/${id}/variant`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
+            if (editIndex === null) {
+                const data = await api.addVariant(id, payload);
+                if (data.ok) showToast("Stay tier initialized successfully.", "success");
+                else showToast("Initialization protocol failure.", "error");
 
-        } else {
+            } else {
+                const data = await api.updateVariant(id, editIndex, payload);
+                if (data.ok) showToast("Tier parameters updated.", "success");
+                else showToast("Update protocol failure.", "error");
+            }
 
-            await fetch(`${API}/listings/${id}/variant/${editIndex}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-
+            resetForm();
+            load();
+        } catch (err) {
+            console.error(err);
+            showToast("Network sync interrupted during save sequence.", "error");
+        } finally {
+            setLoading(false);
         }
-
-        resetForm();
-        load();
     }
 
     function startEdit(v, i) {
-
         setEditIndex(i);
         setType(v.type || "Room");
         setName(v.name || "");
         setPrice(v.price || "");
         setDesc(v.desc || "");
         setAvailable(v.available !== false);
-        setPreview(v.image ? `${API}/${v.image}` : "");
+        const BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+        setPreview(v.image ? (v.image.startsWith('http') ? v.image : `${BASE}/${v.image}`) : "");
+        setFile(null);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     async function remove(i) {
+        if (!confirm("Terminate this residence tier? This manifest entry will be shredded.")) return;
 
-        if (!confirm("Delete this item?")) return;
-
-        await fetch(`${API}/listings/${id}/variant/${i}`, {
-            method: "DELETE"
-        });
-
-        load();
+        try {
+            const data = await api.deleteVariant(id, i);
+            if (data.ok) {
+                showToast("Data manifest terminated.", "success");
+                load();
+            } else {
+                showToast("Termination protocol failure.", "error");
+            }
+        } catch (err) {
+            showToast("Host connectivity error.", "error");
+        }
     }
 
     async function toggleAvailable(i, current) {
-
-        const updated = {
-            ...listing.variants[i],
-            available: !current
-        };
-
-        await fetch(`${API}/listings/${id}/variant/${i}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(updated)
-        });
-
-        load();
+        try {
+            const updated = { ...listing.variants[i], available: !current };
+            await api.updateVariant(id, i, updated);
+            load();
+        } catch (err) {
+            console.error(err);
+            showToast("Link synchronization failure.", "error");
+        }
     }
 
-    if (!listing) return <div style={{ padding: 40 }}>Loading...</div>;
-
-    const fixImg = (img) =>
-        img ? `${API}/${img}` : "https://picsum.photos/400/300";
-
-    return (
-
-        <div style={{ padding: 40 }}>
-
-            <h2>{listing.title}</h2>
-            <p>Manage your rooms, bikes, cars & availability</p>
-
-            {/* FORM */}
-
-            <div style={formCard}>
-
-                <h3>{editIndex === null ? "Add Item" : "Edit Item"}</h3>
-
-                <select value={type} onChange={e => setType(e.target.value)} style={input}>
-                    <option>Room</option>
-                    <option>Bike</option>
-                    <option>Car</option>
-                </select>
-
-                <input placeholder="Name" value={name}
-                    onChange={e => setName(e.target.value)} style={input} />
-
-                <input placeholder="Price" value={price}
-                    onChange={e => setPrice(e.target.value)} style={input} />
-
-                <textarea placeholder="Description"
-                    value={desc}
-                    onChange={e => setDesc(e.target.value)}
-                    style={{ ...input, height: 90 }}
-                />
-
-                <label style={{ display: "block", marginBottom: 10 }}>
-                    <input
-                        type="checkbox"
-                        checked={available}
-                        onChange={e => setAvailable(e.target.checked)}
-                    /> Available for booking
-                </label>
-
-                <input type="file" onChange={handleFile} />
-
-                {preview && (
-                    <img src={preview} style={previewImg} />
-                )}
-
-                <button onClick={save} style={primaryBtn}>
-                    {editIndex === null ? "Add" : "Save changes"}
-                </button>
-
-                {editIndex !== null && (
-                    <button onClick={resetForm} style={secondaryBtn}>
-                        Cancel edit
-                    </button>
-                )}
-
-            </div>
-
-            {/* ITEMS */}
-
-            <div style={grid}>
-
-                {(listing.variants || []).map((v, i) => (
-
-                    <div key={i} style={card}>
-
-                        <img src={fixImg(v.image)} style={cardImg} />
-
-                        <h4>{v.name}</h4>
-                        <div style={{ fontWeight: 700 }}>₹{v.price}</div>
-
-                        {v.desc && <div style={descText}>{v.desc}</div>}
-
-                        <button onClick={() => startEdit(v, i)} style={editBtn}>Edit</button>
-                        <button onClick={() => remove(i)} style={delBtn}>Delete</button>
-
-                    </div>
-
-                ))}
-
-            </div>
-
+    if (!listing) return (
+        <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 font-sans bg-white">
+            <div className="w-10 h-10 border-4 border-slate-100 border-t-emerald-500 rounded-full animate-spin" />
+            <p className="text-sm font-semibold text-slate-500">Loading property...</p>
         </div>
     );
+
+    const fixImg = (img) => {
+        if (!img) return "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80";
+        if (img.startsWith('http')) return img;
+        const BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+        return `${BASE}/uploads/${img}`;
+    };
+
+    return (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8 font-sans selection:bg-emerald-100 selection:text-emerald-900 pb-20">
+
+            {/* PENDING APPROVAL BANNER */}
+            {!listing.approved && (
+                <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 flex items-start gap-4">
+                    <div className="w-10 h-10 bg-amber-100 text-amber-700 rounded-xl flex items-center justify-center shrink-0">
+                        <Activity size={18} />
+                    </div>
+                    <div>
+                        <h3 className="font-bold text-sm text-amber-900">Pending Admin Approval</h3>
+                        <p className="text-xs text-amber-700 mt-0.5">This property is awaiting review by the Wayza team. It will not appear in public listings until approved. You can still add variants and configure details while you wait.</p>
+                    </div>
+                </div>
+            )}
+
+            {/* HEADER */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
+                <div className="space-y-1">
+                    <div className="flex items-center gap-2 text-emerald-600 font-bold text-xs uppercase tracking-wide">
+                        <Settings2 size={14} /> Property Configuration
+                    </div>
+                    <h1 className="text-3xl font-bold text-slate-900">
+                        {listing.title} <span className="text-emerald-500">Variants</span>
+                    </h1>
+                    <p className="text-slate-500 text-sm">
+                        Manage rooms, vehicles, or specific tiers for this property.
+                    </p>
+                </div>
+
+                <button
+                    onClick={() => navigate('/partner/properties')}
+                    className="h-11 px-6 bg-slate-900 text-white rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:bg-emerald-600 transition-colors shadow-md active:scale-95 whitespace-nowrap"
+                >
+                    <ChevronLeft size={16} />
+                    <span>Back to Properties</span>
+                </button>
+            </div>
+
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
+
+                {/* FORM PANEL */}
+                <motion.div
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden sticky top-32 z-20"
+                >
+                    <header className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                        <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
+                            {editIndex === null ? (
+                                <><Plus size={16} className="text-emerald-600" /> <span>Add New Variant</span></>
+                            ) : (
+                                <><Cpu size={16} className="text-emerald-600" /> <span>Edit Variant</span></>
+                            )}
+                        </div>
+                        {editIndex !== null && (
+                            <button onClick={resetForm} className="text-xs font-semibold text-slate-400 hover:text-rose-500 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 transition-colors">Cancel</button>
+                        )}
+                    </header>
+
+                    <form onSubmit={save} className="p-6 space-y-6">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <label className="text-xs font-semibold text-slate-700 block">Class</label>
+                                <div className="relative">
+                                    <Layers className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                                    <select
+                                        value={type} onChange={e => setType(e.target.value)}
+                                        className="h-10 w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-8 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-colors appearance-none cursor-pointer"
+                                    >
+                                        {listing.category === "bike" || listing.category === "car" ? (
+                                            <option value="Vehicle">Vehicle Unit</option>
+                                        ) : (
+                                            <option value="Room">Room</option>
+                                        )}
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-semibold text-slate-700 block">Price (₹)</label>
+                                <div className="relative">
+                                    <Target className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                                    <input
+                                        type="number" required placeholder="0.00" value={price} onChange={e => setPrice(e.target.value)}
+                                        className="h-10 w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-4 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-colors"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-semibold text-slate-700 block">Name</label>
+                            <input
+                                required placeholder="e.g. Deluxe Double Room" value={name} onChange={e => setName(e.target.value)}
+                                className="h-10 w-full bg-slate-50 border border-slate-200 rounded-lg px-4 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-colors"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-semibold text-slate-700 block">Description</label>
+                            <textarea
+                                placeholder="Features, amenities..." value={desc} onChange={e => setDesc(e.target.value)} rows={3}
+                                className="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-colors resize-none"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-semibold text-slate-700 block">Image</label>
+                            {!preview ? (
+                                <div className="relative h-32 bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center group/upload cursor-pointer hover:border-emerald-500/30 transition-colors">
+                                    <input type="file" accept="image/*" onChange={handleFile} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                                    <ImageIcon className="text-slate-400 group-hover/upload:text-emerald-500 transition-colors mb-2" size={24} />
+                                    <p className="text-xs font-semibold text-slate-500 group-hover/upload:text-emerald-600 transition-colors">Click to upload image</p>
+                                </div>
+                            ) : (
+                                <div className="relative h-40 group/preview rounded-xl overflow-hidden border border-slate-200 shadow-sm">
+                                    <img src={preview} className="w-full h-full object-cover" alt="Preview" />
+                                    <button type="button" onClick={removeImage} className="absolute top-2 right-2 w-8 h-8 bg-white/90 backdrop-blur-md text-rose-500 flex items-center justify-center rounded-lg shadow-md hover:bg-rose-500 hover:text-white transition-colors z-20">
+                                        <X size={16} />
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+
+                        <label className="flex items-center gap-4 p-4 border border-slate-200 rounded-xl bg-slate-50 cursor-pointer hover:bg-white hover:border-emerald-200 transition-colors">
+                            <div className="relative">
+                                <input
+                                    type="checkbox" checked={available} onChange={e => setAvailable(e.target.checked)}
+                                    className="hidden"
+                                />
+                                <div className={`w-11 h-6 rounded-full transition-colors flex items-center px-1 ${available ? 'bg-emerald-500' : 'bg-slate-300'}`}>
+                                    <div className={`w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${available ? 'translate-x-5' : 'translate-x-0'}`} />
+                                </div>
+                            </div>
+                            <div className="flex flex-col">
+                                <span className={`text-sm font-semibold transition-colors ${available ? 'text-slate-900' : 'text-slate-500'}`}>Availability</span>
+                                <span className="text-xs text-slate-500">Show variant to customers</span>
+                            </div>
+                        </label>
+
+                        <button
+                            type="submit" disabled={loading}
+                            className={`w-full h-11 bg-slate-900 border border-slate-900 text-white font-semibold text-sm rounded-xl transition-colors flex items-center justify-center gap-2 group/btn ${loading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-emerald-600 hover:border-emerald-600 active:scale-95'}`}
+                        >
+                            {loading ? (
+                                <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                            ) : (
+                                <>
+                                    <span>{editIndex === null ? "Save Variant" : "Update Variant"}</span>
+                                    <Zap size={16} />
+                                </>
+                            )}
+                        </button>
+                    </form>
+                </motion.div>
+
+
+                {/* VARIANTS LIST */}
+                <div className="xl:col-span-2 space-y-6">
+
+                    <div className="bg-white p-6 border border-slate-200 rounded-3xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
+                                <Database size={24} />
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-bold text-slate-900">Current Variants</h3>
+                                <p className="text-sm text-slate-500">{listing.variants?.length || 0} active variants managing inventory</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {!listing.variants || listing.variants.length === 0 ? (
+                        <div className="bg-white border text-center border-slate-200 border-dashed rounded-3xl py-24 px-6 flex flex-col items-center justify-center">
+                            <Database className="text-slate-300 mb-4" size={48} />
+                            <h3 className="text-xl font-bold text-slate-900 mb-2">No Variants found</h3>
+                            <p className="text-sm text-slate-500 max-w-sm">You haven't added any specific rooms, tiers, or options. Add your first variant using the panel on the left.</p>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 gap-4">
+                            <AnimatePresence>
+                                {listing.variants.map((v, i) => (
+                                    <motion.div
+                                        key={i} layout
+                                        initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }}
+                                        className={`bg-white rounded-2xl border border-slate-200 transition-all overflow-hidden flex flex-col md:flex-row ${!v.available ? 'opacity-70' : 'shadow-sm hover:border-emerald-200'}`}
+                                    >
+                                        <div className="w-full md:w-64 h-48 md:h-auto shrink-0 relative">
+                                            <img src={fixImg(v.image)} className="w-full h-full object-cover" alt={v.name} />
+                                            <div className="absolute top-4 left-4">
+                                                <div className="bg-slate-900/90 backdrop-blur-md px-3 py-1.5 rounded-lg text-white font-bold text-xs uppercase shadow-md">
+                                                    {v.type}
+                                                </div>
+                                            </div>
+                                            {!v.available && (
+                                                <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-[2px] flex items-center justify-center">
+                                                    <div className="bg-rose-500 text-white px-3 py-1 rounded-full font-bold text-xs">UNAVAILABLE</div>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div className="p-6 flex-1 flex flex-col justify-between">
+                                            <div className="space-y-2 mb-6">
+                                                <div className="flex justify-between items-start gap-4">
+                                                    <h4 className="text-xl font-bold text-slate-900">{v.name}</h4>
+                                                    <div className="text-right">
+                                                        <div className="text-xl font-bold text-emerald-600">₹{v.price.toLocaleString()}</div>
+                                                        <div className="text-xs font-semibold text-slate-500">{listing.category === 'bike' || listing.category === 'car' ? '/ session' : '/ night'}</div>
+                                                    </div>
+                                                </div>
+                                                <p className="text-sm text-slate-600 leading-relaxed line-clamp-2">
+                                                    {v.desc || <span className="italic text-slate-400">No description provided.</span>}
+                                                </p>
+                                            </div>
+
+                                            <div className="flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-slate-100 gap-4 mt-auto">
+                                                <label className="flex items-center gap-3 cursor-pointer">
+                                                    <div className="relative">
+                                                        <input type="checkbox" className="hidden" checked={v.available !== false} onChange={() => toggleAvailable(i, v.available !== false)} />
+                                                        <div className={`w-10 h-5 rounded-full transition-colors flex items-center px-0.5 ${v.available ? 'bg-emerald-500' : 'bg-slate-300'}`}>
+                                                            <div className={`w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${v.available ? 'translate-x-5' : 'translate-x-0'}`} />
+                                                        </div>
+                                                    </div>
+                                                    <span className="text-sm font-semibold text-slate-700">
+                                                        {v.available ? 'Available' : 'Hidden'}
+                                                    </span>
+                                                </label>
+
+                                                <div className="flex items-center gap-2">
+                                                    <button onClick={() => startEdit(v, i)} className="h-9 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-semibold text-xs flex items-center gap-2 transition-colors">
+                                                        <Edit2 size={14} /> Edit
+                                                    </button>
+                                                    <button onClick={() => remove(i)} className="h-9 w-9 bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white rounded-lg flex items-center justify-center transition-colors">
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </AnimatePresence>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </motion.div>
+    );
 }
-
-/* styles */
-
-const formCard = {
-    background: "white",
-    padding: 20,
-    borderRadius: 12,
-    maxWidth: 420,
-    marginBottom: 30
-};
-
-const input = {
-    width: "100%",
-    padding: 12,
-    marginBottom: 10
-};
-
-const previewImg = {
-    width: "100%",
-    height: 160,
-    objectFit: "cover",
-    borderRadius: 8,
-    marginTop: 10
-};
-
-const grid = {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))",
-    gap: 20
-};
-
-const card = {
-    background: "white",
-    padding: 14,
-    borderRadius: 12,
-    textAlign: "center"
-};
-
-const cardImg = {
-    width: "100%",
-    height: 150,
-    objectFit: "cover",
-    borderRadius: 8
-};
-
-const descText = {
-    fontSize: 13,
-    marginTop: 6
-};
-
-const primaryBtn = {
-    width: "100%",
-    padding: 12,
-    background: "#2563eb",
-    color: "white",
-    border: "none"
-};
-
-const secondaryBtn = {
-    width: "100%",
-    padding: 12,
-    background: "#64748b",
-    color: "white",
-    border: "none"
-};
-
-const editBtn = {
-    marginTop: 10,
-    background: "#0284c7",
-    color: "white",
-    border: "none",
-    padding: 8,
-    borderRadius: 6
-};
-
-const delBtn = {
-    marginTop: 8,
-    background: "#ef4444",
-    color: "white",
-    border: "none",
-    padding: 8,
-    borderRadius: 6
-};

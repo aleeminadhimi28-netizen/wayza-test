@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import VerificationSpinner from "../../components/VerificationSpinner.jsx";
 
-const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
+import { api } from "../../utils/api.js";
 
 export default function PartnerGuard({ children }) {
 
@@ -22,8 +23,7 @@ export default function PartnerGuard({ children }) {
         }
 
         // ✅ check onboarding status from backend
-        fetch(`${API}/partner/status/${email}`)
-            .then(r => r.json())
+        api.partnerStatus(email)
             .then(data => {
 
                 if (!active) return;
@@ -46,7 +46,12 @@ export default function PartnerGuard({ children }) {
     }, [navigate]);
 
     if (checking) {
-        return <div style={{ padding: 40 }}>Loading...</div>;
+        return (
+            <VerificationSpinner
+                message="Synchronizing Partner Network..."
+                subtext="Verifying Business Credentials"
+            />
+        );
     }
 
     return children;

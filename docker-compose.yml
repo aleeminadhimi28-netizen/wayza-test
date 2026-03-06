@@ -1,4 +1,3 @@
-
 version: "3.9"
 services:
   mongo:
@@ -16,6 +15,9 @@ services:
     environment:
       - MONGO_URL=mongodb://mongo:27017/wayza
       - JWT_SECRET=wayza_secret
+      - EMAIL_USER=pudolstitan@gmail.com
+      - EMAIL_PASS=riab jvsi acgo dfih
+      - FRONTEND_URL=http://localhost:5173
     depends_on:
       - mongo
 
