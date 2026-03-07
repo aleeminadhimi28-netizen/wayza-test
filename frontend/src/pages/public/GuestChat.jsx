@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { WayzaLayout } from "../../WayzaUI.jsx";
 import { useAuth } from "../../AuthContext.jsx";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, MessageSquare, Info, ShieldCheck, Zap, User, Clock, ArrowRight, Home, Sparkles } from "lucide-react";
+import { Send, MessageSquare, Info, ShieldCheck, User, Clock, ArrowRight, Home, Sparkles } from "lucide-react";
 
 import { api } from "../../utils/api.js";
 
@@ -58,65 +58,59 @@ export default function GuestChat() {
     }
 
     if (loading) return (
-        <WayzaLayout>
-            <div className="max-w-6xl mx-auto py-32 px-6 flex flex-col items-center justify-center space-y-8">
-                <div className="w-12 h-12 border-4 border-slate-100 border-t-emerald-600 rounded-full animate-spin" />
-                <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest leading-none">Connecting to concierge...</p>
+        <WayzaLayout noPadding>
+            <div className="min-h-screen flex flex-col items-center justify-center bg-white gap-4 font-sans text-slate-400">
+                <div className="w-10 h-10 border-4 border-slate-100 border-t-emerald-500 rounded-full animate-spin" />
+                <p className="text-xs font-bold uppercase tracking-widest">Connecting to messages...</p>
             </div>
         </WayzaLayout>
     );
 
     return (
         <WayzaLayout noPadding>
-            <div className="bg-slate-50 min-h-screen font-sans">
-                <div className="max-w-7xl mx-auto px-6 lg:px-12 py-16">
+            <div className="bg-white min-h-screen font-sans selection:bg-emerald-50 selection:text-emerald-900">
+                <div className="max-w-7xl mx-auto px-6 lg:px-12 py-12 md:py-16">
 
-                    <header className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-10">
-                        <div className="space-y-6">
-                            <div className="flex items-center gap-3 text-emerald-600 font-bold text-[11px] uppercase tracking-[0.4em] italic mb-2 leading-none">
-                                <MessageSquare size={18} strokeWidth={2.5} /> Guest Correspondence
-                            </div>
-                            <h1 className="text-5xl md:text-7xl font-bold text-slate-900 tracking-tighter leading-[0.8] uppercase">Communication <br /><span className="text-emerald-500 italic font-serif lowercase">Registry.</span></h1>
-                            <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.3em] italic border-l-2 border-emerald-500/20 pl-4">"Direct communication with your global property hosts."</p>
-                        </div>
-                        <div className="flex items-center gap-4 bg-white border border-slate-200 px-8 py-4 rounded-2xl font-bold text-[10px] uppercase tracking-widest shadow-sm">
-                            <ShieldCheck size={16} className="text-emerald-500" /> Secure Connection
+                    <header className="mb-12">
+                        <div className="space-y-2 text-center md:text-left">
+                            <h1 className="text-3xl md:text-5xl font-bold text-slate-900 tracking-tight">Messages</h1>
+                            <p className="text-slate-500 font-medium">Direct communication with your hosts.</p>
                         </div>
                     </header>
 
                     {bookings.length === 0 ? (
-                        <div className="bg-white border border-slate-100 rounded-[48px] p-24 text-center space-y-8 shadow-sm">
-                            <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto shadow-inner">
-                                <MessageSquare size={40} className="text-slate-200" />
+                        <div className="py-24 text-center border-2 border-dashed border-slate-100 rounded-[32px] flex flex-col items-center space-y-6">
+                            <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300">
+                                <MessageSquare size={32} />
                             </div>
-                            <div className="space-y-4 max-w-sm mx-auto">
-                                <h3 className="text-3xl font-bold text-slate-900 tracking-tight uppercase">No Active Chats.</h3>
-                                <p className="text-slate-400 font-medium italic">Start a conversation with your host once your booking is confirmed.</p>
+                            <div className="space-y-1">
+                                <h3 className="text-xl font-bold text-slate-900">No active chats</h3>
+                                <p className="text-slate-500 text-sm">Once you have a confirmed booking, you can chat with your host here.</p>
                             </div>
-                            <button onClick={() => window.location.href = '/listings'} className="h-16 px-10 bg-slate-900 text-white rounded-2xl font-bold uppercase text-[10px] tracking-widest hover:bg-emerald-600 transition-all shadow-xl active:scale-95 flex items-center gap-3 mx-auto">
-                                Explore Properties <ArrowRight size={16} />
+                            <button onClick={() => window.location.href = '/listings'} className="h-12 px-8 bg-slate-900 text-white rounded-xl font-bold uppercase text-[10px] tracking-widest hover:bg-emerald-600 transition-all flex items-center gap-2 mt-4">
+                                Explore Properties <ArrowRight size={14} />
                             </button>
                         </div>
                     ) : (
-                        <div className="flex flex-col lg:flex-row h-[750px] bg-white rounded-[48px] border border-slate-200 overflow-hidden shadow-2xl relative">
+                        <div className="flex flex-col lg:flex-row h-[700px] bg-white rounded-[32px] border border-slate-200 overflow-hidden shadow-2xl relative">
 
                             {/* CHAT SIDEBAR */}
-                            <aside className="w-full lg:w-[350px] border-r border-slate-100 flex flex-col bg-slate-50/50">
-                                <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-white">
-                                    <h3 className="text-[10px] font-bold uppercase tracking-[0.5em] text-slate-400 italic">Correspondence Feed</h3>
-                                    <Sparkles size={16} className="text-emerald-500 animate-pulse" />
+                            <aside className="w-full lg:w-[350px] border-r border-slate-100 flex flex-col bg-slate-50/30">
+                                <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-white">
+                                    <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400">Conversations</h3>
+                                    <Sparkles size={16} className="text-emerald-500" />
                                 </div>
-                                <div className="flex-1 overflow-y-auto py-4 scrollbar-hide">
+                                <div className="flex-1 overflow-y-auto py-2">
                                     {bookings.map(b => (
                                         <button
                                             key={b._id} onClick={() => setSelected(b)}
-                                            className={`w-full text-left px-8 py-8 transition-all relative group ${selected?._id === b._id ? "bg-white" : "hover:bg-white/50"}`}
+                                            className={`w-full text-left px-6 py-6 transition-all relative border-b border-slate-50 ${selected?._id === b._id ? "bg-white" : "hover:bg-white/50"}`}
                                         >
-                                            <div className="flex flex-col gap-2">
-                                                <span className="text-[9px] font-bold text-emerald-600 uppercase tracking-widest">{new Date(b.createdAt).toLocaleDateString("en-IN", { month: 'short', day: 'numeric' })}</span>
-                                                <h4 className={`font-bold text-lg tracking-tight uppercase truncate transition-colors ${selected?._id === b._id ? "text-slate-900" : "text-slate-400 group-hover:text-slate-600"}`}>{b.title}</h4>
+                                            <div className="flex flex-col gap-1">
+                                                <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Booking #{b._id?.slice(-6).toUpperCase()}</span>
+                                                <h4 className={`font-bold text-base tracking-tight truncate ${selected?._id === b._id ? "text-slate-900" : "text-slate-400"}`}>{b.title}</h4>
                                             </div>
-                                            {selected?._id === b._id && <motion.div layoutId="activeChat" className="absolute left-0 inset-y-6 w-1.5 bg-emerald-500 rounded-r-full" />}
+                                            {selected?._id === b._id && <div className="absolute left-0 inset-y-0 w-1 bg-emerald-500" />}
                                         </button>
                                     ))}
                                 </div>
@@ -125,41 +119,43 @@ export default function GuestChat() {
                             {/* CHAT INTERFACE */}
                             <main className="flex-1 flex flex-col relative bg-white">
                                 {/* CHAT HEADER */}
-                                <header className="p-8 border-b border-slate-100 flex justify-between items-center bg-white z-10">
-                                    <div className="flex items-center gap-5">
-                                        <div className="w-14 h-14 rounded-2xl bg-slate-900 flex items-center justify-center text-white text-lg font-bold shadow-lg">
+                                <header className="p-6 border-b border-slate-100 flex justify-between items-center bg-white z-10 shadow-sm">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center text-white text-base font-bold">
                                             {selected?.title?.charAt(0).toUpperCase()}
                                         </div>
                                         <div className="flex flex-col">
-                                            <h3 className="font-bold text-xl tracking-tight text-slate-900 uppercase leading-none mb-1.5">{selected?.title}</h3>
-                                            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.3em] text-emerald-500 italic">
-                                                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-                                                Concierge Synchronized
+                                            <h3 className="font-bold text-lg text-slate-900 leading-tight uppercase tracking-tight">{selected?.title}</h3>
+                                            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-emerald-500">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                                Active Host Chat
                                             </div>
                                         </div>
                                     </div>
-                                    <button className="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 hover:text-emerald-600 hover:bg-white transition-all"><Info size={20} /></button>
+                                    <div className="hidden md:flex items-center gap-2 text-xs font-bold text-emerald-600 bg-emerald-50 px-4 py-2 rounded-full border border-emerald-100">
+                                        <ShieldCheck size={14} /> Secured
+                                    </div>
                                 </header>
 
                                 {/* CHAT MESSAGES */}
-                                <div className="flex-1 overflow-y-auto p-10 space-y-8 bg-slate-50/30 scrollbar-hide">
+                                <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 bg-slate-50/10">
                                     <AnimatePresence>
                                         {messages.length === 0 ? (
-                                            <div className="h-full flex flex-col items-center justify-center text-center opacity-30 mt-20">
-                                                <MessageSquare size={48} className="mb-4 text-slate-300" />
-                                                <p className="text-[10px] font-bold uppercase tracking-widest italic">Start the conversation below</p>
+                                            <div className="h-full flex flex-col items-center justify-center text-center text-slate-300">
+                                                <MessageSquare size={48} className="mb-4 opacity-50" />
+                                                <p className="text-xs font-bold uppercase tracking-widest">Start the conversation below</p>
                                             </div>
                                         ) : messages.map((m, i) => {
                                             const isMe = m.senderEmail === user?.email;
                                             return (
                                                 <motion.div
-                                                    key={m._id || i} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+                                                    key={m._id || i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                                                     className={`flex ${isMe ? "justify-end" : "justify-start"}`}
                                                 >
-                                                    <div className={`p-6 md:p-8 rounded-3xl text-base font-medium max-w-[80%] relative shadow-sm ${isMe ? "bg-slate-900 text-white rounded-br-sm" : "bg-white text-slate-600 rounded-bl-sm border border-slate-100"}`}>
+                                                    <div className={`p-4 md:p-6 rounded-[24px] text-sm font-medium max-w-[85%] relative shadow-sm ${isMe ? "bg-slate-900 text-white rounded-br-none" : "bg-white text-slate-600 rounded-bl-none border border-slate-100"}`}>
                                                         {m.message}
-                                                        <div className={`text-[9px] font-bold uppercase tracking-widest mt-4 opacity-40 ${isMe ? "text-right" : "text-left"}`}>
-                                                            {new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • Sent
+                                                        <div className={`text-[9px] font-bold uppercase tracking-widest mt-2 opacity-40 ${isMe ? "text-right" : "text-left"}`}>
+                                                            {new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                         </div>
                                                     </div>
                                                 </motion.div>
@@ -170,19 +166,19 @@ export default function GuestChat() {
                                 </div>
 
                                 {/* CHAT INPUT */}
-                                <footer className="p-8 bg-white border-t border-slate-100">
-                                    <div className="flex gap-4 items-center bg-slate-50 border border-slate-100 p-3 rounded-2xl focus-within:bg-white focus-within:ring-4 focus-within:ring-emerald-500/10 transition-all">
+                                <footer className="p-6 bg-white border-t border-slate-100">
+                                    <div className="flex gap-3 items-center bg-slate-50 border border-slate-100 p-2 rounded-2xl focus-within:bg-white focus-within:ring-4 focus-within:ring-emerald-500/5 transition-all">
                                         <textarea
                                             value={text} onChange={e => setText(e.target.value)}
                                             placeholder="Write your message..."
-                                            className="flex-1 bg-transparent border-none outline-none resize-none px-4 py-2 text-sm font-medium text-slate-900 h-10 scrollbar-hide"
+                                            className="flex-1 bg-transparent border-none outline-none resize-none px-4 py-2 text-sm font-medium text-slate-900 h-10"
                                             onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
                                         />
                                         <button
                                             onClick={send} disabled={!text.trim() || sending}
-                                            className="w-12 h-12 flex items-center justify-center bg-slate-900 hover:bg-emerald-600 text-white rounded-xl shadow-xl transition-all active:scale-95 disabled:opacity-20 flex-shrink-0"
+                                            className="w-10 h-10 flex items-center justify-center bg-slate-900 hover:bg-emerald-600 text-white rounded-xl transition-all active:scale-95 disabled:opacity-20 flex-shrink-0"
                                         >
-                                            <Send size={18} />
+                                            <Send size={16} />
                                         </button>
                                     </div>
                                 </footer>
