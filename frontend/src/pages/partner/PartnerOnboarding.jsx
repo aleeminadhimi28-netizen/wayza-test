@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Briefcase, MapPin, PlusCircle, CheckCircle, ArrowRight, ArrowLeft, Activity, Sparkles, Building, Wallet, Navigation } from "lucide-react";
+import { useAuth } from "../../AuthContext.jsx";
 import { useToast } from "../../ToastContext.jsx";
 
 import { api } from "../../utils/api.js";
@@ -9,6 +10,7 @@ import { api } from "../../utils/api.js";
 export default function PartnerOnboarding() {
     const navigate = useNavigate();
     const { showToast } = useToast();
+    const { user, loading: authLoading } = useAuth();
 
     const [email, setEmail] = useState(null);
     const [step, setStep] = useState(1);
@@ -22,14 +24,13 @@ export default function PartnerOnboarding() {
 
     // ensure logged in partner
     useEffect(() => {
-        const storedEmail = localStorage.getItem("email");
-        const role = localStorage.getItem("role");
-        if (!storedEmail || role !== "partner") {
+        if (authLoading) return;
+        if (!user || user.role !== "partner") {
             navigate("/partner-login", { replace: true });
         } else {
-            setEmail(storedEmail);
+            setEmail(user.email);
         }
-    }, [navigate]);
+    }, [user, authLoading, navigate]);
 
     async function finishOnboarding() {
         if (!email) return;

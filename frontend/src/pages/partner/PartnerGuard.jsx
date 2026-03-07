@@ -1,31 +1,29 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import VerificationSpinner from "../../components/VerificationSpinner.jsx";
+import { useAuth } from "../../AuthContext.jsx";
 
 import { api } from "../../utils/api.js";
 
 export default function PartnerGuard({ children }) {
-
     const navigate = useNavigate();
+    const { user, loading: authLoading } = useAuth();
     const [checking, setChecking] = useState(true);
 
     useEffect(() => {
-
-        let active = true;
-
-        const email = localStorage.getItem("email");
-        const role = localStorage.getItem("role");
+        if (authLoading) return;
 
         // ✅ must be logged in AND partner
-        if (!email || role !== "partner") {
+        if (!user || user.role !== "partner") {
             navigate("/partner-login", { replace: true });
             return;
         }
 
-        // ✅ check onboarding status from backend
-        api.partnerStatus(email)
-            .then(data => {
+        let active = true;
 
+        // ✅ check onboarding status from backend
+        api.partnerStatus(user.email)
+            .then(data => {
                 if (!active) return;
 
                 if (!data.onboarded) {
@@ -33,7 +31,6 @@ export default function PartnerGuard({ children }) {
                 } else {
                     setChecking(false);
                 }
-
             })
             .catch(() => {
                 if (active) navigate("/partner-login", { replace: true });
@@ -43,9 +40,9 @@ export default function PartnerGuard({ children }) {
             active = false;
         };
 
-    }, [navigate]);
+    }, [user, authLoading, navigate]);
 
-    if (checking) {
+    if (authLoading || checking) {
         return (
             <VerificationSpinner
                 message="Synchronizing Partner Network..."

@@ -25,13 +25,6 @@ export default function PartnerDashboard() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const token = localStorage.getItem("token");
-
-    // Redirect if definitely not a partner or not logged in
-    if (!token) {
-      setLoading(false);
-      return;
-    }
 
     // Cinematic delay for system handshaking
     setTimeout(() => {
