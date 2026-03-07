@@ -197,39 +197,39 @@ export default function Listings() {
                         </div>
 
                         {/* Categories + Sort */}
-                        <div className="flex items-center justify-between gap-4 pb-3 overflow-x-auto no-scrollbar">
-                            <div className="flex gap-2 shrink-0">
+                        <div className="flex items-center justify-between gap-4 pb-3">
+                            <div className="flex gap-2 overflow-x-auto no-scrollbar scroll-smooth pb-1 -mb-1 px-1">
                                 {CATEGORIES.map(cat => (
                                     <button
                                         key={cat.id}
                                         onClick={() => setCategory(cat.id)}
-                                        className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${category === cat.id
-                                            ? "bg-slate-900 text-white shadow-md"
+                                        className={`flex items-center gap-2 px-4 py-2 rounded-full text-[11px] sm:text-sm font-bold whitespace-nowrap transition-all flex-shrink-0 ${category === cat.id
+                                            ? "bg-slate-900 text-white shadow-md ring-2 ring-slate-900 ring-offset-2"
                                             : "bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-900"
                                             }`}
                                     >
-                                        <cat.icon size={14} />
+                                        <cat.icon size={13} />
                                         {cat.label}
                                     </button>
                                 ))}
                             </div>
-                            <div className="flex items-center gap-2 shrink-0">
-                                <div className="relative">
+                            <div className="flex items-center gap-2 shrink-0 ml-auto">
+                                <div className="relative hidden xs:block">
                                     <select
                                         value={sort}
                                         onChange={e => setSort(e.target.value)}
-                                        className="h-9 pl-3 pr-8 text-sm border border-slate-300 rounded-xl bg-white focus:outline-none focus:border-emerald-500 appearance-none cursor-pointer text-slate-700 font-medium"
+                                        className="h-9 pl-3 pr-8 text-[11px] sm:text-sm border border-slate-300 rounded-xl bg-white focus:outline-none focus:border-emerald-500 appearance-none cursor-pointer text-slate-700 font-bold"
                                     >
                                         {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                                     </select>
-                                    <ChevronDown size={14} className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                                    <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
                                 </div>
                                 <button
                                     onClick={() => setShowFilters(f => !f)}
-                                    className={`h-9 px-4 border rounded-xl text-sm font-semibold flex items-center gap-2 transition-all ${showFilters ? 'border-emerald-500 text-emerald-600 bg-emerald-50' : 'border-slate-300 text-slate-600 hover:border-emerald-500 hover:text-emerald-600'}`}
+                                    className={`h-9 px-3 sm:px-4 border rounded-xl text-[11px] sm:text-sm font-bold flex items-center gap-2 transition-all ${showFilters ? 'border-emerald-500 text-emerald-600 bg-emerald-50' : 'border-slate-300 text-slate-600'}`}
                                 >
-                                    <SlidersHorizontal size={14} />
-                                    Filters
+                                    <SlidersHorizontal size={13} />
+                                    <span className="hidden xxs:inline">Filters</span>
                                 </button>
                             </div>
                         </div>
