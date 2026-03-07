@@ -276,12 +276,28 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
                             <p className="text-lg font-medium italic leading-relaxed text-white/30 truncate max-w-xs">"Connecting travelers with extraordinary stays."</p>
                         </div>
                         <div>
-                            <h4 className="text-white font-bold uppercase tracking-widest text-[11px] mb-10 text-center">Resources</h4>
-                            <ul className="space-y-5 text-[15px] font-bold text-center">
-                                <li><Link to="/support" className="text-emerald-400">Support</Link></li>
+                            <h4 className="text-white font-bold uppercase tracking-widest text-[11px] mb-10 text-center md:text-left">Resources</h4>
+                            <ul className="space-y-5 text-[15px] font-bold text-center md:text-left">
+                                <li><Link to="/support" className="text-emerald-400">Support Center</Link></li>
                                 <li><Link to="/about">Our Story</Link></li>
                                 <li><Link to="/privacy">Privacy Policy</Link></li>
                                 <li><Link to="/terms">Terms of Service</Link></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 className="text-white font-bold uppercase tracking-widest text-[11px] mb-10 text-center md:text-left">Partner with Us</h4>
+                            <ul className="space-y-5 text-[15px] font-bold text-center md:text-left">
+                                <li><Link to="/partner-register" className="text-emerald-500">Become a Partner</Link></li>
+                                <li><Link to="/partner-login">Partner Login</Link></li>
+                                <li><Link to="/about">Verification Policy</Link></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 className="text-white font-bold uppercase tracking-widest text-[11px] mb-10 text-center md:text-left">Community</h4>
+                            <ul className="space-y-5 text-[15px] font-bold text-center md:text-left text-white/60">
+                                <li><a href="#" className="hover:text-white transition-colors">Instagram</a></li>
+                                <li><a href="#" className="hover:text-white transition-colors">Twitter</a></li>
+                                <li><a href="mailto:contact@wayza.com" className="hover:text-white transition-colors">Contact Support</a></li>
                             </ul>
                         </div>
                     </div>

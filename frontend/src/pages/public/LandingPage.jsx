@@ -394,9 +394,9 @@ export default function LandingPage() {
                                 <div className="space-y-4">
                                     <p className="text-[8px] font-bold uppercase tracking-[0.3em] text-emerald-500/50">Protocol</p>
                                     <ul className="space-y-2">
-                                        {['The Method', 'Verification', 'Partners'].map(l => (
-                                            <li key={l}><Link to="/about" className="text-[11px] font-medium text-white/50 hover:text-white transition-colors uppercase tracking-tight">{l}</Link></li>
-                                        ))}
+                                        <li><Link to="/about" className="text-[11px] font-medium text-white/50 hover:text-white transition-colors uppercase tracking-tight">The Method</Link></li>
+                                        <li><Link to="/about" className="text-[11px] font-medium text-white/50 hover:text-white transition-colors uppercase tracking-tight">Verification</Link></li>
+                                        <li><Link to="/partner-register" className="text-[11px] font-medium text-white/50 hover:text-white transition-colors uppercase tracking-tight">Partners</Link></li>
                                     </ul>
                                 </div>
                                 <div className="space-y-4">
