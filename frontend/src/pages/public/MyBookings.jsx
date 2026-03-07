@@ -5,9 +5,7 @@ import { useAuth } from "../../AuthContext.jsx";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     CalendarCheck, MessageCircle, XCircle, Clock, CheckCircle,
-    AlertCircle, ArrowRight, Plane, MapPin, Zap, Layers, History,
-    Shield, Briefcase, Info, MoreVertical, Sparkles, Navigation, Globe,
-    FileText, Download, Star
+    AlertCircle, ArrowRight, Shield, Star, FileText, History, Info, Navigation
 } from "lucide-react";
 
 import { api } from "../../utils/api.js";
@@ -143,59 +141,47 @@ export default function MyBookings() {
 
     const statusConfig = {
         paid: { label: "Confirmed", color: "text-emerald-600", bg: "bg-emerald-50", icon: CheckCircle, border: "border-emerald-100" },
-        pending: { label: "Awaiting", color: "text-amber-600", bg: "bg-amber-50", icon: Clock, border: "border-amber-100" },
+        pending: { label: "Pending", color: "text-amber-600", bg: "bg-amber-50", icon: Clock, border: "border-amber-100" },
         cancelled: { label: "Cancelled", color: "text-rose-600", bg: "bg-rose-50", icon: XCircle, border: "border-rose-100" },
     };
 
     const filtered = filterStatus === "all" ? rows : rows.filter(b => b.status === filterStatus);
 
     const tabs = [
-        { key: "all", label: "Stay Archive", icon: History },
-        { key: "paid", label: "Verified Stays", icon: CheckCircle },
-        { key: "pending", label: "Awaiting Audit", icon: Clock },
-        { key: "cancelled", label: "Voided Stays", icon: XCircle },
+        { key: "all", label: "All Bookings", icon: History },
+        { key: "paid", label: "Confirmed", icon: CheckCircle },
+        { key: "pending", label: "Pending", icon: Clock },
+        { key: "cancelled", label: "Cancelled", icon: XCircle },
     ];
 
     if (loading) return (
         <WayzaLayout noPadding>
-            <div className="min-h-screen flex flex-col items-center justify-center bg-white gap-8 font-sans">
-                <div className="w-16 h-16 border-4 border-slate-50 border-t-emerald-500 rounded-full animate-spin" />
-                <div className="text-center space-y-2">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-slate-300">Retrieving Information</p>
-                    <p className="text-xl font-bold text-slate-900 tracking-tight uppercase">Loading your travels...</p>
-                </div>
+            <div className="min-h-screen flex flex-col items-center justify-center bg-white gap-4 font-sans text-slate-400">
+                <div className="w-10 h-10 border-4 border-slate-100 border-t-emerald-500 rounded-full animate-spin" />
+                <p className="text-xs font-bold uppercase tracking-widest">Loading bookings...</p>
             </div>
         </WayzaLayout>
     );
 
     return (
         <WayzaLayout noPadding>
-            <div className="bg-slate-50 min-h-screen font-sans pb-32 selection:bg-emerald-100 selection:text-emerald-900">
+            <div className="bg-white min-h-screen font-sans pb-32 selection:bg-emerald-50 selection:text-emerald-900">
 
-                {/* REFINED HEADER */}
-                <header className="bg-white border-b border-slate-100 pt-24 pb-16 px-6 lg:px-12 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-emerald-500/5 blur-[150px] -mr-32 -mt-32 pointer-events-none" />
-
-                    <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-end gap-12 relative z-10">
-                        <div className="space-y-6">
-                            <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-3 text-emerald-600 font-bold text-[10px] uppercase tracking-widest">
-                                <Sparkles size={16} /> Guest Journey Portal
-                            </motion.div>
-                            <h1 className="text-6xl md:text-9xl font-bold text-slate-900 tracking-tighter leading-[0.8] uppercase">
-                                Stay <span className="text-emerald-500 italic font-serif lowercase">Archive.</span>
-                            </h1>
-                            <p className="text-slate-400 font-medium text-xl max-w-xl italic border-l-4 border-emerald-500/20 pl-8">"Review and manage your curated collection of personal stays and experiences."</p>
+                <header className="max-w-7xl mx-auto px-6 lg:px-12 py-12 md:py-20">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
+                        <div className="space-y-2">
+                            <h1 className="text-3xl md:text-5xl font-bold text-slate-900 tracking-tight">My Bookings</h1>
+                            <p className="text-slate-500 font-medium">Manage your stays and travel history with Wayza.</p>
                         </div>
 
-                        {/* STATUS FILTER */}
-                        <div className="flex flex-wrap gap-2 bg-slate-50 p-2 rounded-[24px] border border-slate-100 shadow-inner">
+                        <div className="flex flex-wrap gap-2 p-1.5 bg-slate-50 rounded-2xl border border-slate-100">
                             {tabs.map(tab => (
                                 <button
                                     key={tab.key}
                                     onClick={() => setFilterStatus(tab.key)}
-                                    className={`flex items-center gap-3 px-6 py-3 rounded-2xl font-bold text-[10px] uppercase tracking-widest transition-all ${filterStatus === tab.key
-                                        ? "bg-white text-slate-900 shadow-md border border-slate-100"
-                                        : "text-slate-400 hover:text-slate-900"
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all ${filterStatus === tab.key
+                                        ? "bg-white text-slate-900 shadow-sm border border-slate-100"
+                                        : "text-slate-400 hover:text-slate-600"
                                         }`}
                                 >
                                     <tab.icon size={14} className={filterStatus === tab.key ? "text-emerald-500" : ""} />
@@ -206,31 +192,25 @@ export default function MyBookings() {
                     </div>
                 </header>
 
-                {/* CONTENT AREA */}
-                <main className="max-w-5xl mx-auto px-6 py-20">
-
+                <main className="max-w-5xl mx-auto px-6">
                     <AnimatePresence mode="wait">
                         {rows.length === 0 ? (
-                            <motion.div key="empty" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-[48px] p-24 text-center border border-slate-100 shadow-sm flex flex-col items-center space-y-10">
-                                <div className="w-24 h-24 bg-slate-50 rounded-[32px] flex items-center justify-center text-slate-200 shadow-inner">
-                                    <Navigation size={40} />
+                            <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-24 text-center border-2 border-dashed border-slate-100 rounded-[32px] flex flex-col items-center space-y-6">
+                                <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300">
+                                    <Navigation size={32} />
                                 </div>
-                                <div className="space-y-4">
-                                    <h3 className="text-3xl font-bold text-slate-900 uppercase tracking-tight">Your collection is empty</h3>
-                                    <p className="text-slate-400 font-medium text-lg italic max-w-md mx-auto">"Every great story starts with a single step. Let's find your next extraordinary stay."</p>
+                                <div className="space-y-1">
+                                    <h3 className="text-xl font-bold text-slate-900">No bookings yet</h3>
+                                    <p className="text-slate-500 text-sm">Explore our collection of stays and start your journey.</p>
                                 </div>
-                                <Link to="/listings" className="h-16 px-12 bg-slate-900 text-white rounded-2xl font-bold uppercase text-[10px] tracking-widest hover:bg-emerald-600 transition-all shadow-2xl shadow-emerald-500/10 active:scale-95 flex items-center gap-3">Discover Stays <ArrowRight size={18} /></Link>
+                                <Link to="/listings" className="h-12 px-8 bg-slate-900 text-white rounded-xl font-bold uppercase text-[10px] tracking-widest hover:bg-emerald-600 transition-all flex items-center gap-2 mt-4">Discover Stays <ArrowRight size={14} /></Link>
                             </motion.div>
                         ) : filtered.length === 0 ? (
-                            <motion.div key="no-filter" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-40 text-center bg-white rounded-[48px] border border-slate-100 shadow-sm">
-                                <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-8 text-slate-200">
-                                    <Info size={32} />
-                                </div>
-                                <h4 className="text-xl font-bold text-slate-900 uppercase mb-2">No results found</h4>
-                                <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest italic">No matching stays for the "{filterStatus}" category</p>
+                            <motion.div key="no-filter" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-24 text-center">
+                                <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest">No matching bookings found</p>
                             </motion.div>
                         ) : (
-                            <div className="space-y-10">
+                            <div className="space-y-6">
                                 {filtered.map((b, i) => {
                                     const start = b.checkIn || b.startDate;
                                     const end = b.checkOut || b.endDate;
@@ -240,105 +220,94 @@ export default function MyBookings() {
                                     return (
                                         <motion.div
                                             key={b._id}
-                                            initial={{ opacity: 0, y: 20 }}
+                                            initial={{ opacity: 0, y: 10 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: i * 0.05 }}
-                                            className="group relative bg-white border border-slate-100 rounded-[40px] p-10 md:p-14 hover:shadow-2xl hover:shadow-emerald-500/5 transition-all overflow-hidden border-l-8 border-l-transparent hover:border-l-emerald-500"
+                                            className="bg-white border border-slate-100 rounded-[32px] p-6 md:p-8 hover:border-emerald-100 transition-all shadow-sm flex flex-col lg:flex-row gap-8 justify-between"
                                         >
-                                            <div className="flex flex-col lg:flex-row justify-between gap-12 relative z-10">
-                                                {/* DETAILS SECTION */}
-                                                <div className="flex-1 space-y-10">
-                                                    <div className="flex flex-wrap items-center gap-4">
-                                                        <span className={`inline-flex items-center gap-2 px-5 py-2 rounded-full font-bold text-[9px] uppercase tracking-widest ${cfg.bg} ${cfg.color} border ${cfg.border} shadow-sm`}>
-                                                            <cfg.icon size={14} strokeWidth={2.5} /> {cfg.label}
-                                                        </span>
-                                                        <span className="text-[10px] font-bold text-slate-200 uppercase tracking-widest flex items-center gap-2">
-                                                            <div className="w-1 h-3 bg-emerald-500 rounded-full" />
-                                                            Subject ID: {b._id?.slice(-12).toUpperCase()}
-                                                        </span>
-                                                    </div>
-
-                                                    <div className="space-y-8">
-                                                        <h3 className="text-3xl md:text-5xl font-bold text-slate-900 group-hover:text-emerald-700 transition-colors uppercase tracking-tight leading-[0.9]">{b.title}</h3>
-                                                        <div className="flex flex-wrap items-center gap-6">
-                                                            <div className="bg-slate-50 px-6 py-4 rounded-[20px] border border-slate-100 flex items-center gap-4 shadow-inner">
-                                                                <CalendarCheck size={20} className="text-emerald-500" />
-                                                                <div className="flex flex-col">
-                                                                    <span className="text-[8px] font-bold uppercase tracking-widest text-slate-300">Stay Duration</span>
-                                                                    <span className="text-sm font-bold text-slate-700">{start} <ArrowRight size={12} className="inline mx-2 text-emerald-500/30" /> {end}</span>
-                                                                </div>
-                                                            </div>
-                                                            {b.variantName && (
-                                                                <div className="flex flex-col gap-1">
-                                                                    <span className="text-[8px] font-bold uppercase tracking-widest text-slate-300 ml-1">Selection</span>
-                                                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-slate-100 px-4 py-3 rounded-xl border border-slate-200">{b.variantName}</span>
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    </div>
+                                            <div className="flex-1 space-y-6">
+                                                <div className="flex flex-wrap items-center gap-3">
+                                                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-bold text-[9px] uppercase tracking-wider ${cfg.bg} ${cfg.color} border ${cfg.border}`}>
+                                                        <cfg.icon size={12} strokeWidth={2.5} /> {cfg.label}
+                                                    </span>
+                                                    <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">ID: {b._id?.slice(-8).toUpperCase()}</span>
                                                 </div>
 
-                                                {/* SUMMARY & ACTIONS */}
-                                                <div className="w-full lg:w-72 flex flex-col justify-between items-end gap-10 border-t lg:border-t-0 lg:border-l border-slate-50 pt-10 lg:pt-0 lg:pl-10">
-                                                    <div className="text-right space-y-2">
-                                                        <span className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Total Investment</span>
-                                                        <p className="text-4xl font-bold text-slate-900 italic tracking-tighter">₹{(b.totalPrice || 0).toLocaleString()}</p>
-                                                    </div>
-
-                                                    <div className="flex flex-col w-full gap-3">
-                                                        {b.status !== "cancelled" && isFuture && (
-                                                            <>
-                                                                <button
-                                                                    onClick={() => navigate("/guest-chat")}
-                                                                    className="h-16 w-full bg-slate-900 text-white rounded-2xl font-bold uppercase text-[10px] tracking-widest flex items-center justify-center gap-3 hover:bg-emerald-600 transition-all shadow-xl active:scale-95"
-                                                                >
-                                                                    <MessageCircle size={18} /> Concierge Chat
-                                                                </button>
-                                                                <button
-                                                                    onClick={() => cancelBooking(b._id)}
-                                                                    disabled={cancellingId === b._id}
-                                                                    className="h-12 w-full border border-slate-100 text-slate-300 rounded-xl font-bold uppercase text-[10px] tracking-widest flex items-center justify-center gap-3 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-100 transition-all disabled:opacity-20"
-                                                                >
-                                                                    {cancellingId === b._id ? <Loader2 className="w-4 h-4 animate-spin text-rose-500" /> : <XCircle size={16} />}
-                                                                    Modify Reservation
-                                                                </button>
-                                                            </>
-                                                        )}
-
-                                                        {b.status === "paid" && (
-                                                            <>
-                                                                <button
-                                                                    onClick={() => downloadInvoice(b)}
-                                                                    className="h-11 w-full border border-emerald-100 text-emerald-700 bg-emerald-50 rounded-xl font-bold uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition-all shadow-sm"
-                                                                >
-                                                                    <FileText size={14} /> Download Invoice
-                                                                </button>
-                                                                {!isFuture && (
-                                                                    <button
-                                                                        onClick={() => setReviewModal(b)}
-                                                                        className="h-11 w-full border border-amber-100 text-amber-700 bg-amber-50 rounded-xl font-bold uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 hover:bg-amber-500 hover:text-white hover:border-amber-500 transition-all shadow-sm mt-3"
-                                                                    >
-                                                                        <Star size={14} /> Leave a Review
-                                                                    </button>
-                                                                )}
-                                                            </>
-                                                        )}
-
-                                                        {b.status === "cancelled" && (
-                                                            <div className="h-16 flex items-center justify-center gap-3 font-bold text-[10px] uppercase tracking-widest text-rose-500 bg-rose-50 rounded-2xl border border-rose-100 italic">
-                                                                <AlertCircle size={16} /> Reservation Voided
+                                                <div className="space-y-4">
+                                                    <h3 className="text-2xl font-bold text-slate-900 leading-tight uppercase tracking-tight">{b.title}</h3>
+                                                    <div className="flex flex-wrap gap-4">
+                                                        <div className="bg-slate-50 px-4 py-2 rounded-xl flex items-center gap-3 text-slate-600 text-xs font-semibold">
+                                                            <CalendarCheck size={16} className="text-emerald-500" />
+                                                            {start} — {end}
+                                                        </div>
+                                                        {b.variantName && (
+                                                            <div className="bg-white border border-slate-100 px-4 py-2 rounded-xl text-slate-500 text-[10px] font-bold uppercase tracking-wider">
+                                                                {b.variantName}
                                                             </div>
                                                         )}
-
-                                                        {!isFuture && b.status !== "cancelled" && (
-                                                            <button
-                                                                onClick={() => navigate(`/listing/${b.listingId}`)}
-                                                                className="h-16 w-full bg-slate-50 text-slate-400 rounded-2xl font-bold uppercase text-[10px] tracking-widest flex items-center justify-center gap-3 border border-slate-100 hover:bg-slate-900 hover:text-white transition-all shadow-sm group/btn"
-                                                            >
-                                                                <History size={18} /> Rebook This Stay <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
-                                                            </button>
-                                                        )}
                                                     </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex flex-col lg:items-end justify-between gap-6 border-t lg:border-t-0 lg:border-l border-slate-50 pt-6 lg:pt-0 lg:pl-8 lg:min-w-[240px]">
+                                                <div className="lg:text-right space-y-0.5">
+                                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total amount</span>
+                                                    <p className="text-2xl font-bold text-slate-900">₹{(b.totalPrice || 0).toLocaleString()}</p>
+                                                </div>
+
+                                                <div className="flex flex-col w-full gap-2">
+                                                    {b.status !== "cancelled" && isFuture && (
+                                                        <>
+                                                            <button
+                                                                onClick={() => navigate("/guest-chat")}
+                                                                className="h-12 w-full bg-slate-900 text-white rounded-xl font-bold uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 hover:bg-emerald-600 transition-all active:scale-95 shadow-sm"
+                                                            >
+                                                                <MessageCircle size={16} /> Chat with host
+                                                            </button>
+                                                            <button
+                                                                onClick={() => cancelBooking(b._id)}
+                                                                disabled={cancellingId === b._id}
+                                                                className="h-10 w-full text-slate-400 hover:text-rose-500 font-bold uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                                                            >
+                                                                {cancellingId === b._id ? <Loader2 className="w-3 h-3 animate-spin" /> : <XCircle size={14} />}
+                                                                Cancel stay
+                                                            </button>
+                                                        </>
+                                                    )}
+
+                                                    {b.status === "paid" && (
+                                                        <>
+                                                            <button
+                                                                onClick={() => downloadInvoice(b)}
+                                                                className="h-10 w-full border border-slate-100 text-slate-600 hover:bg-slate-50 rounded-xl font-bold uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 transition-all"
+                                                            >
+                                                                <FileText size={14} /> Download invoice
+                                                            </button>
+                                                            {!isFuture && (
+                                                                <button
+                                                                    onClick={() => setReviewModal(b)}
+                                                                    className="h-10 w-full border border-amber-100 text-amber-700 bg-amber-50 rounded-xl font-bold uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 hover:bg-amber-500 hover:text-white transition-all mt-1"
+                                                                >
+                                                                    <Star size={14} /> Leave review
+                                                                </button>
+                                                            )}
+                                                        </>
+                                                    )}
+
+                                                    {b.status === "cancelled" && (
+                                                        <div className="h-12 flex items-center justify-center gap-2 font-bold text-[10px] uppercase tracking-widest text-rose-500 bg-rose-50 rounded-xl border border-rose-100">
+                                                            <AlertCircle size={14} /> Reservation cancelled
+                                                        </div>
+                                                    )}
+
+                                                    {!isFuture && b.status !== "cancelled" && (
+                                                        <button
+                                                            onClick={() => navigate(`/listing/${b.listingId}`)}
+                                                            className="h-12 w-full bg-slate-50 text-slate-600 rounded-xl font-bold uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 hover:bg-slate-900 hover:text-white transition-all shadow-sm"
+                                                        >
+                                                            <History size={16} /> Rebook stay
+                                                        </button>
+                                                    )}
                                                 </div>
                                             </div>
                                         </motion.div>
@@ -348,38 +317,6 @@ export default function MyBookings() {
                         )}
                     </AnimatePresence>
                 </main>
-
-                {/* INFO FEED */}
-                <div className="max-w-5xl mx-auto px-6">
-                    <div className="flex flex-col md:flex-row items-center justify-between gap-8 p-10 bg-white rounded-[40px] border border-slate-100 shadow-sm relative overflow-hidden group">
-                        <div className="absolute top-0 left-0 w-32 h-32 bg-emerald-500/5 blur-3xl -ml-16 -mt-16" />
-
-                        <div className="flex items-center gap-6 relative z-10">
-                            <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center shadow-inner">
-                                <Shield size={28} />
-                            </div>
-                            <div className="space-y-1">
-                                <h4 className="text-sm font-bold text-slate-900 uppercase tracking-widest">Travel Protection Active</h4>
-                                <p className="text-xs text-slate-400 font-medium italic">Your security and privacy are our highest priority during every stay.</p>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-8 relative z-10 opacity-40 group-hover:opacity-100 transition-all">
-                            <div className="flex flex-col items-center gap-1">
-                                <Globe size={18} className="text-emerald-600" />
-                                <span className="text-[8px] font-bold uppercase tracking-widest text-slate-900">Global</span>
-                            </div>
-                            <div className="flex flex-col items-center gap-1">
-                                <Zap size={18} className="text-emerald-600" />
-                                <span className="text-[8px] font-bold uppercase tracking-widest text-slate-900">Direct</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="py-20 text-center">
-                    <p className="text-[9px] font-bold text-slate-200 uppercase tracking-[0.5em] select-none">Wayza Premium Guest Concierge // Network Stable</p>
-                </div>
             </div>
 
             {/* REVIEW MODAL */}
@@ -395,7 +332,7 @@ export default function MyBookings() {
                             <div className="w-12 h-12 bg-amber-50 text-amber-500 rounded-xl flex items-center justify-center mb-6 shadow-inner">
                                 <Star size={24} />
                             </div>
-                            <h3 className="text-2xl font-bold text-slate-900 tracking-tight uppercase mb-2">Rate Your Stay</h3>
+                            <h3 className="text-2xl font-bold text-slate-900 tracking-tight uppercase mb-2">Rate your stay</h3>
                             <p className="text-sm font-medium text-slate-500 mb-8 italic">"How was your experience at {reviewModal.title}?"</p>
 
                             <div className="space-y-6">
@@ -407,7 +344,7 @@ export default function MyBookings() {
                                     ))}
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Your Feedback (Optional)</label>
+                                    <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Your feedback (Optional)</label>
                                     <textarea
                                         value={comment} onChange={(e) => setComment(e.target.value)}
                                         placeholder="Share details about your stay..."
