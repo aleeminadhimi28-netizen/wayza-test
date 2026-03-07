@@ -44,7 +44,11 @@ export default function GuestChat() {
         } catch (_) { }
     }
 
-    useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
+    useEffect(() => {
+        if (messages.length > 0) {
+            bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [messages.length]);
 
     async function send() {
         if (!text.trim() || !selected) return;
