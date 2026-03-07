@@ -34,6 +34,11 @@ export function AuthProvider({ children }) {
     function login(data) {
         if (!data?.email) return;
 
+        // If backend returns a token, save it as fallback
+        if (data.token) {
+            localStorage.setItem("token", data.token);
+        }
+
         const role = data.role || "guest";
         setUser({
             email: data.email,

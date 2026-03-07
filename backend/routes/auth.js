@@ -37,7 +37,12 @@ router.post("/login", async (req, res, next) => {
     try {
         const db = getDB();
         const users = db.collection("users");
-        const { email, password } = req.body;
+        let { email, password } = req.body;
+
+        // Trim inputs
+        email = email?.trim().toLowerCase();
+        password = password?.trim();
+
         const user = await users.findOne({ email });
         if (!user) return res.status(401).json({ ok: false, message: "User not found" });
 
@@ -45,13 +50,16 @@ router.post("/login", async (req, res, next) => {
         if (!ok) return res.status(401).json({ ok: false, message: "Invalid password" });
 
         const token = jwt.sign({ email: user.email, role: user.role }, SECRET, { expiresIn: "7d" });
+
+        const isProd = process.env.NODE_ENV === "production";
+
         res.cookie("token", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
+            secure: true, // Always true for cross-domain
+            sameSite: "none", // Required for Vercel -> Render cross-site cookies
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
-        res.json({ ok: true, data: { email: user.email, role: user.role } });
+        res.json({ ok: true, data: { email: user.email, role: user.role }, token }); // Also send token back just in case
     } catch (err) { next(err); }
 });
 
