@@ -1,5 +1,12 @@
 import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
+import dns from "dns";
+
+// Fix for Node.js DNS lookup issues with MongoDB SRV on some networks
+if (dns.setDefaultResultOrder) {
+    dns.setDefaultResultOrder("ipv4first");
+}
+
 dotenv.config();
 
 const MONGO_URL = process.env.MONGO_URL;

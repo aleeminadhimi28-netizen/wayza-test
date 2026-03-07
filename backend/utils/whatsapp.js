@@ -29,3 +29,4 @@ Nights: ${data.nights}
 
 _Please prepare the property for arrival._`;
 };
+
