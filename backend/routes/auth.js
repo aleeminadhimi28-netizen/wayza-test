@@ -44,11 +44,20 @@ router.post("/login", async (req, res, next) => {
         password = password?.trim();
 
         const user = await users.findOne({ email });
-        if (!user) return res.status(401).json({ ok: false, message: "User not found" });
+        console.log(`[Login Debug] Searching for: "${email}"`);
+        if (!user) {
+            console.log(`[Login Debug] User NOT found: "${email}"`);
+            return res.status(401).json({ ok: false, message: "User not found" });
+        }
 
+        console.log(`[Login Debug] User found. Comparing passwords...`);
         const ok = await bcrypt.compare(password, user.password);
-        if (!ok) return res.status(401).json({ ok: false, message: "Invalid password" });
+        if (!ok) {
+            console.log(`[Login Debug] Password MISMATCH for: "${email}"`);
+            return res.status(401).json({ ok: false, message: "Invalid password" });
+        }
 
+        console.log(`[Login Debug] Login SUCCESS: "${email}"`);
         const token = jwt.sign({ email: user.email, role: user.role }, SECRET, { expiresIn: "7d" });
 
         const isProd = process.env.NODE_ENV === "production";
@@ -59,7 +68,7 @@ router.post("/login", async (req, res, next) => {
             sameSite: "none", // Required for Vercel -> Render cross-site cookies
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
-        res.json({ ok: true, data: { email: user.email, role: user.role }, token }); // Also send token back just in case
+        res.json({ ok: true, data: { email: user.email, role: user.role, token } });
     } catch (err) { next(err); }
 });
 

@@ -44,7 +44,7 @@ export default function Login() {
                 return;
             }
 
-            login({ email: data.data.email, role: data.data.role });
+            login({ email: data.data.email, role: data.data.role, token: data.data.token });
             showToast("Welcome back to Wayza!", "success");
             navigate("/");
         } catch (error) {
