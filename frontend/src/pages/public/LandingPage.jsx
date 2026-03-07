@@ -95,10 +95,11 @@ export default function LandingPage() {
                         <motion.div
                             initial={{ opacity: 0, y: 15 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="space-y-4 mb-10"
+                            className="space-y-4 mb-10 pt-20 md:pt-0"
                         >
-                            <h1 className="text-4xl md:text-6xl font-medium tracking-tight text-white drop-shadow-md">
-                                Escape the ordinary <span className="text-emerald-500 italic font-serif">gracefully.</span>
+                            <h1 className="text-3xl md:text-6xl font-medium tracking-tight text-white drop-shadow-md">
+                                Escape the ordinary <br className="md:hidden" />
+                                <span className="text-emerald-500 italic font-serif">gracefully.</span>
                             </h1>
                             <p className="text-base md:text-lg font-normal text-white/90 max-w-2xl mx-auto drop-shadow-sm">
                                 Handpicked villas, premium bikes, and local secrets in Varkala.
@@ -110,9 +111,9 @@ export default function LandingPage() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
-                            className="max-w-4xl mx-auto"
+                            className="max-w-4xl mx-auto w-full px-4 md:px-0"
                         >
-                            <div className="bg-white rounded-full p-2 shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-slate-100 flex flex-col md:flex-row items-center gap-1">
+                            <div className="bg-white rounded-3xl md:rounded-full p-2 md:p-3 shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-slate-100 flex flex-col md:flex-row items-center gap-1">
 
                                 {/* Location */}
                                 <div className="flex-[1.5] w-full group px-8 py-3 rounded-full hover:bg-slate-50 transition-colors text-left cursor-pointer">
@@ -152,8 +153,9 @@ export default function LandingPage() {
                                 </div>
 
                                 {/* Search Button */}
-                                <button onClick={handleSearch} className="bg-emerald-500 hover:bg-emerald-600 text-white p-4 md:p-5 rounded-full shadow-lg shadow-emerald-500/20 transition-all hover:scale-105 active:scale-95 group">
-                                    <Search size={22} strokeWidth={2.5} className="group-hover:rotate-6 transition-transform" />
+                                <button onClick={handleSearch} className="w-full md:w-auto bg-emerald-500 hover:bg-emerald-600 text-white p-5 md:p-5 rounded-2xl md:rounded-full shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02] md:hover:scale-105 active:scale-95 group flex items-center justify-center gap-3">
+                                    <Search size={20} strokeWidth={2.5} className="group-hover:rotate-6 transition-transform" />
+                                    <span className="md:hidden font-bold uppercase tracking-widest text-xs">Search Stays</span>
                                 </button>
                             </div>
                         </motion.div>
