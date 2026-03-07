@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../AuthContext.jsx";
 import { motion, AnimatePresence } from "framer-motion";
 import { PageTransition } from "./PageTransition.jsx";
@@ -9,6 +9,7 @@ import { useCurrency, CURRENCIES } from "../../CurrencyContext.jsx";
 
 export function Layout({ children, noPadding = false, hideFooter = false }) {
     const navigate = useNavigate();
+    const location = useLocation();
     const { user, logout } = useAuth();
     const [open, setOpen] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
