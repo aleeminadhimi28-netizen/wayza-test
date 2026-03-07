@@ -10,7 +10,7 @@ import { api } from "../../utils/api.js";
 
 export default function PartnerLogin() {
     const navigate = useNavigate();
-    const { login: setAuth } = useAuth();
+    const { login: setAuth, user } = useAuth();
     const { showToast } = useToast();
 
     const [email, setEmail] = useState("");
@@ -20,13 +20,10 @@ export default function PartnerLogin() {
 
     // AUTO REDIRECT IF ALREADY LOGGED IN
     useEffect(() => {
-        const email = localStorage.getItem("email");
-        const role = localStorage.getItem("role");
-        const loggedIn = localStorage.getItem("loggedIn");
-        if (email && loggedIn === "true" && role === "partner") {
+        if (user && user.role === "partner") {
             navigate("/partner", { replace: true });
         }
-    }, [navigate]);
+    }, [user, navigate]);
 
     async function login(e) {
         if (e) e.preventDefault();
@@ -44,7 +41,6 @@ export default function PartnerLogin() {
                 return;
             }
 
-            localStorage.setItem("token", data.token);
             setAuth({ email: data.email, role: "partner" });
 
             showToast("Welcome back to Wayza Pro.", "success");

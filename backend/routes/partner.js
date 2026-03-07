@@ -3,6 +3,15 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { getDB } from "../config/db.js";
 import { requireAuth } from "../middleware/auth.js";
+import { z } from "zod";
+
+const walletSchema = z.object({
+    accountName: z.string().min(2),
+    accountNumber: z.string().min(5),
+    ifscCode: z.string().min(4),
+    bankName: z.string().min(2),
+    upiId: z.string().optional()
+});
 
 const router = express.Router();
 const SECRET = process.env.JWT_SECRET;
@@ -39,7 +48,13 @@ router.post("/login", async (req, res, next) => {
         if (!ok) return res.status(401).json({ ok: false, message: "Invalid password" });
 
         const token = jwt.sign({ email: user.email, role: "partner" }, SECRET, { expiresIn: "7d" });
-        res.json({ ok: true, token, email: user.email });
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        });
+        res.json({ ok: true, email: user.email });
     } catch (err) { next(err); }
 });
 
@@ -52,12 +67,13 @@ router.get("/status/:email", async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
-router.post("/onboard", async (req, res, next) => {
+router.post("/onboard", requireAuth, async (req, res, next) => {
     try {
         const db = getDB();
         const partners = db.collection("partners");
         const listings = db.collection("listings");
-        const { email, businessName, category, location, firstListing } = req.body;
+        const { businessName, category, location, firstListing } = req.body;
+        const email = req.user.email;
 
         await partners.updateOne(
             { email },
@@ -155,6 +171,7 @@ router.get("/monthly-revenue", requireAuth, async (req, res, next) => {
 
 router.get("/listings/:email", requireAuth, async (req, res, next) => {
     try {
+        if (req.user.email !== req.params.email && req.user.role !== "admin") return res.status(403).json({ ok: false, message: "Forbidden" });
         const db = getDB();
         const listings = db.collection("listings");
         const rows = await listings.find({ ownerEmail: req.params.email }).sort({ createdAt: -1 }).toArray();
@@ -184,9 +201,12 @@ router.get("/wallet", requireAuth, async (req, res, next) => {
 
 router.post("/wallet", requireAuth, async (req, res, next) => {
     try {
+        const parsed = walletSchema.safeParse(req.body);
+        if (!parsed.success) return res.status(400).json({ ok: false, message: "Invalid input", errors: parsed.error.flatten() });
+
         const db = getDB();
         const wallets = db.collection("partnerWallets");
-        const { accountName, accountNumber, ifscCode, bankName, upiId } = req.body;
+        const { accountName, accountNumber, ifscCode, bankName, upiId } = parsed.data;
         await wallets.updateOne(
             { email: req.user.email },
             { $set: { email: req.user.email, accountName, accountNumber, ifscCode, bankName, upiId, updatedAt: new Date() } },
@@ -245,8 +265,8 @@ router.get("/calendar-feed/:token", async (req, res, next) => {
         const partners = db.collection("partners");
         const bookings = db.collection("bookings");
 
-        // The token is the partner's unique ID for security
-        const partner = await partners.findOne({ _id: new ObjectId(req.params.token) });
+        // The token is a secure string
+        const partner = await partners.findOne({ calendarToken: req.params.token });
         if (!partner) return res.status(404).send("Invalid Calendar Token");
 
         const rows = await bookings.find({
@@ -293,7 +313,12 @@ router.get("/calendar-settings", requireAuth, async (req, res, next) => {
         if (!partner) return res.status(404).json({ ok: false });
 
         const baseUrl = process.env.API_URL || "http://localhost:5000";
-        const feedUrl = `${baseUrl}/api/v1/partner/calendar-feed/${partner._id}`;
+        let token = partner.calendarToken;
+        if (!token) {
+            token = require('crypto').randomBytes(32).toString('hex');
+            await partners.updateOne({ _id: partner._id }, { $set: { calendarToken: token } });
+        }
+        const feedUrl = `${baseUrl}/api/v1/partner/calendar-feed/${token}`;
 
         res.json({ ok: true, feedUrl });
     } catch (err) { next(err); }

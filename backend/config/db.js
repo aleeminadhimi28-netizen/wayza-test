@@ -44,6 +44,7 @@ const createIndexes = async (db) => {
     const wishlists = db.collection("wishlists");
     const reviews = db.collection("reviews");
     const messages = db.collection("messages");
+    const resetTokens = db.collection("resetTokens");
 
     await users.createIndex({ email: 1 }, { unique: true, sparse: true });
     await listings.createIndex({ ownerEmail: 1 });
@@ -58,8 +59,9 @@ const createIndexes = async (db) => {
     await wishlists.createIndex({ userEmail: 1 });
     await wishlists.createIndex({ listingId: 1 });
     await reviews.createIndex({ listingId: 1 });
-    await messages.createIndex({ sender: 1, receiver: 1 });
+    await messages.createIndex({ bookingId: 1, createdAt: 1 });
     await messages.createIndex({ timestamp: -1 });
+    await resetTokens.createIndex({ expiry: 1 }, { expireAfterSeconds: 0 });
 
     console.log("✅ Database indexes verified");
 };

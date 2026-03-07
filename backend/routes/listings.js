@@ -53,15 +53,17 @@ router.get("/:id", async (req, res, next) => {
         if (!listing.approved) {
             const authHeader = req.headers.authorization;
             let requesterEmail = null;
+            let requesterRole = null;
             if (authHeader) {
                 try {
                     const token = authHeader.split(" ")[1];
                     const decoded = jwt.verify(token, SECRET);
                     requesterEmail = decoded.email;
+                    requesterRole = decoded.role;
                 } catch (_) { }
             }
-            if (requesterEmail !== listing.ownerEmail && requesterEmail !== "admin@wayza.com") {
-                return res.status(404).json({ ok: false, message: "Listing not found" });
+            if (requesterEmail !== listing.ownerEmail && requesterRole !== "admin") {
+                return res.status(403).json({ ok: false, message: "Forbidden" });
             }
         }
 
@@ -114,6 +116,9 @@ router.post("/:id/variant", requireAuth, async (req, res, next) => {
         if (!name) return res.status(400).json({ ok: false });
         if (!ObjectId.isValid(req.params.id)) return res.status(400).json({ ok: false });
 
+        const listing = await listings.findOne({ _id: new ObjectId(req.params.id) });
+        if (!listing || (listing.ownerEmail !== req.user.email && req.user.role !== "admin")) return res.status(403).json({ ok: false });
+
         await listings.updateOne(
             { _id: new ObjectId(req.params.id) },
             {
@@ -139,6 +144,8 @@ router.put("/:id/variant/:index", requireAuth, async (req, res, next) => {
         const db = getDB();
         const listings = db.collection("listings");
         const { id, index } = req.params;
+        const listing = await listings.findOne({ _id: new ObjectId(id) });
+        if (!listing || (listing.ownerEmail !== req.user.email && req.user.role !== "admin")) return res.status(403).json({ ok: false });
         const updates = {};
         ["name", "type", "price", "qty", "desc", "available", "image"].forEach(f => {
             if (req.body[f] !== undefined) updates["variants." + index + "." + f] = req.body[f];
@@ -153,6 +160,8 @@ router.delete("/:id/variant/:index", requireAuth, async (req, res, next) => {
         const db = getDB();
         const listings = db.collection("listings");
         const { id, index } = req.params;
+        const listing = await listings.findOne({ _id: new ObjectId(id) });
+        if (!listing || (listing.ownerEmail !== req.user.email && req.user.role !== "admin")) return res.status(403).json({ ok: false });
         await listings.updateOne({ _id: new ObjectId(id) }, { $unset: { ["variants." + index]: 1 } });
         await listings.updateOne({ _id: new ObjectId(id) }, { $pull: { variants: null } });
         res.json({ ok: true });

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { api } from "./utils/api.js";
 
 const AuthContext = createContext();
 
@@ -9,26 +10,24 @@ export function AuthProvider({ children }) {
 
     /* -------- RESTORE SESSION -------- */
     useEffect(() => {
-        try {
-            const email = localStorage.getItem("email");
-            const role = localStorage.getItem("role");
-            const loggedIn = localStorage.getItem("loggedIn");
-
-            if (email && loggedIn === "true") {
-                setUser({
-                    email,
-                    role: role || "guest"
-                });
-            } else {
+        const loadSession = async () => {
+            try {
+                const res = await api.getProfile();
+                if (res.ok && res.data?.email) {
+                    setUser({
+                        email: res.data.email,
+                        role: res.data.role
+                    });
+                } else {
+                    setUser(null);
+                }
+            } catch (err) {
+                console.error("Auth session fetch error", err);
                 setUser(null);
             }
-
-        } catch (err) {
-            console.error("Auth restore error", err);
-            setUser(null);
-        }
-
-        setLoading(false);
+            setLoading(false);
+        };
+        loadSession();
     }, []);
 
     /* -------- LOGIN -------- */
@@ -36,11 +35,6 @@ export function AuthProvider({ children }) {
         if (!data?.email) return;
 
         const role = data.role || "guest";
-
-        localStorage.setItem("email", data.email);
-        localStorage.setItem("role", role);
-        localStorage.setItem("loggedIn", "true");
-
         setUser({
             email: data.email,
             role
@@ -48,7 +42,11 @@ export function AuthProvider({ children }) {
     }
 
     /* -------- LOGOUT -------- */
-    function logout() {
+    async function logout() {
+        try {
+            await api.logout();
+        } catch (e) { }
+
         localStorage.clear();
         setUser(null);
     }

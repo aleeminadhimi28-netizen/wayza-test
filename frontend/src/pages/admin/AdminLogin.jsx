@@ -9,7 +9,7 @@ import { api } from "../../utils/api.js";
 
 export default function AdminLogin() {
     const navigate = useNavigate();
-    const { login: setAuth } = useAuth();
+    const { login: setAuth, user } = useAuth();
     const { showToast } = useToast();
 
     const [email, setEmail] = useState("");
@@ -18,12 +18,10 @@ export default function AdminLogin() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const role = localStorage.getItem("role");
-        const token = localStorage.getItem("token");
-        if (token && role === "admin") {
+        if (user && user.role === "admin") {
             navigate("/admin", { replace: true });
         }
-    }, [navigate]);
+    }, [user, navigate]);
 
     async function login(e) {
         if (e) e.preventDefault();
@@ -40,7 +38,6 @@ export default function AdminLogin() {
                 return;
             }
 
-            localStorage.setItem("token", data.token);
             localStorage.setItem("role", "admin");
             setAuth({ email: data.email, role: "admin" });
 

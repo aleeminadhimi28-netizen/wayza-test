@@ -29,6 +29,9 @@ export default function PartnerLayout() {
   // THEME
   const [isDarkMode, setIsDarkMode] = useState(false);
 
+  const [notifs, setNotifs] = useState([]);
+  const [showNotifs, setShowNotifs] = useState(false);
+
   useEffect(() => {
     setIsDarkMode(document.documentElement.classList.contains('wayza-dark'));
   }, []);

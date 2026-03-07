@@ -5,22 +5,30 @@ import crypto from "crypto";
 import { getDB } from "../config/db.js";
 import { requireAuth } from "../middleware/auth.js";
 import { getTransporter } from "../utils/emailTemplates.js";
+import { z } from "zod";
+
+const signupSchema = z.object({
+    email: z.string().email(),
+    password: z.string().min(6)
+});
 
 const router = express.Router();
 const SECRET = process.env.JWT_SECRET;
 
 router.post("/signup", async (req, res, next) => {
     try {
+        const parsed = signupSchema.safeParse(req.body);
+        if (!parsed.success) return res.status(400).json({ ok: false, message: "Invalid input", errors: parsed.error.flatten() });
+
         const db = getDB();
         const users = db.collection("users");
-        const { email, password, role } = req.body;
-        if (!email || !password) return res.status(400).json({ ok: false });
+        const { email, password } = parsed.data;
 
         const exists = await users.findOne({ email });
         if (exists) return res.status(400).json({ ok: false, message: "Email already exists" });
 
         const hash = await bcrypt.hash(password, 10);
-        await users.insertOne({ email, password: hash, role: role || "guest", createdAt: new Date() });
+        await users.insertOne({ email, password: hash, role: "guest", createdAt: new Date() });
         res.json({ ok: true });
     } catch (err) { next(err); }
 });
@@ -37,7 +45,13 @@ router.post("/login", async (req, res, next) => {
         if (!ok) return res.status(401).json({ ok: false, message: "Invalid password" });
 
         const token = jwt.sign({ email: user.email, role: user.role }, SECRET, { expiresIn: "7d" });
-        res.json({ ok: true, data: { token, email: user.email, role: user.role } });
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        });
+        res.json({ ok: true, data: { email: user.email, role: user.role } });
     } catch (err) { next(err); }
 });
 
@@ -127,6 +141,15 @@ router.put("/profile", requireAuth, async (req, res, next) => {
         await users.updateOne({ email: req.user.email }, { $set: updates });
         res.json({ ok: true });
     } catch (err) { next(err); }
+});
+
+router.get("/me", requireAuth, (req, res) => {
+    res.json({ ok: true, data: { email: req.user.email, role: req.user.role } });
+});
+
+router.post("/logout", (req, res) => {
+    res.clearCookie("token");
+    res.json({ ok: true });
 });
 
 export default router;

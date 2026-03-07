@@ -4,6 +4,8 @@ import cors from "cors";
 import compression from "compression";
 import morgan from "morgan";
 import dotenv from "dotenv";
+import rateLimit from "express-rate-limit";
+import cookieParser from "cookie-parser";
 
 // Config & DB
 import { connectDB } from "./config/db.js";
@@ -44,6 +46,7 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+app.use(cookieParser());
 app.use("/uploads", express.static("uploads"));
 
 /* ---------------- ROUTES ---------------- */
@@ -59,6 +62,9 @@ app.post("/api/v1/upload", upload.single("image"), (req, res) => {
   res.json({ ok: true, filename: req.file.path });
 });
 
+// Rate Limiting for Auth
+const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100, message: { ok: false, message: "Too many attempts, please try again later." } });
+app.use("/api/v1/auth", authLimiter);
 // API v1 Routes
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/listings", listingRoutes);

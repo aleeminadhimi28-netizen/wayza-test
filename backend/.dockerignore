@@ -1,0 +1,6 @@
+node_modules
+.env
+tmp/
+*.test.js
+seed_*.js
+debug_*.js

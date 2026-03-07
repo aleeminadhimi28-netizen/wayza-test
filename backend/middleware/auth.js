@@ -6,22 +6,26 @@ dotenv.config();
 const SECRET = process.env.JWT_SECRET;
 
 export function requireAuth(req, res, next) {
+    let token = null;
 
-    const header = req.headers.authorization;
+    if (req.cookies && req.cookies.token) {
+        token = req.cookies.token;
+    } else {
+        const header = req.headers.authorization;
+        if (header && header.startsWith("Bearer ")) {
+            token = header.split(" ")[1];
+        }
+    }
 
-    if (!header || !header.startsWith("Bearer ")) {
+    if (!token) {
         return res.status(401).json({
             ok: false,
             error: "No token provided"
         });
     }
 
-    const token = header.split(" ")[1];
-
     try {
-
         const decoded = jwt.verify(token, SECRET);
-
         req.user = decoded;
 
         next();

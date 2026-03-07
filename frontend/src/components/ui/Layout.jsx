@@ -7,7 +7,7 @@ import { Bell, X, Moon, Sun, Sparkles, Globe } from "lucide-react";
 import { api } from "../../utils/api.js";
 import { useCurrency, CURRENCIES } from "../../CurrencyContext.jsx";
 
-export function Layout({ children, noPadding = false }) {
+export function Layout({ children, noPadding = false, hideFooter = false }) {
     const navigate = useNavigate();
     const { user, logout } = useAuth();
     const [open, setOpen] = useState(false);
@@ -262,28 +262,30 @@ export function Layout({ children, noPadding = false }) {
             </nav>
 
             <PageTransition>
-                <main className={`${scrolled || noPadding ? 'pt-24' : 'pt-0'} transition-all duration-500`}>
+                <main className={`${(scrolled || !isHomePage) && !noPadding ? 'pt-24' : 'pt-0'} transition-all duration-500`}>
                     {children}
                 </main>
             </PageTransition>
 
-            <footer className="bg-slate-950 text-white/40">
-                <div className="max-w-7xl mx-auto px-8 py-32 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-20">
-                    <div className="space-y-10">
-                        <Link to="/" className="text-4xl font-bold tracking-tight uppercase text-white">Wayza<span className="text-emerald-500">.</span></Link>
-                        <p className="text-lg font-medium italic leading-relaxed text-white/30 truncate max-w-xs">"Connecting travelers with extraordinary stays."</p>
+            {!hideFooter && (
+                <footer className="bg-slate-950 text-white/40">
+                    <div className="max-w-7xl mx-auto px-8 py-32 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-20">
+                        <div className="space-y-10">
+                            <Link to="/" className="text-4xl font-bold tracking-tight uppercase text-white">Wayza<span className="text-emerald-500">.</span></Link>
+                            <p className="text-lg font-medium italic leading-relaxed text-white/30 truncate max-w-xs">"Connecting travelers with extraordinary stays."</p>
+                        </div>
+                        <div>
+                            <h4 className="text-white font-bold uppercase tracking-widest text-[11px] mb-10 text-center">Resources</h4>
+                            <ul className="space-y-5 text-[15px] font-bold text-center">
+                                <li><Link to="/support" className="text-emerald-400">Support</Link></li>
+                                <li><Link to="/about">Our Story</Link></li>
+                                <li><Link to="/privacy">Privacy Policy</Link></li>
+                                <li><Link to="/terms">Terms of Service</Link></li>
+                            </ul>
+                        </div>
                     </div>
-                    <div>
-                        <h4 className="text-white font-bold uppercase tracking-widest text-[11px] mb-10 text-center">Resources</h4>
-                        <ul className="space-y-5 text-[15px] font-bold text-center">
-                            <li><Link to="/support" className="text-emerald-400">Support</Link></li>
-                            <li><Link to="/about">Our Story</Link></li>
-                            <li><Link to="/privacy">Privacy Policy</Link></li>
-                            <li><Link to="/terms">Terms of Service</Link></li>
-                        </ul>
-                    </div>
-                </div>
-            </footer>
+                </footer>
+            )}
         </div>
     );
 }

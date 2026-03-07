@@ -1,37 +1,47 @@
 import React, { useEffect, useState } from "react";
 import { WayzaLayout, WayzaHotelItem, WayzaSkeleton } from "../../WayzaUI.jsx";
 import { useNavigate, Link } from "react-router-dom";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-    Search, MapPin, Calendar, Users, ChevronRight, CheckCircle,
-    Shield, Sparkles, Globe, Compass, MessageSquare,
-    ArrowRight, Star, Heart, Info, Target,
-    Layers, Award, Tent, Bike, Car, Music, Clock, Zap
+    Search, MapPin, Calendar, Users, ChevronRight,
+    Shield, Sparkles, Globe, Compass,
+    ArrowRight, Star, Heart, Award,
+    Tent, Bike, Car, Music, Zap, Play, Home,
+    Instagram, Twitter, Facebook, Mail, Phone,
+    CheckCircle2, Cpu, MessageSquare, Terminal,
+    Send, BrainCircuit, Waves, Landmark
 } from "lucide-react";
 
 import { api } from "../../utils/api.js";
+import { useCurrency } from "../../CurrencyContext.jsx";
+
+const CATEGORIES = [
+    { label: "Villas", key: "hotel", icon: Home },
+    { label: "Bikes", key: "bike", icon: Bike },
+    { label: "Cars", key: "car", icon: Car },
+    { label: "Secrets", key: "experience", icon: Sparkles }
+];
+
+const DESTINATIONS = [
+    { name: "Varkala Cliff", properties: "45+ Properties", image: "https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?auto=format&fit=crop&w=800&q=80", colSpan: 2 },
+    { name: "Edava", properties: "20+ Properties", image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80", colSpan: 1 },
+    { name: "Bali", properties: "Exploring", image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=600&q=80", colSpan: 1 },
+];
 
 export default function LandingPage() {
     const navigate = useNavigate();
+    const { formatPrice } = useCurrency();
     const [listings, setListings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [tab, setTab] = useState("hotel");
     const [search, setSearch] = useState("");
     const [checkIn, setCheckIn] = useState("");
     const [checkOut, setCheckOut] = useState("");
+    const [guests, setGuests] = useState(1);
 
-    const [showSuggestions, setShowSuggestions] = useState(false);
-
-    const { scrollY } = useScroll();
-    const heroOpacity = useTransform(scrollY, [0, 600], [1, 0]);
-    const heroScale = useTransform(scrollY, [0, 600], [1, 1.1]);
-
-    const fixImg = (img) => {
-        if (!img) return "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&q=80";
-        if (img.startsWith("http")) return img;
-        const BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
-        return `${BASE}/uploads/${img}`;
-    };
+    // AI Section Interactive State
+    const [aiPrompt, setAiPrompt] = useState("");
+    const [isTyping, setIsTyping] = useState(false);
 
     useEffect(() => {
         api.getListings()
@@ -43,424 +53,384 @@ export default function LandingPage() {
             .catch(() => setLoading(false));
     }, []);
 
+    const fixImg = (img) => {
+        if (!img) return "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&q=80";
+        if (img.startsWith("http")) return img;
+        const BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+        return `${BASE}/uploads/${img}`;
+    };
+
     const handleSearch = () => {
         const params = new URLSearchParams();
         params.set("category", tab);
         if (search) params.set("location", search);
         if (checkIn) params.set("start", checkIn);
         if (checkOut) params.set("end", checkOut);
+        if (guests) params.set("guests", guests);
         navigate(`/listings?${params.toString()}`);
     };
 
-    const uniqueLocations = Array.from(new Set(listings.map(l => l.location).filter(Boolean)));
-    const searchSuggestions = search
-        ? uniqueLocations.filter(loc => loc.toLowerCase().includes(search.toLowerCase()))
-        : [];
-
-    const varkalaSpots = [
-        { name: "Varkala Cliff", description: "Iconic red cliffs with breath-taking ocean views.", image: "https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?auto=format&fit=crop&w=800&q=80", tag: "Nature" },
-        { name: "Edava Beach", description: "A serene escape where backwaters meet the Arabian sea.", image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80", tag: "Coastal" },
-        { name: "Janardhana Temple", description: "A 2,000-year-old spiritual landmark on the hill.", image: "https://images.unsplash.com/photo-1626442651167-797745778a08?auto=format&fit=crop&w=800&q=80", tag: "Heritage" },
-        { name: "Kappil Lake", description: "Quiet boat rides through lush coconut groves.", image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80", tag: "Serene" }
-    ];
-
-    const trendingListings = listings.filter(l => (l.category === "hotel" || !l.category)).slice(0, 8);
+    const trendingList = listings.filter(l => (l.category === "hotel" || !l.category)).slice(0, 8);
 
     return (
-        <WayzaLayout noPadding>
-            <div className="bg-white font-sans text-slate-900 selection:bg-emerald-600 selection:text-white">
+        <WayzaLayout noPadding hideFooter>
+            <div className="bg-white font-sans text-slate-900 selection:bg-emerald-50 selection:text-emerald-900 leading-relaxed antialiased">
 
-                {/* PREMIUM HERO SECTION */}
-                <section className="relative h-screen min-h-[850px] flex items-center justify-center bg-slate-900 overflow-hidden">
-                    <motion.div style={{ opacity: heroOpacity, scale: heroScale }} className="absolute inset-0 z-0">
-                        <img
-                            src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=2000&q=80"
-                            alt="Luxury Stay"
-                            className="w-full h-full object-cover opacity-60"
+                {/* ════ SECTION: REFINED MINI-HERO ════ */}
+                <header className="relative h-[55vh] min-h-[500px] flex flex-col items-center justify-end pb-16">
+                    <div className="absolute inset-0 z-0 overflow-hidden">
+                        <motion.img
+                            initial={{ scale: 1.1 }}
+                            animate={{ scale: 1 }}
+                            transition={{ duration: 1.5, ease: "easeOut" }}
+                            src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=2400&q=85"
+                            alt="Luxury Background"
+                            className="w-full h-full object-cover"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-slate-900" />
-                    </motion.div>
+                        <div className="absolute inset-0 bg-black/10" />
+                        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-white to-transparent" />
+                    </div>
 
-                    <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
+                    <div className="relative z-10 w-full max-w-7xl mx-auto px-6 text-center">
                         <motion.div
-                            initial={{ opacity: 0, y: 30 }}
+                            initial={{ opacity: 0, y: 15 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 1, ease: "easeOut" }}
-                            className="space-y-10"
+                            className="space-y-4 mb-10"
                         >
-                            <div className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-xl border border-white/20 px-6 py-2.5 rounded-full text-white font-bold text-[10px] uppercase tracking-[0.3em] shadow-2xl">
-                                <Sparkles size={14} className="text-emerald-400" /> Defining Modern Hospitality
-                            </div>
-
-                            <h1 className="text-6xl md:text-9xl font-bold text-white tracking-tighter leading-[0.85] uppercase mb-12">
-                                Your Next <br />
-                                <span className="text-emerald-400 italic font-serif lowercase">Masterpiece.</span>
+                            <h1 className="text-4xl md:text-6xl font-medium tracking-tight text-white drop-shadow-md">
+                                Escape the ordinary <span className="text-emerald-500 italic font-serif">gracefully.</span>
                             </h1>
-
-                            <p className="text-lg md:text-2xl text-white/50 max-w-2xl mx-auto font-medium leading-relaxed italic border-l-4 border-emerald-500/20 pl-8">
-                                "Experience a world of curated stays and local adventures, handpicked for <span className="text-white font-bold">absolute excellence.</span>"
+                            <p className="text-base md:text-lg font-normal text-white/90 max-w-2xl mx-auto drop-shadow-sm">
+                                Handpicked villas, premium bikes, and local secrets in Varkala.
                             </p>
+                        </motion.div>
 
-                            <div className="flex flex-wrap justify-center gap-12 pt-10 text-white/40">
-                                {[
-                                    { i: Globe, l: "Global Curations" },
-                                    { i: Shield, l: "Verified Quality" },
-                                    { i: Award, l: "Premium Service" }
-                                ].map((item, idx) => (
-                                    <div key={idx} className="flex flex-col items-center gap-3">
-                                        <item.i size={20} className="text-emerald-400/60" />
-                                        <span className="text-[9px] font-bold uppercase tracking-[0.3em]">{item.l}</span>
+                        {/* PILL SEARCH ORCHESTRATOR */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 }}
+                            className="max-w-4xl mx-auto"
+                        >
+                            <div className="bg-white rounded-full p-2 shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-slate-100 flex flex-col md:flex-row items-center gap-1">
+
+                                {/* Location */}
+                                <div className="flex-[1.5] w-full group px-8 py-3 rounded-full hover:bg-slate-50 transition-colors text-left cursor-pointer">
+                                    <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-0.5">Location</p>
+                                    <input
+                                        placeholder="Where to go?"
+                                        value={search}
+                                        onChange={(e) => setSearch(e.target.value)}
+                                        className="w-full bg-transparent border-none outline-none font-medium text-slate-800 text-sm p-0 placeholder:text-slate-300"
+                                    />
+                                </div>
+
+                                <div className="hidden md:block w-px h-10 bg-slate-100" />
+
+                                {/* Check In/Out */}
+                                <div className="flex-1 w-full px-8 py-3 rounded-full hover:bg-slate-50 transition-colors text-left cursor-pointer">
+                                    <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-0.5">Stay Dates</p>
+                                    <div className="flex items-center gap-2">
+                                        <input type="date" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} className="bg-transparent border-none outline-none font-medium text-slate-800 text-xs p-0 w-24 cursor-pointer" />
+                                        <span className="text-slate-300">-</span>
+                                        <input type="date" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} className="bg-transparent border-none outline-none font-medium text-slate-800 text-xs p-0 w-24 cursor-pointer" />
                                     </div>
-                                ))}
+                                </div>
+
+                                <div className="hidden md:block w-px h-10 bg-slate-100" />
+
+                                {/* Guests */}
+                                <div className="flex-1 w-full px-8 py-3 rounded-full hover:bg-slate-50 transition-colors text-left cursor-pointer">
+                                    <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-0.5">Guests</p>
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        value={guests}
+                                        onChange={e => setGuests(e.target.value)}
+                                        className="w-full bg-transparent border-none outline-none font-medium text-slate-800 text-sm p-0 cursor-pointer"
+                                    />
+                                </div>
+
+                                {/* Search Button */}
+                                <button onClick={handleSearch} className="bg-emerald-500 hover:bg-emerald-600 text-white p-4 md:p-5 rounded-full shadow-lg shadow-emerald-500/20 transition-all hover:scale-105 active:scale-95 group">
+                                    <Search size={22} strokeWidth={2.5} className="group-hover:rotate-6 transition-transform" />
+                                </button>
                             </div>
                         </motion.div>
                     </div>
+                </header>
 
-                    {/* SCROLL INDICATOR */}
-                    <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-4 text-white/20">
-                        <div className="w-px h-20 bg-gradient-to-b from-emerald-500/50 to-transparent" />
-                        <span className="text-[9px] font-bold uppercase tracking-[0.5em] [writing-mode:vertical-lr] animate-pulse">Explore</span>
-                    </div>
-                </section>
-
-                {/* FLOATING SEARCH CONSOLE */}
-                <div className="max-w-6xl mx-auto px-6 relative z-30 -mt-24 md:-mt-32">
-                    <motion.div
-                        initial={{ opacity: 0, y: 50 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="bg-white rounded-[40px] p-8 md:p-12 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] border border-slate-100"
-                    >
-                        {/* SEARCH TABS */}
-                        <div className="flex flex-wrap justify-center gap-3 mb-12">
-                            {[
-                                { label: "Stays", key: "hotel", icon: Tent },
-                                { label: "Bikes & Scooters", key: "bike", icon: Bike },
-                                { label: "Car Rentals", key: "car", icon: Car },
-                                { label: "Experiences", key: "experience", icon: Music }
-                            ].map((t) => (
-                                <button
-                                    key={t.key}
-                                    onClick={() => {
-                                        if (t.key === 'experience') navigate('/experiences');
-                                        else setTab(t.key);
-                                    }}
-                                    className={`px-8 py-4 rounded-2xl font-bold text-[10px] uppercase tracking-widest transition-all flex items-center gap-3 ${tab === t.key ? 'bg-slate-900 text-white shadow-xl translate-y-[-2px]' : 'bg-slate-50 text-slate-400 hover:text-slate-900'}`}
-                                >
-                                    <t.icon size={16} />
-                                    {t.label}
-                                </button>
-                            ))}
-                        </div>
-
-                        {/* SEARCH INPUTS */}
-                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-end">
-                            <div className="lg:col-span-5 space-y-3 relative group">
-                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-4">Destination</label>
-                                <div className="relative">
-                                    <MapPin className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
-                                    <input
-                                        placeholder="Where would you like to go?"
-                                        value={search}
-                                        onChange={(e) => { setSearch(e.target.value); setShowSuggestions(true); }}
-                                        className="h-18 w-full rounded-2xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-emerald-500 transition-all outline-none pl-16 pr-6 font-bold text-slate-900 placeholder:text-slate-200 shadow-inner"
-                                    />
-                                    {showSuggestions && search && searchSuggestions.length > 0 && (
-                                        <div className="absolute top-full left-0 right-0 mt-4 bg-white rounded-3xl shadow-2xl p-6 border border-slate-100 z-50 overflow-hidden">
-                                            <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest mb-4 ml-2">Suggested Locations</p>
-                                            {searchSuggestions.slice(0, 5).map((loc, i) => (
-                                                <div key={i} onClick={() => { setSearch(loc); setShowSuggestions(false); }} className="px-6 py-4 hover:bg-emerald-50 rounded-2xl cursor-pointer font-bold text-slate-900 flex items-center justify-between transition-all group/loc">
-                                                    <div className="flex items-center gap-4"><MapPin size={18} className="text-slate-300 group-hover/loc:text-emerald-500" /> {loc}</div>
-                                                    <ArrowRight size={14} className="text-slate-200 group-hover/loc:text-emerald-500 opacity-0 group-hover/loc:opacity-100 translate-x-[-10px] group-hover/loc:translate-x-0 transition-all" />
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div className="lg:col-span-4 space-y-3">
-                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-4">Stay Dates</label>
-                                <div className="flex gap-3">
-                                    <div className="relative flex-1">
-                                        <input type="date" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} className="h-18 w-full rounded-2xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-emerald-500 transition-all outline-none px-6 font-bold text-[11px] shadow-inner" />
-                                    </div>
-                                    <div className="relative flex-1">
-                                        <input type="date" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} className="h-18 w-full rounded-2xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-emerald-500 transition-all outline-none px-6 font-bold text-[11px] shadow-inner" />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="lg:col-span-3 flex items-end">
-                                <button onClick={handleSearch} className="h-18 w-full bg-slate-900 hover:bg-emerald-600 text-white rounded-2xl font-bold uppercase text-[10px] tracking-widest flex items-center justify-center gap-4 shadow-xl shadow-slate-900/10 transition-all active:scale-95">
-                                    <Search size={20} /> Discover Now
-                                </button>
-                            </div>
-                        </div>
-                    </motion.div>
+                {/* ════ TAB STRIP ════ */}
+                <div className="max-w-7xl mx-auto px-6 mt-12 mb-20 flex flex-wrap items-center justify-center gap-4">
+                    {CATEGORIES.map(c => (
+                        <button
+                            key={c.key}
+                            onClick={() => {
+                                if (c.key === 'experience') navigate('/experiences');
+                                else setTab(c.key);
+                            }}
+                            className={`flex items-center gap-3 px-8 py-3.5 rounded-full transition-all border ${tab === c.key ? 'bg-slate-900 border-slate-900 text-white shadow-xl translate-y-[-2px]' : 'bg-white border-slate-100 text-slate-400 hover:border-slate-300 hover:text-slate-700'}`}
+                        >
+                            <c.icon size={16} />
+                            <span className="text-[13px] font-semibold uppercase tracking-widest">{c.label}</span>
+                        </button>
+                    ))}
                 </div>
 
-                {/* SERVICE PILLARS */}
-                <section className="py-48 px-6 bg-white">
+                {/* ════ TRENDING COLLECTION ════ */}
+                <section className="px-6 max-w-7xl mx-auto mb-32">
+                    <div className="flex flex-col md:flex-row items-baseline justify-between gap-4 mb-12 border-b border-slate-50 pb-8">
+                        <div>
+                            <h2 className="text-3xl font-medium tracking-tight text-slate-900">Featured collection.</h2>
+                            <p className="text-slate-400 text-sm font-normal mt-1">Directly from our verified local hosts.</p>
+                        </div>
+                        <Link to="/listings" className="text-emerald-500 font-semibold text-sm flex items-center gap-1.5 hover:gap-2.5 transition-all">
+                            View inventory <ArrowRight size={14} />
+                        </Link>
+                    </div>
+
+                    {loading ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                            {[1, 2, 3, 4].map(i => <WayzaSkeleton key={i} className="h-80 rounded-3xl" />)}
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                            {trendingList.map(l => (
+                                <motion.div key={l._id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+                                    <WayzaHotelItem
+                                        hotel={{
+                                            id: l._id,
+                                            name: l.title,
+                                            location: l.location || "Varkala Coast",
+                                            price: l.price,
+                                            image: fixImg(l.image)
+                                        }}
+                                    />
+                                </motion.div>
+                            ))}
+                        </div>
+                    )}
+                </section>
+
+                {/* ════ DESTINATIONS MASONRYish ════ */}
+                <section className="py-24 bg-slate-50 px-6">
                     <div className="max-w-7xl mx-auto">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-20">
-                            {[
-                                { title: "Verified Listings", desc: "Every property and vehicle is meticulously inspected for quality and accuracy.", icon: CheckCircle, color: "text-emerald-500", bg: "bg-emerald-50" },
-                                { title: "Seamless Experience", desc: "Enjoy a friction-less reservation process with instant confirmation and support.", icon: Sparkles, color: "text-blue-500", bg: "bg-blue-50" },
-                                { title: "Curated Insights", desc: "Access handpicked local secrets and exclusive activities curated by experts.", icon: Compass, color: "text-amber-500", bg: "bg-amber-50" }
-                            ].map((f, i) => (
-                                <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className="group">
-                                    <div className={`w-20 h-20 ${f.bg} ${f.color} rounded-3xl flex items-center justify-center mb-10 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6 shadow-sm`}>
-                                        <f.icon size={36} />
-                                    </div>
-                                    <h3 className="text-3xl font-bold text-slate-900 mb-5 leading-tight uppercase tracking-tight">{f.title}</h3>
-                                    <p className="text-slate-500 text-sm leading-relaxed font-medium italic">"{f.desc}"</p>
-                                </motion.div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* FEATURED DESTINATION - VARKALA */}
-                <section className="bg-slate-900 py-48 px-6 md:px-12 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-1/2 h-full bg-emerald-500/5 blur-[150px] pointer-events-none" />
-                    <div className="max-w-7xl mx-auto relative z-10">
-                        <div className="flex flex-col md:flex-row justify-between items-end mb-32 gap-10">
-                            <div className="space-y-6">
-                                <div className="flex items-center gap-3 text-emerald-400 font-bold text-[10px] uppercase tracking-[0.5em] italic">
-                                    <Sparkles size={16} className="animate-pulse" /> Exclusive Guide
-                                </div>
-                                <h2 className="text-6xl md:text-9xl font-bold text-white tracking-tighter leading-none uppercase">Discover <br /><span className="text-emerald-50 italic font-serif lowercase">Varkala.</span></h2>
-                            </div>
-                            <button onClick={() => navigate('/listings')} className="h-20 px-16 bg-white text-slate-900 hover:bg-emerald-500 hover:text-white rounded-[24px] font-bold text-[10px] uppercase tracking-[0.4em] transition-all flex items-center gap-6 shadow-2xl active:scale-95 group">
-                                Explore The Coast <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
-                            </button>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                            {varkalaSpots.map((spot, i) => (
-                                <motion.div
-                                    key={i} initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.1 }}
-                                    onClick={() => navigate(`/listings?location=${spot.name}`)}
-                                    className="group relative h-[600px] rounded-[48px] overflow-hidden cursor-pointer shadow-3xl transition-all duration-700 hover:translate-y-[-10px]"
+                        <h2 className="text-2xl font-medium text-slate-800 mb-12 text-center">Where we operate.</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                            {DESTINATIONS.map((d, i) => (
+                                <div
+                                    key={i}
+                                    className={`group cursor-pointer relative h-80 rounded-[40px] overflow-hidden shadow-2xl-soft ${d.colSpan === 2 ? 'md:col-span-2' : 'md:col-span-1'}`}
+                                    onClick={() => navigate(`/listings?location=${d.name}`)}
                                 >
-                                    <img src={spot.image} alt={spot.name} className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110" />
-                                    <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent" />
-
-                                    <div className="absolute top-8 left-8">
-                                        <span className="px-5 py-2.5 bg-white/10 backdrop-blur-xl rounded-full text-[9px] font-bold text-white uppercase tracking-widest border border-white/10">{spot.tag}</span>
+                                    <img src={d.image} alt={d.name} className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                                    <div className="absolute bottom-8 left-8 text-white">
+                                        <p className="font-medium text-2xl tracking-tight mb-1">{d.name}</p>
+                                        <p className="text-[10px] uppercase font-bold tracking-[0.2em] text-white/60">{d.properties}</p>
                                     </div>
-
-                                    <div className="absolute bottom-12 left-10 right-10 space-y-3">
-                                        <h3 className="text-3xl font-bold text-white leading-tight uppercase tracking-tight">{spot.name}</h3>
-                                        <p className="text-white/40 text-xs font-medium opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-500 italic">"{spot.description}"</p>
+                                    <div className="absolute top-8 right-8 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
+                                        <ArrowRight size={20} className="text-white" />
                                     </div>
-                                </motion.div>
+                                </div>
                             ))}
                         </div>
                     </div>
                 </section>
 
-                {/* NEW: AI TRIP PLANNER CTA */}
-                <section className="py-48 px-6 bg-slate-50 overflow-hidden relative">
-                    <div className="absolute top-0 right-0 w-1/2 h-full bg-emerald-500/5 blur-[120px] pointer-events-none" />
-                    <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-20">
-                        <div className="flex-1 space-y-10">
-                            <div className="inline-flex items-center gap-3 bg-emerald-100 text-emerald-700 px-6 py-2.5 rounded-full font-bold text-[10px] uppercase tracking-widest">
-                                <Sparkles size={14} /> New Feature
+                {/* ════ TRUST STRIP ════ */}
+                <section className="py-20 px-6 max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
+                        {[
+                            { icon: CheckCircle2, title: "Verified Stays", desc: "Every property is personally inspected by our team for absolute quality." },
+                            { icon: Compass, title: "Local Secrets", desc: "Access hidden beaches and cafes curated by our native guides." },
+                            { icon: Sparkles, title: "Wayza AI", desc: "Plan your entire stay + vehicle combination in seconds with our AI engine." }
+                        ].map((item, i) => (
+                            <div key={i} className="flex gap-6 items-start">
+                                <div className="shrink-0 w-12 h-12 bg-emerald-50 text-emerald-500 rounded-2xl flex items-center justify-center">
+                                    <item.icon size={24} strokeWidth={1.5} />
+                                </div>
+                                <div>
+                                    <h3 className="font-semibold text-slate-900 mb-2">{item.title}</h3>
+                                    <p className="text-slate-500 text-sm leading-relaxed">{item.desc}</p>
+                                </div>
                             </div>
-                            <h2 className="text-5xl md:text-7xl font-bold text-slate-900 tracking-tighter uppercase leading-none">
-                                Meet your <br /><span className="text-emerald-500 italic font-serif lowercase">AI Trip Architect.</span>
-                            </h2>
-                            <p className="text-slate-500 text-lg md:text-xl font-medium leading-relaxed italic border-l-4 border-slate-200 pl-8">
-                                "Simply tell us your destination and vibe. Our intelligence engine will craft a perfect itinerary with Stays, Wheels, and Experiences in seconds."
-                            </p>
-                            <button onClick={() => navigate('/ai-trip-planner')} className="h-20 px-12 bg-slate-900 text-white hover:bg-emerald-600 rounded-[24px] font-bold text-[10px] uppercase tracking-[0.3em] transition-all flex items-center gap-6 shadow-2xl active:scale-95 group">
-                                Try AI Planner <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
-                            </button>
-                        </div>
-                        <div className="flex-1 relative">
-                            <motion.div
-                                initial={{ opacity: 0, x: 50 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                className="bg-white rounded-[48px] shadow-3xl border border-slate-100 p-8 md:p-12 space-y-8"
-                            >
-                                <div className="flex justify-between items-center pb-6 border-b border-slate-50">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center text-white font-bold">W</div>
-                                        <div>
-                                            <h4 className="font-bold text-slate-900 uppercase text-xs tracking-tighter">Wayza AI</h4>
-                                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Architect V1.0</p>
-                                        </div>
-                                    </div>
-                                    <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse" />
+                        ))}
+                    </div>
+                </section>
+
+                {/* ════ SECTION: AI TRIP ARCHITECT ════ */}
+                <section className="py-20 px-6 bg-slate-950 text-white overflow-hidden relative">
+                    {/* Abstract Decorative Elements */}
+                    <div className="absolute top-0 right-0 w-[50%] h-full bg-emerald-500/5 blur-[150px] pointer-events-none" />
+                    <div className="absolute bottom-0 left-0 w-[30%] h-1/2 bg-blue-500/5 blur-[120px] pointer-events-none" />
+
+                    <div className="max-w-7xl mx-auto">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                            {/* Content Side */}
+                            <div className="space-y-8">
+                                <div className="inline-flex items-center gap-2.5 px-5 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 text-[9px] font-bold uppercase tracking-[0.3em]">
+                                    <Cpu size={12} className="animate-pulse" /> Neural Mapping v4.0
                                 </div>
                                 <div className="space-y-4">
-                                    <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 italic text-slate-500 text-sm">"Planning a chill soul-trip to Bali for 5 days..."</div>
-                                    <div className="bg-emerald-50 p-6 rounded-3xl border border-emerald-100 text-emerald-900 text-sm font-bold">"Generating your bespoke Bali Sanctuary journey..."</div>
+                                    <h2 className="text-4xl md:text-5xl font-medium tracking-tight leading-[1.1]">
+                                        Conversational <br />
+                                        <span className="text-emerald-500 italic font-serif">intelligence.</span>
+                                    </h2>
+                                    <p className="text-white/40 text-sm font-light leading-relaxed max-w-md">
+                                        Forget filters. Describe your mood and vibe. Our AI constructs a verified itinerary in real-time.
+                                    </p>
                                 </div>
-                                <div className="flex gap-3">
-                                    <div className="h-2 flex-1 bg-slate-100 rounded-full overflow-hidden">
-                                        <motion.div initial={{ width: 0 }} whileInView={{ width: '100%' }} transition={{ duration: 2 }} className="h-full bg-emerald-500" />
+
+                                {/* Interactive Chat Simulation */}
+                                <div className="bg-white/5 backdrop-blur-3xl border border-white/10 rounded-[40px] p-8 space-y-8 relative group overflow-hidden">
+                                    <div className="flex items-center gap-4 text-white/20 border-b border-white/5 pb-6">
+                                        <Terminal size={18} />
+                                        <span className="text-[10px] font-bold tracking-widest uppercase">Live Session</span>
                                     </div>
-                                </div>
-                            </motion.div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* TRENDING SELECTIONS */}
-                <section className="py-48 px-6 bg-white">
-                    <div className="max-w-7xl mx-auto">
-                        <header className="flex flex-col items-center text-center space-y-6 mb-32">
-                            <div className="flex items-center gap-3 text-emerald-600 font-bold text-[10px] uppercase tracking-[0.5em] italic">
-                                <Target size={16} /> Curated Stays
-                            </div>
-                            <h2 className="text-6xl md:text-8xl font-bold text-slate-900 tracking-tighter uppercase leading-none">The <span className="text-emerald-500 italic font-serif lowercase">Collection.</span></h2>
-                            <p className="text-slate-400 font-medium text-xl italic max-w-xl border-b border-emerald-500/10 pb-8">"Handpicked by our global scouts for distinguished explorers."</p>
-                        </header>
-
-                        {loading ? (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-                                {[1, 2, 3, 4].map(i => <WayzaSkeleton key={i} className="h-[450px] rounded-[40px]" />)}
-                            </div>
-                        ) : (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-                                {trendingListings.map((l, i) => (
-                                    <motion.div key={l._id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-                                        <WayzaHotelItem hotel={{ id: l._id, name: l.title, location: l.location || "Coastline", price: l.price, image: fixImg(l.image) }} />
-                                    </motion.div>
-                                ))}
-                            </div>
-                        )}
-
-                        <div className="mt-32 text-center">
-                            <Link to="/listings" className="h-20 px-16 bg-slate-900 text-white hover:bg-emerald-600 rounded-[32px] font-bold uppercase text-[10px] tracking-widest transition-all shadow-2xl shadow-slate-900/10 inline-flex items-center gap-6 active:scale-95">
-                                Browse The Full Portfolio <ArrowRight size={20} />
-                            </Link>
-                        </div>
-                    </div>
-                </section>
-
-                {/* TESTIMONIALS */}
-                <section className="py-48 px-6 bg-slate-50 relative overflow-hidden">
-                    <div className="max-w-6xl mx-auto relative z-10">
-                        <header className="text-center space-y-6 mb-32">
-                            <span className="text-emerald-600 font-bold text-[10px] uppercase tracking-[0.5em]">Guest Experience</span>
-                            <h2 className="text-5xl md:text-7xl font-bold text-slate-900 tracking-tight uppercase leading-none">Trusted Stories</h2>
-                        </header>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-                            {[
-                                { name: "Rahul Sharma", city: "Bangalore", q: "Absolutely incredible experience. The cliffside stay was even better than the photos. Seamless booking and perfect support." },
-                                { name: "Sarah Mitchell", city: "London", q: "The local insights were a game changer. Found spots I would have never seen on a typical travel site. 10/10." },
-                                { name: "Anish Kumar", city: "Mumbai", q: "Best platform for verified stays in Kerala. The community and support team are world class professionals." }
-                            ].map((t, i) => (
-                                <motion.div key={i} whileHover={{ y: -10 }} className="bg-white p-12 rounded-[48px] shadow-sm border border-slate-100 transition-all duration-500">
-                                    <div className="text-amber-400 mb-8 flex gap-1">
-                                        {[...Array(5)].map((_, i) => <Star key={i} size={18} className="fill-current" />)}
-                                    </div>
-                                    <p className="text-xl font-medium text-slate-700 italic leading-relaxed mb-12">"{t.q}"</p>
-                                    <div className="flex items-center gap-5 pt-10 border-t border-slate-50">
-                                        <div className="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-2xl shadow-inner uppercase">{t.name[0]}</div>
-                                        <div>
-                                            <h4 className="font-bold text-slate-900 text-lg uppercase tracking-tight">{t.name}</h4>
-                                            <p className="text-slate-400 font-bold text-[9px] uppercase tracking-widest">{t.city}, India</p>
+                                    <div className="space-y-6">
+                                        <div className="flex items-start gap-4">
+                                            <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-white/50 text-[10px] font-bold">ME</div>
+                                            <p className="text-white/80 text-sm md:text-base italic">"I need a quiet clifftop villa in Varkala with a bike for exploring secret cafes."</p>
+                                        </div>
+                                        <div className="flex items-start gap-4">
+                                            <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white"><Sparkles size={14} /></div>
+                                            <div className="space-y-3 flex-1">
+                                                <div className="flex gap-2">
+                                                    <div className="h-2 w-2 rounded-full bg-emerald-500 animate-bounce" />
+                                                    <div className="h-2 w-2 rounded-full bg-emerald-500 animate-bounce [animation-delay:0.2s]" />
+                                                    <div className="h-2 w-2 rounded-full bg-emerald-500 animate-bounce [animation-delay:0.4s]" />
+                                                </div>
+                                                <div className="bg-emerald-500/10 rounded-2xl p-4 border border-emerald-500/20">
+                                                    <p className="text-emerald-400 text-sm font-medium">Analyzing 142 properties... Matching 'Clifftop' + 'Cafe Access' + 'Verify Mobility'...</p>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </motion.div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
+                                    {/* Fake Input */}
+                                    <div className="flex items-center gap-4 bg-black/40 rounded-3xl px-6 py-4 border border-white/5">
+                                        <input
+                                            placeholder="Ask for your dream stay..."
+                                            className="bg-transparent border-none outline-none flex-1 text-sm text-white/30"
+                                            readOnly
+                                        />
+                                        <button className="text-emerald-500"><Send size={18} /></button>
+                                    </div>
+                                </div>
 
-                {/* PARTNER JOIN CTA */}
-                <section className="py-48 px-6">
-                    <div className="max-w-7xl mx-auto">
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.98 }} whileInView={{ opacity: 1, scale: 1 }}
-                            className="relative rounded-[70px] bg-slate-950 p-20 md:p-32 text-center overflow-hidden shadow-3xl"
-                        >
-                            <img src="https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=2000&q=80" className="absolute inset-0 w-full h-full object-cover opacity-10" alt="Partner Join" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-emerald-600/20 via-transparent to-transparent opacity-40" />
+                                <button onClick={() => navigate('/ai-trip-planner')} className="h-14 px-10 bg-white text-slate-950 hover:bg-emerald-500 hover:text-white rounded-full font-bold uppercase text-[10px] tracking-[0.3em] transition-all flex items-center gap-4 shadow-xl">
+                                    Launch Planner <ArrowRight size={14} />
+                                </button>
+                            </div>
 
-                            <div className="relative z-10 max-w-4xl mx-auto space-y-12">
-                                <span className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-md px-6 py-2.5 rounded-full text-emerald-300 font-bold text-[10px] uppercase tracking-[0.3em]">
-                                    <Award size={16} /> Partner Excellence Network
-                                </span>
+                            <div className="relative hidden lg:block">
+                                <div className="aspect-square rounded-[48px] overflow-hidden border border-white/10 shadow-3xl bg-slate-900 group">
+                                    <motion.img
+                                        initial={{ scale: 1.2, opacity: 0.6 }}
+                                        whileInView={{ scale: 1, opacity: 1 }}
+                                        transition={{ duration: 1.5 }}
+                                        src="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80"
+                                        alt="AI Visualization"
+                                        className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
 
-                                <h2 className="text-6xl md:text-8xl font-bold text-white tracking-tighter leading-tight uppercase">
-                                    Become part of <br />the <span className="text-emerald-100 italic">Wayza Collection.</span>
-                                </h2>
+                                    {/* Data Blobs */}
+                                    <motion.div
+                                        animate={{ y: [0, -20, 0] }}
+                                        transition={{ repeat: Infinity, duration: 4 }}
+                                        className="absolute top-12 left-12 p-6 bg-white/10 backdrop-blur-3xl border border-white/20 rounded-3xl"
+                                    >
+                                        <BrainCircuit size={32} className="text-emerald-400 mb-2" />
+                                        <p className="text-[10px] font-bold uppercase tracking-widest text-white/60">Semantic Match</p>
+                                        <p className="text-xl font-bold">98.4% Accuracy</p>
+                                    </motion.div>
 
-                                <p className="text-white/50 text-xl md:text-2xl font-medium max-w-2xl mx-auto leading-relaxed italic">
-                                    Showcase your property to a global audience. Join our network of premium hosts today.
-                                </p>
-
-                                <div className="flex flex-col md:flex-row justify-center gap-6 pt-10">
-                                    <button onClick={() => navigate('/partner-register')} className="h-20 px-12 bg-emerald-600 text-white hover:bg-emerald-500 rounded-2xl font-bold uppercase text-[10px] tracking-widest transition-all shadow-2xl shadow-emerald-600/20">
-                                        Join as a Partner
-                                    </button>
-                                    <button onClick={() => navigate('/about')} className="h-20 px-12 border-2 border-white/20 text-white hover:bg-white/10 rounded-2xl font-bold uppercase text-[10px] tracking-widest transition-all">
-                                        Membership Details
-                                    </button>
+                                    <motion.div
+                                        animate={{ y: [0, 20, 0] }}
+                                        transition={{ repeat: Infinity, duration: 5 }}
+                                        className="absolute bottom-12 right-12 p-6 bg-emerald-500/20 backdrop-blur-3xl border border-emerald-500/30 rounded-3xl text-right"
+                                    >
+                                        <Waves size={32} className="text-emerald-400 mb-2 ml-auto" />
+                                        <p className="text-[10px] font-bold uppercase tracking-widest text-white/60">Vibration Index</p>
+                                        <p className="text-xl font-bold">Ocean Calm</p>
+                                    </motion.div>
                                 </div>
                             </div>
-                        </motion.div>
+                        </div>
                     </div>
                 </section>
 
-                {/* REFINED FOOTER */}
-                <footer className="bg-white py-48 px-6 md:px-12 border-t border-slate-100">
-                    <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-20">
-                        <div className="md:col-span-5 space-y-10">
-                            <h2 className="text-4xl font-bold tracking-tighter text-slate-900 uppercase">Wayza<span className="text-emerald-500">.</span></h2>
-                            <p className="text-slate-400 font-medium text-lg leading-relaxed italic max-w-md">
-                                Your gateway to extraordinary stays and curated adventures. Bridging the gap between travelers and authentic local excellence.
-                            </p>
-                            <div className="flex gap-4">
-                                {[Globe, Shield, Zap, MessageSquare].map((Icon, i) => (
-                                    <div key={i} className="w-14 h-14 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-center text-slate-400 hover:text-emerald-600 transition-all cursor-pointer">
-                                        <Icon size={22} />
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="md:col-span-2 space-y-10">
-                            <h3 className="text-slate-900 font-bold uppercase text-[10px] tracking-[0.4em]">Explore</h3>
-                            <ul className="space-y-6">
-                                {[
-                                    { n: 'Our Stays', k: 'hotel' },
-                                    { n: 'Explore Map', k: 'map' },
-                                    { n: 'Bike Rentals', k: 'bike' },
-                                    { n: 'Car Rentals', k: 'car' }
-                                ].map(l => <li key={l.k}><Link to={l.k === 'map' ? '/explore-map' : `/listings?category=${l.k}`} className="text-slate-400 font-bold text-sm hover:text-emerald-600 transition-colors uppercase tracking-tight">{l.n}</Link></li>)}
-                            </ul>
-                        </div>
-
-                        <div className="md:col-span-2 space-y-10">
-                            <h3 className="text-slate-900 font-bold uppercase text-[10px] tracking-[0.4em]">Company</h3>
-                            <ul className="space-y-6">
-                                {['About Wayza', 'Support Center', 'Partner Program', 'Safety & Trust'].map(l => <li key={l}><Link to={l === 'Support Center' ? '/support' : '/'} className="text-slate-400 font-bold text-sm hover:text-emerald-600 transition-colors uppercase tracking-tight">{l}</Link></li>)}
-                            </ul>
-                        </div>
-
-                        <div className="md:col-span-3 space-y-10">
-                            <h3 className="text-slate-900 font-bold uppercase text-[10px] tracking-[0.4em]">Newsletter</h3>
-                            <p className="text-slate-400 text-sm font-medium italic">Subscribe for early access to new stay collections and exclusive offers.</p>
-                            <div className="relative">
-                                <input placeholder="Your Email" className="w-full h-16 bg-slate-50 border border-slate-100 rounded-2xl px-6 font-bold text-sm focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200" />
-                                <button className="absolute right-3 top-3 bottom-3 px-6 bg-slate-900 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-emerald-600 transition-all">Join</button>
-                            </div>
-                        </div>
+                <footer className="bg-slate-950 pt-16 pb-8 px-6 overflow-hidden relative border-t border-white/5">
+                    {/* Subtle Watermark */}
+                    <div className="absolute -bottom-6 -right-6 text-[10vw] font-black text-white/[0.02] select-none pointer-events-none uppercase tracking-tighter">
+                        Wayza
                     </div>
 
-                    <div className="max-w-7xl mx-auto mt-48 pt-12 border-t border-slate-50 flex flex-col md:flex-row justify-between items-center gap-10">
-                        <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-slate-300">© 2026 Wayza Travels • All Rights Reserved</span>
-                        <div className="flex gap-16 text-[10px] font-bold uppercase tracking-[0.5em] text-slate-300">
-                            <span className="hover:text-emerald-600 transition-colors cursor-pointer">Privacy Policy</span>
-                            <span className="hover:text-emerald-600 transition-colors cursor-pointer">Terms of Service</span>
+                    <div className="max-w-7xl mx-auto">
+                        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 mb-16 relative z-10">
+                            {/* Brand DNA */}
+                            <div className="md:col-span-4 space-y-6">
+                                <div className="space-y-3">
+                                    <h2 className="text-xl font-bold tracking-tighter text-white uppercase">Wayza<span className="text-emerald-500">.</span></h2>
+                                    <p className="text-white/30 text-xs leading-relaxed font-light italic max-w-[240px]">
+                                        "Defining verified inventory and soulful exploration."
+                                    </p>
+                                </div>
+                                <div className="space-y-3">
+                                    <div className="flex bg-white/5 rounded-full p-1 border border-white/10 max-w-xs transition-all focus-within:border-emerald-500">
+                                        <input placeholder="Newsletter" className="bg-transparent border-none outline-none flex-1 px-4 text-[10px] py-1 text-white/70 placeholder:text-white/20" />
+                                        <button className="bg-emerald-500 text-white w-6 h-6 rounded-full flex items-center justify-center hover:bg-emerald-400 transition-colors">
+                                            <ArrowRight size={10} />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Links Grid */}
+                            <div className="md:col-span-8 grid grid-cols-2 lg:grid-cols-4 gap-8">
+                                <div className="space-y-4">
+                                    <p className="text-[8px] font-bold uppercase tracking-[0.3em] text-emerald-500/50">Protocol</p>
+                                    <ul className="space-y-2">
+                                        {['The Method', 'Verification', 'Partners'].map(l => (
+                                            <li key={l}><Link to="/about" className="text-[11px] font-medium text-white/50 hover:text-white transition-colors uppercase tracking-tight">{l}</Link></li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                <div className="space-y-4">
+                                    <p className="text-[8px] font-bold uppercase tracking-[0.3em] text-emerald-500/50">Inventory</p>
+                                    <ul className="space-y-2">
+                                        {['Villas', 'Mobility', 'Secrets'].map(l => (
+                                            <li key={l}><Link to="/listings" className="text-[11px] font-medium text-white/50 hover:text-white transition-colors uppercase tracking-tight">{l}</Link></li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                <div className="space-y-4">
+                                    <p className="text-[8px] font-bold uppercase tracking-[0.3em] text-emerald-500/50">Connect</p>
+                                    <ul className="space-y-2">
+                                        <li><a href="#" className="flex items-center gap-2 text-[11px] font-medium text-white/50 hover:text-white transition-colors uppercase tracking-tight"><Instagram size={11} /> Instagram</a></li>
+                                        <li><a href="#" className="flex items-center gap-2 text-[11px] font-medium text-white/50 hover:text-white transition-colors uppercase tracking-tight"><Mail size={11} /> Contact</a></li>
+                                    </ul>
+                                </div>
+                                <div className="space-y-2 bg-white/[0.03] backdrop-blur-md rounded-2xl p-4 border border-white/10 self-start">
+                                    <div className="flex items-center gap-1.5 text-emerald-500 font-bold text-[9px] uppercase tracking-widest">
+                                        <Shield size={14} /> Secured
+                                    </div>
+                                    <p className="text-[9px] text-white/30 leading-relaxed mt-2">Verified encryption enabled.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[8px] font-bold text-white/20 uppercase tracking-[0.2em]">
+                            <div className="flex gap-6">
+                                <span>Wayza Travels © 2026</span>
+                                <Link to="/privacy" className="hover:text-white/60">Privacy</Link>
+                                <Link to="/terms" className="hover:text-white/60">Terms</Link>
+                            </div>
+                            <div className="flex items-center gap-4">
+                                <span className="flex items-center gap-1.5"><Globe size={10} /> Gateway</span>
+                                <span className="flex items-center gap-1.5"><Landmark size={10} /> Varkala</span>
+                            </div>
                         </div>
                     </div>
                 </footer>

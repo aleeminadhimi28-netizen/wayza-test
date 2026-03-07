@@ -4,6 +4,7 @@ import { WayzaLayout } from "../../WayzaUI.jsx";
 import { Sparkles, MapPin, Calendar, Heart, Search, Compass, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCurrency } from "../../CurrencyContext.jsx";
+import { api } from "../../utils/api.js";
 
 export default function AITripPlanner() {
     const [destination, setDestination] = useState("");
@@ -12,39 +13,28 @@ export default function AITripPlanner() {
     const [itinerary, setItinerary] = useState(null);
     const { formatPrice } = useCurrency();
 
-    const generateTrip = () => {
+    const generateTrip = async () => {
         if (!destination) return;
         setIsGenerating(true);
         setItinerary(null);
 
-        // Simulating AI generation delay
-        setTimeout(() => {
+        try {
+            const res = await api.generateTrip({ destination, vibe });
+            if (res.ok) {
+                // Formatting price on the frontend to match context
+                const formattedData = {
+                    ...res.data,
+                    totalPrice: formatPrice(res.data.totalPrice)
+                };
+                setItinerary(formattedData);
+            } else {
+                alert(res.message || "Could not generate trip. Try a broader destination like 'Varkala'.");
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
             setIsGenerating(false);
-            setItinerary({
-                destination: destination || "Mountain Retreat",
-                vibe: vibe,
-                days: [
-                    {
-                        day: 1,
-                        title: "Arrival & Unwind",
-                        items: [
-                            { type: 'car', time: "10:00 AM", title: "Pick up Premium SUV", desc: "Your reserved Range Rover awaits at the airport." },
-                            { type: 'hotel', time: "12:00 PM", title: "Check-in: Luxury Cabin", desc: "Settle into your boutique cabin with panoramic views." },
-                            { type: 'activity', time: "05:00 PM", title: "Sunset Hike & Dinner", desc: "A guided 2-hour hike concluding with a local organic dinner." }
-                        ]
-                    },
-                    {
-                        day: 2,
-                        title: "Adrenaline & Exploration",
-                        items: [
-                            { type: 'bike', time: "09:00 AM", title: "Mountain E-Bike Rental", desc: "Hit the hidden trails with your reserved high-end E-bikes." },
-                            { type: 'activity', time: "01:00 PM", title: "Hidden Waterfall Tour", desc: "Exclusive access to private waterfalls with a local guide." }
-                        ]
-                    }
-                ],
-                totalPrice: formatPrice(45500)
-            });
-        }, 2500);
+        }
     };
 
     return (

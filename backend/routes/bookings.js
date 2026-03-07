@@ -49,6 +49,19 @@ router.post("/book", requireAuth, async (req, res, next) => {
         const serviceFee = 99;
         const totalPrice = baseAmount + gst + serviceFee;
 
+        // RACE CONDITION FIX: Check for overlapping bookings
+        const conflictingBooking = await bookings.findOne({
+            listingId,
+            variantIndex: variantIndex || 0,
+            status: { $in: ["pending", "paid"] },
+            checkIn: { $lt: checkOut },
+            checkOut: { $gt: checkIn }
+        });
+
+        if (conflictingBooking) {
+            return res.status(409).json({ ok: false, message: "These dates are already booked. Please select different dates." });
+        }
+
         const booking = await bookings.insertOne({
             listingId,
             variantIndex: variantIndex || 0,

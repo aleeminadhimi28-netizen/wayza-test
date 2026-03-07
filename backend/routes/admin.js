@@ -22,7 +22,13 @@ router.post("/login", async (req, res, next) => {
         if (!ok) return res.status(401).json({ ok: false, message: "Invalid password" });
 
         const token = jwt.sign({ email: user.email, role: "admin" }, SECRET, { expiresIn: "7d" });
-        res.json({ ok: true, token, email: user.email });
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        });
+        res.json({ ok: true, email: user.email });
     } catch (err) { next(err); }
 });
 

@@ -3,6 +3,10 @@ import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 dotenv.config();
 
+if (process.env.NODE_ENV === "production") {
+    console.error("SEED SCRIPTS CANNOT RUN IN PRODUCTION");
+    process.exit(1);
+}
 const client = new MongoClient(process.env.MONGO_URL || "mongodb://localhost:27017/wayza");
 
 async function run() {

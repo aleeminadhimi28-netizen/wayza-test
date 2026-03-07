@@ -10,7 +10,7 @@ import { api } from "../../utils/api.js";
 
 export default function Login() {
     const navigate = useNavigate();
-    const { login } = useAuth();
+    const { login, user } = useAuth();
     const { showToast } = useToast();
 
     const [email, setEmail] = useState("");
@@ -20,13 +20,10 @@ export default function Login() {
 
     // AUTO REDIRECT IF ALREADY LOGGED IN
     useEffect(() => {
-        const email = localStorage.getItem("email");
-        const role = localStorage.getItem("role");
-        const loggedIn = localStorage.getItem("loggedIn");
-        if (email && loggedIn === "true" && role === "guest") {
+        if (user && user.role === "guest") {
             navigate("/", { replace: true });
         }
-    }, [navigate]);
+    }, [user, navigate]);
 
     async function handleLogin(e) {
         if (e) e.preventDefault();
@@ -47,7 +44,6 @@ export default function Login() {
                 return;
             }
 
-            localStorage.setItem("token", data.data.token);
             login({ email: data.data.email, role: data.data.role });
             showToast("Welcome back to Wayza!", "success");
             navigate("/");
