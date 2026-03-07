@@ -4,9 +4,11 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import VerificationSpinner from "./components/VerificationSpinner.jsx";
 import { CurrencyProvider } from "./CurrencyContext.jsx";
+import { AuthProvider } from "./AuthContext.jsx";
+import { ToastProvider } from "./ToastContext.jsx";
+import ErrorBoundary from "./components/ErrorBoundary.jsx";
 
 /* ================= PUBLIC ================= */
-
 const LandingPage = lazy(() => import("./pages/public/LandingPage.jsx"));
 const Listings = lazy(() => import("./pages/public/Listings.jsx"));
 const Login = lazy(() => import("./pages/public/Login.jsx"));
@@ -29,17 +31,15 @@ const CustomerSupport = lazy(() => import("./pages/public/CustomerSupport.jsx"))
 const ExploreMap = lazy(() => import("./pages/public/ExploreMap.jsx"));
 const AITripPlanner = lazy(() => import("./pages/public/AITripPlanner.jsx"));
 const Experiences = lazy(() => import("./pages/public/Experiences.jsx"));
-// Destructure after lazy import if possible or lazy import the specific ones
-const PrivacyPolicy = lazy(() => import("./pages/public/StaticPages.jsx").then(module => ({ default: module.PrivacyPolicy })));
-const TermsOfService = lazy(() => import("./pages/public/StaticPages.jsx").then(module => ({ default: module.TermsOfService })));
-const AboutUs = lazy(() => import("./pages/public/StaticPages.jsx").then(module => ({ default: module.AboutUs })));
+
+const PrivacyPolicy = lazy(() => import("./pages/public/StaticPages.jsx").then(m => ({ default: m.PrivacyPolicy })));
+const TermsOfService = lazy(() => import("./pages/public/StaticPages.jsx").then(m => ({ default: m.TermsOfService })));
+const AboutUs = lazy(() => import("./pages/public/StaticPages.jsx").then(m => ({ default: m.AboutUs })));
 
 /* ================= PARTNER ================= */
-
 const PartnerLogin = lazy(() => import("./pages/partner/PartnerLogin.jsx"));
 const PartnerOnboarding = lazy(() => import("./pages/partner/PartnerOnboarding.jsx"));
 const PartnerLayout = lazy(() => import("./layout/PartnerLayout.jsx"));
-
 const PartnerHome = lazy(() => import("./pages/partner/PartnerDashboard.jsx"));
 const PartnerListings = lazy(() => import("./pages/partner/PartnerListings.jsx"));
 const PartnerBookings = lazy(() => import("./pages/partner/PartnerBookings.jsx"));
@@ -53,43 +53,25 @@ const PartnerEarnings = lazy(() => import("./pages/partner/PartnerEarnings.jsx")
 const PartnerWallet = lazy(() => import("./pages/partner/PartnerWallet.jsx"));
 const PartnerRegister = lazy(() => import("./pages/partner/PartnerRegister.jsx"));
 
-import "leaflet/dist/leaflet.css";
-import "./utils/fixLeafletIcon";
-
 /* ================= ADMIN ================= */
-
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard.jsx"));
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin.jsx"));
 
 /* ================= GUARDS ================= */
-
 import AuthGuard from "./AuthGuard.jsx";
 import PartnerGuard from "./pages/partner/PartnerGuard.jsx";
 import AdminGuard from "./AdminGuard.jsx";
 
-/* ================= CONTEXT ================= */
-
-import { AuthProvider } from "./AuthContext.jsx";
-import { ToastProvider } from "./ToastContext.jsx";
-
+import "leaflet/dist/leaflet.css";
+import "./utils/fixLeafletIcon";
 import "./index.css";
 
-/* ================= ROUTES ================= */
-
-function AnimatedRoutes() {
+function AppContent() {
     const location = useLocation();
-
     return (
-        <Suspense fallback={
-            <VerificationSpinner
-                message="Establishing Fast Secure Connection..."
-                subtext="Synchronizing Portal Modules"
-            />
-        }>
+        <Suspense fallback={<VerificationSpinner message="Synchronizing Gateway..." subtext="Loading Portal Modules" />}>
             <AnimatePresence mode="wait">
                 <Routes location={location} key={location.pathname}>
-
-                    {/* ===== PUBLIC ===== */}
                     <Route path="/" element={<LandingPage />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<Signup />} />
@@ -113,17 +95,10 @@ function AnimatedRoutes() {
                     <Route path="/explore-map" element={<ExploreMap />} />
                     <Route path="/ai-trip-planner" element={<AITripPlanner />} />
                     <Route path="/experiences" element={<Experiences />} />
-                    <Route path="*" element={<NotFound />} />
-
-                    {/* ===== PARTNER AUTH ===== */}
                     <Route path="/partner-login" element={<PartnerLogin />} />
                     <Route path="/partner-onboarding" element={<PartnerOnboarding />} />
                     <Route path="/partner-register" element={<PartnerRegister />} />
-
-
-                    {/* ===== PARTNER DASHBOARD (NESTED) ===== */}
                     <Route path="/partner" element={<PartnerGuard><PartnerLayout /></PartnerGuard>}>
-
                         <Route index element={<PartnerHome />} />
                         <Route path="properties" element={<PartnerListings />} />
                         <Route path="bookings" element={<PartnerBookings />} />
@@ -135,37 +110,30 @@ function AnimatedRoutes() {
                         <Route path="chat" element={<PartnerChat />} />
                         <Route path="wallet" element={<PartnerWallet />} />
                         <Route path="property/:id" element={<PartnerProperty />} />
-
                     </Route>
-
-                    {/* ===== ADMIN ===== */}
                     <Route path="/admin" element={<AdminGuard><AdminDashboard /></AdminGuard>} />
                     <Route path="/admin-login" element={<AdminLogin />} />
-
+                    <Route path="*" element={<NotFound />} />
                 </Routes>
             </AnimatePresence>
         </Suspense>
     );
 }
 
-import ErrorBoundary from "./components/ErrorBoundary.jsx";
-
-/* ================= APP ================= */
-
-function App() {
+function Root() {
     return (
-        <ErrorBoundary>
-            <AuthProvider>
-                <CurrencyProvider>
-                    <ToastProvider>
-                        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-                            <AnimatedRoutes />
-                        </BrowserRouter>
-                    </ToastProvider>
-                </CurrencyProvider>
-            </AuthProvider>
-        </ErrorBoundary>
+        <BrowserRouter>
+            <ErrorBoundary>
+                <AuthProvider>
+                    <CurrencyProvider>
+                        <ToastProvider>
+                            <AppContent />
+                        </ToastProvider>
+                    </CurrencyProvider>
+                </AuthProvider>
+            </ErrorBoundary>
+        </BrowserRouter>
     );
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+ReactDOM.createRoot(document.getElementById("root")).render(<Root />);

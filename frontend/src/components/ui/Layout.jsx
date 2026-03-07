@@ -85,7 +85,7 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
         { name: "AI Trip", to: "/ai-trip-planner", icon: Sparkles },
     ];
 
-    const isHomePage = location.pathname === "/";
+    const isHomePage = location?.pathname === "/";
     const headerBg = (scrolled || !isHomePage || mobileMenuOpen) ? 'bg-white/95 backdrop-blur-xl shadow-sm border-b border-slate-100' : 'bg-transparent';
     const textColor = (scrolled || !isHomePage || mobileMenuOpen) ? 'text-slate-900' : 'text-white';
     const subTextColor = (scrolled || !isHomePage || mobileMenuOpen) ? 'text-slate-500' : 'text-white/60';
