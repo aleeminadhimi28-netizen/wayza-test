@@ -29,7 +29,9 @@ const PORT = process.env.PORT || 5000;
 connectDB();
 
 /* ---------------- MIDDLEWARE ---------------- */
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: false,
+}));
 app.use(compression());
 app.use(morgan("dev"));
 app.use(cors({
@@ -40,7 +42,11 @@ app.use(cors({
       "http://localhost:5174",
       "http://localhost:5175",
     ].filter(Boolean);
-    if (!origin || allowed.includes(origin)) return callback(null, true);
+
+    // Check if origin is allowed or matches vercel.app
+    const isVercel = origin && origin.endsWith(".vercel.app");
+
+    if (!origin || allowed.includes(origin) || isVercel) return callback(null, true);
     return callback(new Error("CORS: Not allowed — " + origin));
   },
   credentials: true

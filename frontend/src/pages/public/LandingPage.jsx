@@ -95,9 +95,9 @@ export default function LandingPage() {
                         <motion.div
                             initial={{ opacity: 0, y: 15 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="space-y-4 mb-10 pt-20 md:pt-0"
+                            className="space-y-4 mb-10 pt-36 md:pt-0"
                         >
-                            <h1 className="text-3xl md:text-6xl font-medium tracking-tight text-white drop-shadow-md">
+                            <h1 className="text-3xl md:text-6xl font-medium tracking-tight text-white drop-shadow-md leading-tight">
                                 Escape the ordinary <br className="md:hidden" />
                                 <span className="text-emerald-500 italic font-serif">gracefully.</span>
                             </h1>
