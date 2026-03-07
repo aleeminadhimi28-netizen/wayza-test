@@ -94,6 +94,7 @@ export const api = {
         headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         body: JSON.stringify(data)
     }).then(r => r.json()),
+    bookListing: (data) => api.book(data),
 
     confirmBooking: (data) => customFetch(`${API_URL}/bookings/confirm`, {
         method: "POST",
@@ -112,6 +113,7 @@ export const api = {
     }).then(r => r.json()),
 
     getListingBookings: (id) => customFetch(`${API_URL}/bookings/${id}`).then(r => r.json()),
+    getBookedDates: (id) => api.getListingBookings(id),
 
     // Partner
     partnerLogin: (credentials) => customFetch(`${API_URL}/partner/login`, {
