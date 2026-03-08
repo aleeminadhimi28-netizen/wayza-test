@@ -52,11 +52,16 @@ router.get("/:id", async (req, res, next) => {
 
         if (!listing.approved) {
             const authHeader = req.headers.authorization;
+            let token = null;
+            if (req.cookies && req.cookies.token) {
+                token = req.cookies.token;
+            } else if (authHeader && authHeader.startsWith("Bearer ")) {
+                token = authHeader.split(" ")[1];
+            }
             let requesterEmail = null;
             let requesterRole = null;
-            if (authHeader) {
+            if (token) {
                 try {
-                    const token = authHeader.split(" ")[1];
                     const decoded = jwt.verify(token, SECRET);
                     requesterEmail = decoded.email;
                     requesterRole = decoded.role;
