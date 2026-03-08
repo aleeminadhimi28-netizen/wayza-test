@@ -8,6 +8,7 @@ import {
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
 
 import { api } from "../../utils/api.js";
+import { useToast } from "../../ToastContext.jsx";
 
 export default function AdminDashboard() {
     const [stats, setStats] = useState(null);
@@ -26,13 +27,15 @@ export default function AdminDashboard() {
     // Withdrawal state
     const [withdrawals, setWithdrawals] = useState([]);
 
+    const { showToast } = useToast();
+
     useEffect(() => {
         api.adminStats()
             .then(d => {
                 if (d.error) { setErrorMsg("Unauthorized. Admin privileges required."); return; }
                 if (d) setStats(d);
             })
-            .catch(() => setErrorMsg("Failed to load dashboard data."));
+            .catch(() => setErrorMsg("Failed to load dashboard data. Is the backend running?"));
     }, []);
 
     useEffect(() => {
@@ -48,8 +51,19 @@ export default function AdminDashboard() {
         else if (activeTab === 'bookings') p = api.adminBookings();
 
         if (p) {
-            p.then(d => { if (d.ok) setDataList(d.data || []); setLoadingData(false); })
-                .catch(() => setLoadingData(false));
+            p.then(d => {
+                if (d.ok) {
+                    setDataList(d.data || []);
+                } else {
+                    showToast(`Failed to load ${activeTab}: ${d.message || 'Unknown error'}`, "error");
+                }
+                setLoadingData(false);
+            })
+                .catch(err => {
+                    console.error(`Fetch error for ${activeTab}:`, err);
+                    showToast(`Unable to reach backend for ${activeTab}. It might still be deploying.`, "error");
+                    setLoadingData(false);
+                });
         }
     }, [activeTab]);
 
