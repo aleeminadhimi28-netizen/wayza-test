@@ -50,8 +50,8 @@ router.post("/login", async (req, res, next) => {
         const token = jwt.sign({ email: user.email, role: "partner" }, SECRET, { expiresIn: "7d" });
         res.cookie("token", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
+            secure: true,
+            sameSite: "none",
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
         res.json({ ok: true, email: user.email });
