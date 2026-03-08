@@ -14,10 +14,26 @@ class ErrorBoundary extends React.Component {
 
     componentDidCatch(error, errorInfo) {
         console.error("ErrorBoundary caught an error", error, errorInfo);
+
+        // Treat chunk load errors (failed to fetch dynamically imported module) by automatically reloading
+        // This handles cases where a new version of the site is deployed while the user is actively browsing
+        if (
+            error?.message?.match(/Failed to fetch dynamically imported module/i) ||
+            error?.message?.match(/Importing a module script failed/i)
+        ) {
+            const hasReloaded = sessionStorage.getItem("wayza_chunk_reload");
+            if (!hasReloaded) {
+                console.log("Chunk error detected. Auto-reloading to fetch fresh assets...");
+                sessionStorage.setItem("wayza_chunk_reload", "true");
+                window.location.reload(true);
+            }
+        }
     }
 
     render() {
         if (this.state.hasError) {
+            // Reset the reload locker so if they get here genuinely, they can still manual reload later
+            sessionStorage.removeItem("wayza_chunk_reload");
             return (
                 <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-8 text-center font-sans">
                     <div className="max-w-md w-full space-y-8 bg-white p-12 rounded-[48px] shadow-2xl border border-slate-100">
