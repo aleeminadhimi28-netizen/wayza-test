@@ -204,6 +204,11 @@ export const api = {
         headers: getAuthHeaders()
     }).then(r => r.json()),
 
+    adminApprovePartner: (email) => customFetch(`${API_URL}/admin/partners/${email}/approve`, {
+        method: "PATCH",
+        headers: getAuthHeaders()
+    }).then(r => r.json()),
+
     adminListings: () => customFetch(`${API_URL}/admin/listings`, {
         headers: getAuthHeaders()
     }).then(r => r.json()),

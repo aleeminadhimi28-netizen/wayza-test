@@ -141,6 +141,18 @@ router.delete("/listings/:id", requireAuth, async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
+router.patch("/partners/:email/approve", requireAuth, async (req, res, next) => {
+    try {
+        if (req.user.role !== "admin") return res.status(403).json({ ok: false });
+        const db = getDB();
+        await db.collection("partners").updateOne(
+            { email: req.params.email },
+            { $set: { onboarded: true, updatedAt: new Date() } }
+        );
+        res.json({ ok: true });
+    } catch (err) { next(err); }
+});
+
 router.patch("/listings/:id/approve", requireAuth, async (req, res, next) => {
     try {
         if (req.user.role !== "admin") return res.status(403).json({ ok: false });

@@ -114,6 +114,15 @@ export default function AdminDashboard() {
         await handleDeleteItem("listings", id);
     }
 
+    async function handleApprovePartner(email) {
+        if (!window.confirm("Approve this partner and activate their account?")) return;
+        try {
+            const d = await api.adminApprovePartner(email);
+            if (d.ok) setDataList(prev => prev.map(item => item.email === email ? { ...item, onboarded: true } : item));
+            showToast("Partner approved successfully!", "success");
+        } catch (err) { console.error(err); }
+    }
+
     async function handleMuteUser(email, muted) {
         if (!window.confirm(`${muted ? "Mute" : "Unmute"} this user?`)) return;
         try {
@@ -664,6 +673,12 @@ export default function AdminDashboard() {
                                                                             : 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-500 hover:text-white'}`}
                                                                     >
                                                                         {item.muted ? <><Volume2 size={13} /> Unmute</> : <><VolumeX size={13} /> Mute</>}
+                                                                    </button>
+                                                                )}
+                                                                {/* Approve button for unonboarded partners */}
+                                                                {activeTab === "partners" && !item.onboarded && (
+                                                                    <button onClick={() => handleApprovePartner(item.email)} className="h-8 px-4 bg-emerald-600 text-white rounded-lg font-semibold text-xs hover:bg-emerald-700 transition-colors flex items-center gap-1.5 shadow-sm">
+                                                                        <CheckCircle size={13} /> Approve
                                                                     </button>
                                                                 )}
                                                                 {/* Delete */}
