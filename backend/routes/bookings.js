@@ -66,7 +66,8 @@ router.post("/book", requireAuth, async (req, res, next) => {
         const nights = Math.ceil((new Date(checkOut) - new Date(checkIn)) / 86400000);
         const pricePerNight = Number(variant?.price || listing.price || 0);
         const baseAmount = pricePerNight * nights;
-        const gst = Math.round(baseAmount * GST_RATE);
+        const isVehicle = listing.category === "bike" || listing.category === "car";
+        const gst = isVehicle ? 0 : Math.round(baseAmount * GST_RATE);
         const serviceFee = SERVICE_FEE;
         const totalPrice = baseAmount + gst + serviceFee;
 
@@ -88,9 +89,11 @@ router.post("/book", requireAuth, async (req, res, next) => {
             variantIndex: variantIndex || 0,
             variantName: variant?.name,
             title,
+            category: listing.category || "hotel",
             ownerEmail: ownerEmail || listing.ownerEmail,
             guestEmail: req.user.email,
             checkIn, checkOut, nights, pricePerNight,
+            gst, serviceFee,
             totalPrice, status: "pending",
             createdAt: new Date()
         });

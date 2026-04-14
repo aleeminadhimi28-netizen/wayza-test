@@ -66,8 +66,9 @@ export default function Booking() {
         : 0;
 
     const baseAmount = nights * pricePerNight;
-    const gst = Math.round(baseAmount * 0.12);
-    const serviceFee = nights > 0 ? 199 : 0;
+    const isVehicle = listing?.category === "bike" || listing?.category === "car";
+    const gst = isVehicle ? 0 : Math.round(baseAmount * 0.12);
+    const serviceFee = nights > 0 ? 99 : 0;
     const totalAmount = baseAmount + gst + serviceFee;
 
     const stayInvalid = nights > 0 && nights < minStay;
@@ -235,8 +236,8 @@ export default function Booking() {
                                                 <span>₹{baseAmount.toLocaleString()}</span>
                                             </div>
                                             <div className="flex justify-between text-slate-600 font-medium">
-                                                <span>GST (12%)</span>
-                                                <span>₹{gst.toLocaleString()}</span>
+                                                <span>GST {isVehicle ? "(Waived for Vehicles)" : "(12%)"}</span>
+                                                {isVehicle ? <span className="text-emerald-500 font-bold">Waived</span> : <span>₹{gst.toLocaleString()}</span>}
                                             </div>
                                             <div className="flex justify-between text-slate-600 font-medium">
                                                 <span>Service Fee</span>

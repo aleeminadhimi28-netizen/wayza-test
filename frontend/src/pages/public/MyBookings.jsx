@@ -72,9 +72,10 @@ export default function MyBookings() {
     }
 
     function downloadInvoice(b) {
-        const gst = Math.round((b.pricePerNight || 0) * (b.nights || 1) * 0.12);
+        const isVehicle = b.category === "bike" || b.category === "car";
+        const gst = b.gst !== undefined ? b.gst : (isVehicle ? 0 : Math.round((b.pricePerNight || 0) * (b.nights || 1) * 0.12));
         const baseAmount = (b.pricePerNight || 0) * (b.nights || 1);
-        const serviceFee = 99;
+        const serviceFee = b.serviceFee !== undefined ? b.serviceFee : 99;
         const invoiceId = `WAY-${b._id?.slice(-8).toUpperCase() || 'XXXXXXXX'}`;
         const invoiceDate = new Date(b.paidAt || b.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "long", year: "numeric" });
         const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Invoice ${invoiceId}</title><style>
@@ -122,7 +123,7 @@ export default function MyBookings() {
                 <thead><tr><th>Description</th><th>Amount</th></tr></thead>
                 <tbody>
                     <tr><td>Accommodation (₹${(b.pricePerNight || 0).toLocaleString()} × ${b.nights} night${b.nights !== 1 ? 's' : ''})</td><td>₹${baseAmount.toLocaleString()}</td></tr>
-                    <tr><td>GST @ 12%</td><td>₹${gst.toLocaleString()}</td></tr>
+                    <tr><td>GST${gst === 0 ? ' (Waived for Vehicles)' : ' @ 12%'}</td><td>${gst === 0 ? '<span style="color:#059669;font-weight:700;">Waived</span>' : `₹${gst.toLocaleString()}`}</td></tr>
                     <tr><td>Service & Platform Fee</td><td>₹${serviceFee.toLocaleString()}</td></tr>
                     <tr class="total-row"><td>Total Paid</td><td>₹${(b.totalPrice || 0).toLocaleString()}</td></tr>
                 </tbody>

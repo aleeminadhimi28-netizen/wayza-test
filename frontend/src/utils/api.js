@@ -273,6 +273,13 @@ export const api = {
         body: JSON.stringify(data)
     }).then(r => r.json()),
 
+    // AI Trip Planner
+    generateTrip: (data) => customFetch(`${API_URL}/misc/trip-planner`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    }).then(r => r.json()),
+
     // Communication
     getChat: (bookingId) => customFetch(`${API_URL}/comm/chat/${bookingId}`, {
         headers: getAuthHeaders()

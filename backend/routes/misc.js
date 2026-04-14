@@ -99,33 +99,48 @@ router.post("/trip-planner", async (req, res, next) => {
         const { destination, vibe } = parsed.data;
 
         const listingsColl = db.collection("listings");
-        const baseFilter = { 
-            location: { $regex: destination, $options: "i" }, 
-            approved: true 
+
+        // Broad search: match destination against both title and location fields
+        const baseFilter = {
+            approved: true,
+            $or: [
+                { location: { $regex: destination, $options: "i" } },
+                { title: { $regex: destination, $options: "i" } }
+            ]
         };
 
-        // Fetch all relevant high-quality inventory for this location
+        // Fetch all relevant inventory for this location
         const inventory = await listingsColl.find(baseFilter).toArray();
 
+        // If nothing matches the destination, try a broader fallback with ALL approved listings
+        let usedInventory = inventory;
+        let broadened = false;
         if (inventory.length === 0) {
-            return res.json({ ok: false, message: "Could not find enough inventory for this destination." });
-        }
-
-        // Try AI generation if API Key exists
-        if (process.env.GEMINI_API_KEY) {
-            try {
-                const aiItinerary = await generateItinerary(destination, vibe, inventory);
-                return res.json({ ok: true, data: aiItinerary });
-            } catch (aiErr) {
-                console.error("AI Generation failed, falling back to heuristic:", aiErr);
-                // Fallback to legacy logic below...
+            usedInventory = await listingsColl.find({ approved: true }).limit(20).toArray();
+            broadened = true;
+            if (usedInventory.length === 0) {
+                return res.json({ ok: false, message: "No inventory available yet. Partners need to list properties first." });
             }
         }
 
-        // --- LEGACY HEURISTIC FALLBACK (used if AI is off or fails) ---
-        const stay = inventory.find(i => i.category === "hotel");
-        const vehicle = inventory.find(i => ["car", "bike"].includes(i.category));
-        const activities = inventory.filter(i => i.category === "activity").slice(0, 3);
+        // Try AI generation if API Key exists and is real
+        if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== "your_gemini_api_key_here") {
+            try {
+                const aiItinerary = await generateItinerary(destination, vibe, usedInventory);
+                return res.json({ ok: true, data: aiItinerary });
+            } catch (aiErr) {
+                console.error("AI Generation failed, falling back to heuristic:", aiErr.message);
+            }
+        }
+
+        // --- HEURISTIC FALLBACK ---
+        const stays = usedInventory.filter(i => i.category === "hotel");
+        const vehicles = usedInventory.filter(i => ["car", "bike"].includes(i.category));
+        const activities = usedInventory.filter(i => i.category === "activity");
+
+        const stay = stays[0];
+        const vehicle = vehicles[0];
+        const actList = activities.slice(0, 4);
 
         const vibeMap = {
             chill: "Serene & Relaxed",
@@ -134,53 +149,115 @@ router.post("/trip-planner", async (req, res, next) => {
             luxury: "Grand & Elite"
         };
 
-        const totalItinerary = {
-            destination: destination.charAt(0).toUpperCase() + destination.slice(1),
-            vibe: vibeMap[vibe] || "Custom",
-            days: [
-                { day: 1, title: "Arrival & Orientation", items: [] },
-                { day: 2, title: "Deep Exploration", items: [] }
-            ],
-            totalPrice: 0
+        const vibeDescMap = {
+            chill: "Unwind with scenic views and peaceful moments.",
+            adventure: "Get your adrenaline pumping with thrilling activities.",
+            culture: "Immerse yourself in local traditions and history.",
+            luxury: "Indulge in premium experiences and five-star comfort."
         };
 
+        const destName = destination.charAt(0).toUpperCase() + destination.slice(1);
         let calculatedTotal = 0;
+
+        // Day 1: Arrival
+        const day1Items = [];
         if (vehicle) {
-            totalItinerary.days[0].items.push({
-                type: 'vehicle', time: "10:00 AM", title: `Pickup: ${vehicle.title}`,
-                desc: `Your ${vehicle.category} is ready at the arrival point.`
+            day1Items.push({
+                type: "vehicle", time: "09:30 AM",
+                title: `Pickup: ${vehicle.title}`,
+                desc: `Your ${vehicle.category === "bike" ? "two-wheeler" : "ride"} awaits at the arrival point. ${vehicle.description?.substring(0, 80) || "Comfortable and reliable transport for your trip."}`,
             });
             calculatedTotal += (vehicle.price || 0);
+        } else {
+            day1Items.push({
+                type: "vehicle", time: "09:30 AM",
+                title: "Local Transport Arranged",
+                desc: "A local cab or auto will be arranged for comfortable transfers throughout your stay."
+            });
         }
+
         if (stay) {
-            totalItinerary.days[0].items.push({
-                type: 'hotel', time: "02:00 PM", title: `Check-in: ${stay.title}`,
-                desc: stay.description?.substring(0, 100) + "..."
+            day1Items.push({
+                type: "hotel", time: "12:00 PM",
+                title: `Check-in: ${stay.title}`,
+                desc: stay.description?.substring(0, 120) || "Settle into your accommodation and take in the surroundings."
             });
             calculatedTotal += (stay.price || 0);
-        }
-        if (activities[0]) {
-            totalItinerary.days[0].items.push({
-                type: 'activity', time: "05:00 PM", title: activities[0].title,
-                desc: activities[0].description?.substring(0, 100) + "..."
+        } else {
+            day1Items.push({
+                type: "hotel", time: "12:00 PM",
+                title: `Stay in ${destName}`,
+                desc: "Check into a comfortable local stay and freshen up before exploring."
             });
-            calculatedTotal += (activities[0].price || 0);
         }
-        if (activities[1]) {
-            totalItinerary.days[1].items.push({
-                type: 'activity', time: "10:00 AM", title: activities[1].title,
-                desc: activities[1].description?.substring(0, 100) + "..."
+
+        if (actList[0]) {
+            day1Items.push({
+                type: "activity", time: "04:30 PM",
+                title: actList[0].title,
+                desc: actList[0].description?.substring(0, 120) || vibeDescMap[vibe] || "A curated experience to kick off your trip."
             });
-            calculatedTotal += (activities[1].price || 0);
-        }
-        if (activities[2]) {
-            totalItinerary.days[1].items.push({
-                type: 'activity', time: "03:00 PM", title: activities[2].title,
-                desc: activities[2].description?.substring(0, 100) + "..."
+            calculatedTotal += (actList[0].price || 0);
+        } else {
+            day1Items.push({
+                type: "activity", time: "04:30 PM",
+                title: `Explore ${destName}`,
+                desc: `Take a leisurely walk and discover the local charm of ${destName}. ${vibeDescMap[vibe] || ""}`
             });
-            calculatedTotal += (activities[2].price || 0);
         }
-        totalItinerary.totalPrice = calculatedTotal;
+
+        // Day 2: Exploration
+        const day2Items = [];
+        if (actList[1]) {
+            day2Items.push({
+                type: "activity", time: "08:00 AM",
+                title: actList[1].title,
+                desc: actList[1].description?.substring(0, 120) || "Start the day with an enriching experience."
+            });
+            calculatedTotal += (actList[1].price || 0);
+        } else {
+            day2Items.push({
+                type: "activity", time: "08:00 AM",
+                title: "Morning at leisure",
+                desc: `Enjoy a relaxed breakfast and soak in the morning vibes of ${destName}.`
+            });
+        }
+
+        if (actList[2]) {
+            day2Items.push({
+                type: "activity", time: "12:00 PM",
+                title: actList[2].title,
+                desc: actList[2].description?.substring(0, 120) || "A midday highlight curated just for you."
+            });
+            calculatedTotal += (actList[2].price || 0);
+        }
+
+        if (actList[3]) {
+            day2Items.push({
+                type: "activity", time: "04:00 PM",
+                title: actList[3].title,
+                desc: actList[3].description?.substring(0, 120) || "Wind down with one final memorable experience."
+            });
+            calculatedTotal += (actList[3].price || 0);
+        }
+
+        // Always add a checkout step
+        day2Items.push({
+            type: "hotel", time: "06:00 PM",
+            title: stay ? `Check-out: ${stay.title}` : "Check-out & Departure",
+            desc: `Wrap up your ${destName} adventure. We hope you had an incredible time!`
+        });
+
+        const totalItinerary = {
+            destination: destName + (broadened ? " (Region)" : ""),
+            vibe: vibeMap[vibe] || "Custom",
+            days: [
+                { day: 1, title: "Arrival & First Impressions", items: day1Items },
+                { day: 2, title: "Deep Exploration & Departure", items: day2Items }
+            ],
+            totalPrice: calculatedTotal
+        };
+
         res.json({ ok: true, data: totalItinerary });
 
     } catch (err) { next(err); }
