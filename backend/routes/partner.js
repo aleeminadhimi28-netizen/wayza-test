@@ -14,6 +14,11 @@ const registerSchema = z.object({
     type: z.string().optional()
 });
 
+const loginSchema = z.object({
+    email: z.string().email(),
+    password: z.string().min(1)
+});
+
 const onboardSchema = z.object({
     businessName: z.string().min(1),
     category: z.string().min(1),
@@ -64,9 +69,12 @@ router.post("/register", async (req, res, next) => {
 
 router.post("/login", async (req, res, next) => {
     try {
+        const parsed = loginSchema.safeParse(req.body);
+        if (!parsed.success) return res.status(400).json({ ok: false, message: "Invalid input", errors: parsed.error.flatten() });
+
         const db = getDB();
         const users = db.collection("users");
-        const { email, password } = req.body;
+        const { email, password } = parsed.data;
         const user = await users.findOne({ email });
         if (!user || user.role !== "partner")
             return res.status(401).json({ ok: false, message: "Not a partner account" });

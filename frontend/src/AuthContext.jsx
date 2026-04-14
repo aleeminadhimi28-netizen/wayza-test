@@ -11,6 +11,14 @@ export function AuthProvider({ children }) {
     /* -------- RESTORE SESSION -------- */
     useEffect(() => {
         const loadSession = async () => {
+            // Skip API call if no token exists — prevents 401 spam in logs
+            const storedToken = localStorage.getItem("token");
+            if (!storedToken) {
+                setUser(null);
+                setLoading(false);
+                return;
+            }
+
             try {
                 const res = await api.getProfile();
                 if (res.ok && res.data?.email) {
@@ -20,6 +28,7 @@ export function AuthProvider({ children }) {
                     });
                 } else {
                     setUser(null);
+                    localStorage.removeItem("token");
                 }
             } catch (err) {
                 console.error("Auth session fetch error", err);

@@ -63,6 +63,10 @@ const createIndexes = async (db) => {
     await bookings.createIndex({ status: 1 });
     await bookings.createIndex({ listingId: 1 });
     await bookings.createIndex({ checkIn: 1 });
+    // Compound index for booking overlap detection (race condition prevention)
+    await bookings.createIndex({ listingId: 1, variantIndex: 1, status: 1, checkIn: 1, checkOut: 1 });
+    // Location search index for AI planner
+    await listings.createIndex({ location: 1 });
     await wishlists.createIndex({ userEmail: 1 });
     await wishlists.createIndex({ listingId: 1 });
     await reviews.createIndex({ listingId: 1 });
