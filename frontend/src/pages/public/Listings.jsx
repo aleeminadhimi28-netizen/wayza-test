@@ -125,14 +125,7 @@ export default function Listings() {
 
     useEffect(() => { setPage(1); }, [location, minPrice, maxPrice, sort, category]);
 
-    const mockScore = (id) => {
-        const hash = id?.split("").reduce((a, c) => a + c.charCodeAt(0), 0) || 0;
-        return 7.0 + (hash % 30) / 10;
-    };
-    const mockReviewCount = (id) => {
-        const hash = id?.split("").reduce((a, c) => a + c.charCodeAt(0), 0) || 0;
-        return 18 + (hash % 220);
-    };
+
 
     const catLabel = CATEGORIES.find(c => c.id === category)?.label || "Properties";
 
@@ -350,8 +343,8 @@ export default function Listings() {
                         ) : (
                             <motion.div key="results" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
                                 {rows.map((l, i) => {
-                                    const score = mockScore(l._id);
-                                    const reviewCount = mockReviewCount(l._id);
+                                    const score = l.avgRating || 0;
+                                    const reviewCount = l.reviewCount || 0;
                                     const minVariantPrice = l.variants?.length
                                         ? Math.min(...l.variants.map(v => v.price || 0))
                                         : l.price || 0;
@@ -445,8 +438,8 @@ export default function Listings() {
                                                     <div className="flex flex-col md:items-end gap-1.5">
                                                         <div className="flex items-center gap-3">
                                                             <div className="text-right hidden md:block">
-                                                                <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">{getRatingLabel(score)}</p>
-                                                                <p className="text-[10px] text-slate-300 font-bold uppercase tracking-widest">{reviewCount} Verified Audits</p>
+                                                                <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">{score > 0 ? getRatingLabel(score) : 'New'}</p>
+                                                                <p className="text-[10px] text-slate-300 font-bold uppercase tracking-widest">{reviewCount > 0 ? `${reviewCount} Verified Reviews` : 'No Reviews Yet'}</p>
                                                             </div>
                                                             <div className="w-12 h-12 bg-slate-950 text-white text-lg font-black rounded-2xl flex items-center justify-center shadow-xl shadow-slate-900/10">
                                                                 {score.toFixed(1)}

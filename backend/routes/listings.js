@@ -62,6 +62,25 @@ router.get("/", async (req, res, next) => {
         const pages = Math.ceil(total / Number(limit));
         const rows = await listings.find(filter).sort(sortOpt).skip(skip).limit(Number(limit)).toArray();
 
+        // Attach real review stats (avgRating, reviewCount) to each listing
+        if (rows.length > 0) {
+            const listingIds = rows.map(r => r._id.toString());
+            const reviews = db.collection("reviews");
+            const reviewStats = await reviews.aggregate([
+                { $match: { listingId: { $in: listingIds } } },
+                { $group: { _id: "$listingId", avgRating: { $avg: "$rating" }, count: { $sum: 1 } } }
+            ]).toArray();
+
+            const statsMap = {};
+            reviewStats.forEach(s => { statsMap[s._id] = { avgRating: Math.round(s.avgRating * 10) / 10, reviewCount: s.count }; });
+
+            rows.forEach(r => {
+                const s = statsMap[r._id.toString()];
+                r.avgRating = s?.avgRating || 0;
+                r.reviewCount = s?.reviewCount || 0;
+            });
+        }
+
         res.json({ ok: true, rows, total, pages });
     } catch (err) { next(err); }
 });

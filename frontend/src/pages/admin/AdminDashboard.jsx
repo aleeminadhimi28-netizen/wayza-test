@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
     Users, Briefcase, Home, CalendarCheck, TrendingUp, LogOut, LayoutDashboard,
-    Trash2, Search, CheckCircle, Clock, Bell, ArrowUpRight, VolumeX, Volume2,
-    MessageSquare, Send, X, ChevronDown, AlertCircle, Mail, Banknote, XCircle
+    Trash2, Search, CheckCircle, Clock, Bell, VolumeX, Volume2,
+    MessageSquare, Banknote, X
 } from "lucide-react";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
 
 import { api } from "../../utils/api.js";
 import { useToast } from "../../ToastContext.jsx";
+
+// Sub-components
+import AdminOverview from "./AdminOverview.jsx";
+import AdminSupport from "./AdminSupport.jsx";
+import AdminWithdrawals from "./AdminWithdrawals.jsx";
 
 export default function AdminDashboard() {
     const [stats, setStats] = useState(null);
@@ -20,9 +24,6 @@ export default function AdminDashboard() {
 
     // Support state
     const [tickets, setTickets] = useState([]);
-    const [selectedTicket, setSelectedTicket] = useState(null);
-    const [replyText, setReplyText] = useState("");
-    const [sendingReply, setSendingReply] = useState(false);
 
     // Withdrawal state
     const [withdrawals, setWithdrawals] = useState([]);
@@ -131,51 +132,11 @@ export default function AdminDashboard() {
         } catch (err) { console.error(err); }
     }
 
-    async function handleReplyTicket() {
-        if (!replyText.trim() || !selectedTicket) return;
-        setSendingReply(true);
-        try {
-            await api.replyToTicket(selectedTicket._id, { reply: replyText.trim() });
-            setReplyText("");
-            await loadTickets();
-            const updated = tickets.find(t => t._id === selectedTicket._id);
-            if (updated) setSelectedTicket({ ...updated, replies: [...(updated.replies || []), { message: replyText.trim(), from: "admin", createdAt: new Date() }] });
-        } catch (_) { }
-        setSendingReply(false);
-    }
-
-    async function handleCloseTicket(id) {
-        try {
-            await api.replyToTicket(id, { status: "closed" });
-            await loadTickets();
-            if (selectedTicket?._id === id) setSelectedTicket(prev => ({ ...prev, status: "closed" }));
-        } catch (_) { }
-    }
-
-    async function handleDeleteTicket(id) {
-        if (!window.confirm("Delete this support ticket?")) return;
-        try {
-            await api.deleteTicket(id);
-            setTickets(prev => prev.filter(t => t._id !== id));
-            if (selectedTicket?._id === id) setSelectedTicket(null);
-        } catch (_) { }
-    }
-
     async function handleUpdatePayout(id, status) {
         if (!window.confirm(`Mark this booking as ${status}?`)) return;
         try {
             const d = await api.adminUpdatePayoutStatus(id, status);
             if (d.ok) setDataList(prev => prev.map(item => item._id === id ? { ...item, payoutStatus: status } : item));
-        } catch (err) { console.error(err); }
-    }
-
-    async function handleWithdrawal(id, status) {
-        const reason = status === "rejected" ? window.prompt("Reason for rejection (optional):") : null;
-        if (status === "rejected" && reason === null) return; // User cancelled prompt
-        if (!window.confirm(`${status === "completed" ? "Approve" : "Reject"} this withdrawal?`)) return;
-        try {
-            const d = await api.adminUpdateWithdrawal(id, status, reason);
-            if (d.ok) setWithdrawals(prev => prev.map(w => w._id === id ? { ...w, status, reason } : w));
         } catch (err) { console.error(err); }
     }
 
@@ -205,13 +166,6 @@ export default function AdminDashboard() {
         </div>
     );
 
-    const kpiCards = [
-        { title: "Total Users", value: stats.totalUsers, icon: Users, bg: "bg-blue-50", color: "text-blue-600", trend: "+12%", up: true },
-        { title: "Partners", value: stats.totalPartners, icon: Briefcase, bg: "bg-violet-50", color: "text-violet-600", trend: "+5%", up: true },
-        { title: "Pending Approval", value: stats.pendingListings || 0, icon: Clock, bg: "bg-amber-50", color: "text-amber-600", trend: "Review", up: false },
-        { title: "Platform Revenue", value: `₹${(stats.platformCommission || 0).toLocaleString()}`, icon: TrendingUp, bg: "bg-emerald-50", color: "text-emerald-600", trend: "+24%", up: true }
-    ];
-
     const filteredData = dataList.filter(item => {
         const query = searchQuery.toLowerCase();
         return (item.email || item.title || item.businessName || "").toLowerCase().includes(query);
@@ -228,7 +182,6 @@ export default function AdminDashboard() {
     ];
 
     const pendingWithdrawals = withdrawals.filter(w => w.status === 'pending').length;
-
     const openTickets = tickets.filter(t => t.status === "open").length;
 
     return (
@@ -294,7 +247,7 @@ export default function AdminDashboard() {
                             <p className="text-xs text-slate-500 mt-0.5">Wayza Admin Panel</p>
                         </div>
                         <div className="flex items-center gap-3">
-                            {(activeTab !== "overview" && activeTab !== "support") && (
+                            {(activeTab !== "overview" && activeTab !== "support" && activeTab !== "withdrawals") && (
                                 <div className="relative hidden md:block w-72">
                                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
                                     <input
@@ -315,241 +268,20 @@ export default function AdminDashboard() {
 
                 <div className="p-8">
                     <AnimatePresence mode="wait">
-                        {activeTab === "overview" ? (
-                            <motion.div key="ov" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-8">
+                        {activeTab === "overview" && (
+                            <AdminOverview stats={stats} setActiveTab={setActiveTab} />
+                        )}
 
-                                {/* KPI CARDS */}
-                                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
-                                    {kpiCards.map((card, i) => (
-                                        <div key={i} className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all">
-                                            <div className="flex justify-between items-start mb-4">
-                                                <div className={`w-11 h-11 rounded-xl ${card.bg} ${card.color} flex items-center justify-center`}>
-                                                    <card.icon size={20} />
-                                                </div>
-                                                <span className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold ${card.up ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>
-                                                    {card.up && <ArrowUpRight size={11} strokeWidth={3} />}
-                                                    {card.trend}
-                                                </span>
-                                            </div>
-                                            <p className="text-xs font-semibold text-slate-500 mb-1">{card.title}</p>
-                                            <p className="text-2xl font-bold text-slate-900">{card.value}</p>
-                                        </div>
-                                    ))}
-                                </div>
+                        {activeTab === "support" && (
+                            <AdminSupport tickets={tickets} setTickets={setTickets} loadTickets={loadTickets} loadingData={loadingData} />
+                        )}
 
-                                {/* CHART + ACTIVITY */}
-                                <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                                    {/* REVENUE CHART */}
-                                    <div className="xl:col-span-2 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                                        <div className="flex justify-between items-center mb-6">
-                                            <div>
-                                                <h3 className="text-lg font-bold text-slate-900">Revenue Overview</h3>
-                                                <p className="text-xs text-slate-500">Monthly platform earnings</p>
-                                            </div>
-                                        </div>
-                                        <div className="h-[350px]">
-                                            <ResponsiveContainer width="100%" height="100%">
-                                                <AreaChart data={stats.monthlyRevenue || [{ name: 'JAN', rev: 400 }, { name: 'FEB', rev: 800 }, { name: 'MAR', rev: 1200 }]}>
-                                                    <defs>
-                                                        <linearGradient id="colorEmerald" x1="0" y1="0" x2="0" y2="1">
-                                                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.15} />
-                                                            <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-                                                        </linearGradient>
-                                                    </defs>
-                                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                                                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 600 }} dy={10} />
-                                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 600 }} />
-                                                    <RechartsTooltip contentStyle={{ background: '#0f172a', border: 'none', borderRadius: '12px', fontWeight: 600, fontSize: '12px', padding: '12px 16px', color: '#fff' }} itemStyle={{ color: '#10b981' }} />
-                                                    <Area type="monotone" dataKey="rev" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorEmerald)" />
-                                                </AreaChart>
-                                            </ResponsiveContainer>
-                                        </div>
-                                    </div>
+                        {activeTab === "withdrawals" && (
+                            <AdminWithdrawals withdrawals={withdrawals} setWithdrawals={setWithdrawals} stats={stats} loadingData={loadingData} />
+                        )}
 
-                                    {/* RECENT ACTIVITY */}
-                                    <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col">
-                                        <div className="flex items-center justify-between mb-4">
-                                            <h3 className="text-lg font-bold text-slate-900">Recent Activity</h3>
-                                            <span className="text-xs font-semibold text-emerald-600 cursor-pointer" onClick={() => setActiveTab("bookings")}>View All</span>
-                                        </div>
-                                        <div className="space-y-2 flex-1 overflow-y-auto">
-                                            {stats.recentBookings?.slice(0, 8).map((b, i) => (
-                                                <div key={i} className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-all">
-                                                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${b.status === 'paid' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>
-                                                        {b.status === 'paid' ? <CheckCircle size={16} /> : <Clock size={16} />}
-                                                    </div>
-                                                    <div className="flex-1 min-w-0">
-                                                        <p className="font-semibold text-sm text-slate-900 truncate">{b.title}</p>
-                                                        <p className="text-xs text-slate-400 truncate">{b.guestEmail?.split('@')[0]}</p>
-                                                    </div>
-                                                    <div className="text-right">
-                                                        <p className="font-bold text-sm text-slate-900">₹{b.totalPrice?.toLocaleString()}</p>
-                                                        <p className="text-xs text-slate-400 capitalize">{b.status}</p>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                            {(!stats.recentBookings || stats.recentBookings.length === 0) && (
-                                                <div className="flex flex-col items-center justify-center py-12 text-center">
-                                                    <CalendarCheck size={28} className="text-slate-200 mb-2" />
-                                                    <p className="text-sm font-semibold text-slate-500">No recent bookings</p>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            </motion.div>
-
-                        ) : activeTab === "support" ? (
-                            /* ===== SUPPORT TAB ===== */
-                            <motion.div key="support" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                                    {[
-                                        { label: "Open Tickets", value: tickets.filter(t => t.status === "open").length, bg: "bg-amber-50", color: "text-amber-600", icon: AlertCircle },
-                                        { label: "Closed Tickets", value: tickets.filter(t => t.status === "closed").length, bg: "bg-emerald-50", color: "text-emerald-600", icon: CheckCircle },
-                                        { label: "Total Tickets", value: tickets.length, bg: "bg-blue-50", color: "text-blue-600", icon: MessageSquare },
-                                    ].map((c, i) => (
-                                        <div key={i} className="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
-                                            <div className={`w-10 h-10 rounded-xl ${c.bg} ${c.color} flex items-center justify-center mb-3`}>
-                                                <c.icon size={18} />
-                                            </div>
-                                            <p className="text-xs font-semibold text-slate-500 mb-0.5">{c.label}</p>
-                                            <p className="text-xl font-bold text-slate-900">{c.value}</p>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 min-h-[500px]">
-                                    {/* TICKET LIST */}
-                                    <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col">
-                                        <div className="p-4 border-b border-slate-100">
-                                            <h3 className="font-bold text-sm text-slate-900">All Tickets</h3>
-                                        </div>
-                                        <div className="flex-1 overflow-y-auto divide-y divide-slate-50">
-                                            {tickets.length === 0 ? (
-                                                <div className="py-16 text-center">
-                                                    <MessageSquare size={28} className="text-slate-200 mx-auto mb-2" />
-                                                    <p className="text-sm text-slate-500">No support tickets</p>
-                                                </div>
-                                            ) : tickets.map(t => (
-                                                <button
-                                                    key={t._id}
-                                                    onClick={() => setSelectedTicket(t)}
-                                                    className={`w-full text-left p-4 hover:bg-slate-50 transition-colors ${selectedTicket?._id === t._id ? 'bg-emerald-50/50 border-l-2 border-emerald-500' : ''}`}
-                                                >
-                                                    <div className="flex items-start justify-between gap-2">
-                                                        <div className="min-w-0 flex-1">
-                                                            <p className="font-semibold text-sm text-slate-900 truncate">{t.subject}</p>
-                                                            <p className="text-xs text-slate-400 truncate mt-0.5">{t.email}</p>
-                                                        </div>
-                                                        <span className={`shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase ${t.status === 'open' ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'}`}>
-                                                            {t.status}
-                                                        </span>
-                                                    </div>
-                                                    <p className="text-xs text-slate-500 mt-1 line-clamp-2">{t.message}</p>
-                                                    <p className="text-[10px] text-slate-400 mt-1.5">{new Date(t.createdAt).toLocaleDateString()}</p>
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    {/* TICKET DETAIL */}
-                                    <div className="xl:col-span-2 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col">
-                                        {!selectedTicket ? (
-                                            <div className="flex-1 flex flex-col items-center justify-center gap-3">
-                                                <Mail size={32} className="text-slate-200" />
-                                                <p className="text-sm text-slate-500">Select a ticket to view details</p>
-                                            </div>
-                                        ) : (
-                                            <>
-                                                {/* Ticket header */}
-                                                <div className="p-5 border-b border-slate-100 flex items-start justify-between gap-4">
-                                                    <div className="min-w-0">
-                                                        <h3 className="font-bold text-base text-slate-900">{selectedTicket.subject}</h3>
-                                                        <div className="flex items-center gap-3 mt-1.5">
-                                                            <span className="text-xs text-slate-500">{selectedTicket.email}</span>
-                                                            <span className="text-xs text-slate-400">·</span>
-                                                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase ${selectedTicket.status === 'open' ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'}`}>
-                                                                {selectedTicket.status}
-                                                            </span>
-                                                            <span className="text-xs text-slate-400">·</span>
-                                                            <span className="text-xs text-slate-400 capitalize">{selectedTicket.category}</span>
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex items-center gap-2 shrink-0">
-                                                        {selectedTicket.status === "open" && (
-                                                            <button onClick={() => handleCloseTicket(selectedTicket._id)} className="h-8 px-3 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-lg font-semibold text-xs hover:bg-emerald-600 hover:text-white transition-all flex items-center gap-1.5">
-                                                                <CheckCircle size={12} /> Close
-                                                            </button>
-                                                        )}
-                                                        <button onClick={() => handleDeleteTicket(selectedTicket._id)} className="w-8 h-8 bg-rose-50 text-rose-500 border border-rose-100 rounded-lg flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all">
-                                                            <Trash2 size={14} />
-                                                        </button>
-                                                    </div>
-                                                </div>
-
-                                                {/* Messages */}
-                                                <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-slate-50/50">
-                                                    {/* Original message */}
-                                                    <div className="flex gap-3">
-                                                        <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs shrink-0">
-                                                            {(selectedTicket.email || "U").charAt(0).toUpperCase()}
-                                                        </div>
-                                                        <div className="bg-white border border-slate-200 rounded-2xl rounded-tl-md p-4 shadow-sm max-w-[80%]">
-                                                            <p className="text-sm text-slate-700 leading-relaxed">{selectedTicket.message}</p>
-                                                            <p className="text-[10px] text-slate-400 mt-2">{new Date(selectedTicket.createdAt).toLocaleString()}</p>
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Replies */}
-                                                    {(selectedTicket.replies || []).map((r, i) => (
-                                                        <div key={i} className={`flex gap-3 ${r.from === 'admin' ? 'justify-end' : ''}`}>
-                                                            {r.from !== 'admin' && (
-                                                                <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs shrink-0">U</div>
-                                                            )}
-                                                            <div className={`rounded-2xl p-4 max-w-[80%] shadow-sm ${r.from === 'admin'
-                                                                ? 'bg-slate-900 text-white rounded-br-md'
-                                                                : 'bg-white border border-slate-200 rounded-tl-md text-slate-700'}`}>
-                                                                <p className="text-sm leading-relaxed">{r.message}</p>
-                                                                <p className={`text-[10px] mt-2 ${r.from === 'admin' ? 'text-white/40' : 'text-slate-400'}`}>
-                                                                    {r.from === 'admin' ? 'Admin' : selectedTicket.email} · {new Date(r.createdAt).toLocaleString()}
-                                                                </p>
-                                                            </div>
-                                                            {r.from === 'admin' && (
-                                                                <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0">A</div>
-                                                            )}
-                                                        </div>
-                                                    ))}
-                                                </div>
-
-                                                {/* Reply input */}
-                                                {selectedTicket.status === "open" && (
-                                                    <div className="p-4 border-t border-slate-100 bg-white">
-                                                        <div className="flex gap-3 items-center">
-                                                            <input
-                                                                placeholder="Type your reply..."
-                                                                value={replyText}
-                                                                onChange={e => setReplyText(e.target.value)}
-                                                                onKeyDown={e => e.key === 'Enter' && handleReplyTicket()}
-                                                                className="flex-1 h-10 bg-slate-50 border border-slate-200 rounded-xl px-4 text-sm font-medium focus:bg-white focus:border-emerald-500 transition-all outline-none"
-                                                            />
-                                                            <button
-                                                                onClick={handleReplyTicket}
-                                                                disabled={!replyText.trim() || sendingReply}
-                                                                className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${!replyText.trim() ? 'bg-slate-100 text-slate-300' : 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm'}`}
-                                                            >
-                                                                {sendingReply ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Send size={16} />}
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                )}
-                                            </>
-                                        )}
-                                    </div>
-                                </div>
-                            </motion.div>
-
-                        ) : (
-                            /* ===== DATA TABLE TABS ===== */
+                        {/* DATA TABLE TABS (users, partners, listings, bookings) */}
+                        {["users", "partners", "listings", "bookings"].includes(activeTab) && (
                             <motion.div key="list" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
 
                                 {/* PENDING APPROVAL SECTION for listings tab */}
@@ -658,13 +390,11 @@ export default function AdminDashboard() {
                                                                         <CheckCircle size={13} /> Settle Payout
                                                                     </button>
                                                                 )}
-                                                                {/* Approve button for unapproved listings */}
                                                                 {activeTab === "listings" && !item.approved && (
                                                                     <button onClick={() => handleApproveProperty(item._id)} className="h-8 px-4 bg-emerald-600 text-white rounded-lg font-semibold text-xs hover:bg-emerald-700 transition-colors flex items-center gap-1.5 shadow-sm">
                                                                         <CheckCircle size={13} /> Approve
                                                                     </button>
                                                                 )}
-                                                                {/* Mute/Unmute for users */}
                                                                 {activeTab === "users" && (
                                                                     <button
                                                                         onClick={() => handleMuteUser(item.email, !item.muted)}
@@ -675,13 +405,11 @@ export default function AdminDashboard() {
                                                                         {item.muted ? <><Volume2 size={13} /> Unmute</> : <><VolumeX size={13} /> Mute</>}
                                                                     </button>
                                                                 )}
-                                                                {/* Approve button for unonboarded partners */}
                                                                 {activeTab === "partners" && !item.onboarded && (
                                                                     <button onClick={() => handleApprovePartner(item.email)} className="h-8 px-4 bg-emerald-600 text-white rounded-lg font-semibold text-xs hover:bg-emerald-700 transition-colors flex items-center gap-1.5 shadow-sm">
                                                                         <CheckCircle size={13} /> Approve
                                                                     </button>
                                                                 )}
-                                                                {/* Delete */}
                                                                 <button onClick={() => handleDeleteItem(activeTab, item.email || item._id)} className="w-8 h-8 bg-rose-50 text-rose-500 border border-rose-100 rounded-lg flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all">
                                                                     <Trash2 size={14} />
                                                                 </button>
@@ -699,101 +427,6 @@ export default function AdminDashboard() {
                                                 <p className="text-sm text-slate-500">Try adjusting your search query.</p>
                                             </div>
                                         )}
-                                    </div>
-                                </div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-
-                    {/* ===== WITHDRAWALS TAB ===== */}
-                    <AnimatePresence mode="wait">
-                        {activeTab === "withdrawals" && (
-                            <motion.div key="withdrawals" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-                                <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                                    <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-                                        <div>
-                                            <h3 className="text-lg font-bold text-slate-900">Finance Center</h3>
-                                            <p className="text-xs text-slate-500 mt-0.5">Track platform earnings and partner payout requests.</p>
-                                        </div>
-                                        <div className="flex items-center gap-4">
-                                            <div className="text-right border-r border-slate-100 pr-6 hidden md:block">
-                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Platform Earned (10%)</p>
-                                                <p className="text-xl font-bold text-emerald-600">₹{(stats.platformCommission || 0).toLocaleString()}</p>
-                                            </div>
-                                            <div className="flex items-center gap-3">
-                                                {pendingWithdrawals > 0 && (
-                                                    <span className="flex items-center gap-1.5 text-xs font-bold text-amber-700 bg-amber-50 border border-amber-100 px-4 py-2 rounded-2xl animate-pulse">
-                                                        <Clock size={12} /> {pendingWithdrawals} New Requests
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="overflow-x-auto">
-                                        <table className="w-full text-left">
-                                            <thead>
-                                                <tr className="border-b border-slate-100 bg-slate-50/50">
-                                                    <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wide">Partner</th>
-                                                    <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wide">Amount</th>
-                                                    <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wide">Date</th>
-                                                    <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wide">Status</th>
-                                                    <th className="px-6 py-4 text-right text-xs font-bold text-slate-400 uppercase tracking-wide">Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className="divide-y divide-slate-50">
-                                                {withdrawals.map((w, i) => (
-                                                    <tr key={w._id || i} className="hover:bg-slate-50/50 transition-colors group">
-                                                        <td className="px-6 py-4">
-                                                            <p className="font-semibold text-sm text-slate-900">{w.email}</p>
-                                                            <p className="text-[10px] font-mono text-slate-400 mt-0.5">#{(w._id || "").slice(-8).toUpperCase()}</p>
-                                                        </td>
-                                                        <td className="px-6 py-4">
-                                                            <p className="font-bold text-lg text-slate-900">₹{Number(w.amount).toLocaleString()}</p>
-                                                        </td>
-                                                        <td className="px-6 py-4 text-sm text-slate-600">
-                                                            {new Date(w.requestedAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
-                                                        </td>
-                                                        <td className="px-6 py-4">
-                                                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${w.status === "completed" ? "bg-emerald-50 text-emerald-700 border-emerald-100"
-                                                                : w.status === "rejected" ? "bg-rose-50 text-rose-700 border-rose-100"
-                                                                    : "bg-amber-50 text-amber-700 border-amber-100"
-                                                                }`}>
-                                                                {w.status === "completed" ? <CheckCircle size={10} /> : w.status === "rejected" ? <XCircle size={10} /> : <Clock size={10} />}
-                                                                {w.status}
-                                                            </span>
-                                                            {w.reason && <p className="text-[10px] text-slate-400 mt-1 max-w-[180px] truncate">{w.reason}</p>}
-                                                        </td>
-                                                        <td className="px-6 py-4 text-right">
-                                                            {w.status === "pending" && (
-                                                                <div className="flex justify-end gap-2">
-                                                                    <button
-                                                                        onClick={() => handleWithdrawal(w._id, "completed")}
-                                                                        className="h-8 px-4 bg-emerald-600 text-white rounded-lg font-semibold text-xs hover:bg-emerald-700 transition-colors flex items-center gap-1.5 shadow-sm"
-                                                                    >
-                                                                        <CheckCircle size={13} /> Approve
-                                                                    </button>
-                                                                    <button
-                                                                        onClick={() => handleWithdrawal(w._id, "rejected")}
-                                                                        className="h-8 px-3 bg-rose-50 text-rose-600 border border-rose-100 rounded-lg font-semibold text-xs hover:bg-rose-500 hover:text-white transition-colors flex items-center gap-1.5"
-                                                                    >
-                                                                        <XCircle size={13} /> Reject
-                                                                    </button>
-                                                                </div>
-                                                            )}
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                                {withdrawals.length === 0 && !loadingData && (
-                                                    <tr>
-                                                        <td colSpan={5} className="py-20 text-center">
-                                                            <Banknote size={32} className="text-slate-200 mx-auto mb-3" />
-                                                            <h3 className="text-lg font-bold text-slate-900 mb-1">No withdrawal requests</h3>
-                                                            <p className="text-sm text-slate-500">Partner withdrawal requests will appear here.</p>
-                                                        </td>
-                                                    </tr>
-                                                )}
-                                            </tbody>
-                                        </table>
                                     </div>
                                 </div>
                             </motion.div>
