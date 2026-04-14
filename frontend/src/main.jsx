@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
+import { HelmetProvider } from "react-helmet-async";
 import VerificationSpinner from "./components/VerificationSpinner.jsx";
 import { CurrencyProvider } from "./CurrencyContext.jsx";
 import { AuthProvider } from "./AuthContext.jsx";
@@ -122,17 +123,19 @@ function AppContent() {
 
 function Root() {
     return (
-        <BrowserRouter>
-            <ErrorBoundary>
-                <AuthProvider>
-                    <CurrencyProvider>
-                        <ToastProvider>
-                            <AppContent />
-                        </ToastProvider>
-                    </CurrencyProvider>
-                </AuthProvider>
-            </ErrorBoundary>
-        </BrowserRouter>
+        <HelmetProvider>
+            <BrowserRouter>
+                <ErrorBoundary>
+                    <AuthProvider>
+                        <CurrencyProvider>
+                            <ToastProvider>
+                                <AppContent />
+                            </ToastProvider>
+                        </CurrencyProvider>
+                    </AuthProvider>
+                </ErrorBoundary>
+            </BrowserRouter>
+        </HelmetProvider>
     );
 }
 

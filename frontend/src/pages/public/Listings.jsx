@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 import { api } from "../../utils/api.js";
+import SEO from "../../components/SEO.jsx";
 
 const CATEGORIES = [
     { id: 'hotel', label: 'Stays', icon: Hotel },
@@ -131,6 +132,7 @@ export default function Listings() {
 
     return (
         <WayzaLayout noPadding>
+            <SEO title={location ? `${catLabel} in ${location}` : `Explore ${catLabel}`} description={`Browse verified ${catLabel.toLowerCase()} directly from Wayza.`} />
             <div className="bg-slate-50 min-h-screen font-sans selection:bg-emerald-100 selection:text-emerald-900">
 
                 {/* ─── PREMIUM SEARCH BAR ─── */}

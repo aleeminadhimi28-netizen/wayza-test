@@ -13,7 +13,7 @@ import {
   Clock, CreditCard, ChevronDown, ChevronUp, Sparkles, ShieldCheck
 } from "lucide-react";
 import MapView from "../../components/MapView.jsx";
-
+import SEO from "../../components/SEO.jsx";
 import { api } from "../../utils/api.js";
 
 const AMENITIES = [
@@ -178,6 +178,12 @@ export default function ListingDetails() {
 
   return (
     <WayzaLayout noPadding>
+      <SEO 
+        title={listing.title} 
+        description={listing.description} 
+        image={images[0]}
+        type="product" 
+      />
       <div className="bg-white min-h-screen font-sans selection:bg-emerald-100 selection:text-emerald-900">
         <div className="max-w-[1400px] mx-auto px-6 md:px-12 py-10 md:py-16">
 

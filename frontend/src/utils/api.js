@@ -321,6 +321,13 @@ export const api = {
         headers: getAuthHeaders()
     }).then(r => r.json()),
 
+    // Misc
+    subscribeNewsletter: (email) => customFetch(`${API_URL}/misc/newsletter`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+    }).then(r => r.json()),
+
     // Upload (directly returns path)
     uploadImage: (formData) => customFetch(`${API_URL}/upload`, {
         method: "POST",

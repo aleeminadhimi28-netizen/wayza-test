@@ -20,7 +20,31 @@ const tripPlannerSchema = z.object({
     vibe: z.string().optional()
 });
 
+const newsletterSchema = z.object({
+    email: z.string().email()
+});
+
 const router = express.Router();
+
+/* ================= NEWSLETTER ================= */
+
+router.post("/newsletter", async (req, res, next) => {
+    try {
+        const parsed = newsletterSchema.safeParse(req.body);
+        if (!parsed.success) return res.status(400).json({ ok: false, message: "Valid email is required" });
+
+        const db = getDB();
+        const { email } = parsed.data;
+
+        await db.collection("newsletters").updateOne(
+            { email },
+            { $setOnInsert: { email, createdAt: new Date() } },
+            { upsert: true }
+        );
+
+        res.json({ ok: true, message: "Subscribed successfully" });
+    } catch (err) { next(err); }
+});
 
 /* ================= REVIEWS ================= */
 

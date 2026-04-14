@@ -14,6 +14,8 @@ import {
 
 import { api } from "../../utils/api.js";
 import { useCurrency } from "../../CurrencyContext.jsx";
+import { useToast } from "../../ToastContext.jsx";
+import SEO from "../../components/SEO.jsx";
 
 const CATEGORIES = [
     { label: "Villas", key: "hotel", icon: Home },
@@ -31,6 +33,7 @@ const DESTINATIONS = [
 export default function LandingPage() {
     const navigate = useNavigate();
     const { formatPrice } = useCurrency();
+    const { showToast } = useToast();
     const [listings, setListings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [tab, setTab] = useState("hotel");
@@ -38,6 +41,28 @@ export default function LandingPage() {
     const [checkIn, setCheckIn] = useState("");
     const [checkOut, setCheckOut] = useState("");
     const [guests, setGuests] = useState(1);
+    
+    // Newsletter State
+    const [newsletterEmail, setNewsletterEmail] = useState("");
+    const [newsletterLoading, setNewsletterLoading] = useState(false);
+
+    const handleNewsletterSubmit = async (e) => {
+        e.preventDefault();
+        if (!newsletterEmail) return;
+        setNewsletterLoading(true);
+        try {
+            const data = await api.subscribeNewsletter(newsletterEmail);
+            if (data.ok) {
+                showToast("Subscribed to the Wayza Newsletter!", "success");
+                setNewsletterEmail("");
+            } else {
+                showToast(data.message || "Failed to subscribe.", "error");
+            }
+        } catch (err) {
+            showToast("Network error.", "error");
+        }
+        setNewsletterLoading(false);
+    };
 
     // AI Section Interactive State
     const [aiPrompt, setAiPrompt] = useState("");
@@ -74,6 +99,7 @@ export default function LandingPage() {
 
     return (
         <WayzaLayout noPadding hideFooter>
+            <SEO title="Escape the ordinary" />
             <div className="bg-white font-sans text-slate-900 selection:bg-emerald-50 selection:text-emerald-900 leading-relaxed antialiased">
 
                 {/* ════ SECTION: REFINED MINI-HERO ════ */}
@@ -380,12 +406,18 @@ export default function LandingPage() {
                                     </p>
                                 </div>
                                 <div className="space-y-3">
-                                    <div className="flex bg-white/5 rounded-full p-1 border border-white/10 max-w-xs transition-all focus-within:border-emerald-500">
-                                        <input placeholder="Newsletter" className="bg-transparent border-none outline-none flex-1 px-4 text-[10px] py-1 text-white/70 placeholder:text-white/20" />
-                                        <button className="bg-emerald-500 text-white w-6 h-6 rounded-full flex items-center justify-center hover:bg-emerald-400 transition-colors">
+                                    <form onSubmit={handleNewsletterSubmit} className={`flex bg-white/5 rounded-full p-1 border border-white/10 max-w-xs transition-all focus-within:border-emerald-500 ${newsletterLoading ? 'opacity-50 pointer-events-none' : ''}`}>
+                                        <input 
+                                            type="email" 
+                                            placeholder="Newsletter" 
+                                            value={newsletterEmail}
+                                            onChange={e => setNewsletterEmail(e.target.value)}
+                                            className="bg-transparent border-none outline-none flex-1 px-4 text-[10px] py-1 text-white/70 placeholder:text-white/20" 
+                                        />
+                                        <button type="submit" disabled={newsletterLoading} className="bg-emerald-500 text-white w-6 h-6 rounded-full flex items-center justify-center hover:bg-emerald-400 transition-colors">
                                             <ArrowRight size={10} />
                                         </button>
-                                    </div>
+                                    </form>
                                 </div>
                             </div>
 
