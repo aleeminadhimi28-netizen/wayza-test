@@ -66,7 +66,7 @@ export default function AITripPlanner() {
                                 <input
                                     value={destination}
                                     onChange={e => setDestination(e.target.value)}
-                                    placeholder="e.g. Kyoto, Bali, Swiss Alps..."
+                                    placeholder="e.g. Varkala, Kovalam, Munnar..."
                                     className="w-full h-14 pl-12 pr-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 font-bold text-slate-900 transition-all placeholder:font-medium"
                                 />
                             </div>
@@ -93,10 +93,15 @@ export default function AITripPlanner() {
                             <button
                                 onClick={generateTrip}
                                 disabled={isGenerating || !destination}
-                                className="h-14 px-8 bg-slate-900 hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-2xl font-bold uppercase tracking-widest text-xs flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-500/10 w-full md:w-auto active:scale-95"
+                                title={!destination ? "Enter a destination first" : ""}
+                                className={`h-14 px-8 text-white rounded-2xl font-bold uppercase tracking-widest text-xs flex items-center justify-center gap-2 transition-all w-full md:w-auto active:scale-95 ${
+                                    !destination || isGenerating
+                                        ? "bg-slate-300 cursor-not-allowed opacity-70"
+                                        : "bg-slate-900 hover:bg-emerald-600 shadow-lg shadow-emerald-500/10 cursor-pointer"
+                                }`}
                             >
                                 {isGenerating ? <Loader2 size={18} className="animate-spin" /> : <Sparkles size={18} />}
-                                {isGenerating ? "Manifesting..." : "Generate Magic"}
+                                {isGenerating ? "Manifesting..." : !destination ? "Enter Destination" : "Generate Magic"}
                             </button>
                         </div>
                     </div>

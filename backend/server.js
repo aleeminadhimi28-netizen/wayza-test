@@ -2,12 +2,17 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
+import { createServer } from "http";
+import { Server } from "socket.io";
+import { initSocket } from "./utils/socket.js";
 import helmet from "helmet";
 import cors from "cors";
 import compression from "compression";
 import morgan from "morgan";
 import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
+import { globalLimiter, authLimiter } from "./middleware/rateLimiter.js";
+import { requireAuth } from "./middleware/auth.js";
 
 // Config & DB
 import { connectDB } from "./config/db.js";
@@ -35,19 +40,36 @@ app.use(helmet({
 app.use(compression());
 app.use(morgan("dev"));
 
+const allowedOrigins = process.env.ALLOWED_ORIGINS 
+  ? process.env.ALLOWED_ORIGINS.split(",") 
+  : ["http://localhost:5173", "http://localhost:3000"];
+
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow any Vercel domain and localhost
-    const isVercel = origin && (origin.endsWith(".vercel.app") || origin.includes("vercel"));
-    const isLocal = !origin || origin.includes("localhost");
-
-    if (isVercel || isLocal) {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin) || (process.env.NODE_ENV === "development" && origin.includes("localhost"))) {
       return callback(null, true);
     }
-    return callback(new Error("CORS: Not allowed — " + origin));
+    
+    // Check for Vercel preview deployments if in staging/dev
+    if (origin.endsWith(".vercel.app") && process.env.NODE_ENV === "development") {
+      return callback(null, true);
+    }
+
+    return callback(new Error("CORS: Origin not allowed by security policy"));
   },
-  credentials: true
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
 }));
+
+const httpServer = createServer(app);
+initSocket(httpServer, allowedOrigins);
+
+// Apply global rate limiting to all requests
+app.use(globalLimiter);
 
 app.use(express.json());
 app.use(cookieParser());
@@ -59,12 +81,12 @@ app.get("/api/v1/health", (req, res) => {
   res.json({ ok: true, status: "up", uptime: process.uptime() });
 });
 
-app.post("/api/v1/upload", upload.single("image"), (req, res) => {
+app.post("/api/v1/upload", requireAuth, upload.single("image"), (req, res) => {
   if (!req.file) return res.status(400).json({ ok: false, message: "No file uploaded" });
   res.json({ ok: true, filename: req.file.path });
 });
 
-const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 200, message: { ok: false, message: "Too many attempts" } });
+// Apply stricter rate limiting to auth routes
 app.use("/api/v1/auth", authLimiter);
 
 app.use("/api/v1/auth", authRoutes);
@@ -82,6 +104,6 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).json({ ok: false, message: err.message || "Internal Server Error" });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Wayza backend running on PORT ${PORT}`);
+httpServer.listen(PORT, () => {
+  console.log(`🚀 Wayza backend running with WebSockets on PORT ${PORT}`);
 });

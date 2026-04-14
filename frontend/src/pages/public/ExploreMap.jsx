@@ -21,7 +21,7 @@ L.Icon.Default.mergeOptions({
 const createPriceIcon = (price) => {
     return L.divIcon({
         className: "custom-price-marker",
-        html: `<div style="background: #10b981; color: white; padding: 4px 8px; border-radius: 12px; font-weight: 800; font-size: 11px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.2); white-space: nowrap;">₹${price > 0 ? price.toLocaleString() : 'Free'}</div>`,
+        html: `<div style="background: #10b981; color: white; padding: 4px 8px; border-radius: 12px; font-weight: 800; font-size: 11px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.2); white-space: nowrap;">₹${price > 0 ? price.toLocaleString() : '—'}</div>`,
         iconSize: [60, 24],
         iconAnchor: [30, 12],
     });
@@ -38,8 +38,8 @@ export default function ExploreMap() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [activeItem, setActiveItem] = useState(null);
-    const [mapCenter, setMapCenter] = useState([20.5937, 78.9629]); // Center of India
-    const [mapZoom, setMapZoom] = useState(5);
+    const [mapCenter, setMapCenter] = useState([8.7379, 76.7163]); // Varkala, Kerala
+    const [mapZoom, setMapZoom] = useState(13);
 
     useEffect(() => {
         async function fetchData() {

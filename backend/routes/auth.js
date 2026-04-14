@@ -12,6 +12,11 @@ const signupSchema = z.object({
     password: z.string().min(6)
 });
 
+const loginSchema = z.object({
+    email: z.string().email(),
+    password: z.string().min(1)
+});
+
 const router = express.Router();
 const SECRET = process.env.JWT_SECRET;
 
@@ -36,29 +41,27 @@ router.post("/signup", async (req, res, next) => {
 
 router.post("/login", async (req, res, next) => {
     try {
+        const parsed = loginSchema.safeParse(req.body);
+        if (!parsed.success) return res.status(400).json({ ok: false, message: "Invalid input", errors: parsed.error.flatten() });
+
         const db = getDB();
         const users = db.collection("users");
-        let { email, password } = req.body;
+        const email = parsed.data.email.toLowerCase().trim();
+        const password = parsed.data.password.trim();
 
-        email = email?.toLowerCase().trim();
-        password = password?.trim();
-
-        console.log(`[AUTH] Login attempt for: ${email}`);
         const user = await users.findOne({ email });
 
         if (!user) {
-            console.log(`[AUTH] User not found: ${email}`);
             return res.status(401).json({ ok: false, message: "Invalid email or password" });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            console.log(`[AUTH] Password mismatch for: ${email}`);
             return res.status(401).json({ ok: false, message: "Invalid email or password" });
         }
 
-        console.log(`[AUTH] Login success for: ${email}`);
-        const token = jwt.sign({ email: user.email, role: user.role }, SECRET || "permanent_secret_123", { expiresIn: "7d" });
+        if (!SECRET) throw new Error("JWT_SECRET is not configured");
+        const token = jwt.sign({ email: user.email, role: user.role }, SECRET, { expiresIn: "7d" });
 
         res.cookie("token", token, {
             httpOnly: true,
@@ -76,7 +79,6 @@ router.post("/login", async (req, res, next) => {
             }
         });
     } catch (err) {
-        console.error("[AUTH ERROR]", err);
         next(err);
     }
 });

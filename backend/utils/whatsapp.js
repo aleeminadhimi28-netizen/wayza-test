@@ -30,3 +30,30 @@ Nights: ${data.nights}
 _Please prepare the property for arrival._`;
 };
 
+export const formatWhatsAppApprovalNeeded = (data) => {
+    return `*⚖️ Action Required: New Listing*
+
+Partner: *${data.ownerEmail}*
+Property: *${data.title}*
+Location: ${data.location}
+
+_Please review the listing in the Wayza Admin Dashboard for approval._`;
+};
+
+export const formatWhatsAppListingApproved = (data) => {
+    return `*✨ Congratulations! Your Property is Live*
+
+Property: *${data.title}*
+Status: *PUBLISHED*
+
+_Your listing is now visible to all Wayza guests and ready for bookings._`;
+};
+
+export const formatWhatsAppPartnerOnboarded = (data) => {
+    return `*🚀 Welcome to Wayza Pro!*
+
+Your partner account has been verified. You can now start listing your premium properties and experiences.
+
+_Happy hosting!_`;
+};
+

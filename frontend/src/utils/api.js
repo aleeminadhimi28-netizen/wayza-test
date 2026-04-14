@@ -112,7 +112,9 @@ export const api = {
         headers: getAuthHeaders()
     }).then(r => r.json()),
 
-    getListingBookings: (id) => customFetch(`${API_URL}/bookings/${id}`).then(r => r.json()),
+    getListingBookings: (id) => customFetch(`${API_URL}/bookings/${id}`, {
+        headers: getAuthHeaders()
+    }).then(r => r.json()),
     getBookedDates: (id) => api.getListingBookings(id),
 
     // Partner
@@ -128,7 +130,9 @@ export const api = {
         body: JSON.stringify(data)
     }).then(r => r.json()),
 
-    partnerStatus: (email) => customFetch(`${API_URL}/partner/status/${email}`).then(r => r.json()),
+    partnerStatus: () => customFetch(`${API_URL}/partner/status`, {
+        headers: getAuthHeaders()
+    }).then(r => r.json()),
 
     partnerOnboard: (data) => customFetch(`${API_URL}/partner/onboard`, {
         method: "POST",
@@ -313,6 +317,7 @@ export const api = {
     // Upload (directly returns path)
     uploadImage: (formData) => customFetch(`${API_URL}/upload`, {
         method: "POST",
+        headers: getAuthHeaders(),
         body: formData
     }).then(r => r.json())
 };

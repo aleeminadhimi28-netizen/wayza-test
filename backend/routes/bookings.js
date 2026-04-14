@@ -4,6 +4,26 @@ import { getDB } from "../config/db.js";
 import { requireAuth } from "../middleware/auth.js";
 import { getTransporter, guestBookingEmail, ownerBookingEmail } from "../utils/emailTemplates.js";
 import { sendWhatsAppAlert, formatWhatsAppBookingMsg } from "../utils/whatsapp.js";
+import { z } from "zod";
+import { GST_RATE, SERVICE_FEE, COMMISSION_RATE } from "../config/constants.js";
+
+const bookSchema = z.object({
+    listingId: z.string().min(1),
+    variantIndex: z.number().int().min(0).optional(),
+    checkIn: z.string().min(1),
+    checkOut: z.string().min(1),
+    title: z.string().optional(),
+    ownerEmail: z.string().email().optional()
+});
+
+const confirmSchema = z.object({
+    bookingId: z.string().min(1),
+    paymentId: z.string().optional()
+});
+
+const cancelSchema = z.object({
+    bookingId: z.string().min(1)
+});
 
 const router = express.Router();
 
@@ -16,26 +36,27 @@ router.get("/my-bookings", requireAuth, async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
-router.get("/:listingId", async (req, res, next) => {
+router.get("/:listingId", requireAuth, async (req, res, next) => {
     try {
         const db = getDB();
         const bookings = db.collection("bookings");
         const rows = await bookings.find({
             listingId: req.params.listingId,
             status: { $in: ["pending", "paid"] }
-        }).toArray();
+        }).project({ guestEmail: 0 }).toArray();
         res.json(rows);
     } catch (err) { next(err); }
 });
 
 router.post("/book", requireAuth, async (req, res, next) => {
     try {
+        const parsed = bookSchema.safeParse(req.body);
+        if (!parsed.success) return res.status(400).json({ ok: false, message: "Invalid booking data", errors: parsed.error.flatten() });
+
         const db = getDB();
         const listings = db.collection("listings");
         const bookings = db.collection("bookings");
-        const { listingId, variantIndex, checkIn, checkOut, title, ownerEmail } = req.body;
-        if (!listingId || !checkIn || !checkOut)
-            return res.status(400).json({ ok: false, message: "Missing booking data" });
+        const { listingId, variantIndex, checkIn, checkOut, title, ownerEmail } = parsed.data;
 
         const listing = await listings.findOne({ _id: new ObjectId(listingId) });
         if (!listing) return res.status(404).json({ ok: false, message: "Listing not found" });
@@ -45,8 +66,8 @@ router.post("/book", requireAuth, async (req, res, next) => {
         const nights = Math.ceil((new Date(checkOut) - new Date(checkIn)) / 86400000);
         const pricePerNight = Number(variant?.price || listing.price || 0);
         const baseAmount = pricePerNight * nights;
-        const gst = Math.round(baseAmount * 0.12);
-        const serviceFee = 99;
+        const gst = Math.round(baseAmount * GST_RATE);
+        const serviceFee = SERVICE_FEE;
         const totalPrice = baseAmount + gst + serviceFee;
 
         // RACE CONDITION FIX: Check for overlapping bookings
@@ -80,11 +101,14 @@ router.post("/book", requireAuth, async (req, res, next) => {
 
 router.post("/confirm", requireAuth, async (req, res, next) => {
     try {
+        const parsed = confirmSchema.safeParse(req.body);
+        if (!parsed.success) return res.status(400).json({ ok: false, message: "Invalid confirmation data", errors: parsed.error.flatten() });
+
         const db = getDB();
         const bookings = db.collection("bookings");
         const transporter = getTransporter();
 
-        const { bookingId, paymentId } = req.body;
+        const { bookingId, paymentId } = parsed.data;
         if (!ObjectId.isValid(bookingId))
             return res.status(400).json({ ok: false, message: "Invalid booking ID" });
 
@@ -92,7 +116,7 @@ router.post("/confirm", requireAuth, async (req, res, next) => {
         if (!booking) return res.status(404).json({ ok: false, message: "Booking not found" });
 
         const totalPrice = booking.totalPrice || 0;
-        const commissionAmount = Math.round(totalPrice * 0.10);
+        const commissionAmount = Math.round(totalPrice * COMMISSION_RATE);
         const netEarnings = totalPrice - commissionAmount;
 
         await bookings.updateOne(
@@ -104,13 +128,13 @@ router.post("/confirm", requireAuth, async (req, res, next) => {
                     paidAt: new Date(),
                     commissionAmount,
                     netEarnings,
-                    payoutStatus: "pending" // MERCHANT MODEL: Funds held in escrow
+                    payoutStatus: "pending"
                 }
             }
         );
 
         if (booking && transporter) {
-            const ownerPayout = Math.round((booking.totalPrice || 0) * 0.9);
+            const ownerPayout = Math.round((booking.totalPrice || 0) * (1 - COMMISSION_RATE));
             const emailData = {
                 guestEmail: booking.guestEmail,
                 ownerEmail: booking.ownerEmail,
@@ -150,25 +174,28 @@ router.post("/confirm", requireAuth, async (req, res, next) => {
 
 router.post("/cancel", requireAuth, async (req, res, next) => {
     try {
+        const parsed = cancelSchema.safeParse(req.body);
+        if (!parsed.success) return res.status(400).json({ ok: false, message: "Invalid cancellation data", errors: parsed.error.flatten() });
+
         const db = getDB();
         const bookings = db.collection("bookings");
-        const { bookingId } = req.body;
+        const { bookingId } = parsed.data;
         if (!ObjectId.isValid(bookingId))
             return res.status(400).json({ ok: false, message: "Invalid booking ID" });
 
         const booking = await bookings.findOne({ _id: new ObjectId(bookingId) });
-        if (!booking) return res.status(404).json({ ok: false });
+        if (!booking) return res.status(404).json({ ok: false, message: "Booking not found" });
 
         const allowed = booking.guestEmail === req.user.email || booking.ownerEmail === req.user.email;
-        if (!allowed) return res.status(403).json({ ok: false });
+        if (!allowed) return res.status(403).json({ ok: false, message: "Not authorized to cancel this booking" });
 
         if (new Date(booking.checkIn) <= new Date())
             return res.status(400).json({ ok: false, message: "Cannot cancel past bookings" });
 
         const updates = { status: "cancelled", cancelledAt: new Date() };
         if (booking.status === "paid") {
-            updates.refundStatus = "pending"; // Admin needs to issue refund
-            updates.payoutStatus = null; // Void partner payout
+            updates.refundStatus = "pending";
+            updates.payoutStatus = null;
         }
 
         await bookings.updateOne(

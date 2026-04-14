@@ -140,116 +140,140 @@ export default function Listings() {
         <WayzaLayout noPadding>
             <div className="bg-slate-50 min-h-screen font-sans selection:bg-emerald-100 selection:text-emerald-900">
 
-                {/* ─── SEARCH & FILTER STRIP ─── */}
-                <div className="bg-white border-b border-slate-200 sticky top-24 z-40 shadow-sm">
-                    <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
+                {/* ─── PREMIUM SEARCH BAR ─── */}
+                <div className="bg-white/80 backdrop-blur-xl border-b border-slate-200 sticky top-20 z-40">
+                    <div className="max-w-[1240px] mx-auto px-4 py-4">
+                        <div className="bg-slate-50 border border-slate-200 rounded-2xl p-2 shadow-sm flex flex-col lg:flex-row items-stretch lg:items-center gap-2">
+                            {/* Location */}
+                            <div className="flex-1 relative group">
+                                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors" size={18} />
+                                <input
+                                    value={searchInput}
+                                    onChange={e => setSearchInput(e.target.value)}
+                                    placeholder="Explore your next destination..."
+                                    className="w-full h-12 pl-12 pr-4 bg-transparent text-sm font-semibold text-slate-900 focus:outline-none placeholder:text-slate-400 placeholder:font-normal"
+                                />
+                                <div className="absolute right-0 top-1/4 bottom-1/4 w-px bg-slate-200 hidden lg:block" />
+                            </div>
 
-                        <div className="py-3">
-                            <div className="grid grid-cols-1 sm:flex sm:flex-row gap-2">
-                                <div className="relative flex-[2] min-w-0">
-                                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                            {/* Dates */}
+                            <div className="flex items-center gap-1 flex-1 lg:max-w-[400px]">
+                                <div className="flex-1 relative group">
+                                    <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                                     <input
-                                        value={searchInput}
-                                        onChange={e => setSearchInput(e.target.value)}
-                                        onKeyDown={e => e.key === "Enter" && handleSearch()}
-                                        placeholder="Where are you going?"
-                                        className="w-full h-11 pl-9 pr-3 text-sm border border-slate-300 rounded-xl focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 bg-white transition-all"
+                                        type="date"
+                                        value={checkInInput}
+                                        onChange={e => setCheckInInput(e.target.value)}
+                                        className="w-full h-12 pl-12 pr-2 bg-transparent text-xs font-bold text-slate-900 focus:outline-none appearance-none cursor-pointer"
+                                    />
+                                    <div className="absolute right-0 top-1/4 bottom-1/4 w-px bg-slate-200 hidden lg:block" />
+                                </div>
+                                <div className="flex-1 relative group">
+                                    <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                                    <input
+                                        type="date"
+                                        value={checkOutInput}
+                                        onChange={e => setCheckOutInput(e.target.value)}
+                                        className="w-full h-12 pl-12 pr-2 bg-transparent text-xs font-bold text-slate-900 focus:outline-none appearance-none cursor-pointer"
                                     />
                                 </div>
-                                <div className="grid grid-cols-2 sm:contents gap-2">
-                                    <div className="relative min-w-0">
-                                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                                        <input
-                                            type="date"
-                                            value={checkInInput}
-                                            onChange={e => setCheckInInput(e.target.value)}
-                                            className="w-full h-11 pl-9 pr-2 text-[11px] sm:text-sm border border-slate-300 rounded-xl focus:outline-none focus:border-emerald-500 bg-white transition-all"
-                                        />
-                                    </div>
-                                    <div className="relative min-w-0">
-                                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                                        <input
-                                            type="date"
-                                            value={checkOutInput}
-                                            onChange={e => setCheckOutInput(e.target.value)}
-                                            className="w-full h-11 pl-9 pr-2 text-[11px] sm:text-sm border border-slate-300 rounded-xl focus:outline-none focus:border-emerald-500 bg-white transition-all"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="grid grid-cols-2 sm:flex gap-2">
-                                    <button
-                                        onClick={handleSearch}
-                                        className="h-11 px-6 bg-slate-900 hover:bg-emerald-600 text-white text-sm font-semibold rounded-xl transition-all flex items-center justify-center gap-2 whitespace-nowrap shadow-md active:scale-95"
-                                    >
-                                        <Search size={16} />
-                                        Search
-                                    </button>
-                                    <Link
-                                        to="/explore-map"
-                                        className="h-11 px-6 bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 text-sm font-semibold rounded-xl transition-all flex items-center justify-center gap-2 whitespace-nowrap shadow-sm active:scale-95"
-                                    >
-                                        <Navigation size={16} className="text-emerald-500" />
-                                        <span className="hidden xs:inline">Map</span>
-                                        <span className="xs:hidden">Map</span>
-                                    </Link>
-                                </div>
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex items-center gap-2 pl-2 border-t lg:border-t-0 border-slate-200 pt-2 lg:pt-0">
+                                <button
+                                    onClick={handleSearch}
+                                    className="px-8 h-12 bg-slate-900 hover:bg-emerald-600 text-white text-sm font-bold rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-slate-900/10 active:scale-95"
+                                >
+                                    <Search size={18} />
+                                    Search
+                                </button>
+                                <Link
+                                    to="/explore-map"
+                                    className="w-12 h-12 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-slate-600 hover:text-emerald-500 hover:border-emerald-200 hover:bg-emerald-50 transition-all shadow-sm group"
+                                >
+                                    <Navigation size={20} className="transition-transform group-hover:scale-110" />
+                                </Link>
                             </div>
                         </div>
 
-                        {/* Categories + Sort */}
-                        <div className="flex items-center justify-between gap-4 pb-3">
-                            <div className="flex gap-2 overflow-x-auto no-scrollbar scroll-smooth pb-1 -mb-1 px-1">
+                        {/* Category Pills & Sort */}
+                        <div className="flex items-center justify-between mt-4 overflow-x-auto no-scrollbar scroll-smooth gap-4">
+                            <div className="flex items-center gap-2">
                                 {CATEGORIES.map(cat => (
                                     <button
                                         key={cat.id}
                                         onClick={() => setCategory(cat.id)}
-                                        className={`flex items-center gap-2 px-4 py-2 rounded-full text-[11px] sm:text-sm font-bold whitespace-nowrap transition-all flex-shrink-0 ${category === cat.id
-                                            ? "bg-slate-900 text-white shadow-md ring-2 ring-slate-900 ring-offset-2"
-                                            : "bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-900"
+                                        className={`group relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap ${category === cat.id
+                                            ? "bg-slate-900 text-white shadow-xl translate-y-[-2px]"
+                                            : "bg-slate-100 text-slate-500 hover:bg-white hover:text-slate-900 hover:shadow-md"
                                             }`}
                                     >
-                                        <cat.icon size={13} />
+                                        <cat.icon size={16} className={`transition-transform group-hover:scale-110 ${category === cat.id ? "text-emerald-400" : ""}`} />
                                         {cat.label}
+                                        {category === cat.id && (
+                                            <motion.div layoutId="activeCat" className="absolute inset-0 border-2 border-emerald-400/30 rounded-full" />
+                                        )}
                                     </button>
                                 ))}
                             </div>
-                            <div className="flex items-center gap-2 shrink-0 ml-auto">
-                                <div className="relative hidden xs:block">
+
+                            <div className="flex items-center gap-3 shrink-0">
+                                <div className="h-8 w-px bg-slate-200 hidden sm:block" />
+                                <div className="relative group">
                                     <select
                                         value={sort}
                                         onChange={e => setSort(e.target.value)}
-                                        className="h-9 pl-3 pr-8 text-[11px] sm:text-sm border border-slate-300 rounded-xl bg-white focus:outline-none focus:border-emerald-500 appearance-none cursor-pointer text-slate-700 font-bold"
+                                        className="h-10 pl-4 pr-10 text-xs font-bold text-slate-600 bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500 appearance-none cursor-pointer transition-all hover:bg-slate-50"
                                     >
                                         {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                                     </select>
-                                    <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                                    <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-hover:text-emerald-500 transition-colors" />
                                 </div>
                                 <button
-                                    onClick={() => setShowFilters(f => !f)}
-                                    className={`h-9 px-3 sm:px-4 border rounded-xl text-[11px] sm:text-sm font-bold flex items-center gap-2 transition-all ${showFilters ? 'border-emerald-500 text-emerald-600 bg-emerald-50' : 'border-slate-300 text-slate-600'}`}
+                                    onClick={() => setShowFilters(!showFilters)}
+                                    className={`h-10 w-10 flex items-center justify-center rounded-xl border transition-all ${showFilters ? 'bg-emerald-50 border-emerald-200 text-emerald-600 shadow-inner' : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}
                                 >
-                                    <SlidersHorizontal size={13} />
-                                    <span className="hidden xxs:inline">Filters</span>
+                                    <SlidersHorizontal size={18} />
                                 </button>
                             </div>
                         </div>
 
-                        {/* Filter panel */}
+                        {/* Filter Drawer */}
                         <AnimatePresence>
                             {showFilters && (
-                                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-                                    <div className="py-3 flex flex-wrap gap-4 border-t border-slate-100">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-sm font-semibold text-slate-600">Budget (₹/night):</span>
-                                            <input type="number" placeholder="Min" value={minPrice} onChange={e => setMinPrice(e.target.value)} className="w-24 h-9 px-3 text-sm border border-slate-300 rounded-lg focus:outline-none focus:border-emerald-500 text-center" />
-                                            <span className="text-slate-400">—</span>
-                                            <input type="number" placeholder="Max" value={maxPrice} onChange={e => setMaxPrice(e.target.value)} className="w-24 h-9 px-3 text-sm border border-slate-300 rounded-lg focus:outline-none focus:border-emerald-500 text-center" />
+                                <motion.div
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: "auto", opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    className="overflow-hidden"
+                                >
+                                    <div className="py-6 mt-2 border-t border-slate-100 grid grid-cols-1 md:grid-cols-3 gap-8">
+                                        <div className="space-y-3">
+                                            <p className="text-xs font-black uppercase tracking-widest text-slate-400 italic">Price Range</p>
+                                            <div className="flex items-center gap-3">
+                                                <div className="relative flex-1">
+                                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-sm font-bold">₹</span>
+                                                    <input type="number" placeholder="Min" value={minPrice} onChange={e => setMinPrice(e.target.value)} className="w-full h-11 pl-7 pr-3 text-sm font-bold bg-slate-50 border border-slate-100 rounded-xl focus:bg-white focus:border-emerald-500 transition-all" />
+                                                </div>
+                                                <span className="text-slate-200">/</span>
+                                                <div className="relative flex-1">
+                                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-sm font-bold">₹</span>
+                                                    <input type="number" placeholder="Max" value={maxPrice} onChange={e => setMaxPrice(e.target.value)} className="w-full h-11 pl-7 pr-3 text-sm font-bold bg-slate-50 border border-slate-100 rounded-xl focus:bg-white focus:border-emerald-500 transition-all" />
+                                                </div>
+                                            </div>
                                         </div>
-                                        {(minPrice || maxPrice) && (
-                                            <button onClick={() => { setMinPrice(""); setMaxPrice(""); }} className="h-9 px-3 text-sm text-slate-400 hover:text-rose-500 flex items-center gap-1 transition-colors font-medium">
-                                                <X size={14} /> Clear
-                                            </button>
-                                        )}
+
+                                        <div className="flex items-end justify-end md:col-span-2">
+                                            {(minPrice || maxPrice) && (
+                                                <button
+                                                    onClick={() => { setMinPrice(""); setMaxPrice(""); }}
+                                                    className="h-11 px-6 text-sm font-bold text-rose-500 hover:text-rose-600 flex items-center gap-2 hover:bg-rose-50 rounded-xl transition-all"
+                                                >
+                                                    <X size={16} /> Reset Filters
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
                                 </motion.div>
                             )}
@@ -299,18 +323,29 @@ export default function Listings() {
                                 ))}
                             </motion.div>
                         ) : rows.length === 0 ? (
-                            <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-white rounded-2xl border border-slate-200 p-20 text-center">
-                                <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-slate-100">
-                                    <Search size={28} className="text-slate-300" />
+                            <motion.div key="empty" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-[32px] border border-slate-200 p-20 flex flex-col items-center justify-center text-center shadow-2xl shadow-slate-200/50 relative overflow-hidden">
+                                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-emerald-400 to-transparent" />
+                                <div className="w-32 h-32 bg-slate-50 border-4 border-white rounded-full flex items-center justify-center mb-8 shadow-xl relative">
+                                    <div className="absolute inset-0 bg-emerald-500/5 rounded-full animate-ping" />
+                                    <Search size={48} className="text-slate-200" />
                                 </div>
-                                <h3 className="text-lg font-bold text-slate-900 mb-2">No properties found</h3>
-                                <p className="text-slate-400 text-sm mb-6">Try adjusting your filters or explore a different destination.</p>
-                                <button
-                                    onClick={() => { setMinPrice(""); setMaxPrice(""); navigate(`/listings?category=${category}`); }}
-                                    className="px-6 py-2.5 bg-slate-900 text-white rounded-xl text-sm font-semibold hover:bg-emerald-600 transition-colors"
-                                >
-                                    Clear all filters
-                                </button>
+                                <div className="max-w-md space-y-4 relative z-10">
+                                    <h3 className="text-4xl font-black text-slate-900 tracking-tighter uppercase leading-[0.9]">
+                                        Empty <br /><span className="text-emerald-500 italic font-serif lowercase">Space.</span>
+                                    </h3>
+                                    <p className="text-slate-400 font-medium italic text-sm leading-relaxed">
+                                        No properties matched your criteria in <span className="text-slate-900 font-bold">{location || "this area"}</span>. <br />
+                                        Try adjusting your distance or refining your search tokens.
+                                    </p>
+                                    <div className="pt-8">
+                                        <button
+                                            onClick={() => { setMinPrice(""); setMaxPrice(""); navigate(`/listings?category=${category}`); }}
+                                            className="px-10 h-14 bg-slate-900 text-white rounded-[24px] text-xs font-black uppercase tracking-[0.2em] hover:bg-emerald-600 transition-all shadow-xl active:scale-95 flex items-center gap-4 mx-auto"
+                                        >
+                                            Reset Filters <ArrowRight size={18} />
+                                        </button>
+                                    </div>
+                                </div>
                             </motion.div>
                         ) : (
                             <motion.div key="results" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
@@ -365,86 +400,78 @@ export default function Listings() {
                                                 </div>
                                             </div>
 
-                                            {/* Info */}
-                                            <div className="flex flex-1 flex-col sm:flex-row p-5 gap-4">
-                                                <div className="flex-1 space-y-2.5">
-                                                    {/* Title */}
-                                                    <h3 className="text-slate-900 font-bold text-lg leading-snug group-hover:text-emerald-700 transition-colors line-clamp-2">
-                                                        {l.title}
-                                                    </h3>
+                                            <div className="flex-1 p-6 md:p-8 flex flex-col md:flex-row gap-8">
+                                                <div className="flex-1 space-y-4">
+                                                    <div>
+                                                        <div className="flex items-center gap-2 mb-2">
+                                                            <span className="px-2 py-0.5 rounded-md bg-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-500 border border-slate-200">
+                                                                {l.category || "Hotel"}
+                                                            </span>
+                                                            {l.price > 8000 && (
+                                                                <span className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-amber-600 italic">
+                                                                    <Sparkles size={10} /> Signature Collection
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                        <h3 className="text-2xl md:text-3xl font-black tracking-tighter text-slate-900 leading-[0.9] group-hover:text-emerald-600 transition-colors uppercase italic font-serif">
+                                                            {l.title}
+                                                        </h3>
+                                                    </div>
 
-                                                    {/* Location */}
-                                                    <div className="flex items-center gap-1.5 text-slate-500 text-sm">
-                                                        <MapPin size={14} className="text-emerald-500 shrink-0" />
+                                                    <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest">
+                                                        <MapPin size={14} className="text-emerald-500" />
                                                         <span>{l.location || "Kerala, India"}</span>
                                                     </div>
 
-                                                    {/* Amenity tags */}
-                                                    <div className="flex flex-wrap gap-1.5 pt-0.5">
+                                                    <p className="text-slate-500 text-sm leading-relaxed line-clamp-2 max-w-xl font-medium italic">
+                                                        "{l.description || "Experience the pinnacle of coastal luxury, where modern architecture harmonizes with Kerala's serene natural beauty."}"
+                                                    </p>
+
+                                                    <div className="flex flex-wrap gap-2 pt-2">
                                                         {[
-                                                            { icon: Wifi, text: "Free WiFi" },
-                                                            { icon: Coffee, text: "Breakfast available" },
-                                                            { icon: Shield, text: "Free cancellation" },
+                                                            { icon: Wifi, text: "Connectivity" },
+                                                            { icon: Coffee, text: "Breakfast" },
+                                                            { icon: Shield, text: "Secured" },
                                                         ].map((a, idx) => (
-                                                            <span key={idx} className="flex items-center gap-1 text-[11px] text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-0.5 rounded-full font-medium">
-                                                                <a.icon size={11} />
+                                                            <div key={idx} className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-lg border border-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                                                                <a.icon size={12} />
                                                                 {a.text}
-                                                            </span>
+                                                            </div>
                                                         ))}
                                                     </div>
-
-                                                    {/* Star rating preview */}
-                                                    <div className="flex items-center gap-1.5 pt-0.5">
-                                                        {[1, 2, 3, 4, 5].map(s => (
-                                                            <Star key={s} size={13} className={s <= Math.round(score / 2) ? "fill-amber-400 text-amber-400" : "text-slate-200 fill-slate-200"} />
-                                                        ))}
-                                                        <span className="text-xs text-slate-400 ml-1">{reviewCount} reviews</span>
-                                                    </div>
-
-                                                    {/* Variants */}
-                                                    {l.variants?.length > 0 && (
-                                                        <p className="text-xs text-slate-400 font-medium">{l.variants.length} room type{l.variants.length > 1 ? "s" : ""} available</p>
-                                                    )}
                                                 </div>
 
-                                                {/* Price + CTA */}
-                                                <div className="sm:w-44 shrink-0 flex flex-row sm:flex-col justify-between sm:justify-end sm:items-end items-center gap-4 sm:border-l sm:border-slate-100 sm:pl-5 pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-100">
-
-                                                    {/* Score badge */}
-                                                    <div className="flex flex-col items-end gap-1">
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="text-xs font-semibold text-slate-600 hidden sm:block">{getRatingLabel(score)}</span>
-                                                            <div className="w-9 h-9 bg-emerald-600 text-white text-sm font-bold rounded-tl-xl rounded-tr-xl rounded-bl-xl flex items-center justify-center shadow-md">
+                                                <div className="md:w-56 shrink-0 flex flex-row md:flex-col justify-between md:justify-center md:items-end items-center gap-6 md:border-l md:border-slate-100 md:pl-8 pt-6 md:pt-0 border-t md:border-t-0 border-slate-100">
+                                                    <div className="flex flex-col md:items-end gap-1.5">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="text-right hidden md:block">
+                                                                <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">{getRatingLabel(score)}</p>
+                                                                <p className="text-[10px] text-slate-300 font-bold uppercase tracking-widest">{reviewCount} Verified Audits</p>
+                                                            </div>
+                                                            <div className="w-12 h-12 bg-slate-950 text-white text-lg font-black rounded-2xl flex items-center justify-center shadow-xl shadow-slate-900/10">
                                                                 {score.toFixed(1)}
                                                             </div>
                                                         </div>
-                                                        <span className="text-[11px] text-slate-400 hidden sm:block">{reviewCount} reviews</span>
                                                     </div>
 
-                                                    {/* Price */}
                                                     <div className="text-right">
                                                         {minVariantPrice > 0 ? (
                                                             <>
-                                                                <p className="text-xs text-slate-400 hidden sm:block">Starting from</p>
-                                                                <p className="text-2xl font-bold text-slate-900">₹{minVariantPrice.toLocaleString()}</p>
-                                                                <p className="text-xs text-slate-400">per night</p>
-                                                                <p className="text-[11px] text-emerald-600 font-medium">incl. taxes & fees</p>
+                                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-300 mb-1">Nightly rate from</p>
+                                                                <p className="text-3xl font-black text-slate-900 tracking-tighter">₹{minVariantPrice.toLocaleString()}</p>
+                                                                <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mt-1">Inclusive of Access</p>
                                                             </>
                                                         ) : (
-                                                            <>
-                                                                <p className="text-sm font-bold text-slate-900">Price on request</p>
-                                                                <p className="text-xs text-slate-400">Contact host</p>
-                                                            </>
+                                                            <p className="text-sm font-black text-slate-900 uppercase">Rate on Inquiry</p>
                                                         )}
                                                     </div>
 
-                                                    {/* CTA */}
                                                     <button
                                                         onClick={e => { e.stopPropagation(); navigate(`/listing/${l._id}`); }}
-                                                        className="hidden sm:flex items-center justify-center gap-2 mt-1 w-full px-4 py-2.5 bg-slate-900 hover:bg-emerald-600 text-white text-sm font-bold rounded-xl transition-all active:scale-95 group/btn"
+                                                        className="h-14 px-8 bg-slate-900 hover:bg-emerald-600 text-white rounded-2xl shadow-2xl shadow-slate-900/10 transition-all active:scale-[0.98] group/btn flex items-center justify-center gap-3"
                                                     >
-                                                        See availability
-                                                        <ArrowRight size={15} className="group-hover/btn:translate-x-0.5 transition-transform" />
+                                                        <span className="text-[10px] font-black uppercase tracking-[0.3em]">Explore</span>
+                                                        <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
                                                     </button>
                                                 </div>
                                             </div>
@@ -457,33 +484,34 @@ export default function Listings() {
 
                     {/* ─── PAGINATION ─── */}
                     {!loading && pages > 1 && (
-                        <div className="mt-8 flex items-center justify-center gap-2">
+                        <div className="mt-20 flex items-center justify-center gap-4">
                             <button
                                 disabled={page <= 1}
                                 onClick={() => { setPage(p => p - 1); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                                className="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 text-slate-500 hover:border-emerald-500 hover:text-emerald-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                                className="w-14 h-14 flex items-center justify-center rounded-2xl border border-slate-200 text-slate-400 hover:border-emerald-500 hover:text-emerald-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all hover:bg-emerald-50"
                             >
-                                <ChevronLeft size={18} />
+                                <ChevronLeft size={20} />
                             </button>
-                            {Array.from({ length: Math.min(pages, 7) }, (_, i) => {
-                                const pg = i + 1;
-                                return (
-                                    <button
-                                        key={pg}
-                                        onClick={() => { setPage(pg); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                                        className={`w-10 h-10 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${pg === page ? "bg-slate-900 text-white shadow-lg" : "border border-slate-200 text-slate-600 hover:border-emerald-500 hover:text-emerald-600"}`}
-                                    >
-                                        {pg}
-                                    </button>
-                                );
-                            })}
-                            {pages > 7 && <span className="text-slate-300 px-1 font-bold">···</span>}
+                            <div className="flex items-center gap-2">
+                                {Array.from({ length: Math.min(pages, 7) }, (_, i) => {
+                                    const pg = i + 1;
+                                    return (
+                                        <button
+                                            key={pg}
+                                            onClick={() => { setPage(pg); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                                            className={`w-14 h-14 flex items-center justify-center rounded-2xl text-sm font-black transition-all ${pg === page ? "bg-slate-900 text-white shadow-2xl shadow-slate-900/20 scale-110" : "bg-white border border-slate-100 text-slate-400 hover:border-emerald-200 hover:text-emerald-500"}`}
+                                        >
+                                            {pg}
+                                        </button>
+                                    );
+                                })}
+                            </div>
                             <button
                                 disabled={page >= pages}
                                 onClick={() => { setPage(p => p + 1); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                                className="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 text-slate-500 hover:border-emerald-500 hover:text-emerald-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                                className="w-14 h-14 flex items-center justify-center rounded-2xl border border-slate-200 text-slate-400 hover:border-emerald-500 hover:text-emerald-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all hover:bg-emerald-50"
                             >
-                                <ChevronRight size={18} />
+                                <ChevronRight size={20} />
                             </button>
                         </div>
                     )}

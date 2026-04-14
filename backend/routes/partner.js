@@ -1,9 +1,30 @@
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 import { getDB } from "../config/db.js";
-import { requireAuth } from "../middleware/auth.js";
+import { requireAuth, requireRole } from "../middleware/auth.js";
 import { z } from "zod";
+import { COMMISSION_RATE, BCRYPT_ROUNDS, JWT_EXPIRY } from "../config/constants.js";
+
+const registerSchema = z.object({
+    email: z.string().email(),
+    password: z.string().min(6),
+    businessName: z.string().min(1).optional(),
+    type: z.string().optional()
+});
+
+const onboardSchema = z.object({
+    businessName: z.string().min(1),
+    category: z.string().min(1),
+    location: z.string().min(1),
+    firstListing: z.object({
+        title: z.string().min(1),
+        price: z.number().optional(),
+        latitude: z.number().optional(),
+        longitude: z.number().optional()
+    }).optional()
+});
 
 const walletSchema = z.object({
     accountName: z.string().min(2),
@@ -13,21 +34,27 @@ const walletSchema = z.object({
     upiId: z.string().optional()
 });
 
+const withdrawalSchema = z.object({
+    amount: z.number().positive()
+});
+
 const router = express.Router();
 const SECRET = process.env.JWT_SECRET;
 
 router.post("/register", async (req, res, next) => {
     try {
+        const parsed = registerSchema.safeParse(req.body);
+        if (!parsed.success) return res.status(400).json({ ok: false, message: "Invalid input", errors: parsed.error.flatten() });
+
         const db = getDB();
         const users = db.collection("users");
         const partners = db.collection("partners");
-        const { email, password, businessName, type } = req.body;
-        if (!email || !password) return res.status(400).json({ ok: false });
+        const { email, password, businessName, type } = parsed.data;
 
         const exists = await users.findOne({ email });
         if (exists) return res.status(400).json({ ok: false, message: "Email already registered" });
 
-        const hash = await bcrypt.hash(password, 10);
+        const hash = await bcrypt.hash(password, BCRYPT_ROUNDS);
         await users.insertOne({ email, password: hash, role: "partner", createdAt: new Date() });
         await partners.insertOne({ email, businessName, type, onboarded: false, createdAt: new Date() });
 
@@ -47,7 +74,7 @@ router.post("/login", async (req, res, next) => {
         const ok = await bcrypt.compare(password, user.password);
         if (!ok) return res.status(401).json({ ok: false, message: "Invalid password" });
 
-        const token = jwt.sign({ email: user.email, role: "partner" }, SECRET, { expiresIn: "7d" });
+        const token = jwt.sign({ email: user.email, role: "partner" }, SECRET, { expiresIn: JWT_EXPIRY });
         res.cookie("token", token, {
             httpOnly: true,
             secure: true,
@@ -58,21 +85,24 @@ router.post("/login", async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
-router.get("/status/:email", async (req, res, next) => {
+router.get("/status", requireAuth, async (req, res, next) => {
     try {
         const db = getDB();
         const partners = db.collection("partners");
-        const partner = await partners.findOne({ email: req.params.email });
+        const partner = await partners.findOne({ email: req.user.email });
         res.json({ onboarded: partner?.onboarded === true });
     } catch (err) { next(err); }
 });
 
-router.post("/onboard", requireAuth, async (req, res, next) => {
+router.post("/onboard", requireAuth, requireRole(["partner"]), async (req, res, next) => {
     try {
+        const parsed = onboardSchema.safeParse(req.body);
+        if (!parsed.success) return res.status(400).json({ ok: false, message: "Invalid input", errors: parsed.error.flatten() });
+
         const db = getDB();
         const partners = db.collection("partners");
         const listings = db.collection("listings");
-        const { businessName, category, location, firstListing } = req.body;
+        const { businessName, category, location, firstListing } = parsed.data;
         const email = req.user.email;
 
         await partners.updateOne(
@@ -99,7 +129,7 @@ router.post("/onboard", requireAuth, async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
-router.get("/earnings", requireAuth, async (req, res, next) => {
+router.get("/earnings", requireAuth, requireRole(["partner", "admin"]), async (req, res, next) => {
     try {
         const db = getDB();
         const bookings = db.collection("bookings");
@@ -109,15 +139,15 @@ router.get("/earnings", requireAuth, async (req, res, next) => {
         let platformFee = 0;
         let ownerPayout = 0;
 
-        let pendingBalance = 0; // Money from future stays
-        let availableBalance = 0; // Money from stays that have started/completed
-        let alreadyPaid = 0; // Money already transferred to partner's bank
+        let pendingBalance = 0;
+        let availableBalance = 0;
+        let alreadyPaid = 0;
 
         const now = new Date();
 
         allPaid.forEach(b => {
-            const earnings = b.netEarnings || (b.totalPrice * 0.9);
-            const fee = b.commissionAmount || (b.totalPrice * 0.1);
+            const earnings = b.netEarnings || (b.totalPrice * (1 - COMMISSION_RATE));
+            const fee = b.commissionAmount || (b.totalPrice * COMMISSION_RATE);
 
             totalRevenue += b.totalPrice || 0;
             platformFee += fee;
@@ -148,7 +178,7 @@ router.get("/earnings", requireAuth, async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
-router.get("/monthly-revenue", requireAuth, async (req, res, next) => {
+router.get("/monthly-revenue", requireAuth, requireRole(["partner", "admin"]), async (req, res, next) => {
     try {
         const db = getDB();
         const bookings = db.collection("bookings");
@@ -179,7 +209,7 @@ router.get("/listings/:email", requireAuth, async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
-router.get("/bookings", requireAuth, async (req, res, next) => {
+router.get("/bookings", requireAuth, requireRole(["partner", "admin"]), async (req, res, next) => {
     try {
         const db = getDB();
         const bookings = db.collection("bookings");
@@ -190,7 +220,7 @@ router.get("/bookings", requireAuth, async (req, res, next) => {
 
 // ===== WALLET =====
 
-router.get("/wallet", requireAuth, async (req, res, next) => {
+router.get("/wallet", requireAuth, requireRole(["partner"]), async (req, res, next) => {
     try {
         const db = getDB();
         const wallets = db.collection("partnerWallets");
@@ -199,7 +229,7 @@ router.get("/wallet", requireAuth, async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
-router.post("/wallet", requireAuth, async (req, res, next) => {
+router.post("/wallet", requireAuth, requireRole(["partner"]), async (req, res, next) => {
     try {
         const parsed = walletSchema.safeParse(req.body);
         if (!parsed.success) return res.status(400).json({ ok: false, message: "Invalid input", errors: parsed.error.flatten() });
@@ -216,30 +246,31 @@ router.post("/wallet", requireAuth, async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
-router.post("/wallet/request", requireAuth, async (req, res, next) => {
+router.post("/wallet/request", requireAuth, requireRole(["partner"]), async (req, res, next) => {
     try {
+        const parsed = withdrawalSchema.safeParse(req.body);
+        if (!parsed.success) return res.status(400).json({ ok: false, message: "Invalid amount" });
+
         const db = getDB();
         const withdrawals = db.collection("withdrawalRequests");
-        const { amount } = req.body;
-        if (!amount || Number(amount) <= 0) return res.status(400).json({ ok: false, message: "Invalid amount" });
+        const amount = parsed.data.amount;
 
-        // Check available balance by summing netEarnings from cleared bookings
         const bookings = db.collection("bookings");
         const now = new Date();
         const allPaid = await bookings.find({ ownerEmail: req.user.email, status: "paid" }).toArray();
         const available = allPaid.reduce((sum, b) => {
             if (b.payoutStatus === "paid_out") return sum;
-            if (new Date(b.checkIn) <= now) return sum + (b.netEarnings || (b.totalPrice * 0.9));
+            if (new Date(b.checkIn) <= now) return sum + (b.netEarnings || (b.totalPrice * (1 - COMMISSION_RATE)));
             return sum;
         }, 0);
 
-        if (Number(amount) > Math.round(available)) {
+        if (amount > Math.round(available)) {
             return res.status(400).json({ ok: false, message: "Insufficient available balance" });
         }
 
         await withdrawals.insertOne({
             email: req.user.email,
-            amount: Number(amount),
+            amount,
             status: "pending",
             requestedAt: new Date()
         });
@@ -248,7 +279,7 @@ router.post("/wallet/request", requireAuth, async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
-router.get("/wallet/requests", requireAuth, async (req, res, next) => {
+router.get("/wallet/requests", requireAuth, requireRole(["partner"]), async (req, res, next) => {
     try {
         const db = getDB();
         const withdrawals = db.collection("withdrawalRequests");
@@ -265,7 +296,6 @@ router.get("/calendar-feed/:token", async (req, res, next) => {
         const partners = db.collection("partners");
         const bookings = db.collection("bookings");
 
-        // The token is a secure string
         const partner = await partners.findOne({ calendarToken: req.params.token });
         if (!partner) return res.status(404).send("Invalid Calendar Token");
 
@@ -315,7 +345,7 @@ router.get("/calendar-settings", requireAuth, async (req, res, next) => {
         const baseUrl = process.env.API_URL || "http://localhost:5000";
         let token = partner.calendarToken;
         if (!token) {
-            token = require('crypto').randomBytes(32).toString('hex');
+            token = crypto.randomBytes(32).toString('hex');
             await partners.updateOne({ _id: partner._id }, { $set: { calendarToken: token } });
         }
         const feedUrl = `${baseUrl}/api/v1/partner/calendar-feed/${token}`;

@@ -113,6 +113,7 @@ export default function AdminLogin() {
                                     <input
                                         type="email" required value={email} onChange={e => setEmail(e.target.value)}
                                         placeholder="admin@wayza.com"
+                                        autoComplete="email"
                                         className="w-full h-12 bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition-all"
                                     />
                                 </div>
@@ -125,6 +126,7 @@ export default function AdminLogin() {
                                     <input
                                         type={show ? "text" : "password"} required value={password} onChange={e => setPassword(e.target.value)}
                                         placeholder="••••••••"
+                                        autoComplete="current-password"
                                         className="w-full h-12 bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-12 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition-all"
                                     />
                                     <button type="button" onClick={() => setShow(!show)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">

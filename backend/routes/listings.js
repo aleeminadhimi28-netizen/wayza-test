@@ -3,6 +3,30 @@ import { ObjectId } from "mongodb";
 import jwt from "jsonwebtoken";
 import { getDB } from "../config/db.js";
 import { requireAuth } from "../middleware/auth.js";
+import { sendWhatsAppAlert, formatWhatsAppApprovalNeeded } from "../utils/whatsapp.js";
+import { z } from "zod";
+
+const createListingSchema = z.object({
+    title: z.string().min(1),
+    location: z.string().optional(),
+    price: z.number().min(0).optional().default(0),
+    description: z.string().optional(),
+    image: z.string().optional(),
+    images: z.array(z.string()).optional().default([]),
+    category: z.string().optional().default("hotel"),
+    latitude: z.number().optional(),
+    longitude: z.number().optional()
+});
+
+const variantSchema = z.object({
+    name: z.string().min(1),
+    price: z.number().min(0).optional().default(0),
+    qty: z.number().int().min(1).optional().default(1),
+    type: z.string().optional(),
+    desc: z.string().optional(),
+    available: z.boolean().optional().default(true),
+    image: z.string().optional()
+});
 
 const router = express.Router();
 const SECRET = process.env.JWT_SECRET;
@@ -78,10 +102,12 @@ router.get("/:id", async (req, res, next) => {
 
 router.post("/", requireAuth, async (req, res, next) => {
     try {
+        const parsed = createListingSchema.safeParse(req.body);
+        if (!parsed.success) return res.status(400).json({ ok: false, message: "Invalid listing data", errors: parsed.error.flatten() });
+
         const db = getDB();
         const listings = db.collection("listings");
-        const { title, location, price, description, image, images, category, latitude, longitude } = req.body;
-        if (!title) return res.status(400).json({ ok: false, message: "Title required" });
+        const { title, location, price, description, image, images, category, latitude, longitude } = parsed.data;
 
         const result = await listings.insertOne({
             title, location,
@@ -96,6 +122,15 @@ router.post("/", requireAuth, async (req, res, next) => {
             longitude: longitude ? Number(longitude) : null,
             createdAt: new Date()
         });
+
+        // Notify Admin of new listing for approval
+        const adminPhone = process.env.ADMIN_PHONE || "918608827725";
+        const msg = formatWhatsAppApprovalNeeded({
+            ownerEmail: req.user.email,
+            title,
+            location
+        });
+        sendWhatsAppAlert(adminPhone, msg).catch(e => console.error("WhatsApp alert error:", e));
 
         res.json({ ok: true, id: result.insertedId });
     } catch (err) { next(err); }
@@ -115,15 +150,17 @@ router.delete("/:id", requireAuth, async (req, res, next) => {
 
 router.post("/:id/variant", requireAuth, async (req, res, next) => {
     try {
+        const parsed = variantSchema.safeParse(req.body);
+        if (!parsed.success) return res.status(400).json({ ok: false, message: "Invalid variant data", errors: parsed.error.flatten() });
+
         const db = getDB();
         const listings = db.collection("listings");
-        const { name, price, qty, type, desc, available, image } = req.body;
-        if (!name) return res.status(400).json({ ok: false });
-        if (!ObjectId.isValid(req.params.id)) return res.status(400).json({ ok: false });
+        if (!ObjectId.isValid(req.params.id)) return res.status(400).json({ ok: false, message: "Invalid listing ID" });
 
         const listing = await listings.findOne({ _id: new ObjectId(req.params.id) });
-        if (!listing || (listing.ownerEmail !== req.user.email && req.user.role !== "admin")) return res.status(403).json({ ok: false });
+        if (!listing || (listing.ownerEmail !== req.user.email && req.user.role !== "admin")) return res.status(403).json({ ok: false, message: "Not authorized" });
 
+        const { name, type, price, qty, desc, available, image } = parsed.data;
         await listings.updateOne(
             { _id: new ObjectId(req.params.id) },
             {

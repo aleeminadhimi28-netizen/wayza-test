@@ -112,6 +112,7 @@ export default function Login() {
                                     <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/field:text-emerald-600 transition-colors" size={20} />
                                     <input
                                         type="email" required value={email} onChange={e => setEmail(e.target.value)}
+                                        autoComplete="email"
                                         className="w-full h-18 bg-slate-50 border border-slate-100 rounded-2xl pl-16 pr-6 font-bold text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200 shadow-inner"
                                         placeholder="email@example.com"
                                     />
@@ -127,6 +128,7 @@ export default function Login() {
                                     <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/field:text-emerald-600 transition-colors" size={20} />
                                     <input
                                         type={show ? "text" : "password"} required value={password} onChange={e => setPassword(e.target.value)}
+                                        autoComplete="current-password"
                                         className="w-full h-18 bg-slate-50 border border-slate-100 rounded-2xl pl-16 pr-20 font-bold text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200 shadow-inner"
                                         placeholder="••••••••"
                                     />

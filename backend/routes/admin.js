@@ -3,17 +3,28 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { ObjectId } from "mongodb";
 import { getDB } from "../config/db.js";
-import { requireAuth } from "../middleware/auth.js";
+import { requireAuth, requireRole } from "../middleware/auth.js";
 import { getTransporter, payoutSettledEmail, withdrawalStatusEmail } from "../utils/emailTemplates.js";
+import { sendWhatsAppAlert, formatWhatsAppListingApproved, formatWhatsAppPartnerOnboarded } from "../utils/whatsapp.js";
+import { z } from "zod";
+import { COMMISSION_RATE, JWT_EXPIRY } from "../config/constants.js";
+
+const loginSchema = z.object({
+    email: z.string().email(),
+    password: z.string().min(1)
+});
 
 const router = express.Router();
 const SECRET = process.env.JWT_SECRET;
 
 router.post("/login", async (req, res, next) => {
     try {
+        const parsed = loginSchema.safeParse(req.body);
+        if (!parsed.success) return res.status(400).json({ ok: false, message: "Invalid input", errors: parsed.error.flatten() });
+
         const db = getDB();
         const users = db.collection("users");
-        const { email, password } = req.body;
+        const { email, password } = parsed.data;
         const user = await users.findOne({ email });
         if (!user || user.role !== "admin")
             return res.status(401).json({ ok: false, message: "Unauthorized: Not an admin account" });
@@ -21,7 +32,7 @@ router.post("/login", async (req, res, next) => {
         const ok = await bcrypt.compare(password, user.password);
         if (!ok) return res.status(401).json({ ok: false, message: "Invalid password" });
 
-        const token = jwt.sign({ email: user.email, role: "admin" }, SECRET, { expiresIn: "7d" });
+        const token = jwt.sign({ email: user.email, role: "admin" }, SECRET, { expiresIn: JWT_EXPIRY });
         res.cookie("token", token, {
             httpOnly: true,
             secure: true,
@@ -32,11 +43,8 @@ router.post("/login", async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
-router.get("/stats", requireAuth, async (req, res, next) => {
+router.get("/stats", requireAuth, requireRole(["admin"]), async (req, res, next) => {
     try {
-        if (req.user.role !== "admin")
-            return res.status(403).json({ ok: false, message: "Admin only" });
-
         const db = getDB();
         const users = db.collection("users");
         const listings = db.collection("listings");
@@ -53,7 +61,7 @@ router.get("/stats", requireAuth, async (req, res, next) => {
 
         const paid = await bookings.find({ status: "paid" }).toArray();
         const totalRevenue = paid.reduce((s, b) => s + (b.totalPrice || 0), 0);
-        const platformCommission = Math.round(totalRevenue * 0.1);
+        const platformCommission = Math.round(totalRevenue * COMMISSION_RATE);
 
         const revenueMap = {};
         paid.forEach(b => {
@@ -80,9 +88,8 @@ router.get("/stats", requireAuth, async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
-router.get("/users", requireAuth, async (req, res, next) => {
+router.get("/users", requireAuth, requireRole(["admin"]), async (req, res, next) => {
     try {
-        if (req.user.role !== "admin") return res.status(403).json({ ok: false });
         const db = getDB();
         const users = db.collection("users");
         const list = await users.find({ role: { $ne: "admin" } }, { projection: { password: 0 } }).sort({ createdAt: -1 }).toArray();
@@ -90,9 +97,8 @@ router.get("/users", requireAuth, async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
-router.get("/partners", requireAuth, async (req, res, next) => {
+router.get("/partners", requireAuth, requireRole(["admin"]), async (req, res, next) => {
     try {
-        if (req.user.role !== "admin") return res.status(403).json({ ok: false });
         const db = getDB();
         const partners = db.collection("partners");
         const list = await partners.find({}).sort({ createdAt: -1 }).toArray();
@@ -100,9 +106,8 @@ router.get("/partners", requireAuth, async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
-router.delete("/users/:email", requireAuth, async (req, res, next) => {
+router.delete("/users/:email", requireAuth, requireRole(["admin"]), async (req, res, next) => {
     try {
-        if (req.user.role !== "admin") return res.status(403).json({ ok: false });
         const db = getDB();
         await db.collection("users").deleteOne({ email: req.params.email });
         await db.collection("partners").deleteOne({ email: req.params.email });
@@ -111,9 +116,8 @@ router.delete("/users/:email", requireAuth, async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
-router.delete("/partners/:email", requireAuth, async (req, res, next) => {
+router.delete("/partners/:email", requireAuth, requireRole(["admin"]), async (req, res, next) => {
     try {
-        if (req.user.role !== "admin") return res.status(403).json({ ok: false });
         const db = getDB();
         await db.collection("partners").deleteOne({ email: req.params.email });
         await db.collection("users").deleteOne({ email: req.params.email });
@@ -122,18 +126,16 @@ router.delete("/partners/:email", requireAuth, async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
-router.get("/listings", requireAuth, async (req, res, next) => {
+router.get("/listings", requireAuth, requireRole(["admin"]), async (req, res, next) => {
     try {
-        if (req.user.role !== "admin") return res.status(403).json({ ok: false });
         const db = getDB();
         const list = await db.collection("listings").find({}).sort({ createdAt: -1 }).toArray();
         res.json({ ok: true, data: list });
     } catch (err) { next(err); }
 });
 
-router.delete("/listings/:id", requireAuth, async (req, res, next) => {
+router.delete("/listings/:id", requireAuth, requireRole(["admin"]), async (req, res, next) => {
     try {
-        if (req.user.role !== "admin") return res.status(403).json({ ok: false });
         if (!ObjectId.isValid(req.params.id)) return res.status(400).json({ ok: false });
         const db = getDB();
         await db.collection("listings").deleteOne({ _id: new ObjectId(req.params.id) });
@@ -141,21 +143,27 @@ router.delete("/listings/:id", requireAuth, async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
-router.patch("/partners/:email/approve", requireAuth, async (req, res, next) => {
+router.patch("/partners/:email/approve", requireAuth, requireRole(["admin"]), async (req, res, next) => {
     try {
-        if (req.user.role !== "admin") return res.status(403).json({ ok: false });
         const db = getDB();
         await db.collection("partners").updateOne(
             { email: req.params.email },
             { $set: { onboarded: true, updatedAt: new Date() } }
         );
+
+        // Notify Partner of account approval
+        const partner = await db.collection("partners").findOne({ email: req.params.email });
+        if (partner?.phone) {
+            const msg = formatWhatsAppPartnerOnboarded({ email: req.params.email });
+            sendWhatsAppAlert(partner.phone, msg).catch(e => console.error("WhatsApp alert error:", e));
+        }
+
         res.json({ ok: true });
     } catch (err) { next(err); }
 });
 
-router.patch("/listings/:id/approve", requireAuth, async (req, res, next) => {
+router.patch("/listings/:id/approve", requireAuth, requireRole(["admin"]), async (req, res, next) => {
     try {
-        if (req.user.role !== "admin") return res.status(403).json({ ok: false });
         if (!ObjectId.isValid(req.params.id)) return res.status(400).json({ ok: false });
 
         const db = getDB();
@@ -164,13 +172,23 @@ router.patch("/listings/:id/approve", requireAuth, async (req, res, next) => {
             { _id: new ObjectId(req.params.id) },
             { $set: { approved: approved === true, approvedAt: new Date() } }
         );
+
+        // Notify Partner of listing approval
+        if (approved === true) {
+            const listing = await db.collection("listings").findOne({ _id: new ObjectId(req.params.id) });
+            const partner = await db.collection("partners").findOne({ email: listing?.ownerEmail });
+            if (partner?.phone) {
+                const msg = formatWhatsAppListingApproved({ title: listing.title });
+                sendWhatsAppAlert(partner.phone, msg).catch(e => console.error("WhatsApp alert error:", e));
+            }
+        }
+
         res.json({ ok: true });
     } catch (err) { next(err); }
 });
 
-router.patch("/users/:email/mute", requireAuth, async (req, res, next) => {
+router.patch("/users/:email/mute", requireAuth, requireRole(["admin"]), async (req, res, next) => {
     try {
-        if (req.user.role !== "admin") return res.status(403).json({ ok: false });
         const db = getDB();
         const { muted } = req.body;
         await db.collection("users").updateOne({ email: req.params.email }, { $set: { muted: muted === true, mutedAt: new Date() } });
@@ -178,18 +196,16 @@ router.patch("/users/:email/mute", requireAuth, async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
-router.get("/bookings", requireAuth, async (req, res, next) => {
+router.get("/bookings", requireAuth, requireRole(["admin"]), async (req, res, next) => {
     try {
-        if (req.user.role !== "admin") return res.status(403).json({ ok: false });
         const db = getDB();
         const list = await db.collection("bookings").find({}).sort({ createdAt: -1 }).toArray();
         res.json({ ok: true, data: list });
     } catch (err) { next(err); }
 });
 
-router.patch("/bookings/:id/payout", requireAuth, async (req, res, next) => {
+router.patch("/bookings/:id/payout", requireAuth, requireRole(["admin"]), async (req, res, next) => {
     try {
-        if (req.user.role !== "admin") return res.status(403).json({ ok: false });
         if (!ObjectId.isValid(req.params.id)) return res.status(400).json({ ok: false });
 
         const db = getDB();
@@ -216,18 +232,16 @@ router.patch("/bookings/:id/payout", requireAuth, async (req, res, next) => {
 
 // ===== WITHDRAWAL MANAGEMENT =====
 
-router.get("/withdrawals", requireAuth, async (req, res, next) => {
+router.get("/withdrawals", requireAuth, requireRole(["admin"]), async (req, res, next) => {
     try {
-        if (req.user.role !== "admin") return res.status(403).json({ ok: false });
         const db = getDB();
         const rows = await db.collection("withdrawalRequests").find({}).sort({ requestedAt: -1 }).toArray();
         res.json({ ok: true, data: rows });
     } catch (err) { next(err); }
 });
 
-router.patch("/withdrawals/:id", requireAuth, async (req, res, next) => {
+router.patch("/withdrawals/:id", requireAuth, requireRole(["admin"]), async (req, res, next) => {
     try {
-        if (req.user.role !== "admin") return res.status(403).json({ ok: false });
         if (!ObjectId.isValid(req.params.id)) return res.status(400).json({ ok: false });
 
         const db = getDB();

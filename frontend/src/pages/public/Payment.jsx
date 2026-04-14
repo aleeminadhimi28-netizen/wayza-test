@@ -2,7 +2,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { WayzaLayout, WayzaButton } from "../../WayzaUI.jsx"
 import { useAuth } from "../../AuthContext.jsx"
 import { motion, AnimatePresence } from "framer-motion";
-import { ShieldCheck, CreditCard, Apple, Wallet, CheckCircle, Lock, Zap, ArrowLeft, ArrowRight, Shield, Activity, Globe, CreditCard as CardIcon, Sparkles } from "lucide-react";
+import { ShieldCheck, CreditCard, Apple, Wallet, CheckCircle, Lock, Zap, ArrowLeft, ArrowRight, Shield, Activity, Globe, CreditCard as CardIcon, Sparkles, ChevronRight } from "lucide-react";
 import { useToast } from "../../ToastContext.jsx";
 import { useState } from "react";
 
@@ -51,73 +51,120 @@ export default function Payment() {
 
     return (
         <WayzaLayout noPadding>
-            <div className="bg-white min-h-screen font-sans selection:bg-emerald-50 selection:text-emerald-900">
-                <div className="max-w-7xl mx-auto px-6 lg:px-12 py-12 md:py-20">
-                    <header className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-                        <div className="space-y-2">
-                            <h1 className="text-3xl md:text-5xl font-bold text-slate-900 tracking-tight">Payment</h1>
-                            <p className="text-slate-500 font-medium">Choose your payment method and complete your booking.</p>
+            <div className="bg-white min-h-screen font-sans selection:bg-emerald-100 selection:text-emerald-900">
+
+                {/* ─── PREMIUM MESH BACKGROUND ─── */}
+                <div className="fixed inset-0 z-0 pointer-events-none opacity-40">
+                    <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-emerald-100/30 blur-[120px] rounded-full" />
+                    <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-slate-100/50 blur-[120px] rounded-full" />
+                </div>
+
+                <div className="max-w-[1400px] mx-auto px-6 md:px-12 py-10 md:py-16 relative z-10">
+
+                    {/* ─── BREADCRUMB / BACK ─── */}
+                    <div className="flex items-center justify-between mb-16">
+                        <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-slate-300 overflow-x-auto no-scrollbar whitespace-nowrap">
+                            <button onClick={() => navigate("/")} className="hover:text-emerald-600 transition-colors">Protocol</button>
+                            <ChevronRight size={10} />
+                            <span className="text-slate-900">Secure Checkout</span>
                         </div>
-                        <button onClick={() => navigate(-1)} className="h-12 px-6 bg-slate-50 text-slate-600 hover:text-slate-900 border border-slate-100 rounded-2xl font-bold uppercase text-[10px] tracking-widest transition-all flex items-center gap-2">
-                            <ArrowLeft size={14} /> Back
+                        <button onClick={() => navigate(-1)} className="w-12 h-12 bg-white border border-slate-100 rounded-2xl flex items-center justify-center text-slate-900 hover:border-emerald-200 transition-all shadow-sm">
+                            <ArrowLeft size={18} />
                         </button>
+                    </div>
+
+                    <header className="mb-20 space-y-6">
+                        <div className="flex items-center gap-4">
+                            <div className="px-3 py-1 bg-slate-950 text-white text-[9px] font-black uppercase tracking-[0.4em] rounded-md flex items-center gap-2">
+                                <ShieldCheck size={12} className="text-emerald-400" />
+                                Wayza Vault Secure
+                            </div>
+                        </div>
+                        <h1 className="text-6xl md:text-8xl font-black text-slate-900 tracking-tighter uppercase leading-[0.8] font-serif italic">
+                            Authorization <br />
+                            <span className="lowercase">& settlement.</span>
+                        </h1>
+                        <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest italic max-w-sm">
+                            "Execute your commitment via our encrypted liquidity bridge."
+                        </p>
                     </header>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-                        {/* LEFT COLUMN: PAYMENT METHODS */}
-                        <div className="lg:col-span-7 space-y-12">
-                            <section className="space-y-6">
-                                <h3 className="text-sm font-bold text-slate-900">1. Fast checkout</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <button onClick={() => handlePayment('apple')} disabled={submitting} className="h-20 bg-slate-950 text-white rounded-[24px] flex items-center justify-center gap-3 transition-all hover:bg-black active:scale-95 disabled:opacity-50">
-                                        <Apple size={24} />
-                                        <span className="text-lg font-bold">Apple Pay</span>
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 items-start">
+
+                        {/* LEFT: PAYMENT INSTRUMENTS */}
+                        <div className="lg:col-span-7 space-y-20">
+
+                            {/* Rapid Access */}
+                            <section className="space-y-10">
+                                <div className="flex items-center gap-4">
+                                    <span className="h-px w-12 bg-emerald-500" />
+                                    <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-600 italic">Rapid Access</span>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <button onClick={() => handlePayment('apple')} disabled={submitting} className="h-24 bg-slate-950 text-white rounded-[40px] flex items-center justify-center gap-4 transition-all hover:bg-black active:scale-[0.98] shadow-2xl shadow-slate-950/20 group">
+                                        <Apple size={28} className="group-hover:scale-110 transition-transform" />
+                                        <div className="text-left">
+                                            <p className="text-[9px] font-black uppercase tracking-widest text-white/40">Pay with</p>
+                                            <p className="text-xl font-black tracking-tighter">Apple Pay</p>
+                                        </div>
                                     </button>
-                                    <button onClick={() => handlePayment('google')} disabled={submitting} className="h-20 bg-white border border-slate-200 text-slate-900 rounded-[24px] flex items-center justify-center gap-3 transition-all hover:border-emerald-500 active:scale-95 disabled:opacity-50">
-                                        <div className="w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center font-bold text-[10px]">G</div>
-                                        <span className="text-lg font-bold">Google Pay</span>
+                                    <button onClick={() => handlePayment('google')} disabled={submitting} className="h-24 bg-white border border-slate-100 text-slate-900 rounded-[40px] flex items-center justify-center gap-4 transition-all hover:border-emerald-500 active:scale-[0.98] shadow-sm group">
+                                        <div className="w-10 h-10 bg-slate-50 border border-slate-100 rounded-full flex items-center justify-center font-black text-xs group-hover:bg-emerald-50 transition-colors">G</div>
+                                        <div className="text-left">
+                                            <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Secure via</p>
+                                            <p className="text-xl font-black tracking-tighter">Google Pay</p>
+                                        </div>
                                     </button>
                                 </div>
                             </section>
 
-                            <div className="relative py-2 flex items-center">
-                                <div className="flex-1 border-t border-slate-100"></div>
-                                <span className="px-6 text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em]">Or card payment</span>
-                                <div className="flex-1 border-t border-slate-100"></div>
-                            </div>
+                            {/* Card Protocol */}
+                            <section className="space-y-10 bg-slate-50/50 p-12 rounded-[48px] border border-slate-100">
+                                <div className="flex items-center gap-4">
+                                    <span className="h-px w-12 bg-slate-200" />
+                                    <span className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-300">Residency Instrument Protocol</span>
+                                </div>
 
-                            <section className="bg-slate-50 border border-slate-100 rounded-[32px] p-8 md:p-12">
-                                <h3 className="text-sm font-bold text-slate-900 mb-8">2. Credit or Debit card</h3>
-                                <div className="space-y-6">
-                                    <div className="space-y-3">
-                                        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Card Number</label>
+                                <div className="space-y-10">
+                                    <div className="space-y-4 group">
+                                        <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 group-focus-within:text-emerald-600 transition-colors italic">Card Index Identifier</label>
                                         <div className="relative">
-                                            <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                                            <input placeholder="0000 0000 0000 0000" className="w-full h-14 bg-white border border-slate-200 rounded-xl pl-12 pr-4 font-bold text-slate-900 focus:border-emerald-500 outline-none transition-all" />
+                                            <CreditCard className="absolute left-10 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-emerald-500 transition-colors" size={24} />
+                                            <input
+                                                placeholder="0000 0000 0000 0000"
+                                                className="w-full h-24 bg-white/50 border border-slate-100 rounded-[32px] pl-24 pr-10 font-bold text-2xl tracking-tighter text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-100 shadow-sm"
+                                            />
                                         </div>
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-3">
-                                            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Expiry Date</label>
-                                            <input placeholder="MM / YY" className="w-full h-14 bg-white border border-slate-200 rounded-xl px-4 font-bold text-slate-900 focus:border-emerald-500 outline-none transition-all" />
+                                    <div className="grid grid-cols-2 gap-8">
+                                        <div className="space-y-4 group">
+                                            <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 group-focus-within:text-emerald-600 transition-colors italic">Expiry Cycle</label>
+                                            <input
+                                                placeholder="MM / YY"
+                                                className="w-full h-24 bg-white/50 border border-slate-100 rounded-[32px] px-10 font-bold text-2xl tracking-tighter text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-100 shadow-sm text-center"
+                                            />
                                         </div>
-                                        <div className="space-y-3">
-                                            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">CVC</label>
-                                            <input placeholder="123" className="w-full h-14 bg-white border border-slate-200 rounded-xl px-4 font-bold text-slate-900 focus:border-emerald-500 outline-none transition-all" />
+                                        <div className="space-y-4 group">
+                                            <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 group-focus-within:text-emerald-600 transition-colors italic">Auth Key (CVC)</label>
+                                            <input
+                                                type="password" placeholder="•••"
+                                                className="w-full h-24 bg-white/50 border border-slate-100 rounded-[32px] px-10 font-bold text-2xl tracking-[0.5em] text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-100 shadow-sm text-center"
+                                            />
                                         </div>
                                     </div>
 
-                                    <button onClick={() => handlePayment('card')} disabled={submitting} className="w-full h-16 bg-slate-900 hover:bg-emerald-600 text-white rounded-2xl font-bold uppercase text-xs tracking-widest transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3 mt-4">
+                                    <button
+                                        onClick={() => handlePayment('card')}
+                                        disabled={submitting}
+                                        className="w-full h-24 bg-slate-950 text-white rounded-[40px] font-black uppercase text-xs tracking-[0.5em] transition-all hover:bg-emerald-500 shadow-3xl shadow-slate-950/20 active:scale-[0.98] flex items-center justify-center gap-6 disabled:opacity-20 mt-4 group"
+                                    >
                                         {submitting ? (
-                                            <>
-                                                <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                                                <span>Processing...</span>
-                                            </>
+                                            <div className="w-8 h-8 border-4 border-white/20 border-t-white rounded-full animate-spin" />
                                         ) : (
                                             <>
-                                                <span>Pay ₹{price.toLocaleString()}</span>
-                                                <ArrowRight size={16} />
+                                                <span>Authorize Entry: ₹{price.toLocaleString()}</span>
+                                                <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
                                             </>
                                         )}
                                     </button>
@@ -125,40 +172,58 @@ export default function Payment() {
                             </section>
                         </div>
 
-                        {/* RIGHT COLUMN: SUMMARY */}
-                        <aside className="lg:col-span-5 lg:sticky lg:top-24">
-                            <div className="bg-white border border-slate-200 rounded-[32px] overflow-hidden shadow-xl p-8 md:p-10">
-                                <div className="space-y-8">
-                                    <div className="space-y-2">
-                                        <h2 className="text-2xl font-bold text-slate-900">Order Summary</h2>
-                                        <p className="text-sm font-medium text-slate-500">{title}</p>
-                                    </div>
+                        {/* RIGHT: SETTLEMENT SUMMARY */}
+                        <div className="lg:col-span-5 relative">
+                            <div className="sticky top-32 space-y-8">
+                                <div className="bg-slate-950 rounded-[48px] p-12 text-white shadow-3xl shadow-slate-900/40 relative overflow-hidden">
+                                    <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[100px] rounded-full pointer-events-none" />
 
-                                    <div className="space-y-3 pt-6 border-t border-slate-100">
-                                        <div className="flex justify-between items-center text-sm">
-                                            <span className="text-slate-500 font-medium">Total stay</span>
-                                            <span className="font-bold text-slate-900">{nights} {nights > 1 ? 'Nights' : 'Night'}</span>
+                                    <div className="relative z-10 space-y-12">
+                                        <div className="space-y-4">
+                                            <p className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-400">Settlement Ledger</p>
+                                            <div className="flex items-center justify-between">
+                                                <h3 className="text-3xl font-black tracking-tighter uppercase italic font-serif leading-none">{title}</h3>
+                                                <span className="text-[9px] font-black uppercase tracking-widest text-white/30 truncate max-w-[100px]">WZ-{bookingId?.slice(-8).toUpperCase()}</span>
+                                            </div>
                                         </div>
-                                        <div className="flex justify-between items-center text-sm">
-                                            <span className="text-slate-500 font-medium">Booking ID</span>
-                                            <span className="font-mono text-xs font-bold text-emerald-600">WZ-{bookingId?.slice(-8).toUpperCase()}</span>
+
+                                        <div className="space-y-6 pt-10 border-t border-white/10">
+                                            <div className="flex justify-between items-center text-xs font-black uppercase tracking-widest text-white/40">
+                                                <span>Audit Period</span>
+                                                <span className="text-white bg-white/5 px-4 py-2 rounded-xl">{nights} {nights > 1 ? 'Stages' : 'Stage'}</span>
+                                            </div>
+                                            <div className="flex justify-between items-center text-xs font-black uppercase tracking-widest text-white/40">
+                                                <span>Security Protocol</span>
+                                                <span className="text-emerald-400">WAYZA VAULT</span>
+                                            </div>
+                                            <div className="flex justify-between items-center pt-8 border-t border-white/10">
+                                                <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-400">Net Commitment</span>
+                                                <span className="text-5xl font-black tracking-tighter font-serif italic text-white">₹{price.toLocaleString()}</span>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div className="pt-6 border-t border-slate-100 flex justify-between items-center">
-                                        <span className="text-slate-900 font-bold">Total amount</span>
-                                        <span className="text-4xl font-bold text-slate-900 tracking-tight">₹{price.toLocaleString()}</span>
-                                    </div>
-
-                                    <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100 flex gap-3">
-                                        <ShieldCheck size={18} className="text-emerald-600 shrink-0" />
-                                        <p className="text-[11px] text-emerald-800 font-medium leading-relaxed">
-                                            Your transaction is encrypted and secured. Wayza does not store your card details.
-                                        </p>
+                                        <div className="p-8 bg-white/5 backdrop-blur-md rounded-[32px] border border-white/10 flex items-start gap-6">
+                                            <ShieldCheck size={24} className="text-emerald-500 shrink-0" />
+                                            <p className="text-[10px] text-white/40 font-black uppercase tracking-widest leading-relaxed italic">
+                                                Your financial signature is protected by military-grade AES-256 encryption. We do not persist sensitive instrument data.
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
+
+                                <div className="bg-slate-50 border border-slate-100 rounded-[32px] p-8 flex items-center gap-6 group hover:bg-white hover:shadow-xl transition-all duration-500">
+                                    <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
+                                        <Globe size={20} className="text-emerald-600" />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <p className="text-sm font-black uppercase tracking-widest text-slate-900">Regional Node</p>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Global Dispatch Protocol Active</p>
+                                    </div>
+                                    <ChevronRight size={16} className="ml-auto text-slate-300" />
+                                </div>
                             </div>
-                        </aside>
+                        </div>
+
                     </div>
                 </div>
             </div>

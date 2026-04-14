@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 
 import { api } from "../../utils/api.js";
+import { initiateSocketConnection, disconnectSocket, subscribeToMessages, joinBookingRoom, leaveBookingRoom } from "../../utils/socket.js";
 
 export default function PartnerChat() {
   const { user } = useAuth();
@@ -16,7 +17,20 @@ export default function PartnerChat() {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const bottomRef = useRef(null);
-  const pollRef = useRef(null);
+
+  useEffect(() => {
+    initiateSocketConnection();
+    subscribeToMessages((err, msg) => {
+      if (err) return;
+      setMessages(prev => {
+        const exists = prev.find(m => m._id === msg._id);
+        if (exists) return prev;
+        return [...prev, msg];
+      });
+    });
+
+    return () => disconnectSocket();
+  }, []);
 
   useEffect(() => {
     if (!user?.email) return;
@@ -34,8 +48,11 @@ export default function PartnerChat() {
   useEffect(() => {
     if (!selected) return;
     loadMessages();
-    pollRef.current = setInterval(loadMessages, 5000);
-    return () => clearInterval(pollRef.current);
+    joinBookingRoom(selected._id);
+
+    return () => {
+      leaveBookingRoom(selected._id);
+    };
   }, [selected?._id]);
 
   async function loadMessages() {
@@ -54,7 +71,6 @@ export default function PartnerChat() {
     try {
       await api.sendChat(selected._id, text.trim());
       setText("");
-      await loadMessages();
     } catch (_) { }
     setSending(false);
   }

@@ -10,7 +10,7 @@ import {
   CheckCircle, Shield, Info, Wifi, Coffee, Wind, Tv,
   Utensils, Zap, Phone, Send, MessageSquare, ArrowRight,
   Grid3x3, Users, Calendar, Car, Bike, Anchor, Hotel,
-  Clock, CreditCard, ChevronDown, ChevronUp, Sparkles
+  Clock, CreditCard, ChevronDown, ChevronUp, Sparkles, ShieldCheck
 } from "lucide-react";
 import MapView from "../../components/MapView.jsx";
 
@@ -178,436 +178,272 @@ export default function ListingDetails() {
 
   return (
     <WayzaLayout noPadding>
-      <div className="bg-slate-50 min-h-screen font-sans selection:bg-emerald-100 selection:text-emerald-900">
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-6">
+      <div className="bg-white min-h-screen font-sans selection:bg-emerald-100 selection:text-emerald-900">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-12 py-10 md:py-16">
 
           {/* ─── BREADCRUMB ─── */}
-          <div className="flex items-center gap-2 text-sm text-slate-400 mb-4">
-            <button onClick={() => navigate("/listings")} className="hover:text-emerald-600 transition-colors">Properties</button>
-            <ChevronRight size={14} />
-            <button onClick={() => navigate(`/listings?location=${encodeURIComponent(listing.location || "")}`)} className="hover:text-emerald-600 transition-colors">{listing.location || "Kerala"}</button>
-            <ChevronRight size={14} />
-            <span className="text-slate-600 font-medium truncate max-w-[200px]">{listing.title}</span>
+          <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-slate-300 mb-10 overflow-x-auto no-scrollbar whitespace-nowrap">
+            <button onClick={() => navigate("/")} className="hover:text-emerald-600 transition-colors">Protocol</button>
+            <ChevronRight size={10} />
+            <button onClick={() => navigate("/listings")} className="hover:text-emerald-600 transition-colors">Stays</button>
+            <ChevronRight size={10} />
+            <span className="text-slate-900 truncate max-w-[200px]">{listing.title}</span>
           </div>
 
-          {/* ─── TITLE ROW ─── */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-            <div className="space-y-3">
-              <div className="flex flex-wrap gap-2 items-center">
-                <span className="bg-slate-900 text-white text-[9px] font-bold px-3 py-1.5 rounded-lg uppercase tracking-widest">{listing.category || "Hotel"}</span>
+          {/* ─── TITLE & ACTIONS ─── */}
+          <div className="flex flex-col xl:flex-row justify-between items-start gap-12 mb-16">
+            <div className="space-y-6 max-w-4xl">
+              <div className="flex flex-wrap gap-4 items-center">
+                <div className="px-3 py-1 bg-slate-950 text-white text-[10px] font-black uppercase tracking-[0.4em] rounded-md">
+                  {listing.category || "Estate"}
+                </div>
                 {listing.price > 8000 && (
-                  <span className="bg-gradient-to-r from-amber-400 to-orange-400 text-slate-900 text-[9px] font-bold px-3 py-1.5 rounded-lg uppercase tracking-widest flex items-center gap-1.5 shadow-sm">
-                    <Sparkles size={11} /> Superhost
-                  </span>
+                  <div className="flex items-center gap-2 text-amber-600 text-[10px] font-black uppercase tracking-[0.4em] italic">
+                    <Sparkles size={12} /> Priority Asset
+                  </div>
                 )}
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tighter uppercase leading-none">{listing.title}</h1>
-              <div className="flex flex-wrap items-center gap-6 text-sm font-medium">
-                {/* Rating */}
-                <div className="flex items-center gap-1.5">
-                  <StarRow rating={Math.round(parseFloat(avgRating))} size={15} />
-                  <span className="font-bold text-slate-900">{avgRating}</span>
-                  <span className="text-slate-400">({reviews.length} reviews)</span>
+              <h1 className="text-6xl md:text-8xl font-black text-slate-900 tracking-tighter uppercase leading-[0.8] font-serif italic">
+                {listing.title}
+              </h1>
+              <div className="flex flex-wrap items-center gap-x-10 gap-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-emerald-50 content-center text-center rounded-2xl border border-emerald-100 italic font-black text-xl text-emerald-600 font-serif">
+                    {avgRating}
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-900">Exceptional</p>
+                    <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">{reviews.length} Audited Reviews</p>
+                  </div>
                 </div>
-                <span className="text-slate-300">·</span>
-                {/* Location */}
-                <div className="flex items-center gap-1 text-slate-500">
-                  <MapPin size={14} className="text-emerald-500" />
-                  {listing.location || "Kerala, India"}
+                <div className="h-10 w-px bg-slate-100 hidden md:block" />
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-slate-50 flex items-center justify-center rounded-xl text-slate-400">
+                    <MapPin size={20} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-900">{listing.location || "Kerala, India"}</p>
+                    <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest italic leading-none mt-1">Prime Location</p>
+                  </div>
                 </div>
-                {/* Verified */}
-                {listing.approved && (
-                  <>
-                    <span className="text-slate-300">·</span>
-                    <div className="flex items-center gap-1 text-emerald-600 font-semibold">
-                      <CheckCircle size={14} />
-                      Verified by Wayza
-                    </div>
-                  </>
-                )}
               </div>
             </div>
-            {/* Action buttons */}
-            <div className="flex items-center gap-2 shrink-0">
-              <button
-                onClick={() => { navigator.clipboard.writeText(window.location.href); showToast("Link copied!", "success"); }}
-                className="flex items-center gap-2 px-4 py-2.5 border border-slate-300 rounded-xl text-sm font-semibold text-slate-700 hover:border-emerald-500 hover:text-emerald-600 transition-all"
-              >
-                <Share2 size={16} />
-                Share
-              </button>
+
+            <div className="flex items-center gap-4 shrink-0 w-full xl:w-auto">
               <button
                 onClick={toggleWishlist}
-                className={`flex items-center gap-2 px-4 py-2.5 border rounded-xl text-sm font-semibold transition-all ${saved ? "border-rose-300 bg-rose-50 text-rose-600" : "border-slate-300 text-slate-700 hover:border-rose-300 hover:text-rose-500"}`}
+                className={`flex-1 xl:flex-none h-16 px-10 rounded-2xl font-black uppercase text-[10px] tracking-[0.4em] transition-all border flex items-center justify-center gap-4 ${saved ? "bg-rose-50 border-rose-100 text-rose-600" : "bg-white border-slate-100 text-slate-900 hover:border-rose-200"}`}
               >
-                <Heart size={16} className={saved ? "fill-rose-500" : ""} />
-                {saved ? "Saved" : "Save"}
+                <Heart size={18} className={saved ? "fill-rose-600" : ""} />
+                {saved ? "Retained" : "Archive"}
+              </button>
+              <button
+                onClick={() => { navigator.clipboard.writeText(window.location.href); showToast("Listing encrypted & shared.", "success"); }}
+                className="w-16 h-16 bg-white border border-slate-100 rounded-2xl flex items-center justify-center text-slate-900 hover:border-emerald-200 transition-all shadow-sm"
+              >
+                <Share2 size={20} />
               </button>
             </div>
           </div>
 
-          {/* ─── PHOTO GRID ─── */}
-          <div className="relative mb-8 rounded-2xl overflow-hidden bg-slate-200 h-[280px] sm:h-[440px] grid grid-cols-1 sm:grid-cols-4 sm:grid-rows-2 gap-1.5 cursor-pointer">
-            {/* Main large image */}
-            <div className="col-span-1 sm:col-span-2 sm:row-span-2 overflow-hidden" onClick={() => { setGalleryIndex(0); setGalleryOpen(true); }}>
-              <img src={images[0]} alt="Main" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
-            </div>
-            {/* 4 smaller images - HIDDEN ON MOBILE */}
-            {[1, 2, 3, 4].map(i => (
-              <div key={i} className="hidden sm:block overflow-hidden relative" onClick={() => { setGalleryIndex(i); setGalleryOpen(true); }}>
-                <img src={images[i]} alt={`Photo ${i + 1}`} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
-                {i === 4 && images.length > 5 && (
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                    <span className="text-white text-sm font-bold">+{images.length - 4} more</span>
-                  </div>
-                )}
+          {/* ─── GALLERY ─── */}
+          <div className="relative mb-20 rounded-[40px] overflow-hidden bg-slate-50 h-[400px] md:h-[650px] group cursor-pointer border border-slate-100" onClick={() => setGalleryOpen(true)}>
+            <img src={images[0]} alt="Hero" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[2s]" />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+
+            <div className="absolute bottom-10 right-10 flex items-center gap-4">
+              <div className="bg-white/80 backdrop-blur-xl border border-white/20 px-6 py-4 rounded-3xl flex items-center gap-4 shadow-2xl">
+                <Grid3x3 size={20} className="text-slate-900" />
+                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-900">Catalog ({images.length} frames)</span>
               </div>
-            ))}
-            {/* Show all photos button */}
-            <button
-              onClick={() => setGalleryOpen(true)}
-              className="absolute bottom-4 right-4 flex items-center gap-2 bg-white/95 backdrop-blur-sm text-slate-900 text-sm font-bold px-4 py-2.5 rounded-xl shadow-lg hover:shadow-xl transition-all border border-white/80"
-            >
-              <Grid3x3 size={16} />
-              Show all photos
-            </button>
+            </div>
           </div>
 
-          {/* ─── MAIN LAYOUT ─── */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+          {/* ─── MAIN CONTENT ─── */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 items-start">
 
-            {/* ══ LEFT COLUMN ══ */}
-            <div className="lg:col-span-2 space-y-6">
+            {/* LEFT: INFORMATION */}
+            <div className="lg:col-span-7 space-y-20">
 
-              {/* Overview */}
-              <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-5">
-                <div className="flex items-start justify-between pb-5 border-b border-slate-100">
+              {/* Narrative */}
+              <section className="space-y-8">
+                <div className="flex items-center gap-4">
+                  <span className="h-px w-12 bg-emerald-500" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-600 italic">Project Narrative</span>
+                </div>
+                <div className="flex items-center justify-between pb-8 border-b border-slate-100">
                   <div>
-                    <h2 className="text-xl font-bold text-slate-900">
-                      {listing.category === "hotel" ? "Hotel" : listing.category === "bike" ? "Bike Rental" : listing.category === "car" ? "Car Rental" : "Experience"} in {listing.location || "Kerala"}
-                    </h2>
-                    <p className="text-slate-500 text-sm mt-1">Hosted by Wayza Partner · Superhost</p>
+                    <h2 className="text-4xl font-black text-slate-900 uppercase tracking-tighter leading-none italic font-serif mb-4">The Experience.</h2>
+                    <p className="text-slate-400 font-bold uppercase text-[9px] tracking-widest italic">Curated by Wayza Network Architecture</p>
                   </div>
-                  <div className="w-12 h-12 bg-slate-900 rounded-full flex items-center justify-center text-white font-bold text-lg shrink-0">
-                    {listing.title?.charAt(0).toUpperCase()}
+                  <div className="w-16 h-16 bg-slate-950 rounded-3xl flex items-center justify-center text-white italic font-black text-2xl font-serif">
+                    {listing.title?.charAt(0)}
                   </div>
                 </div>
+                <p className="text-2xl text-slate-600 leading-relaxed font-medium italic">
+                  "{listing.description || "An extraordinary sanctuary where serene architecture meets the rhythm of the coast, designed for those who seek more than just a place to rest. Every corner is thoughtfully crafted to offer comfort, beauty, and a true sense of place."}"
+                </p>
+              </section>
 
-                {/* Quick facts */}
-                <div className="flex flex-wrap gap-6 py-2">
-                  {[
-                    { icon: Users, text: "Up to 4 guests" },
-                    { icon: CheckCircle, text: "Free cancellation" },
-                    { icon: Shield, text: "Verified property" },
-                    { icon: Clock, text: "Check-in after 12 PM" },
-                  ].map((f, i) => (
-                    <div key={i} className="flex items-center gap-2 text-sm text-slate-600">
-                      <f.icon size={18} className="text-emerald-600 shrink-0" />
-                      {f.text}
+              {/* Artifacts (Amenities) */}
+              <section className="space-y-12 bg-slate-50/50 p-12 rounded-[48px] border border-slate-100">
+                <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-300">Available Utilities</h2>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-x-12 gap-y-10">
+                  {AMENITIES.map((a, i) => (
+                    <div key={i} className="flex flex-col gap-4 group">
+                      <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm border border-slate-100 group-hover:bg-emerald-500 group-hover:text-white transition-all">
+                        <a.icon size={20} />
+                      </div>
+                      <span className="text-xs font-black uppercase tracking-widest text-slate-900">{a.label}</span>
                     </div>
                   ))}
                 </div>
+              </section>
 
-                {/* Description */}
-                <div className="pt-2 border-t border-slate-100">
-                  <p className="text-slate-700 text-sm leading-relaxed">
-                    {listing.description || "An extraordinary sanctuary where serene architecture meets the rhythm of the coast, designed for those who seek more than just a place to rest. Every corner is thoughtfully crafted to offer comfort, beauty, and a true sense of place."}
-                  </p>
-                </div>
-              </div>
-
-              {/* Amenities */}
-              <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
-                <h2 className="text-lg font-bold text-slate-900">What this place offers</h2>
-                <div className="grid grid-cols-2 gap-3">
-                  {(showAllAmenities ? AMENITIES : AMENITIES.slice(0, 6)).map((a, i) => (
-                    <div key={i} className="flex items-center gap-3 text-sm text-slate-700 py-1">
-                      <a.icon size={18} className="text-emerald-600 shrink-0" />
-                      {a.label}
-                    </div>
-                  ))}
-                </div>
-                {AMENITIES.length > 6 && (
-                  <button
-                    onClick={() => setShowAllAmenities(v => !v)}
-                    className="flex items-center gap-1.5 text-sm font-semibold text-slate-900 border border-slate-300 px-4 py-2.5 rounded-xl hover:border-emerald-500 hover:text-emerald-600 transition-all mt-2"
-                  >
-                    {showAllAmenities ? <><ChevronUp size={16} /> Show less</> : <><ChevronDown size={16} /> Show all {AMENITIES.length} amenities</>}
-                  </button>
-                )}
-              </div>
-
-              {/* Room variants */}
+              {/* Variants Detail */}
               {listing.variants?.length > 0 && (
-                <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
-                  <h2 className="text-lg font-bold text-slate-900">Choose your room</h2>
-                  <div className="space-y-3">
+                <section className="space-y-10">
+                  <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-300">Accomodation Options</h2>
+                  <div className="grid gap-6">
                     {listing.variants.map((v, i) => (
                       <div
                         key={i}
                         onClick={() => setSelectedVariant(i)}
-                        className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all ${selectedVariant === i ? "border-emerald-500 bg-emerald-50" : "border-slate-200 hover:border-emerald-300"}`}
+                        className={`p-10 rounded-[40px] border-2 transition-all cursor-pointer flex flex-col md:flex-row justify-between items-center gap-8 ${selectedVariant === i ? "border-emerald-500 bg-emerald-50/30" : "border-slate-100 hover:border-emerald-200"}`}
                       >
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2">
-                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${selectedVariant === i ? "border-emerald-500 bg-emerald-500" : "border-slate-300"}`}>
-                              {selectedVariant === i && <div className="w-2 h-2 rounded-full bg-white" />}
-                            </div>
-                            <span className="font-semibold text-slate-900">{v.name}</span>
-                          </div>
-                          {v.desc && <p className="text-sm text-slate-500 ml-7">{v.desc}</p>}
+                        <div className="space-y-3">
+                          <h3 className="text-3xl font-black tracking-tighter text-slate-900 uppercase italic font-serif">{v.name}</h3>
+                          <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">{v.desc || "Executive level residency"}</p>
                         </div>
-                        <div className="text-right shrink-0">
-                          <p className="text-xl font-bold text-slate-900">₹{v.price.toLocaleString()}</p>
-                          <p className="text-xs text-slate-400">per night</p>
+                        <div className="text-center md:text-right">
+                          <p className="text-4xl font-black text-slate-900 tracking-tighter">₹{v.price.toLocaleString()}</p>
+                          <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">per cycle</p>
                         </div>
                       </div>
                     ))}
                   </div>
-                </div>
+                </section>
               )}
 
-              {/* Map */}
-              <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
-                <div>
-                  <h2 className="text-lg font-bold text-slate-900">Location</h2>
-                  <p className="text-sm text-slate-500 flex items-center gap-1.5 mt-1">
-                    <MapPin size={14} className="text-emerald-500" />
-                    {listing.location || "Kerala, India"}
-                  </p>
-                </div>
-                <div className="h-[280px] rounded-xl overflow-hidden border border-slate-200">
-                  <MapView lat={listing?.latitude || 8.7379} lng={listing?.longitude || 76.7163} title={listing?.title} />
-                </div>
-              </div>
-
-              {/* Reviews */}
-              <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-5">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="text-lg font-bold text-slate-900">Guest reviews</h2>
-                    <div className="flex items-center gap-2 mt-1">
-                      <div className="flex items-center gap-1.5 bg-emerald-600 text-white px-2.5 py-1 rounded-lg">
-                        <span className="font-bold text-sm">{avgRating}</span>
-                      </div>
-                      <span className="text-sm font-semibold text-slate-700">
-                        {parseFloat(avgRating) >= 9 ? "Exceptional" : parseFloat(avgRating) >= 8 ? "Excellent" : "Very Good"}
-                      </span>
-                      <span className="text-sm text-slate-400">· {reviews.length} reviews</span>
-                    </div>
+              {/* Audit (Reviews) */}
+              <section className="space-y-12">
+                <header className="flex items-center justify-between">
+                  <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-300">Guest Audit</h2>
+                  <div className="flex items-center gap-4">
+                    <span className="text-5xl font-black text-slate-900 tabular-nums">{avgRating}</span>
+                    <div className="h-10 w-px bg-slate-200" />
+                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">{reviews.length} Audits</span>
                   </div>
-                </div>
+                </header>
 
-                {/* Review cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {reviews.slice(0, 4).map((r, i) => (
-                    <motion.div
-                      key={r._id || i}
-                      initial={{ opacity: 0, y: 16 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.05 }}
-                      className="p-4 rounded-xl border border-slate-100 bg-slate-50 space-y-3"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-full bg-slate-900 text-white text-sm font-bold flex items-center justify-center shrink-0">
-                            {(r.guestEmail || "G").charAt(0).toUpperCase()}
-                          </div>
+                <div className="grid gap-8">
+                  {reviews.slice(0, 3).map((r, i) => (
+                    <div key={i} className="bg-white p-10 rounded-[40px] border border-slate-100 shadow-sm space-y-6">
+                      <div className="flex justify-between items-start">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 bg-slate-950 text-white rounded-2xl flex items-center justify-center font-black">{(r.guestEmail || "G").charAt(0).toUpperCase()}</div>
                           <div>
-                            <p className="font-semibold text-slate-900 text-sm leading-tight">{r.guestEmail?.split("@")[0]}</p>
-                            <p className="text-xs text-emerald-600 font-medium">Verified guest</p>
+                            <p className="text-sm font-black uppercase tracking-widest text-slate-900">{r.guestEmail?.split("@")[0]}</p>
+                            <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-widest italic leading-none mt-1">Verified Stay</p>
                           </div>
                         </div>
-                        <StarRow rating={r.rating} size={13} />
+                        <div className="flex gap-1">
+                          {[1, 2, 3, 4, 5].map(s => <Star key={s} size={10} className={s <= r.rating ? "fill-amber-400 text-amber-400" : "fill-slate-100 text-slate-100"} />)}
+                        </div>
                       </div>
-                      <p className="text-sm text-slate-600 leading-relaxed">
-                        "{r.comment || "An absolutely wonderful stay. Everything was exactly as described."}"
-                      </p>
-                      <p className="text-xs text-slate-400">
-                        {r.createdAt ? new Date(r.createdAt).toLocaleDateString("en-IN", { month: "short", year: "numeric" }) : "Recent"}
-                      </p>
-                    </motion.div>
+                      <p className="text-lg text-slate-600 italic leading-relaxed font-medium">"{r.comment || "An absolutely wonderful stay. Everything was exactly as described."}"</p>
+                    </div>
                   ))}
                 </div>
+              </section>
+            </div>
 
-                {reviews.length === 0 && (
-                  <div className="py-10 text-center border border-dashed border-slate-200 rounded-xl">
-                    <MessageSquare size={32} className="text-slate-300 mx-auto mb-3" />
-                    <p className="text-slate-400 text-sm">No reviews yet. Be the first to review after your stay!</p>
-                  </div>
-                )}
+            {/* RIGHT: RESERVATION CONSOLE */}
+            <div className="lg:col-span-5 relative">
+              <div className="sticky top-32 space-y-8">
+                <div className="bg-slate-950 rounded-[48px] p-12 text-white shadow-3xl shadow-slate-900/40 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[100px] rounded-full pointer-events-none" />
 
-                {/* Write review */}
-                {user && canReview && !alreadyReviewed && (
-                  <div className="pt-4 border-t border-slate-100 space-y-4">
-                    <h3 className="font-bold text-slate-900">Share your experience</h3>
-                    <div className="space-y-1">
-                      <p className="text-sm text-slate-500">Your rating</p>
-                      <StarRow rating={rating} size={28} interactive onSet={setRating} />
+                  <div className="relative z-10 space-y-10">
+                    <div className="flex justify-between items-end">
+                      <div>
+                        <p className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-400 mb-2">Access Rate</p>
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-6xl font-black tracking-tighter font-serif italic">₹{basePrice.toLocaleString()}</span>
+                          <span className="text-white/40 text-[10px] font-black uppercase tracking-widest">/ Slot</span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-2xl font-black text-emerald-500 font-serif italic">{avgRating}</p>
+                        <p className="text-[9px] font-black uppercase tracking-widest text-white/30">Protocol Score</p>
+                      </div>
                     </div>
-                    <textarea
-                      value={comment}
-                      onChange={e => setComment(e.target.value)}
-                      placeholder="Tell us about your stay..."
-                      rows={4}
-                      className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 resize-none transition-all"
-                    />
-                    <button
-                      onClick={submitReview}
-                      disabled={submitting}
-                      className="flex items-center gap-2 px-6 py-2.5 bg-slate-900 hover:bg-emerald-600 text-white text-sm font-bold rounded-xl transition-all active:scale-95 disabled:opacity-50"
-                    >
-                      {submitting ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Send size={16} />}
-                      {submitting ? "Submitting..." : "Submit review"}
-                    </button>
+
+                    <div className="space-y-4">
+                      <div className="bg-white/5 backdrop-blur-md rounded-3xl p-6 border border-white/10 space-y-6">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Check-in</label>
+                            <input
+                              type="date" value={checkIn} onChange={e => setCheckIn(e.target.value)}
+                              className="w-full bg-transparent border-b border-white/10 py-2 font-bold text-sm outline-none focus:border-emerald-500 transition-colors"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Check-out</label>
+                            <input
+                              type="date" value={checkOut} onChange={e => setCheckOut(e.target.value)}
+                              className="w-full bg-transparent border-b border-white/10 py-2 font-bold text-sm outline-none focus:border-emerald-500 transition-colors"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4 pt-4 border-t border-white/5">
+                      {nights > 0 && (
+                        <div className="space-y-3">
+                          <div className="flex justify-between text-xs font-bold uppercase tracking-widest text-white/60">
+                            <span>Residency x {nights}</span>
+                            <span>₹{(basePrice * nights).toLocaleString()}</span>
+                          </div>
+                          <div className="flex justify-between text-xs font-black uppercase tracking-widest text-emerald-400 pt-3 border-t border-white/10">
+                            <span>Final Commitment</span>
+                            <span className="text-2xl tracking-tighter font-serif italic">₹{total.toLocaleString()}</span>
+                          </div>
+                        </div>
+                      )}
+
+                      <button
+                        onClick={handleReserve}
+                        className="w-full h-20 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black uppercase text-xs tracking-[0.5em] rounded-[28px] transition-all shadow-xl shadow-emerald-500/20 active:scale-[0.98] flex items-center justify-center gap-4"
+                      >
+                        <span>Initialize Reservation</span>
+                        <ArrowRight size={18} />
+                      </button>
+                    </div>
+
+                    <div className="flex flex-col items-center gap-4 pt-4">
+                      <div className="flex items-center gap-3 text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">
+                        <ShieldCheck size={14} className="text-emerald-500" /> Secure Encryption Protocol
+                      </div>
+                    </div>
                   </div>
-                )}
+                </div>
+
+                <div className="bg-slate-50 border border-slate-100 rounded-[32px] p-8 flex items-center gap-6 group hover:bg-white hover:shadow-xl transition-all duration-500">
+                  <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
+                    <MessageSquare size={20} className="text-emerald-600" />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm font-black uppercase tracking-widest text-slate-900">Direct Inquiries</p>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Connect with our Concierge</p>
+                  </div>
+                  <ChevronRight size={16} className="ml-auto text-slate-300" />
+                </div>
               </div>
             </div>
 
-            {/* ══ BOOKING WIDGET ══ */}
-            <div className="lg:col-span-1">
-              <div className="sticky top-28 bg-white rounded-2xl border border-slate-200 shadow-xl p-6 space-y-5">
-
-                {/* Price */}
-                <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-bold text-slate-900">₹{basePrice.toLocaleString()}</span>
-                  <span className="text-slate-400 text-sm">/ night</span>
-                  {listing.variants?.length > 0 && (
-                    <span className="text-xs text-emerald-600 font-semibold ml-auto">({activeVariant?.name || "Standard"})</span>
-                  )}
-                </div>
-
-                {/* Rating summary */}
-                <div className="flex items-center gap-2 pb-4 border-b border-slate-100">
-                  <StarRow rating={Math.round(parseFloat(avgRating))} size={14} />
-                  <span className="text-sm font-bold text-slate-900">{avgRating}</span>
-                  <span className="text-xs text-slate-400">· {reviews.length} reviews</span>
-                </div>
-
-
-                {/* ── VARIANT SELECTOR (in booking widget) ── */}
-                {listing.variants?.length > 0 && (
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Room / Option type</label>
-                    <div className="space-y-2">
-                      {listing.variants.map((v, i) => (
-                        <button
-                          key={i}
-                          onClick={() => setSelectedVariant(i)}
-                          className={`w-full flex items-center justify-between p-3.5 rounded-xl border-2 text-left transition-all ${selectedVariant === i
-                            ? "border-emerald-500 bg-emerald-50"
-                            : "border-slate-200 hover:border-emerald-300 bg-white"
-                            }`}
-                        >
-                          <div className="flex items-center gap-3">
-                            {/* Radio dot */}
-                            <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${selectedVariant === i ? "border-emerald-500 bg-emerald-500" : "border-slate-300"
-                              }`}>
-                              {selectedVariant === i && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
-                            </div>
-                            <div>
-                              <p className={`text-sm font-bold ${selectedVariant === i ? "text-emerald-700" : "text-slate-900"}`}>{v.name}</p>
-                              {v.desc && <p className="text-xs text-slate-400 mt-0.5 line-clamp-1">{v.desc}</p>}
-                            </div>
-                          </div>
-                          <div className="text-right shrink-0 ml-3">
-                            <p className={`text-base font-bold ${selectedVariant === i ? "text-emerald-700" : "text-slate-900"}`}>
-                              {formatPrice(v.price)}
-                            </p>
-                            <p className="text-[10px] text-slate-400">/ night</p>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Date inputs */}
-                <div className="border border-slate-300 rounded-xl overflow-hidden divide-y divide-slate-200">
-                  <div className="grid grid-cols-2 divide-x divide-slate-200">
-                    <div className="p-3">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide block mb-1">Check-in</label>
-                      <input
-                        type="date"
-                        min={today}
-                        value={checkIn}
-                        onChange={e => { setCheckIn(e.target.value); if (checkOut && e.target.value >= checkOut) setCheckOut(""); }}
-                        className="w-full text-sm font-semibold text-slate-900 focus:outline-none bg-transparent"
-                      />
-                    </div>
-                    <div className="p-3">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide block mb-1">Check-out</label>
-                      <input
-                        type="date"
-                        min={checkIn || today}
-                        value={checkOut}
-                        onChange={e => setCheckOut(e.target.value)}
-                        className="w-full text-sm font-semibold text-slate-900 focus:outline-none bg-transparent"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-
-                {/* Price breakdown (when dates selected) */}
-                {nights > 0 && (
-                  <div className="space-y-2.5 py-3 border-y border-slate-100 text-sm">
-                    <div className="flex justify-between text-slate-600">
-                      <span>{formatPrice(basePrice)} × {nights} night{nights > 1 ? "s" : ""}</span>
-                      <span className="font-semibold text-slate-900">{formatPrice(basePrice * nights)}</span>
-                    </div>
-                    <div className="flex justify-between text-slate-600">
-                      <span>Taxes & GST (12%)</span>
-                      <span className="font-semibold text-slate-900">{formatPrice(gst)}</span>
-                    </div>
-                    <div className="flex justify-between text-slate-600">
-                      <span>Service fee</span>
-                      <span className="font-semibold text-slate-900">{formatPrice(serviceFee)}</span>
-                    </div>
-                    <div className="flex justify-between font-bold text-slate-900 pt-1 border-t border-slate-200">
-                      <span>Total</span>
-                      <span>{formatPrice(total)}</span>
-                    </div>
-                  </div>
-                )}
-
-                {/* Reserve button */}
-                <button
-                  onClick={handleReserve}
-                  className="w-full h-12 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl transition-all active:scale-95 flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20"
-                >
-                  <CreditCard size={18} />
-                  {nights > 0 ? `Reserve · ${formatPrice(total)}` : "Reserve"}
-                </button>
-
-                <p className="text-center text-xs text-slate-400">You won't be charged yet</p>
-
-                {/* Info note */}
-                <div className="flex gap-3 p-3.5 bg-amber-50 border border-amber-100 rounded-xl">
-                  <Info size={16} className="text-amber-500 shrink-0 mt-0.5" />
-                  <p className="text-xs text-amber-700 leading-relaxed">
-                    High demand in <strong>{listing.location}</strong>. Reserve now to secure this rate.
-                  </p>
-                </div>
-
-                {/* Trust icons */}
-                <div className="flex justify-around pt-2 border-t border-slate-100 text-xs text-slate-400">
-                  <div className="flex flex-col items-center gap-1">
-                    <Shield size={16} className="text-emerald-500" />
-                    <span>Secure</span>
-                  </div>
-                  <div className="flex flex-col items-center gap-1">
-                    <CheckCircle size={16} className="text-emerald-500" />
-                    <span>Verified</span>
-                  </div>
-                  <div className="flex flex-col items-center gap-1">
-                    <Clock size={16} className="text-emerald-500" />
-                    <span>Free cancel</span>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 

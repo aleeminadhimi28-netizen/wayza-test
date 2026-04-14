@@ -22,7 +22,7 @@ export default function PartnerGuard({ children }) {
         let active = true;
 
         // ✅ check onboarding status from backend
-        api.partnerStatus(user.email)
+        api.partnerStatus()
             .then(data => {
                 if (!active) return;
 
