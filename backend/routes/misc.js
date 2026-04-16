@@ -1,4 +1,5 @@
 import express from "express";
+import { ObjectId } from "mongodb";
 import { getDB } from "../config/db.js";
 import { requireAuth } from "../middleware/auth.js";
 import { generateItinerary } from "../utils/ai.js";
@@ -343,7 +344,8 @@ router.post("/chat", async (req, res, next) => {
         const { listingId, query } = parsed.data;
         const db = getDB();
         
-        const listing = await db.collection("listings").findOne({ _id: listingId });
+        if (!ObjectId.isValid(listingId)) return res.status(400).json({ ok: false, message: "Invalid ID" });
+        const listing = await db.collection("listings").findOne({ _id: new ObjectId(listingId) });
         if (!listing) return res.status(404).json({ ok: false, message: "Listing not found" });
 
         // Logic check for AI key
