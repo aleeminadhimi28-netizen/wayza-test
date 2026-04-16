@@ -15,6 +15,8 @@ import { globalLimiter, authLimiter, uploadLimiter } from "./middleware/rateLimi
 import { requireAuth } from "./middleware/auth.js";
 import { activityLogger } from "./middleware/activityLogger.js";
 import { securityGuards } from "./middleware/security.js";
+import { shutdownPostHog } from "./utils/posthog.js";
+
 
 // Config & DB
 import { connectDB } from "./config/db.js";
@@ -105,6 +107,11 @@ initSocket(httpServer, checkOrigin);
 
 /* ---------------- ROUTES ---------------- */
 
+app.get("/api/v1/health", (req, res) => {
+  res.json({ ok: true, status: "up", uptime: process.uptime() });
+});
+
+
 
 
 // Apply upload specific rate limits
@@ -132,7 +139,6 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).json({ ok: false, message: err.message || "Internal Server Error" });
 });
 
-import { shutdownPostHog } from "./utils/posthog.js";
 
 httpServer.listen(PORT, () => {
   console.log(`🚀 Wayza backend running with WebSockets on PORT ${PORT}`);
