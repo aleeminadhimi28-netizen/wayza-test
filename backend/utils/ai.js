@@ -66,3 +66,40 @@ export const generateItinerary = async (destination, vibe, listings) => {
         throw new Error("Failed to parse AI response");
     }
 };
+
+/**
+ * Answer a specific question about a listing using AI context.
+ */
+export const answerListingQuery = async (query, listing) => {
+    if (!process.env.GEMINI_API_KEY) {
+        throw new Error("GEMINI_API_KEY is not defined");
+    }
+
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+    const prompt = `
+    You are the 'Wayza Digital Concierge', an elite, helpful, and highly sophisticated AI assistant for a premium property called "${listing.title}".
+    
+    Context about the property:
+    - Description: ${listing.description}
+    - Location: ${listing.location}
+    - Category: ${listing.category}
+    - Price: ${listing.price} per night
+    - Amenities: ${listing.amenities?.join(", ") || "WiFi, Breakfast, Security, Parking"}
+    
+    The guest is asking: "${query}"
+    
+    Instructions:
+    1. Answer ONLY based on the context provided. If the information isn't there, say you'll check with the host.
+    2. Maintain an ultra-luxurious, welcoming, and professional tone.
+    3. Keep the answer concise (under 3 sentences).
+    4. Use British English or International English.
+    5. Do not make up facts.
+    
+    Your Response:
+    `;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    return response.text();
+};

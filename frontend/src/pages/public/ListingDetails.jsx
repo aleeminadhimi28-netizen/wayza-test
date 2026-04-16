@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 import MapView from "../../components/MapView.jsx";
 import SEO from "../../components/SEO.jsx";
+import ListingConcierge from "../../components/ListingConcierge.jsx";
+import NeighborhoodVibes from "../../components/NeighborhoodVibes.jsx";
 import { api } from "../../utils/api.js";
 
 const AMENITIES = [
@@ -303,6 +305,35 @@ export default function ListingDetails() {
                 </p>
               </section>
 
+              {/* Virtual Walkthrough (Sensory UI) */}
+              <section className="space-y-8">
+                <div className="flex items-center gap-4">
+                  <span className="h-px w-12 bg-emerald-500" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-600 italic">Virtual Walkthrough</span>
+                </div>
+                <div className="relative aspect-video rounded-[48px] overflow-hidden bg-slate-950 border border-slate-100 group shadow-2xl">
+                  {/* Mocking a luxury video walkthrough */}
+                  <div className="absolute inset-0 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm z-10 group-hover:opacity-0 transition-opacity duration-700 pointer-events-none">
+                     <div className="flex flex-col items-center gap-4">
+                        <div className="w-20 h-20 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full flex items-center justify-center">
+                           <Zap size={32} className="text-emerald-400 animate-pulse" />
+                        </div>
+                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white">Experience the Soul of the Estate</p>
+                     </div>
+                  </div>
+                  <iframe 
+                    className="w-full h-full grayscale-[0.2] hover:grayscale-0 transition-all duration-1000"
+                    src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&loop=1&controls=0&modestbranding=1" 
+                    title="Virtual Walkthrough"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  />
+                </div>
+              </section>
+
+              {/* Neighborhood Discovery */}
+              <NeighborhoodVibes location={listing.location} category={listing.category} />
+
               {/* Artifacts (Amenities) */}
               <section className="space-y-12 bg-slate-50/50 p-12 rounded-[48px] border border-slate-100">
                 <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-300">Available Utilities</h2>
@@ -522,6 +553,9 @@ export default function ListingDetails() {
             </motion.div>
           )}
         </AnimatePresence>
+        
+        {/* Intelligence Overlay */}
+        <ListingConcierge listingId={listing._id} listingTitle={listing.title} />
       </div>
     </WayzaLayout>
   );

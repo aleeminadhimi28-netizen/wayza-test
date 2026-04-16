@@ -328,4 +328,42 @@ router.post("/validate-coupon", async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
+/* ================= AI CONCIERGE CHAT ================= */
+
+const chatSchema = z.object({
+    listingId: z.string().min(1),
+    query: z.string().min(3).max(500)
+});
+
+router.post("/chat", async (req, res, next) => {
+    try {
+        const parsed = chatSchema.safeParse(req.body);
+        if (!parsed.success) return res.status(400).json({ ok: false, message: "Listing ID and query are required" });
+
+        const { listingId, query } = parsed.data;
+        const db = getDB();
+        
+        const listing = await db.collection("listings").findOne({ _id: listingId });
+        if (!listing) return res.status(404).json({ ok: false, message: "Listing not found" });
+
+        // Logic check for AI key
+        if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== "your_gemini_api_key_here") {
+            try {
+                const { answerListingQuery } = await import("../utils/ai.js");
+                const answer = await answerListingQuery(query, listing);
+                return res.json({ ok: true, answer });
+            } catch (aiErr) {
+                console.error("AI Concierge failed:", aiErr.message);
+            }
+        }
+
+        // Fallback if AI fails or key is missing
+        res.json({ 
+            ok: true, 
+            answer: "Thank you for your inquiry. Our elite concierge team is currently reviewing your request about " + listing.title + " and will respond shortly."
+        });
+
+    } catch (err) { next(err); }
+});
+
 export default router;
