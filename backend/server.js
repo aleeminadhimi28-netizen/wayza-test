@@ -32,59 +32,12 @@ import communicationRoutes from "./routes/communication.js";
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Enable trust proxy for correct IP detection behind Vercel/Cloudflare
+// 1. PRODUCTION-READY PROXY & CORS
 app.set("trust proxy", 1);
-
-// Initialize Database
-connectDB();
-
-/* ---------------- MIDDLEWARE ---------------- */
-// 1. Core Security Headers
-app.use(helmet({
-  crossOriginResourcePolicy: false,
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      imgSrc: ["'self'", "data:", "https://res.cloudinary.com"],
-      connectSrc: ["'self'", "wss:", "https://api.cloudinary.com"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      objectSrc: ["'none'"],
-      upgradeInsecureRequests: [],
-    },
-  },
-}));
-
-// 2. Performance & Logging
-app.use(compression());
-app.use(morgan("dev"));
-
-// 3. Security Guards (NoSQL Sanitize, HPP, Slowdown)
-app.use(securityGuards);
-
-// 4. Rate Limiting (Global)
-app.use(globalLimiter);
-
-// 5. Body Parsing with strict limits (Prevents memory exhaustion)
-app.use(express.json({ limit: "15kb" }));
-app.use(express.urlencoded({ extended: true, limit: "15kb" }));
-app.use(cookieParser());
-
-// 6. Audit Logging
-app.use(activityLogger); 
-
-app.use("/uploads", express.static("uploads"));
-
-/* ---------------- ROUTES ---------------- */
-
-app.get("/api/v1/health", (req, res) => {
-  res.json({ ok: true, status: "up", uptime: process.uptime() });
-});
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS 
   ? process.env.ALLOWED_ORIGINS.split(",") 
-  : ["http://localhost:5173", "http://localhost:3000"];
+  : ["http://localhost:5173", "http://localhost:3000", "https://wayza-test.vercel.app"];
 
 app.use(cors({
   origin: (origin, callback) => {
@@ -92,7 +45,8 @@ app.use(cors({
     if (allowedOrigins.includes(origin) || (process.env.NODE_ENV === "development" && origin.includes("localhost"))) {
       return callback(null, true);
     }
-    if (origin.endsWith(".vercel.app") && process.env.NODE_ENV === "development") {
+    // Allow Vercel previews and production
+    if (origin.endsWith(".vercel.app")) {
       return callback(null, true);
     }
     return callback(new Error("CORS: Origin not allowed by security policy"));
@@ -102,8 +56,52 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
 }));
 
+// 2. INITIALIZE DATABASE
+connectDB();
+
+/* ---------------- MIDDLEWARE ---------------- */
+// 3. SECURE HEADERS (CSP)
+app.use(helmet({
+  crossOriginResourcePolicy: false,
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://us.i.posthog.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      imgSrc: ["'self'", "data:", "https://res.cloudinary.com", "https://us.i.posthog.com"],
+      connectSrc: ["'self'", "wss:", "https://api.cloudinary.com", "https://wayza-test.onrender.com", "https://us.i.posthog.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: [],
+    },
+  },
+}));
+
+// 4. PERFORMANCE & LOGGING
+app.use(compression());
+app.use(morgan("dev"));
+
+// 5. SECURITY GUARDS (NoSQL Sanitize, HPP, Slowdown)
+app.use(securityGuards);
+
+// 6. RATE LIMITING (Global)
+app.use(globalLimiter);
+
+// 7. BODY PARSING
+app.use(express.json({ limit: "15kb" }));
+app.use(express.urlencoded({ extended: true, limit: "15kb" }));
+app.use(cookieParser());
+
+// 8. AUDIT LOGGING
+app.use(activityLogger); 
+
+app.use("/uploads", express.static("uploads"));
+
 const httpServer = createServer(app);
 initSocket(httpServer, allowedOrigins);
+
+/* ---------------- ROUTES ---------------- */
+
 
 
 // Apply upload specific rate limits
