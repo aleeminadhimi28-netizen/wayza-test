@@ -2,14 +2,15 @@ import { Server } from "socket.io";
 
 let io;
 
-export const initSocket = (server, allowedOrigins) => {
+export const initSocket = (server, originCheck) => {
     io = new Server(server, {
         cors: {
-            origin: allowedOrigins,
+            origin: originCheck,
             methods: ["GET", "POST"],
             credentials: true
         }
     });
+
 
     io.on("connection", (socket) => {
         console.log(`[Socket] New client connected: ${socket.id}`);

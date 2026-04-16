@@ -39,18 +39,20 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",") 
   : ["http://localhost:5173", "http://localhost:3000", "https://wayza-test.vercel.app"];
 
+const checkOrigin = (origin, callback) => {
+  if (!origin) return callback(null, true);
+  if (allowedOrigins.includes(origin) || (process.env.NODE_ENV === "development" && origin.includes("localhost"))) {
+    return callback(null, true);
+  }
+  // Allow any Vercel domain (production and previews)
+  if (origin.endsWith(".vercel.app")) {
+    return callback(null, true);
+  }
+  return callback(new Error("CORS: Origin not allowed by security policy"));
+};
+
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin) || (process.env.NODE_ENV === "development" && origin.includes("localhost"))) {
-      return callback(null, true);
-    }
-    // Allow Vercel previews and production
-    if (origin.endsWith(".vercel.app")) {
-      return callback(null, true);
-    }
-    return callback(new Error("CORS: Origin not allowed by security policy"));
-  },
+  origin: checkOrigin,
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
@@ -69,7 +71,7 @@ app.use(helmet({
       scriptSrc: ["'self'", "'unsafe-inline'", "https://us.i.posthog.com"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       imgSrc: ["'self'", "data:", "https://res.cloudinary.com", "https://us.i.posthog.com"],
-      connectSrc: ["'self'", "wss:", "https://api.cloudinary.com", "https://wayza-test.onrender.com", "https://us.i.posthog.com"],
+      connectSrc: ["'self'", "wss:", "https://api.cloudinary.com", "https://*.onrender.com", "https://us.i.posthog.com", "https://*.vercel.app"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       objectSrc: ["'none'"],
       upgradeInsecureRequests: [],
@@ -81,10 +83,10 @@ app.use(helmet({
 app.use(compression());
 app.use(morgan("dev"));
 
-// 5. SECURITY GUARDS (NoSQL Sanitize, HPP, Slowdown)
+// 5. SECURITY GUARDS
 app.use(securityGuards);
 
-// 6. RATE LIMITING (Global)
+// 6. RATE LIMITING
 app.use(globalLimiter);
 
 // 7. BODY PARSING
@@ -98,7 +100,8 @@ app.use(activityLogger);
 app.use("/uploads", express.static("uploads"));
 
 const httpServer = createServer(app);
-initSocket(httpServer, allowedOrigins);
+initSocket(httpServer, checkOrigin);
+
 
 /* ---------------- ROUTES ---------------- */
 
