@@ -18,6 +18,7 @@ export default function Payment() {
     const price = location.state?.price || 0;
     const title = location.state?.title || "Premium Experience";
     const nights = location.state?.nights || 1;
+    const couponCode = location.state?.couponCode;
 
     async function handlePayment(method = "card") {
         if (!bookingId) {
@@ -192,6 +193,12 @@ export default function Payment() {
                                                 <span>Audit Period</span>
                                                 <span className="text-white bg-white/5 px-4 py-2 rounded-xl">{nights} {nights > 1 ? 'Stages' : 'Stage'}</span>
                                             </div>
+                                            {couponCode && (
+                                                <div className="flex justify-between items-center text-xs font-black uppercase tracking-widest text-white/40">
+                                                    <span>Promo Sequence</span>
+                                                    <span className="text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-xl">{couponCode}</span>
+                                                </div>
+                                            )}
                                             <div className="flex justify-between items-center text-xs font-black uppercase tracking-widest text-white/40">
                                                 <span>Security Protocol</span>
                                                 <span className="text-emerald-400">WAYZA VAULT</span>

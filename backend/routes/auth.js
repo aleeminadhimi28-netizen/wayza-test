@@ -7,6 +7,8 @@ import { requireAuth } from "../middleware/auth.js";
 import { getTransporter } from "../utils/emailTemplates.js";
 import { z } from "zod";
 import { BCRYPT_ROUNDS, JWT_EXPIRY } from "../config/constants.js";
+import { captureEvent } from "../utils/posthog.js";
+
 
 const signupSchema = z.object({
     email: z.string().email(),
@@ -36,8 +38,13 @@ router.post("/signup", async (req, res, next) => {
 
         const hash = await bcrypt.hash(password, BCRYPT_ROUNDS);
         await users.insertOne({ email, password: hash, role: "guest", createdAt: new Date() });
+
+        // Track signup in PostHog
+        captureEvent(email, "User Signed Up", { role: "guest" });
+
         res.json({ ok: true });
     } catch (err) { next(err); }
+
 });
 
 router.post("/login", async (req, res, next) => {
@@ -71,7 +78,11 @@ router.post("/login", async (req, res, next) => {
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
+        // Track successful login in PostHog
+        captureEvent(user.email, "User Logged In", { role: user.role });
+
         res.json({
+
             ok: true,
             data: {
                 email: user.email,

@@ -26,3 +26,8 @@ services:
         sync: false
       - key: FRONTEND_URL
         value: https://wayza-app.vercel.app
+      - key: POSTHOG_API_KEY
+        sync: false
+      - key: POSTHOG_HOST
+        value: https://us.i.posthog.com
+

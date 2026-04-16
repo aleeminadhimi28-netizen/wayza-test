@@ -5,7 +5,7 @@ import { requireAuth } from "../middleware/auth.js";
 import { getTransporter, guestBookingEmail, ownerBookingEmail } from "../utils/emailTemplates.js";
 import { sendWhatsAppAlert, formatWhatsAppBookingMsg } from "../utils/whatsapp.js";
 import { z } from "zod";
-import { GST_RATE, SERVICE_FEE, COMMISSION_RATE } from "../config/constants.js";
+// Removed static constants import here. Values are fetched dynamically now.
 
 const bookSchema = z.object({
     listingId: z.string().min(1),
@@ -13,7 +13,8 @@ const bookSchema = z.object({
     checkIn: z.string().min(1),
     checkOut: z.string().min(1),
     title: z.string().optional(),
-    ownerEmail: z.string().email().optional()
+    ownerEmail: z.string().email().optional(),
+    couponCode: z.string().optional()
 });
 
 const confirmSchema = z.object({
@@ -56,7 +57,7 @@ router.post("/book", requireAuth, async (req, res, next) => {
         const db = getDB();
         const listings = db.collection("listings");
         const bookings = db.collection("bookings");
-        const { listingId, variantIndex, checkIn, checkOut, title, ownerEmail } = parsed.data;
+        const { listingId, variantIndex, checkIn, checkOut, title, ownerEmail, couponCode } = parsed.data;
 
         const listing = await listings.findOne({ _id: new ObjectId(listingId) });
         if (!listing) return res.status(404).json({ ok: false, message: "Listing not found" });
@@ -67,9 +68,34 @@ router.post("/book", requireAuth, async (req, res, next) => {
         const pricePerNight = Number(variant?.price || listing.price || 0);
         const baseAmount = pricePerNight * nights;
         const isVehicle = listing.category === "bike" || listing.category === "car";
-        const gst = isVehicle ? 0 : Math.round(baseAmount * GST_RATE);
-        const serviceFee = SERVICE_FEE;
-        const totalPrice = baseAmount + gst + serviceFee;
+        
+        const config = await db.collection("settings").findOne({ type: "financials" }) || { gstRate: 0.12, serviceFee: 99, commissionRate: 0.10 };
+        
+        let discountAmount = 0;
+        let appliedCouponCode = null;
+        if (couponCode) {
+            const coupon = await db.collection("coupons").findOne({ code: couponCode.toUpperCase(), isActive: true });
+            if (coupon) {
+                discountAmount = Math.round(baseAmount * coupon.discountPercentage);
+                appliedCouponCode = coupon.code;
+            } else {
+                return res.status(400).json({ ok: false, message: "Invalid or inactive coupon code" });
+            }
+        }
+
+        const discountedBaseAmount = baseAmount - discountAmount;
+        const gst = isVehicle ? 0 : Math.round(discountedBaseAmount * config.gstRate);
+        const serviceFee = config.serviceFee;
+        const totalPrice = discountedBaseAmount + gst + serviceFee;
+
+        // Old total price for commission calculation
+        const unadjustedGst = isVehicle ? 0 : Math.round(baseAmount * config.gstRate);
+        const unadjustedTotalPrice = baseAmount + unadjustedGst + serviceFee;
+        
+        // Freeze platform commission amount
+        // Using unadjusted base amount or unadjusted total price depending on the old logic.
+        // The old code in /confirm used: Math.round(totalPrice * config.commissionRate)
+        const platformCommissionAmount = Math.round(unadjustedTotalPrice * config.commissionRate);
 
         // RACE CONDITION FIX: Check for overlapping bookings
         const conflictingBooking = await bookings.findOne({
@@ -93,8 +119,11 @@ router.post("/book", requireAuth, async (req, res, next) => {
             ownerEmail: ownerEmail || listing.ownerEmail,
             guestEmail: req.user.email,
             checkIn, checkOut, nights, pricePerNight,
+            baseAmount, discountAmount, couponCode: appliedCouponCode,
             gst, serviceFee,
-            totalPrice, status: "pending",
+            totalPrice, 
+            platformCommissionAmount, // Fixed commission
+            status: "pending",
             createdAt: new Date()
         });
 
@@ -119,7 +148,18 @@ router.post("/confirm", requireAuth, async (req, res, next) => {
         if (!booking) return res.status(404).json({ ok: false, message: "Booking not found" });
 
         const totalPrice = booking.totalPrice || 0;
-        const commissionAmount = Math.round(totalPrice * COMMISSION_RATE);
+        const config = await db.collection("settings").findOne({ type: "financials" }) || { commissionRate: 0.10 };
+        
+        // Use the frozen platformCommissionAmount if available, to protect Wayza's revenue despite discounts.
+        const commissionAmount = booking.platformCommissionAmount !== undefined 
+            ? booking.platformCommissionAmount 
+            : Math.round(totalPrice * config.commissionRate);
+            
+        // Because of discount, netEarnings can be smaller. The discount is fully absorbed by the partner.
+        // Wait, discount on booking reduces totalPrice.
+        // Therefore netEarnings = totalPrice - commissionAmount; 
+        // This implicitly means the partner takes the full hit because totalPrice is smaller by discountAmount, 
+        // but commissionAmount didn't decrease.
         const netEarnings = totalPrice - commissionAmount;
 
         await bookings.updateOne(
@@ -137,7 +177,7 @@ router.post("/confirm", requireAuth, async (req, res, next) => {
         );
 
         if (booking && transporter) {
-            const ownerPayout = Math.round((booking.totalPrice || 0) * (1 - COMMISSION_RATE));
+            const ownerPayout = netEarnings; // Payout accurately reflects absorption of discount
             const emailData = {
                 guestEmail: booking.guestEmail,
                 ownerEmail: booking.ownerEmail,

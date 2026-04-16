@@ -7,7 +7,7 @@ import { requireAuth, requireRole } from "../middleware/auth.js";
 import { getTransporter, payoutSettledEmail, withdrawalStatusEmail } from "../utils/emailTemplates.js";
 import { sendWhatsAppAlert, formatWhatsAppListingApproved, formatWhatsAppPartnerOnboarded } from "../utils/whatsapp.js";
 import { z } from "zod";
-import { COMMISSION_RATE, JWT_EXPIRY } from "../config/constants.js";
+import { JWT_EXPIRY } from "../config/constants.js";
 
 const loginSchema = z.object({
     email: z.string().email(),
@@ -43,6 +43,23 @@ router.post("/login", async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
+router.patch("/config", requireAuth, requireRole(["admin"]), async (req, res, next) => {
+    try {
+        const { gstRate, serviceFee, commissionRate } = req.body;
+        if (typeof gstRate !== "number" || typeof serviceFee !== "number" || typeof commissionRate !== "number") {
+             return res.status(400).json({ ok: false, message: "Invalid configuration types" });
+        }
+        
+        const db = getDB();
+        await db.collection("settings").updateOne(
+            { type: "financials" },
+            { $set: { gstRate, serviceFee, commissionRate, updatedAt: new Date() } },
+            { upsert: true }
+        );
+        res.json({ ok: true, message: "Platform configuration updated safely." });
+    } catch (err) { next(err); }
+});
+
 router.get("/stats", requireAuth, requireRole(["admin"]), async (req, res, next) => {
     try {
         const db = getDB();
@@ -61,7 +78,7 @@ router.get("/stats", requireAuth, requireRole(["admin"]), async (req, res, next)
 
         const paid = await bookings.find({ status: "paid" }).toArray();
         const totalRevenue = paid.reduce((s, b) => s + (b.totalPrice || 0), 0);
-        const platformCommission = Math.round(totalRevenue * COMMISSION_RATE);
+        const platformCommission = paid.reduce((s, b) => s + (b.commissionAmount || Math.round((b.totalPrice || 0) * 0.10)), 0);
 
         const revenueMap = {};
         paid.forEach(b => {
@@ -265,6 +282,69 @@ router.patch("/withdrawals/:id", requireAuth, requireRole(["admin"]), async (req
         }
 
         res.json({ ok: true });
+    } catch (err) { next(err); }
+});
+
+// ===== COUPON MANAGEMENT =====
+
+const createCouponSchema = z.object({
+    code: z.string().min(3).max(20),
+    discountPercentage: z.number().min(0.01).max(0.99)
+});
+
+router.get("/coupons", requireAuth, requireRole(["admin"]), async (req, res, next) => {
+    try {
+        const db = getDB();
+        const coupons = await db.collection("coupons").find({}).sort({ createdAt: -1 }).toArray();
+        res.json({ ok: true, data: coupons });
+    } catch (err) { next(err); }
+});
+
+router.post("/coupons", requireAuth, requireRole(["admin"]), async (req, res, next) => {
+    try {
+        const parsed = createCouponSchema.safeParse(req.body);
+        if (!parsed.success) return res.status(400).json({ ok: false, message: "Invalid coupon data", errors: parsed.error.flatten() });
+
+        const db = getDB();
+        const { code, discountPercentage } = parsed.data;
+        const normalizedCode = code.toUpperCase();
+
+        const existing = await db.collection("coupons").findOne({ code: normalizedCode });
+        if (existing) {
+            return res.status(400).json({ ok: false, message: "Coupon code already exists" });
+        }
+
+        const coupon = {
+            code: normalizedCode,
+            discountPercentage,
+            isActive: true,
+            createdAt: new Date()
+        };
+
+        await db.collection("coupons").insertOne(coupon);
+        res.json({ ok: true, data: coupon });
+    } catch (err) { next(err); }
+});
+
+router.delete("/coupons/:id", requireAuth, requireRole(["admin"]), async (req, res, next) => {
+    try {
+        if (!ObjectId.isValid(req.params.id)) return res.status(400).json({ ok: false });
+
+        const db = getDB();
+        await db.collection("coupons").deleteOne({ _id: new ObjectId(req.params.id) });
+        res.json({ ok: true });
+    } catch (err) { next(err); }
+});
+
+router.get("/logs", requireAuth, requireRole(["admin"]), async (req, res, next) => {
+    try {
+        const db = getDB();
+        const logs = await db.collection("activityLogs")
+            .find({})
+            .sort({ createdAt: -1 })
+            .limit(200) // limit results for performance
+            .toArray();
+        res.json({ ok: true, data: logs });
     } catch (err) { next(err); }
 });
 

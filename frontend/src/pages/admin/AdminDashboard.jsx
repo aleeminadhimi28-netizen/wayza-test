@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
     Users, Briefcase, Home, CalendarCheck, TrendingUp, LogOut, LayoutDashboard,
     Trash2, Search, CheckCircle, Clock, Bell, VolumeX, Volume2,
-    MessageSquare, Banknote, X
+    MessageSquare, Banknote, X, Settings, Tag, Activity
 } from "lucide-react";
 
 import { api } from "../../utils/api.js";
@@ -13,6 +13,9 @@ import { useToast } from "../../ToastContext.jsx";
 import AdminOverview from "./AdminOverview.jsx";
 import AdminSupport from "./AdminSupport.jsx";
 import AdminWithdrawals from "./AdminWithdrawals.jsx";
+import AdminSettings from "./AdminSettings.jsx";
+import AdminCoupons from "./AdminCoupons.jsx";
+import AdminLogs from "./AdminLogs.jsx";
 
 export default function AdminDashboard() {
     const [stats, setStats] = useState(null);
@@ -178,7 +181,10 @@ export default function AdminDashboard() {
         { id: 'listings', icon: Home, label: 'Properties' },
         { id: 'bookings', icon: CalendarCheck, label: 'Bookings' },
         { id: 'withdrawals', icon: Banknote, label: 'Finance' },
-        { id: 'support', icon: MessageSquare, label: 'Support' }
+        { id: 'support', icon: MessageSquare, label: 'Support' },
+        { id: 'coupons', icon: Tag, label: 'Promotions' },
+        { id: 'logs', icon: Activity, label: 'Activity Logs' },
+        { id: 'settings', icon: Settings, label: 'Settings' }
     ];
 
     const pendingWithdrawals = withdrawals.filter(w => w.status === 'pending').length;
@@ -247,7 +253,7 @@ export default function AdminDashboard() {
                             <p className="text-xs text-slate-500 mt-0.5">Wayza Admin Panel</p>
                         </div>
                         <div className="flex items-center gap-3">
-                            {(activeTab !== "overview" && activeTab !== "support" && activeTab !== "withdrawals") && (
+                            {(activeTab !== "overview" && activeTab !== "support" && activeTab !== "withdrawals" && activeTab !== "settings") && (
                                 <div className="relative hidden md:block w-72">
                                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
                                     <input
@@ -278,6 +284,18 @@ export default function AdminDashboard() {
 
                         {activeTab === "withdrawals" && (
                             <AdminWithdrawals withdrawals={withdrawals} setWithdrawals={setWithdrawals} stats={stats} loadingData={loadingData} />
+                        )}
+
+                        {activeTab === "settings" && (
+                            <AdminSettings />
+                        )}
+
+                        {activeTab === "coupons" && (
+                            <AdminCoupons />
+                        )}
+
+                        {activeTab === "logs" && (
+                            <AdminLogs />
                         )}
 
                         {/* DATA TABLE TABS (users, partners, listings, bookings) */}

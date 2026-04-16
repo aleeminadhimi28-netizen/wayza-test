@@ -170,8 +170,19 @@ export default function ListingDetails() {
   const nights = checkIn && checkOut
     ? Math.max(0, Math.ceil((new Date(checkOut) - new Date(checkIn)) / 86400000))
     : 0;
-  const gst = Math.round(basePrice * nights * 0.12);
-  const serviceFee = nights > 0 ? 199 : 0;
+  
+  const [platformConfig, setPlatformConfig] = useState(null);
+
+  useEffect(() => {
+     api.getPlatformConfig().then(res => { if (res.ok) setPlatformConfig(res.data); }).catch(() => {});
+  }, []);
+
+  const isVehicle = listing.category === "bike" || listing.category === "car";
+  const gstRate = platformConfig?.gstRate ?? 0.12;
+  const serviceFeeRate = platformConfig?.serviceFee ?? 99;
+
+  const gst = isVehicle ? 0 : Math.round(basePrice * nights * gstRate);
+  const serviceFee = nights > 0 ? serviceFeeRate : 0;
   const total = basePrice * nights + gst + serviceFee;
 
   const today = new Date().toISOString().split("T")[0];

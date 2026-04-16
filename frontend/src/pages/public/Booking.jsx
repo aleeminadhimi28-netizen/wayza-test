@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../AuthContext.jsx";
 import { useToast } from "../../ToastContext.jsx";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calendar, CheckCircle, Zap, Info, ArrowRight, Home, CreditCard, Sparkles, MapPin, Clock, Shield, Globe, Star, Navigation, Target } from "lucide-react";
+import { Calendar, CheckCircle, Zap, Info, ArrowRight, Home, CreditCard, Sparkles, MapPin, Clock, Shield, Globe, Star, Navigation, Target, Tag } from "lucide-react";
 import { WayzaLayout, WayzaSkeleton } from "../../WayzaUI.jsx";
 
 import { api } from "../../utils/api.js";
@@ -20,6 +20,10 @@ export default function Booking() {
     const [endDate, setEndDate] = useState("");
     const [blocked, setBlocked] = useState([]);
     const [loading, setLoading] = useState(true);
+
+    const [couponCode, setCouponCode] = useState("");
+    const [discountInfo, setDiscountInfo] = useState(null);
+    const [validatingCoupon, setValidatingCoupon] = useState(false);
 
     const todayStr = new Date().toISOString().split("T")[0];
     const minStay = 1;
@@ -65,14 +69,45 @@ export default function Booking() {
         ? Math.max(0, Math.ceil((new Date(endDate) - new Date(startDate)) / 86400000))
         : 0;
 
+    const [platformConfig, setPlatformConfig] = useState(null);
+
+    useEffect(() => {
+        api.getPlatformConfig().then(res => { if (res.ok) setPlatformConfig(res.data); }).catch(() => {});
+    }, []);
+
     const baseAmount = nights * pricePerNight;
     const isVehicle = listing?.category === "bike" || listing?.category === "car";
-    const gst = isVehicle ? 0 : Math.round(baseAmount * 0.12);
-    const serviceFee = nights > 0 ? 99 : 0;
-    const totalAmount = baseAmount + gst + serviceFee;
+    const gstRate = platformConfig?.gstRate ?? 0.12;
+    const serviceFeeRate = platformConfig?.serviceFee ?? 99;
+
+    const discountAmount = discountInfo ? Math.round(baseAmount * discountInfo.discountPercentage) : 0;
+    const discountedBase = baseAmount - discountAmount;
+
+    const gst = isVehicle ? 0 : Math.round(discountedBase * gstRate);
+    const serviceFee = nights > 0 ? serviceFeeRate : 0;
+    const totalAmount = discountedBase + gst + serviceFee;
 
     const stayInvalid = nights > 0 && nights < minStay;
     const blockedDates = isBlocked(startDate, endDate);
+
+    const handleApplyCoupon = async () => {
+        if (!couponCode) return;
+        setValidatingCoupon(true);
+        try {
+            const res = await api.validateCoupon(couponCode);
+            if (res.ok) {
+                setDiscountInfo({ discountPercentage: res.discountPercentage, code: res.code });
+                showToast(`Coupon applied! ${Math.round(res.discountPercentage * 100)}% off.`, "success");
+            } else {
+                setDiscountInfo(null);
+                showToast(res.message || "Invalid coupon", "error");
+            }
+        } catch (err) {
+            setDiscountInfo(null);
+            showToast("Failed to validate coupon", "error");
+        }
+        setValidatingCoupon(false);
+    };
 
     async function reserve() {
         if (!user?.email) {
@@ -100,7 +135,8 @@ export default function Booking() {
                 title: listing?.title,
                 ownerEmail: listing?.ownerEmail,
                 checkIn: startDate,
-                checkOut: endDate
+                checkOut: endDate,
+                couponCode: discountInfo ? discountInfo.code : undefined
             });
 
             if (!data.ok) {
@@ -109,7 +145,7 @@ export default function Booking() {
             }
 
             navigate(`/payment/${data.bookingId}`, {
-                state: { bookingId: data.bookingId, price: totalAmount, title: listing?.title, nights }
+                state: { bookingId: data.bookingId, price: totalAmount, title: listing?.title, nights, couponCode: discountInfo ? discountInfo.code : null }
             });
         } catch {
             showToast("Connection error. Please try again.", "error");
@@ -188,6 +224,38 @@ export default function Booking() {
                                         </motion.div>
                                     )}
                                 </AnimatePresence>
+                                
+                                <div className="mt-8 pt-8 border-t border-slate-200/60">
+                                    <label className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
+                                        <Tag size={16} className="text-emerald-500" /> Have a promo code?
+                                    </label>
+                                    <div className="flex gap-3">
+                                        <input
+                                            type="text"
+                                            value={couponCode}
+                                            onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                                            placeholder="Enter code here"
+                                            className="flex-1 h-12 bg-white border border-slate-200 rounded-xl px-4 font-bold text-slate-900 focus:border-emerald-500 outline-none uppercase transition-all"
+                                            disabled={!!discountInfo}
+                                        />
+                                        {!discountInfo ? (
+                                            <button 
+                                                onClick={handleApplyCoupon}
+                                                disabled={validatingCoupon || !couponCode}
+                                                className="h-12 px-6 bg-slate-900 text-white rounded-xl font-bold text-sm disabled:opacity-50 transition-all hover:bg-emerald-600"
+                                            >
+                                                {validatingCoupon ? "Checking..." : "Apply"}
+                                            </button>
+                                        ) : (
+                                            <button 
+                                                onClick={() => { setDiscountInfo(null); setCouponCode(""); }}
+                                                className="h-12 px-6 bg-rose-50 text-rose-600 rounded-xl font-bold text-sm transition-all hover:bg-rose-100"
+                                            >
+                                                Remove
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
                             </section>
 
                             {/* POLICIES */}
@@ -235,8 +303,14 @@ export default function Booking() {
                                                 <span>₹{pricePerNight.toLocaleString()} x {nights || 0} nights</span>
                                                 <span>₹{baseAmount.toLocaleString()}</span>
                                             </div>
+                                            {discountInfo && (
+                                                <div className="flex justify-between text-emerald-600 font-bold">
+                                                    <span>Discount ({Math.round(discountInfo.discountPercentage * 100)}%)</span>
+                                                    <span>-₹{discountAmount.toLocaleString()}</span>
+                                                </div>
+                                            )}
                                             <div className="flex justify-between text-slate-600 font-medium">
-                                                <span>GST {isVehicle ? "(Waived for Vehicles)" : "(12%)"}</span>
+                                                <span>GST {isVehicle ? "(Waived for Vehicles)" : `(${gstRate * 100}%)`}</span>
                                                 {isVehicle ? <span className="text-emerald-500 font-bold">Waived</span> : <span>₹{gst.toLocaleString()}</span>}
                                             </div>
                                             <div className="flex justify-between text-slate-600 font-medium">

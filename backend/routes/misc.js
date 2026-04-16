@@ -26,6 +26,20 @@ const newsletterSchema = z.object({
 
 const router = express.Router();
 
+/* ================= PLATFORM CONFIG ================= */
+
+router.get("/config", async (req, res, next) => {
+    try {
+        const db = getDB();
+        const config = await db.collection("settings").findOne({ type: "financials" }) || {
+            gstRate: 0.12,
+            serviceFee: 99,
+            commissionRate: 0.10
+        };
+        res.json({ ok: true, data: config });
+    } catch (err) { next(err); }
+});
+
 /* ================= NEWSLETTER ================= */
 
 router.post("/newsletter", async (req, res, next) => {
@@ -284,6 +298,33 @@ router.post("/trip-planner", async (req, res, next) => {
 
         res.json({ ok: true, data: totalItinerary });
 
+    } catch (err) { next(err); }
+});
+
+/* ================= COUPONS ================= */
+
+const couponValidateSchema = z.object({
+    code: z.string().min(1)
+});
+
+router.post("/validate-coupon", async (req, res, next) => {
+    try {
+        const parsed = couponValidateSchema.safeParse(req.body);
+        if (!parsed.success) return res.status(400).json({ ok: false, message: "Coupon code is required" });
+
+        const db = getDB();
+        const code = parsed.data.code.toUpperCase();
+        const coupon = await db.collection("coupons").findOne({ code, isActive: true });
+
+        if (!coupon) {
+            return res.status(400).json({ ok: false, message: "Invalid or inactive coupon code" });
+        }
+
+        res.json({ 
+            ok: true, 
+            discountPercentage: coupon.discountPercentage,
+            code: coupon.code
+        });
     } catch (err) { next(err); }
 });
 

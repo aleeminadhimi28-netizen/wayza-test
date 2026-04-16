@@ -254,7 +254,31 @@ export const api = {
         body: JSON.stringify({ status, reason })
     }).then(r => r.json()),
 
+    adminGetCoupons: () => customFetch(`${API_URL}/admin/coupons`, {
+        headers: getAuthHeaders()
+    }).then(r => r.json()),
+
+    adminGetLogs: () => customFetch(`${API_URL}/admin/logs`, {
+        headers: getAuthHeaders()
+    }).then(r => r.json()),
+
+    adminCreateCoupon: (data) => customFetch(`${API_URL}/admin/coupons`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+        body: JSON.stringify(data)
+    }).then(r => r.json()),
+
+    adminDeleteCoupon: (id) => customFetch(`${API_URL}/admin/coupons/${id}`, {
+        method: "DELETE",
+        headers: getAuthHeaders()
+    }).then(r => r.json()),
+
     // Misc
+    validateCoupon: (code) => customFetch(`${API_URL}/misc/validate-coupon`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+        body: JSON.stringify({ code })
+    }).then(r => r.json()),
     getReviews: (id) => customFetch(`${API_URL}/misc/reviews/${id}`).then(r => r.json()),
 
     postReview: (data) => customFetch(`${API_URL}/misc/reviews`, {
@@ -322,6 +346,12 @@ export const api = {
     }).then(r => r.json()),
 
     // Misc
+    getPlatformConfig: () => customFetch(`${API_URL}/misc/config`).then(r => r.json()),
+    updatePlatformConfig: (data) => customFetch(`${API_URL}/admin/config`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+        body: JSON.stringify(data)
+    }).then(r => r.json()),
     subscribeNewsletter: (email) => customFetch(`${API_URL}/misc/newsletter`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

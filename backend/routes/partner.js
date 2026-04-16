@@ -5,7 +5,7 @@ import crypto from "crypto";
 import { getDB } from "../config/db.js";
 import { requireAuth, requireRole } from "../middleware/auth.js";
 import { z } from "zod";
-import { COMMISSION_RATE, BCRYPT_ROUNDS, JWT_EXPIRY } from "../config/constants.js";
+import { BCRYPT_ROUNDS, JWT_EXPIRY } from "../config/constants.js";
 
 const registerSchema = z.object({
     email: z.string().email(),
@@ -154,8 +154,8 @@ router.get("/earnings", requireAuth, requireRole(["partner", "admin"]), async (r
         const now = new Date();
 
         allPaid.forEach(b => {
-            const earnings = b.netEarnings || (b.totalPrice * (1 - COMMISSION_RATE));
-            const fee = b.commissionAmount || (b.totalPrice * COMMISSION_RATE);
+            const fee = b.commissionAmount !== undefined ? b.commissionAmount : Math.round((b.totalPrice || 0) * 0.10);
+            const earnings = b.netEarnings !== undefined ? b.netEarnings : (b.totalPrice || 0) - fee;
 
             totalRevenue += b.totalPrice || 0;
             platformFee += fee;
@@ -268,7 +268,11 @@ router.post("/wallet/request", requireAuth, requireRole(["partner"]), async (req
         const allPaid = await bookings.find({ ownerEmail: req.user.email, status: "paid" }).toArray();
         const available = allPaid.reduce((sum, b) => {
             if (b.payoutStatus === "paid_out") return sum;
-            if (new Date(b.checkIn) <= now) return sum + (b.netEarnings || (b.totalPrice * (1 - COMMISSION_RATE)));
+            if (new Date(b.checkIn) <= now) {
+                const fee = b.commissionAmount !== undefined ? b.commissionAmount : Math.round((b.totalPrice || 0) * 0.10);
+                const earnings = b.netEarnings !== undefined ? b.netEarnings : (b.totalPrice || 0) - fee;
+                return sum + earnings;
+            }
             return sum;
         }, 0);
 

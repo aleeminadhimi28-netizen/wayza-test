@@ -8,6 +8,23 @@ import { CurrencyProvider } from "./CurrencyContext.jsx";
 import { AuthProvider } from "./AuthContext.jsx";
 import { ToastProvider } from "./ToastContext.jsx";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
+import posthog from "posthog-js";
+import { PostHogProvider } from "posthog-js/react";
+
+// Initialize PostHog
+if (typeof window !== "undefined") {
+  const phKey = import.meta.env.VITE_POSTHOG_KEY;
+  const phHost = import.meta.env.VITE_POSTHOG_HOST;
+
+  if (phKey && phKey !== "your_posthog_project_api_key_here") {
+    posthog.init(phKey, {
+      api_host: phHost || "https://us.i.posthog.com",
+      person_profiles: "identified_only", 
+      capture_pageview: false, // We'll handle this manually or let autocapture deal with it
+    });
+  }
+}
+
 
 /* ================= PUBLIC ================= */
 const LandingPage = lazy(() => import("./pages/public/LandingPage.jsx"));
@@ -123,20 +140,23 @@ function AppContent() {
 
 function Root() {
     return (
-        <HelmetProvider>
-            <BrowserRouter>
-                <ErrorBoundary>
-                    <AuthProvider>
-                        <CurrencyProvider>
-                            <ToastProvider>
-                                <AppContent />
-                            </ToastProvider>
-                        </CurrencyProvider>
-                    </AuthProvider>
-                </ErrorBoundary>
-            </BrowserRouter>
-        </HelmetProvider>
+        <PostHogProvider client={posthog}>
+            <HelmetProvider>
+                <BrowserRouter>
+                    <ErrorBoundary>
+                        <AuthProvider>
+                            <CurrencyProvider>
+                                <ToastProvider>
+                                    <AppContent />
+                                </ToastProvider>
+                            </CurrencyProvider>
+                        </AuthProvider>
+                    </ErrorBoundary>
+                </BrowserRouter>
+            </HelmetProvider>
+        </PostHogProvider>
     );
 }
+
 
 ReactDOM.createRoot(document.getElementById("root")).render(<Root />);
