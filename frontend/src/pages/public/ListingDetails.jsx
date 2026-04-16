@@ -137,6 +137,12 @@ export default function ListingDetails() {
     navigate(`/booking/${id}`, { state: { variantIndex: selectedVariant } });
   };
 
+  const [platformConfig, setPlatformConfig] = useState(null);
+
+  useEffect(() => {
+     api.getPlatformConfig().then(res => { if (res.ok) setPlatformConfig(res.data); }).catch(() => {});
+  }, []);
+
   // Loading skeleton
   if (!listing) return (
     <WayzaLayout noPadding>
@@ -171,11 +177,6 @@ export default function ListingDetails() {
     ? Math.max(0, Math.ceil((new Date(checkOut) - new Date(checkIn)) / 86400000))
     : 0;
   
-  const [platformConfig, setPlatformConfig] = useState(null);
-
-  useEffect(() => {
-     api.getPlatformConfig().then(res => { if (res.ok) setPlatformConfig(res.data); }).catch(() => {});
-  }, []);
 
   const isVehicle = listing.category === "bike" || listing.category === "car";
   const gstRate = platformConfig?.gstRate ?? 0.12;
