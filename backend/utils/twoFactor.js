@@ -1,4 +1,5 @@
-import { authenticator } from 'otplib';
+import pkg from 'otplib';
+const { authenticator } = pkg;
 import QRCode from 'qrcode';
 
 /**
