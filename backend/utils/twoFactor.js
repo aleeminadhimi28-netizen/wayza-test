@@ -1,5 +1,6 @@
-import pkg from 'otplib';
-const { authenticator } = pkg;
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const { authenticator } = require('otplib');
 import QRCode from 'qrcode';
 
 /**
