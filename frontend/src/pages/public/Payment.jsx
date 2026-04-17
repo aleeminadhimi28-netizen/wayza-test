@@ -13,7 +13,14 @@ export default function Payment() {
     const navigate = useNavigate();
     const location = useLocation();
     const { showToast } = useToast();
+    const { user } = useAuth();
     const [submitting, setSubmitting] = useState(false);
+
+    useEffect(() => {
+        if (!user) {
+            navigate("/login", { state: { from: location.pathname } });
+        }
+    }, [user, navigate, location]);
 
     const price = location.state?.price || 0;
     const title = location.state?.title || "Premium Experience";

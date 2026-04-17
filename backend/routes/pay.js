@@ -37,6 +37,12 @@ router.post("/create-order", requireAuth, async (req, res, next) => {
 
         const order = await razorpay.orders.create(options);
 
+        // PERSIST the order ID to the booking for webhook tracking
+        await db.collection("bookings").updateOne(
+            { _id: new ObjectId(bookingId) },
+            { $set: { razorpayOrderId: order.id } }
+        );
+
         res.json({
             ok: true,
             orderId: order.id,

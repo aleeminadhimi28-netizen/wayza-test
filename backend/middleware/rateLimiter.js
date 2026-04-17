@@ -39,11 +39,30 @@ export const authLimiter = rateLimit({
     message: "Too many authentication attempts. Please try again in 15 minutes."
   },
   handler: (req, res, next, options) => {
+    const safeBody = { ...req.body };
+    if (safeBody.password) safeBody.password = "[REDACTED]";
+    if (safeBody.newPassword) safeBody.newPassword = "[REDACTED]";
+    if (safeBody.oldPassword) safeBody.oldPassword = "[REDACTED]";
+    if (safeBody.otp) safeBody.otp = "[REDACTED]";
+    if (safeBody.razorpay_signature) safeBody.razorpay_signature = "[REDACTED]";
+    if (safeBody.razorpay_payment_id) safeBody.razorpay_payment_id = "[REDACTED]";
+    if (safeBody.twoFactorSecret) safeBody.twoFactorSecret = "[REDACTED]";
+    
     captureEvent(req.ip, "Auth Brute Force Blocked", { 
         url: req.originalUrl,
-        email: req.body?.email || "unknown" 
+        body: safeBody
     });
     res.status(options.statusCode).send(options.message);
+  }
+});
+
+// Payment Limiter
+export const paymentLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  limit: 15, // 15 orders per hour per IP
+  message: { 
+    ok: false, 
+    message: "Too many payment attempts. Please contact support if you are having issues." 
   }
 });
 

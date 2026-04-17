@@ -11,7 +11,7 @@ import compression from "compression";
 import morgan from "morgan";
 import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
-import { globalLimiter, authLimiter, uploadLimiter } from "./middleware/rateLimiter.js";
+import { globalLimiter, authLimiter, uploadLimiter, paymentLimiter } from "./middleware/rateLimiter.js";
 import { requireAuth } from "./middleware/auth.js";
 import { activityLogger } from "./middleware/activityLogger.js";
 import { securityGuards } from "./middleware/security.js";
@@ -31,6 +31,7 @@ import adminRoutes from "./routes/admin.js";
 import miscRoutes from "./routes/misc.js";
 import communicationRoutes from "./routes/communication.js";
 import payRoutes from "./routes/pay.js";
+import webhookRoutes from "./routes/webhooks.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -132,7 +133,11 @@ app.use("/api/v1/partner", partnerRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/misc", miscRoutes);
 app.use("/api/v1/comm", communicationRoutes);
-app.use("/api/v1/payments", payRoutes);
+app.use("/api/v1/payments", paymentLimiter, payRoutes);
+
+// WEBHOOKS need raw body BEFORE express.json()
+app.use("/api/v1/webhooks/razorpay", express.raw({ type: "application/json" }));
+app.use("/api/v1/webhooks", webhookRoutes);
 
 app.get("/", (_, res) => res.json({ ok: true, status: "Wayza API v1 Running" }));
 

@@ -21,6 +21,10 @@ export const activityLogger = (req, res, next) => {
             if (safeBody.password) safeBody.password = "[REDACTED]";
             if (safeBody.newPassword) safeBody.newPassword = "[REDACTED]";
             if (safeBody.oldPassword) safeBody.oldPassword = "[REDACTED]";
+            if (safeBody.otp) safeBody.otp = "[REDACTED]";
+            if (safeBody.razorpay_signature) safeBody.razorpay_signature = "[REDACTED]";
+            if (safeBody.razorpay_payment_id) safeBody.razorpay_payment_id = "[REDACTED]";
+            if (safeBody.twoFactorSecret) safeBody.twoFactorSecret = "[REDACTED]";
             
             const logEntry = {
                 method: req.method,
