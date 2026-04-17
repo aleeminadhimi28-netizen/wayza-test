@@ -4,7 +4,7 @@ import { useAuth } from "../../AuthContext.jsx"
 import { motion, AnimatePresence } from "framer-motion";
 import { ShieldCheck, CreditCard, Apple, Wallet, CheckCircle, Lock, Zap, ArrowLeft, ArrowRight, Shield, Activity, Globe, CreditCard as CardIcon, Sparkles, ChevronRight } from "lucide-react";
 import { useToast } from "../../ToastContext.jsx";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { api } from "../../utils/api.js";
 
@@ -20,6 +20,16 @@ export default function Payment() {
     const nights = location.state?.nights || 1;
     const couponCode = location.state?.couponCode;
 
+    useEffect(() => {
+        const script = document.createElement("script");
+        script.src = "https://checkout.razorpay.com/v1/checkout.js";
+        script.async = true;
+        document.body.appendChild(script);
+        return () => {
+            document.body.removeChild(script);
+        }
+    }, []);
+
     async function handlePayment(method = "card") {
         if (!bookingId) {
             showToast("Invalid transaction reference.", "error");
@@ -27,25 +37,61 @@ export default function Payment() {
         }
 
         setSubmitting(true);
-        // Simulated latency for verification
-        await new Promise(r => setTimeout(r, 2000));
 
         try {
-            const data = await api.confirmBooking({
-                bookingId,
-                paymentId: `PAY-${method.toUpperCase()}-` + Date.now()
-            });
-
-            if (!data.ok) {
-                showToast(data.message || "Payment authorization failed.", "error");
+            // 1. Create Order on Backend
+            const orderData = await api.createRazorpayOrder(bookingId);
+            if (!orderData.ok) {
+                showToast(orderData.message || "Failed to initiate payment.", "error");
                 setSubmitting(false);
                 return;
             }
 
-            showToast("Payment confirmed! Your stay is verified. 🌿", "success");
-            navigate("/payment-success");
+            // 2. Configure Razorpay Options
+            const options = {
+                key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_SefBe7ldCASLlG",
+                amount: orderData.amount,
+                currency: orderData.currency,
+                name: "Wayza",
+                description: `Booking: ${title}`,
+                order_id: orderData.orderId,
+                handler: async function (response) {
+                    try {
+                        // 3. Verify Payment on Backend
+                        const confirmData = await api.confirmBooking({
+                            bookingId,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_signature: response.razorpay_signature
+                        });
+
+                        if (confirmData.ok) {
+                            showToast("Payment confirmed! Your stay is verified. 🌿", "success");
+                            navigate("/payment-success");
+                        } else {
+                            showToast(confirmData.message || "Payment verification failed.", "error");
+                            setSubmitting(false);
+                        }
+                    } catch (err) {
+                        showToast("Verification error. Contact support.", "error");
+                        setSubmitting(false);
+                    }
+                },
+                theme: {
+                    color: "#059669",
+                },
+                modal: {
+                    ondismiss: function () {
+                        setSubmitting(false);
+                    }
+                }
+            };
+
+            const rzp = new window.Razorpay(options);
+            rzp.open();
         } catch (err) {
-            showToast("Connection error during payment.", "error");
+            console.error("Razorpay Error:", err);
+            showToast("Failed to connect to payment gateway.", "error");
             setSubmitting(false);
         }
     }

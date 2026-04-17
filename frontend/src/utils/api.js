@@ -142,6 +142,11 @@ export const api = {
         headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         body: JSON.stringify(data)
     }).then(r => r.json()),
+    createRazorpayOrder: (bookingId) => customFetch(`${API_URL}/payments/create-order`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+        body: JSON.stringify({ bookingId })
+    }).then(r => r.json()),
 
     cancelBooking: (data) => customFetch(`${API_URL}/bookings/cancel`, {
         method: "POST",

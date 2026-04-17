@@ -30,6 +30,7 @@ import partnerRoutes from "./routes/partner.js";
 import adminRoutes from "./routes/admin.js";
 import miscRoutes from "./routes/misc.js";
 import communicationRoutes from "./routes/communication.js";
+import payRoutes from "./routes/pay.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -131,6 +132,7 @@ app.use("/api/v1/partner", partnerRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/misc", miscRoutes);
 app.use("/api/v1/comm", communicationRoutes);
+app.use("/api/v1/payments", payRoutes);
 
 app.get("/", (_, res) => res.json({ ok: true, status: "Wayza API v1 Running" }));
 

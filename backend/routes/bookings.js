@@ -5,6 +5,7 @@ import { requireAuth } from "../middleware/auth.js";
 import { getTransporter, guestBookingEmail, ownerBookingEmail } from "../utils/emailTemplates.js";
 import { sendWhatsAppAlert, formatWhatsAppBookingMsg } from "../utils/whatsapp.js";
 import { z } from "zod";
+import crypto from "crypto";
 // Removed static constants import here. Values are fetched dynamically now.
 
 const bookSchema = z.object({
@@ -19,7 +20,9 @@ const bookSchema = z.object({
 
 const confirmSchema = z.object({
     bookingId: z.string().min(1),
-    paymentId: z.string().optional()
+    razorpay_payment_id: z.string().min(1),
+    razorpay_order_id: z.string().min(1),
+    razorpay_signature: z.string().min(1)
 });
 
 const cancelSchema = z.object({
@@ -140,12 +143,26 @@ router.post("/confirm", requireAuth, async (req, res, next) => {
         const bookings = db.collection("bookings");
         const transporter = await getTransporter();
 
-        const { bookingId, paymentId } = parsed.data;
+        const { bookingId, razorpay_payment_id, razorpay_order_id, razorpay_signature } = parsed.data;
+
+        // VERIFY RAZORPAY SIGNATURE
+        const secret = process.env.RAZORPAY_KEY_SECRET;
+        const generated_signature = crypto
+            .createHmac("sha256", secret)
+            .update(razorpay_order_id + "|" + razorpay_payment_id)
+            .digest("hex");
+
+        if (generated_signature !== razorpay_signature) {
+            return res.status(400).json({ ok: false, message: "Payment verification failed: Invalid signature" });
+        }
+
         if (!ObjectId.isValid(bookingId))
             return res.status(400).json({ ok: false, message: "Invalid booking ID" });
 
         const booking = await bookings.findOne({ _id: new ObjectId(bookingId) });
         if (!booking) return res.status(404).json({ ok: false, message: "Booking not found" });
+
+        const paymentId = razorpay_payment_id; // Map back to original variable for rest of logic
 
         const totalPrice = booking.totalPrice || 0;
         const config = await db.collection("settings").findOne({ type: "financials" }) || { commissionRate: 0.10 };
