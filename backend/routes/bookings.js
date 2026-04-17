@@ -138,7 +138,7 @@ router.post("/confirm", requireAuth, async (req, res, next) => {
 
         const db = getDB();
         const bookings = db.collection("bookings");
-        const transporter = getTransporter();
+        const transporter = await getTransporter();
 
         const { bookingId, paymentId } = parsed.data;
         if (!ObjectId.isValid(bookingId))

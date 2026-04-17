@@ -234,7 +234,7 @@ router.patch("/bookings/:id/payout", requireAuth, requireRole(["admin"]), async 
         );
 
         // Send email notification to partner
-        const transporter = getTransporter();
+        const transporter = await getTransporter();
         if (transporter && booking?.ownerEmail && status === "paid_out") {
             transporter.sendMail(payoutSettledEmail({
                 ownerEmail: booking.ownerEmail,
@@ -271,7 +271,7 @@ router.patch("/withdrawals/:id", requireAuth, requireRole(["admin"]), async (req
         );
 
         // Send email notification
-        const transporter = getTransporter();
+        const transporter = await getTransporter();
         if (transporter && request?.email) {
             transporter.sendMail(withdrawalStatusEmail({
                 ownerEmail: request.email,
