@@ -17,11 +17,11 @@ export default function ListingConcierge({ listingId, listingTitle }) {
         }
     }, [messages, isThinking]);
 
-    const handleSend = async () => {
-        if (!query.trim() || isThinking) return;
+    const handleSend = async (quickQuery = null) => {
+        const textToSend = quickQuery || query.trim();
+        if (!textToSend || isThinking) return;
 
-        const userMsg = query.trim();
-        setMessages(prev => [...prev, { role: "user", text: userMsg }]);
+        setMessages(prev => [...prev, { role: "user", text: textToSend }]);
         setQuery("");
         setIsThinking(true);
 
@@ -30,7 +30,7 @@ export default function ListingConcierge({ listingId, listingTitle }) {
             const response = await fetch(`${API_URL}/api/v1/misc/chat`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ listingId, query: userMsg })
+                body: JSON.stringify({ listingId, query: textToSend })
             });
             const data = await response.json();
             
@@ -64,7 +64,7 @@ export default function ListingConcierge({ listingId, listingTitle }) {
                                 </div>
                                 <div>
                                     <h3 className="font-black uppercase tracking-widest text-[10px] text-emerald-400">Concierge Intelligence</h3>
-                                    <p className="font-black text-sm tracking-tighter italic font-serif">Wayza Assistant</p>
+                                    <p className="font-black text-sm tracking-tighter">Wayza Assistant</p>
                                 </div>
                             </div>
                             <button onClick={() => setIsOpen(false)} className="text-white/40 hover:text-white transition-colors">
@@ -94,9 +94,23 @@ export default function ListingConcierge({ listingId, listingTitle }) {
                                     <div className="w-8 h-8 bg-white border border-slate-100 rounded-xl flex items-center justify-center animate-pulse">
                                         <Loader2 size={14} className="animate-spin text-emerald-600" />
                                     </div>
-                                    <div className="p-4 bg-white border border-slate-50 rounded-2xl rounded-tl-none italic text-[11px] text-slate-400 uppercase tracking-widest font-black">
+                                    <div className="p-4 bg-white border border-slate-50 rounded-2xl rounded-tl-none text-[11px] text-slate-400 uppercase tracking-widest font-black">
                                         Architecting Response...
                                     </div>
+                                </div>
+                            )}
+
+                            {messages.length === 1 && !isThinking && (
+                                <div className="flex flex-wrap gap-2 pt-4">
+                                    {["Is the WiFi fast?", "Breakfast options?", "Check-in policy?"].map(q => (
+                                        <button 
+                                            key={q}
+                                            onClick={() => handleSend(q)}
+                                            className="px-4 py-2 bg-white border border-slate-100 rounded-full text-[10px] font-bold text-slate-600 hover:border-emerald-500 hover:text-emerald-600 transition-all shadow-sm"
+                                        >
+                                            {q}
+                                        </button>
+                                    ))}
                                 </div>
                             )}
                         </div>
@@ -110,7 +124,7 @@ export default function ListingConcierge({ listingId, listingTitle }) {
                                     onChange={e => setQuery(e.target.value)}
                                     onKeyPress={e => e.key === "Enter" && handleSend()}
                                     placeholder="Ask about amenities, views, or area..."
-                                    className="w-full h-12 bg-slate-50 border border-slate-100 rounded-2xl px-4 pr-12 text-[13px] font-bold text-slate-900 focus:outline-none focus:border-emerald-500 transition-all italic"
+                                    className="w-full h-12 bg-slate-50 border border-slate-100 rounded-2xl px-4 pr-12 text-[13px] font-bold text-slate-900 focus:outline-none focus:border-emerald-500 transition-all"
                                 />
                                 <button
                                     onClick={handleSend}

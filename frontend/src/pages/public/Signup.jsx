@@ -70,9 +70,9 @@ export default function Signup() {
                         <UserPlus size={16} className="text-emerald-400" /> Join our community
                     </motion.div>
                     <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-7xl md:text-9xl font-bold text-white tracking-tighter leading-[0.8] uppercase">
-                        Your <br /><span className="text-emerald-500 italic font-serif lowercase">Voyage</span> <br /> Commences.
+                        Your <br /><span className="text-emerald-500 lowercase">Voyage</span> <br /> Commences.
                     </motion.h1>
-                    <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="text-xl text-white/70 font-medium leading-relaxed italic">
+                    <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="text-xl text-white/70 font-medium leading-relaxed">
                         Create an account to unlock exclusive properties, manage your bookings, and experience luxury travel like never before.
                     </motion.p>
                 </div>
@@ -94,8 +94,8 @@ export default function Signup() {
                     </Link>
 
                     <div className="space-y-4">
-                        <h2 className="text-5xl md:text-6xl font-bold text-slate-900 tracking-tighter leading-none uppercase">Initialize <span className="text-emerald-500 italic font-serif lowercase">Identity.</span></h2>
-                        <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.4em] italic border-l-2 border-emerald-500/20 pl-4">"Join the network to experience the matrix of luxury."</p>
+                        <h2 className="text-5xl md:text-6xl font-bold text-slate-900 tracking-tighter leading-none uppercase">Initialize <span className="text-emerald-500 lowercase">Identity.</span></h2>
+                        <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.4em] border-l-2 border-emerald-500/20 pl-4">"Join the network to experience the matrix of luxury."</p>
                     </div>
 
                     <form onSubmit={handleSignup} className="space-y-8 group">
@@ -150,7 +150,7 @@ export default function Signup() {
                     <div className="pt-20 border-t border-slate-50 flex justify-between items-center opacity-40 hover:opacity-100 transition-opacity group">
                         <div className="flex items-center gap-3">
                             <ShieldCheck size={16} className="text-emerald-500 group-hover:scale-110 transition-transform" />
-                            <span className="text-[9px] font-bold uppercase tracking-widest text-slate-300 italic">Enterprise Grade Security</span>
+                            <span className="text-[9px] font-bold uppercase tracking-widest text-slate-300">Enterprise Grade Security</span>
                         </div>
                         <div className="flex gap-2">
                             <div className="w-1.5 h-1.5 rounded-full bg-slate-100 group-hover:bg-emerald-200 transition-colors" />

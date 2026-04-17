@@ -70,6 +70,12 @@ export const api = {
         headers: getAuthHeaders()
     }).then(r => r.json()),
 
+    updateListing: (id, data) => customFetch(`${API_URL}/listings/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+        body: JSON.stringify(data)
+    }).then(r => r.json()),
+
     // Variants
     addVariant: (id, data) => customFetch(`${API_URL}/listings/${id}/variant`, {
         method: "POST",
@@ -116,6 +122,17 @@ export const api = {
         headers: getAuthHeaders()
     }).then(r => r.json()),
     getBookedDates: (id) => api.getListingBookings(id),
+
+    checkIn: (id, data) => customFetch(`${API_URL}/bookings/${id}/check-in`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+        body: JSON.stringify(data || {})
+    }).then(r => r.json()),
+
+    checkOut: (id) => customFetch(`${API_URL}/bookings/${id}/check-out`, {
+        method: "PATCH",
+        headers: getAuthHeaders()
+    }).then(r => r.json()),
 
     // Partner
     partnerLogin: (credentials) => customFetch(`${API_URL}/partner/login`, {

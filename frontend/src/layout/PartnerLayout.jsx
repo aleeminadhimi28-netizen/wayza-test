@@ -221,7 +221,7 @@ export default function PartnerLayout() {
                     </div>
                     <div className="overflow-y-auto overflow-x-hidden p-2 flex-1">
                       {notifs.length === 0 ? (
-                        <p className="text-center text-xs text-slate-400 py-6 italic">No new notifications</p>
+                        <p className="text-center text-xs text-slate-400 py-6">No new notifications</p>
                       ) : (
                         notifs.map(n => (
                           <div key={n._id} className={`p-3 rounded-xl mb-1 flex flex-col gap-1 text-sm ${n.read ? "bg-white text-slate-500" : "bg-emerald-50 text-emerald-900 font-semibold"}`}>

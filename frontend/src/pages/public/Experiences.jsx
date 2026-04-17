@@ -79,11 +79,11 @@ export default function Experiences() {
 
                             <h1 className="text-7xl md:text-[160px] font-bold text-white tracking-tighter leading-[0.8] uppercase mb-4 drop-shadow-2xl">
                                 NATIVE <br />
-                                <span className="text-amber-400 italic font-serif lowercase drop-shadow-none">secrets.</span>
+                                <span className="text-amber-400 lowercase drop-shadow-none">secrets.</span>
                             </h1>
 
                             <div className="flex flex-col items-center gap-8">
-                                <p className="text-xl md:text-2xl text-white/60 max-w-3xl mx-auto font-medium leading-relaxed italic border-l-2 border-amber-500/50 pl-10 py-2">
+                                <p className="text-xl md:text-2xl text-white/60 max-w-3xl mx-auto font-medium leading-relaxed border-l-2 border-amber-500/50 pl-10 py-2">
                                     "Handpicked curated journeys, high-adrenaline adventures, and <span className="text-white font-bold">deep cultural dives</span> designed for the native explorer."
                                 </p>
                                 
@@ -131,12 +131,12 @@ export default function Experiences() {
                 <section className="py-32 px-6 max-w-7xl mx-auto">
                     <header className="mb-24 flex flex-col md:flex-row justify-between items-end gap-10">
                         <div className="space-y-4">
-                            <div className="flex items-center gap-3 text-amber-600 font-bold text-[10px] uppercase tracking-[0.5em] italic">
+                            <div className="flex items-center gap-3 text-amber-600 font-bold text-[10px] uppercase tracking-[0.5em]">
                                 <Sparkles size={18} /> Top Rated Experiences
                             </div>
-                            <h2 className="text-5xl md:text-7xl font-bold tracking-tighter uppercase leading-none">Curated <br /><span className="text-amber-500 italic font-serif lowercase">extraordinary.</span></h2>
+                            <h2 className="text-5xl md:text-7xl font-bold tracking-tighter uppercase leading-none">Curated <br /><span className="text-amber-500 lowercase">extraordinary.</span></h2>
                         </div>
-                        <p className="text-slate-400 text-lg font-medium italic max-w-md border-l-2 border-slate-100 pl-8 pb-2">
+                        <p className="text-slate-400 text-lg font-medium max-w-md border-l-2 border-slate-100 pl-8 pb-2">
                            Showing <span className="text-slate-900 font-bold">{listings.length}</span> handpicked experiences verified for quality and authenticity.
                         </p>
                     </header>
@@ -226,9 +226,9 @@ export default function Experiences() {
                                 <Zap size={16} /> ADRENALINE PEAK
                             </div>
                             <h2 className="text-6xl md:text-9xl font-bold text-white tracking-tighter uppercase leading-[0.85]">
-                                FEEL THE <br /><span className="text-amber-500 italic font-serif lowercase">rush.</span>
+                                FEEL THE <br /><span className="text-amber-500 lowercase">rush.</span>
                             </h2>
-                            <p className="text-white/40 text-xl font-medium leading-relaxed italic border-l-4 border-amber-500/20 pl-10 py-2">
+                            <p className="text-white/40 text-xl font-medium leading-relaxed border-l-4 border-amber-500/20 pl-10 py-2">
                                 "From paragliding over red cliffs to high-speed jet ski expeditions, our adrenaline portfolio is unmatched in the region."
                             </p>
                             <button className="h-24 px-16 bg-white text-slate-950 hover:bg-amber-500 hover:text-white rounded-[32px] font-bold text-[12px] uppercase tracking-[0.4em] transition-all flex items-center gap-8 active:scale-95 group">
@@ -253,9 +253,9 @@ export default function Experiences() {
                                 </span>
                                 <h2 className="text-7xl md:text-[110px] font-bold text-slate-950 tracking-tighter leading-[0.8] uppercase">
                                     UNLOCK THE <br />
-                                    <span className="italic font-serif lowercase text-white mt-4 block">unindexed.</span>
+                                    <span className="lowercase text-white mt-4 block">unindexed.</span>
                                 </h2>
-                                <p className="text-slate-950/60 text-2xl md:text-3xl font-medium max-w-3xl mx-auto leading-relaxed italic border-t border-b border-slate-950/10 py-12">
+                                <p className="text-slate-950/60 text-2xl md:text-3xl font-medium max-w-3xl mx-auto leading-relaxed border-t border-b border-slate-950/10 py-12">
                                     "Our Native Secrets collection includes private tours and entries not found on any global travel index."
                                 </p>
                                 <div className="flex flex-col md:flex-row justify-center gap-6">
@@ -277,7 +277,7 @@ export default function Experiences() {
                         <div className="md:col-span-6 space-y-16">
                             <div className="space-y-8">
                                 <h1 className="text-6xl font-bold tracking-tighter text-slate-950 uppercase m-0 leading-none">Wayza<span className="text-amber-500">.</span></h1>
-                                <p className="text-slate-400 font-medium text-2xl leading-relaxed italic max-w-lg">
+                                <p className="text-slate-400 font-medium text-2xl leading-relaxed max-w-lg">
                                     "Curating the extraordinary for those who seek the unindexed."
                                 </p>
                             </div>

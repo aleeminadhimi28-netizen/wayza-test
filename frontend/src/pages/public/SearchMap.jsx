@@ -42,7 +42,7 @@ export default function SearchMap() {
                             </button>
                         </div>
                         <h1 className="text-3xl font-bold tracking-tight text-slate-900 uppercase leading-none">Interactive <span className="text-emerald-500">Explorer.</span></h1>
-                        <p className="text-slate-400 font-bold uppercase text-[9px] tracking-widest italic">Found {listings.length} properties in this region</p>
+                        <p className="text-slate-400 font-bold uppercase text-[9px] tracking-widest">Found {listings.length} properties in this region</p>
                     </header>
 
                     {/* LISTING FEED */}
@@ -131,7 +131,7 @@ export default function SearchMap() {
                             <div className="flex items-center gap-2 text-emerald-600 font-bold text-[10px] uppercase tracking-widest">
                                 <Sparkles size={14} /> Location Guide
                             </div>
-                            <p className="text-slate-500 text-[11px] font-bold italic leading-relaxed uppercase tracking-widest">
+                            <p className="text-slate-500 text-[11px] font-bold leading-relaxed uppercase tracking-widest">
                                 "Interactive mapping for a seamless discovery experience. All properties are verified for quality."
                             </p>
                         </div>

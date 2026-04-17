@@ -162,6 +162,8 @@ router.post("/confirm", requireAuth, async (req, res, next) => {
         // but commissionAmount didn't decrease.
         const netEarnings = totalPrice - commissionAmount;
 
+        const passcode = Math.floor(100000 + Math.random() * 900000).toString();
+
         await bookings.updateOne(
             { _id: new ObjectId(bookingId) },
             {
@@ -171,7 +173,8 @@ router.post("/confirm", requireAuth, async (req, res, next) => {
                     paidAt: new Date(),
                     commissionAmount,
                     netEarnings,
-                    payoutStatus: "pending"
+                    payoutStatus: "pending",
+                    checkInPasscode: passcode
                 }
             }
         );
@@ -246,6 +249,61 @@ router.post("/cancel", requireAuth, async (req, res, next) => {
             { $set: updates }
         );
 
+        res.json({ ok: true });
+    } catch (err) { next(err); }
+});
+
+router.patch("/:id/check-in", requireAuth, async (req, res, next) => {
+    try {
+        const db = getDB();
+        const bookings = db.collection("bookings");
+        const { id } = req.params;
+        const { passcode } = req.body;
+
+        if (!ObjectId.isValid(id)) return res.status(400).json({ ok: false, message: "Invalid ID" });
+
+        const booking = await bookings.findOne({ _id: new ObjectId(id) });
+        if (!booking) return res.status(404).json({ ok: false, message: "Booking not found" });
+
+        // Security: Only owner can check in
+        if (booking.ownerEmail !== req.user.email && req.user.role !== "admin") {
+            return res.status(403).json({ ok: false, message: "Not authorized" });
+        }
+
+        if (booking.status !== "paid") {
+            return res.status(400).json({ ok: false, message: `Cannot check in from status: ${booking.status}` });
+        }
+
+        // Optional passcode verification
+        if (passcode && booking.checkInPasscode !== passcode) {
+            return res.status(400).json({ ok: false, message: "Invalid verification passcode" });
+        }
+
+        await bookings.updateOne({ _id: new ObjectId(id) }, { $set: { status: "arrived", checkedInAt: new Date() } });
+        res.json({ ok: true });
+    } catch (err) { next(err); }
+});
+
+router.patch("/:id/check-out", requireAuth, async (req, res, next) => {
+    try {
+        const db = getDB();
+        const bookings = db.collection("bookings");
+        const { id } = req.params;
+
+        if (!ObjectId.isValid(id)) return res.status(400).json({ ok: false, message: "Invalid ID" });
+
+        const booking = await bookings.findOne({ _id: new ObjectId(id) });
+        if (!booking) return res.status(404).json({ ok: false, message: "Booking not found" });
+
+        if (booking.ownerEmail !== req.user.email && req.user.role !== "admin") {
+            return res.status(403).json({ ok: false, message: "Not authorized" });
+        }
+
+        if (booking.status !== "arrived") {
+            return res.status(400).json({ ok: false, message: "Guest has not checked in yet" });
+        }
+
+        await bookings.updateOne({ _id: new ObjectId(id) }, { $set: { status: "departed", checkedOutAt: new Date() } });
         res.json({ ok: true });
     } catch (err) { next(err); }
 });

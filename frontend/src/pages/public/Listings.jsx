@@ -245,7 +245,7 @@ export default function Listings() {
                                 >
                                     <div className="py-6 mt-2 border-t border-slate-100 grid grid-cols-1 md:grid-cols-3 gap-8">
                                         <div className="space-y-3">
-                                            <p className="text-xs font-black uppercase tracking-widest text-slate-400 italic">Price Range</p>
+                                            <p className="text-xs font-black uppercase tracking-widest text-slate-400">Price Range</p>
                                             <div className="flex items-center gap-3">
                                                 <div className="relative flex-1">
                                                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-sm font-bold">₹</span>
@@ -326,9 +326,9 @@ export default function Listings() {
                                 </div>
                                 <div className="max-w-md space-y-4 relative z-10">
                                     <h3 className="text-4xl font-black text-slate-900 tracking-tighter uppercase leading-[0.9]">
-                                        Empty <br /><span className="text-emerald-500 italic font-serif lowercase">Space.</span>
+                                        Empty <br /><span className="text-emerald-500 lowercase">Space.</span>
                                     </h3>
-                                    <p className="text-slate-400 font-medium italic text-sm leading-relaxed">
+                                    <p className="text-slate-400 font-medium text-sm leading-relaxed">
                                         No properties matched your criteria in <span className="text-slate-900 font-bold">{location || "this area"}</span>. <br />
                                         Try adjusting your distance or refining your search tokens.
                                     </p>
@@ -403,12 +403,12 @@ export default function Listings() {
                                                                 {l.category || "Hotel"}
                                                             </span>
                                                             {l.price > 8000 && (
-                                                                <span className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-amber-600 italic">
+                                                                <span className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-amber-600">
                                                                     <Sparkles size={10} /> Signature Collection
                                                                 </span>
                                                             )}
                                                         </div>
-                                                        <h3 className="text-2xl md:text-3xl font-black tracking-tighter text-slate-900 leading-[0.9] group-hover:text-emerald-600 transition-colors uppercase italic font-serif">
+                                                        <h3 className="text-2xl md:text-3xl font-black tracking-tighter text-slate-900 leading-[0.9] group-hover:text-emerald-600 transition-colors uppercase">
                                                             {l.title}
                                                         </h3>
                                                     </div>
@@ -418,7 +418,7 @@ export default function Listings() {
                                                         <span>{l.location || "Kerala, India"}</span>
                                                     </div>
 
-                                                    <p className="text-slate-500 text-sm leading-relaxed line-clamp-2 max-w-xl font-medium italic">
+                                                    <p className="text-slate-500 text-sm leading-relaxed line-clamp-2 max-w-xl font-medium">
                                                         "{l.description || "Experience the pinnacle of coastal luxury, where modern architecture harmonizes with Kerala's serene natural beauty."}"
                                                     </p>
 

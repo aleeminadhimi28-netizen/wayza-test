@@ -218,17 +218,17 @@ export default function ListingDetails() {
                   {listing.category || "Estate"}
                 </div>
                 {listing.price > 8000 && (
-                  <div className="flex items-center gap-2 text-amber-600 text-[10px] font-black uppercase tracking-[0.4em] italic">
+                  <div className="flex items-center gap-2 text-amber-600 text-[10px] font-black uppercase tracking-[0.4em]">
                     <Sparkles size={12} /> Priority Asset
                   </div>
                 )}
               </div>
-              <h1 className="text-6xl md:text-8xl font-black text-slate-900 tracking-tighter uppercase leading-[0.8] font-serif italic">
+              <h1 className="text-6xl md:text-8xl font-black text-slate-900 tracking-tighter uppercase leading-[0.8]">
                 {listing.title}
               </h1>
               <div className="flex flex-wrap items-center gap-x-10 gap-y-4">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-emerald-50 content-center text-center rounded-2xl border border-emerald-100 italic font-black text-xl text-emerald-600 font-serif">
+                  <div className="w-12 h-12 bg-emerald-50 flex items-center justify-center rounded-2xl border border-emerald-100 font-black text-xl text-emerald-600">
                     {avgRating}
                   </div>
                   <div>
@@ -243,7 +243,7 @@ export default function ListingDetails() {
                   </div>
                   <div>
                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-900">{listing.location || "Kerala, India"}</p>
-                    <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest italic leading-none mt-1">Prime Location</p>
+                    <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest leading-none mt-1">Prime Location</p>
                   </div>
                 </div>
               </div>
@@ -289,47 +289,23 @@ export default function ListingDetails() {
               <section className="space-y-8">
                 <div className="flex items-center gap-4">
                   <span className="h-px w-12 bg-emerald-500" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-600 italic">Project Narrative</span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-600">Project Narrative</span>
                 </div>
                 <div className="flex items-center justify-between pb-8 border-b border-slate-100">
                   <div>
-                    <h2 className="text-4xl font-black text-slate-900 uppercase tracking-tighter leading-none italic font-serif mb-4">The Experience.</h2>
-                    <p className="text-slate-400 font-bold uppercase text-[9px] tracking-widest italic">Curated by Wayza Network Architecture</p>
+                    <h2 className="text-4xl font-black text-slate-900 uppercase tracking-tighter leading-none mb-4">The Experience.</h2>
+                    <p className="text-slate-400 font-bold uppercase text-[9px] tracking-widest">Curated by Wayza Network Architecture</p>
                   </div>
-                  <div className="w-16 h-16 bg-slate-950 rounded-3xl flex items-center justify-center text-white italic font-black text-2xl font-serif">
+                  <div className="w-16 h-16 bg-slate-950 rounded-3xl flex items-center justify-center text-white font-black text-2xl">
                     {listing.title?.charAt(0)}
                   </div>
                 </div>
-                <p className="text-2xl text-slate-600 leading-relaxed font-medium italic">
+                <p className="text-2xl text-slate-600 leading-relaxed font-medium">
                   "{listing.description || "An extraordinary sanctuary where serene architecture meets the rhythm of the coast, designed for those who seek more than just a place to rest. Every corner is thoughtfully crafted to offer comfort, beauty, and a true sense of place."}"
                 </p>
               </section>
 
-              {/* Virtual Walkthrough (Sensory UI) */}
-              <section className="space-y-8">
-                <div className="flex items-center gap-4">
-                  <span className="h-px w-12 bg-emerald-500" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-600 italic">Virtual Walkthrough</span>
-                </div>
-                <div className="relative aspect-video rounded-[48px] overflow-hidden bg-slate-950 border border-slate-100 group shadow-2xl">
-                  {/* Mocking a luxury video walkthrough */}
-                  <div className="absolute inset-0 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm z-10 group-hover:opacity-0 transition-opacity duration-700 pointer-events-none">
-                     <div className="flex flex-col items-center gap-4">
-                        <div className="w-20 h-20 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full flex items-center justify-center">
-                           <Zap size={32} className="text-emerald-400 animate-pulse" />
-                        </div>
-                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white">Experience the Soul of the Estate</p>
-                     </div>
-                  </div>
-                  <iframe 
-                    className="w-full h-full grayscale-[0.2] hover:grayscale-0 transition-all duration-1000"
-                    src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&loop=1&controls=0&modestbranding=1" 
-                    title="Virtual Walkthrough"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  />
-                </div>
-              </section>
+
 
               {/* Neighborhood Discovery */}
               <NeighborhoodVibes location={listing.location} category={listing.category} />
@@ -361,7 +337,7 @@ export default function ListingDetails() {
                         className={`p-10 rounded-[40px] border-2 transition-all cursor-pointer flex flex-col md:flex-row justify-between items-center gap-8 ${selectedVariant === i ? "border-emerald-500 bg-emerald-50/30" : "border-slate-100 hover:border-emerald-200"}`}
                       >
                         <div className="space-y-3">
-                          <h3 className="text-3xl font-black tracking-tighter text-slate-900 uppercase italic font-serif">{v.name}</h3>
+                          <h3 className="text-3xl font-black tracking-tighter text-slate-900 uppercase">{v.name}</h3>
                           <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">{v.desc || "Executive level residency"}</p>
                         </div>
                         <div className="text-center md:text-right">
@@ -393,14 +369,14 @@ export default function ListingDetails() {
                           <div className="w-12 h-12 bg-slate-950 text-white rounded-2xl flex items-center justify-center font-black">{(r.guestEmail || "G").charAt(0).toUpperCase()}</div>
                           <div>
                             <p className="text-sm font-black uppercase tracking-widest text-slate-900">{r.guestEmail?.split("@")[0]}</p>
-                            <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-widest italic leading-none mt-1">Verified Stay</p>
+                            <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-widest leading-none mt-1">Verified Stay</p>
                           </div>
                         </div>
                         <div className="flex gap-1">
                           {[1, 2, 3, 4, 5].map(s => <Star key={s} size={10} className={s <= r.rating ? "fill-amber-400 text-amber-400" : "fill-slate-100 text-slate-100"} />)}
                         </div>
                       </div>
-                      <p className="text-lg text-slate-600 italic leading-relaxed font-medium">"{r.comment || "An absolutely wonderful stay. Everything was exactly as described."}"</p>
+                      <p className="text-lg text-slate-600 leading-relaxed font-medium">"{r.comment || "An absolutely wonderful stay. Everything was exactly as described."}"</p>
                     </div>
                   ))}
                 </div>
@@ -418,12 +394,12 @@ export default function ListingDetails() {
                       <div>
                         <p className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-400 mb-2">Access Rate</p>
                         <div className="flex items-baseline gap-2">
-                          <span className="text-6xl font-black tracking-tighter font-serif italic">₹{basePrice.toLocaleString()}</span>
+                          <span className="text-6xl font-black tracking-tighter">₹{basePrice.toLocaleString()}</span>
                           <span className="text-white/40 text-[10px] font-black uppercase tracking-widest">/ Slot</span>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-2xl font-black text-emerald-500 font-serif italic">{avgRating}</p>
+                        <p className="text-2xl font-black text-emerald-500">{avgRating}</p>
                         <p className="text-[9px] font-black uppercase tracking-widest text-white/30">Protocol Score</p>
                       </div>
                     </div>
@@ -458,7 +434,7 @@ export default function ListingDetails() {
                           </div>
                           <div className="flex justify-between text-xs font-black uppercase tracking-widest text-emerald-400 pt-3 border-t border-white/10">
                             <span>Final Commitment</span>
-                            <span className="text-2xl tracking-tighter font-serif italic">₹{total.toLocaleString()}</span>
+                            <span className="text-2xl tracking-tighter">₹{total.toLocaleString()}</span>
                           </div>
                         </div>
                       )}

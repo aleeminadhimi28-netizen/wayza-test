@@ -103,7 +103,7 @@ export default function ResetPassword() {
               <ShieldCheck size={32} className="text-emerald-400" />
             </div>
             <h1 className="text-5xl md:text-6xl font-bold text-slate-900 tracking-tight leading-none uppercase mb-8">Password <br /><span className="text-emerald-500">Update.</span></h1>
-            <p className="text-slate-400 text-lg font-medium italic leading-relaxed">
+            <p className="text-slate-400 text-lg font-medium leading-relaxed">
               "Establish your new secure password. We recommend a unique combination of characters to keep your account safe."
             </p>
           </motion.div>

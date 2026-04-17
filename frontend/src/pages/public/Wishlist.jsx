@@ -56,16 +56,16 @@ export default function Wishlist() {
                 <header className="bg-white pt-24 pb-20 px-6 md:px-12 border-b border-slate-200">
                     <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-end gap-10">
                         <div className="space-y-6">
-                            <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-3 text-emerald-600 font-bold text-[11px] uppercase tracking-[0.4em] italic leading-none">
+                            <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-3 text-emerald-600 font-bold text-[11px] uppercase tracking-[0.4em] leading-none">
                                 <Heart size={18} className="fill-emerald-600" /> Selection Repository
                             </motion.div>
                             <h1 className="text-6xl md:text-9xl font-bold text-slate-900 tracking-tighter leading-[0.8] uppercase">
-                                Curated <br /><span className="text-emerald-500 italic font-serif lowercase">Collection.</span>
+                                Curated <br /><span className="text-emerald-500 lowercase">Collection.</span>
                             </h1>
-                            <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.3em] italic border-l-2 border-emerald-500/20 pl-4">"Your personal gallery of global masterpieces and unique sanctuaries."</p>
+                            <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.3em] border-l-2 border-emerald-500/20 pl-4">"Your personal gallery of global masterpieces and unique sanctuaries."</p>
                         </div>
 
-                        <div className="flex items-center gap-4 bg-emerald-50 text-emerald-600 px-10 py-6 rounded-[32px] font-bold text-[11px] uppercase tracking-[0.3em] border border-emerald-100 shadow-sm italic transition-all hover:shadow-lg">
+                        <div className="flex items-center gap-4 bg-emerald-50 text-emerald-600 px-10 py-6 rounded-[32px] font-bold text-[11px] uppercase tracking-[0.3em] border border-emerald-100 shadow-sm transition-all hover:shadow-lg">
                             <Heart size={20} className="fill-emerald-600" /> {rows.length} Registry Count
                         </div>
                     </div>
@@ -91,8 +91,8 @@ export default function Wishlist() {
                                 </div>
 
                                 <div className="space-y-6 max-w-lg mx-auto">
-                                    <h3 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tighter leading-none uppercase">Registry is <span className="text-emerald-500 italic font-serif lowercase">Void.</span></h3>
-                                    <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.4em] italic border-t border-slate-100 pt-6">"Identify your next sanctuary and synchronize it with your registry."</p>
+                                    <h3 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tighter leading-none uppercase">Registry is <span className="text-emerald-500 lowercase">Void.</span></h3>
+                                    <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.4em] border-t border-slate-100 pt-6">"Identify your next sanctuary and synchronize it with your registry."</p>
                                 </div>
 
                                 <Link to="/listings" className="h-20 px-12 bg-slate-900 text-white rounded-[24px] font-bold uppercase text-[10px] tracking-widest hover:bg-emerald-600 transition-all shadow-xl shadow-slate-900/10 inline-flex items-center gap-4 active:scale-95">

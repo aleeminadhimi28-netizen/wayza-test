@@ -27,6 +27,7 @@ export default function PartnerCreateProperty() {
     const [category, setCategory] = useState("hotel");
     const [latitude, setLatitude] = useState("");
     const [longitude, setLongitude] = useState("");
+    const [walkthroughVideo, setWalkthroughVideo] = useState("");
     const [image, setImage] = useState(null);
     const [preview, setPreview] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -114,7 +115,13 @@ export default function PartnerCreateProperty() {
                 }
             }
 
-            const data = await api.createListing({ title, location, category, price: 0, image: filename, ownerEmail: user?.email, latitude: latitude ? Number(latitude) : null, longitude: longitude ? Number(longitude) : null });
+            const data = await api.createListing({ 
+                title, location, category, price: 0, image: filename, 
+                ownerEmail: user?.email, 
+                latitude: latitude ? Number(latitude) : null, 
+                longitude: longitude ? Number(longitude) : null,
+                walkthroughVideo
+            });
 
             if (data.ok) {
                 showToast("Property created! It will go live after admin approval. Add your room variants now.", "success");
@@ -258,6 +265,21 @@ export default function PartnerCreateProperty() {
                                             <option key={c.value} value={c.value}>{c.label}</option>
                                         ))}
                                     </select>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-xs font-semibold text-slate-700 block">Walkthrough Video URL (YouTube)</label>
+                                    <div className="relative">
+                                        <Plus className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                                        <input
+                                            type="url"
+                                            placeholder="https://www.youtube.com/embed/..."
+                                            value={walkthroughVideo}
+                                            onChange={e => setWalkthroughVideo(e.target.value)}
+                                            className="h-11 w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-4 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all"
+                                        />
+                                    </div>
+                                    <p className="text-[10px] text-slate-400 font-medium ml-1">Optional: Paste an 'embed' link for a high-fidelity virtual tour.</p>
                                 </div>
                             </div>
                         </div>

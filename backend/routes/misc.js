@@ -2,7 +2,7 @@ import express from "express";
 import { ObjectId } from "mongodb";
 import { getDB } from "../config/db.js";
 import { requireAuth } from "../middleware/auth.js";
-import { generateItinerary } from "../utils/ai.js";
+import { generateItinerary, answerListingQuery, generateNeighborhoodVibe } from "../utils/ai.js";
 import { z } from "zod";
 
 const reviewSchema = z.object({
@@ -351,7 +351,6 @@ router.post("/chat", async (req, res, next) => {
         // Logic check for AI key
         if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== "your_gemini_api_key_here") {
             try {
-                const { answerListingQuery } = await import("../utils/ai.js");
                 const answer = await answerListingQuery(query, listing);
                 return res.json({ ok: true, answer });
             } catch (aiErr) {
@@ -368,4 +367,79 @@ router.post("/chat", async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
+/* ================= NEIGHBORHOOD VIBE ================= */
+
+router.get("/neighborhood-vibe", async (req, res, next) => {
+    try {
+        const { location, category } = req.query;
+        if (!location) return res.status(400).json({ ok: false, message: "Location is required" });
+
+        // Try AI generation
+        if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== "your_gemini_api_key_here") {
+            try {
+                const vibe = await generateNeighborhoodVibe(location, category);
+                return res.json({ ok: true, data: vibe });
+            } catch (aiErr) {
+                console.error("Vibe generation failed:", aiErr.message);
+            }
+        }
+
+        // Fallback
+        res.json({
+            ok: true,
+            data: {
+                vibeTitle: "Coastal Rhapsody",
+                vibeDesc: "A sanctuary where the rhythm of the waves meets the soul of contemporary luxury.",
+                hotspots: [
+                    { name: "The Cliff Trail", iconLabel: "Compass", label: "Adventure" },
+                    { name: "Soul Food Cafe", iconLabel: "Coffee", label: "Gourmet" },
+                    { name: "Private Shore", iconLabel: "Waves", label: "Exclusive" },
+                    { name: "Luna Lounge", iconLabel: "Moon", label: "Nightlife" }
+                ]
+            }
+        });
+    } catch (err) { next(err); }
+});
+
+// ---------------- SEED DATA ----------------
+if (process.env.ALLOW_SEED === 'true') {
+    router.post('/seed', async (req, res, next) => {
+        try {
+            const db = getDB();
+            await db.collection('bookings').deleteMany({});
+            
+            // Insert admin user
+            const users = db.collection('users');
+            const adminEmail = process.env.ADMIN_EMAIL || 'admin@wayza.com';
+            const adminExists = await users.findOne({ email: adminEmail });
+            if (!adminExists) {
+                await users.insertOne({
+                    email: adminEmail,
+                    password: '$2a$10$placeholderhash', // placeholder bcrypt hash
+                    role: 'admin',
+                    createdAt: new Date()
+                });
+            }
+            // Insert sample property
+            const listings = db.collection('listings');
+            const sampleExists = await listings.findOne({ title: 'Sample Property' });
+            if (!sampleExists) {
+                await listings.insertOne({
+                    title: 'Sample Property',
+                    location: 'Sample City',
+                    price: 100,
+                    category: 'hotel',
+                    description: 'A sample property for testing.',
+                    ownerEmail: adminEmail,
+                    approved: true,
+                    createdAt: new Date(),
+                    variants: []
+                });
+            }
+            res.json({ ok: true, message: 'Seed data inserted' });
+        } catch (err) {
+            next(err);
+        }
+    });
+}
 export default router;

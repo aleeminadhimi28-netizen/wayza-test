@@ -75,11 +75,11 @@ export default function VerificationSpinner({
                     <motion.p
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="text-[10px] font-bold uppercase tracking-[0.5em] text-slate-300 italic"
+                        className="text-[10px] font-bold uppercase tracking-[0.5em] text-slate-300"
                     >
                         {subtext}
                     </motion.p>
-                    <h3 className="text-2xl font-bold text-slate-900 tracking-tighter uppercase italic leading-none">
+                    <h3 className="text-2xl font-bold text-slate-900 tracking-tighter uppercase leading-none">
                         {message}
                     </h3>
                 </div>
@@ -91,7 +91,7 @@ export default function VerificationSpinner({
                             initial={{ y: 20, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
                             exit={{ y: -20, opacity: 0 }}
-                            className="text-[9px] font-bold text-emerald-600 uppercase tracking-widest italic"
+                            className="text-[9px] font-bold text-emerald-600 uppercase tracking-widest"
                         >
                             {statuses[statusIndex]}
                         </motion.span>
@@ -111,12 +111,12 @@ export default function VerificationSpinner({
 
             {/* PROTOCOL LABEL */}
             <div className="absolute bottom-12 flex flex-col items-center gap-4 opacity-20 pointer-events-none">
-                <div className="flex items-center gap-4 font-bold text-[9px] uppercase tracking-[0.8em] italic text-slate-400">
+                <div className="flex items-center gap-4 font-bold text-[9px] uppercase tracking-[0.8em] text-slate-400">
                     <Navigation size={14} /> SECURE_PROTOCOL // AUTHORIZATION_GRID_V.4
                 </div>
                 <div className="flex items-center gap-3">
                     <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                    <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-slate-300 italic">SYSTEM_HANDSHAKE_NOMINAL</span>
+                    <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-slate-300">SYSTEM_HANDSHAKE_NOMINAL</span>
                 </div>
             </div>
         </div>

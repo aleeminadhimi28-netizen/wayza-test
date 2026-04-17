@@ -178,7 +178,7 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
                                                 </div>
                                                 <div className="overflow-y-auto p-4 flex-1">
                                                     {notifs.length === 0 ? (
-                                                        <p className="text-center text-xs text-slate-400 py-6 italic">No new notifications</p>
+                                                        <p className="text-center text-xs text-slate-400 py-6">No new notifications</p>
                                                     ) : (
                                                         notifs.map(n => (
                                                             <div key={n._id} className={`p-4 rounded-2xl mb-2 flex flex-col gap-1.5 text-sm ${n.read ? "bg-white text-slate-500 border border-slate-50" : "bg-emerald-50 text-emerald-900 font-semibold border border-emerald-100/50"}`}>
@@ -273,7 +273,7 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
                     <div className="max-w-7xl mx-auto px-8 py-32 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-20">
                         <div className="space-y-10">
                             <Link to="/" className="text-4xl font-bold tracking-tight uppercase text-white">Wayza<span className="text-emerald-500">.</span></Link>
-                            <p className="text-lg font-medium italic leading-relaxed text-white/30 truncate max-w-xs">"Connecting travelers with extraordinary stays."</p>
+                            <p className="text-lg font-medium leading-relaxed text-white/30 truncate max-w-xs">"Connecting travelers with extraordinary stays."</p>
                         </div>
                         <div>
                             <h4 className="text-white font-bold uppercase tracking-widest text-[11px] mb-10 text-center md:text-left">Resources</h4>

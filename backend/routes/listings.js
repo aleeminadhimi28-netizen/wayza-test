@@ -15,7 +15,8 @@ const createListingSchema = z.object({
     images: z.array(z.string()).optional().default([]),
     category: z.string().optional().default("hotel"),
     latitude: z.number().optional(),
-    longitude: z.number().optional()
+    longitude: z.number().optional(),
+    walkthroughVideo: z.string().optional()
 });
 
 const variantSchema = z.object({
@@ -139,6 +140,7 @@ router.post("/", requireAuth, async (req, res, next) => {
             approved: false,
             latitude: latitude ? Number(latitude) : null,
             longitude: longitude ? Number(longitude) : null,
+            walkthroughVideo: walkthroughVideo || null,
             createdAt: new Date()
         });
 
@@ -152,6 +154,36 @@ router.post("/", requireAuth, async (req, res, next) => {
         sendWhatsAppAlert(adminPhone, msg).catch(e => console.error("WhatsApp alert error:", e));
 
         res.json({ ok: true, id: result.insertedId });
+    } catch (err) { next(err); }
+});
+
+router.put("/:id", requireAuth, async (req, res, next) => {
+    try {
+        const db = getDB();
+        const listings = db.collection("listings");
+        if (!ObjectId.isValid(req.params.id)) return res.status(400).json({ ok: false });
+
+        const listing = await listings.findOne({ _id: new ObjectId(req.params.id) });
+        if (!listing || (listing.ownerEmail !== req.user.email && req.user.role !== "admin")) {
+            return res.status(403).json({ ok: false, message: "Not authorized" });
+        }
+
+        const updates = {};
+        const fields = ["title", "location", "description", "category", "latitude", "longitude", "walkthroughVideo", "image"];
+        fields.forEach(f => {
+            if (req.body[f] !== undefined) {
+                if (["latitude", "longitude"].includes(f) && req.body[f] !== null) {
+                    updates[f] = Number(req.body[f]);
+                } else {
+                    updates[f] = req.body[f];
+                }
+            }
+        });
+
+        if (req.body.price !== undefined) updates.price = Number(req.body.price);
+
+        await listings.updateOne({ _id: new ObjectId(req.params.id) }, { $set: updates });
+        res.json({ ok: true });
     } catch (err) { next(err); }
 });
 

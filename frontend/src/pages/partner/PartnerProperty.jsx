@@ -27,6 +27,12 @@ export default function PartnerProperty() {
 
     const [editIndex, setEditIndex] = useState(null);
     const [loading, setLoading] = useState(false);
+    
+    // Listing editing
+    const [isEditingMain, setIsEditingMain] = useState(false);
+    const [mainTitle, setMainTitle] = useState("");
+    const [mainVideo, setMainVideo] = useState("");
+    const [mainLoading, setMainLoading] = useState(false);
 
     useEffect(() => { load(); }, [id]);
 
@@ -35,6 +41,8 @@ export default function PartnerProperty() {
             const data = await api.getListing(id);
             const l = data.data || data;
             setListing(l);
+            setMainTitle(l.title || "");
+            setMainVideo(l.walkthroughVideo || "");
 
             if (editIndex === null) {
                 setType((l.category === "bike" || l.category === "car") ? "Vehicle" : "Room");
@@ -160,6 +168,23 @@ export default function PartnerProperty() {
         }
     }
 
+    async function updateMainDetails() {
+        setMainLoading(true);
+        try {
+            const data = await api.updateListing(id, { title: mainTitle, walkthroughVideo: mainVideo });
+            if (data.ok) {
+                showToast("Core property manifest updated.", "success");
+                setIsEditingMain(false);
+                load();
+            } else {
+                showToast("Update sequence failed.", "error");
+            }
+        } catch (err) {
+            showToast("Network protocol error.", "error");
+        }
+        setMainLoading(false);
+    }
+
     if (!listing) return (
         <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 font-sans bg-white">
             <div className="w-10 h-10 border-4 border-slate-100 border-t-emerald-500 rounded-full animate-spin" />
@@ -206,12 +231,84 @@ export default function PartnerProperty() {
 
                 <button
                     onClick={() => navigate('/partner/properties')}
-                    className="h-11 px-6 bg-slate-900 text-white rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:bg-emerald-600 transition-colors shadow-md active:scale-95 whitespace-nowrap"
+                    className="h-11 px-6 bg-slate-100 text-slate-900 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:bg-slate-200 transition-colors shadow-sm active:scale-95 whitespace-nowrap"
                 >
                     <ChevronLeft size={16} />
                     <span>Back to Properties</span>
                 </button>
             </div>
+
+            {/* MAIN DETAILS EDIT PANEL */}
+            <AnimatePresence>
+                {isEditingMain ? (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="bg-slate-900 rounded-3xl p-8 border border-white/10 shadow-2xl overflow-hidden"
+                    >
+                        <div className="flex items-center gap-3 text-emerald-400 font-black text-[10px] uppercase tracking-[0.4em] mb-6">
+                            <Cpu size={14} /> Update Core Manifest
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-2">Property Identity</label>
+                                <input 
+                                    type="text" value={mainTitle} onChange={e => setMainTitle(e.target.value)}
+                                    className="w-full bg-white/5 border border-white/10 rounded-2xl h-14 px-6 text-white font-bold text-sm outline-none focus:border-emerald-500 transition-all"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-2">Walkthrough Intelligence (URL)</label>
+                                <input 
+                                    type="url" value={mainVideo} onChange={e => setMainVideo(e.target.value)}
+                                    placeholder="https://www.youtube.com/embed/..."
+                                    className="w-full bg-white/5 border border-white/10 rounded-2xl h-14 px-6 text-white font-bold text-sm outline-none focus:border-emerald-500 transition-all font-mono"
+                                />
+                            </div>
+                        </div>
+                        <div className="flex justify-end gap-4 mt-8">
+                            <button 
+                                onClick={() => setIsEditingMain(false)} 
+                                className="h-12 px-6 text-white/40 font-black uppercase text-[10px] tracking-widest hover:text-white transition-colors"
+                            >
+                                Abort
+                            </button>
+                            <button 
+                                onClick={updateMainDetails}
+                                disabled={mainLoading}
+                                className="h-12 px-10 bg-emerald-500 text-slate-950 font-black uppercase text-[10px] tracking-[0.3em] rounded-xl flex items-center gap-2 hover:bg-emerald-400 transition-all disabled:opacity-50"
+                            >
+                                {mainLoading ? <Activity size={14} className="animate-spin" /> : <><Sparkles size={14} /> Commit Changes</>}
+                            </button>
+                        </div>
+                    </motion.div>
+                ) : (
+                    <div className="bg-white border border-slate-100 rounded-3xl p-6 flex items-center justify-between group cursor-pointer hover:border-emerald-200 transition-all shadow-sm" onClick={() => setIsEditingMain(true)}>
+                        <div className="flex items-center gap-6">
+                            <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-emerald-50 group-hover:text-emerald-500 transition-all">
+                                <Target size={24} />
+                            </div>
+                            <div>
+                                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-300">Property Identity</p>
+                                <h2 className="text-xl font-bold text-slate-900">{listing.title}</h2>
+                                {listing.walkthroughVideo ? (
+                                    <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-widest flex items-center gap-1 mt-1">
+                                        <Zap size={10} /> Neural Walkthrough Active
+                                    </p>
+                                ) : (
+                                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest flex items-center gap-1 mt-1">
+                                        <History size={10} /> Using Default Sensory Link
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                        <button className="h-10 px-6 border border-slate-100 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-emerald-600 group-hover:border-emerald-100 transition-all">
+                            Configure Core
+                        </button>
+                    </div>
+                )}
+            </AnimatePresence>
 
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
 
@@ -386,7 +483,7 @@ export default function PartnerProperty() {
                                                     </div>
                                                 </div>
                                                 <p className="text-sm text-slate-600 leading-relaxed line-clamp-2">
-                                                    {v.desc || <span className="italic text-slate-400">No description provided.</span>}
+                                                    {v.desc || <span className="text-slate-400">No description provided.</span>}
                                                 </p>
                                             </div>
 

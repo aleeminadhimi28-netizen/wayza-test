@@ -42,9 +42,9 @@ class ErrorBoundary extends React.Component {
                         </div>
                         <div className="space-y-4">
                             <h1 className="text-4xl font-bold text-slate-900 tracking-tighter uppercase leading-none">
-                                Something went <br /><span className="text-rose-500 italic font-serif lowercase">unexpected.</span>
+                                Something went <br /><span className="text-rose-500 lowercase">unexpected.</span>
                             </h1>
-                            <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.4em] leading-relaxed italic">
+                            <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.4em] leading-relaxed">
                                 "The network encountered a synchronization anomaly."
                             </p>
                         </div>

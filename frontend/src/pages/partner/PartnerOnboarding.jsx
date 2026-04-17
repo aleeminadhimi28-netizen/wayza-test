@@ -114,10 +114,10 @@ export default function PartnerOnboarding() {
                             <div className="space-y-8">
                                 <div className="flex items-center gap-4">
                                     <span className="h-px w-12 bg-emerald-500" />
-                                    <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-600 italic">Phase 01: Onboarding</span>
+                                    <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-600">Phase 01: Onboarding</span>
                                 </div>
-                                <h2 className="text-6xl md:text-8xl font-black tracking-tighter text-slate-900 uppercase leading-[0.8] font-serif italic">Partner <br /><span className="lowercase">Identity.</span></h2>
-                                <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest italic leading-relaxed max-w-sm">"Define your presence within the Wayza luxury network architecture."</p>
+                                <h2 className="text-6xl md:text-8xl font-black tracking-tighter text-slate-900 uppercase leading-[0.8]">Partner <br /><span className="lowercase">Identity.</span></h2>
+                                <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest leading-relaxed max-w-sm">"Define your presence within the Wayza luxury network architecture."</p>
                             </div>
 
                             <div className="space-y-12">
@@ -143,15 +143,15 @@ export default function PartnerOnboarding() {
                             <div className="space-y-8">
                                 <div className="flex items-center gap-4">
                                     <span className="h-px w-12 bg-emerald-500" />
-                                    <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-600 italic">Phase 02: Deployment</span>
+                                    <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-600">Phase 02: Deployment</span>
                                 </div>
-                                <h2 className="text-6xl md:text-8xl font-black tracking-tighter text-slate-900 uppercase leading-[0.8] font-serif italic">Operational <br /><span className="lowercase">Location.</span></h2>
-                                <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest italic leading-relaxed max-w-sm">"Specify your geographic focus for guest discovery and route optimization."</p>
+                                <h2 className="text-6xl md:text-8xl font-black tracking-tighter text-slate-900 uppercase leading-[0.8]">Operational <br /><span className="lowercase">Location.</span></h2>
+                                <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest leading-relaxed max-w-sm">"Specify your geographic focus for guest discovery and route optimization."</p>
                             </div>
 
                             <div className="space-y-12">
                                 <FormInput label="Geographic Coordinates" value={location} onChange={setLocation} placeholder="E.G. VARKALA, KERALA" icon={<MapPin size={24} />} />
-                                <div className="p-12 bg-slate-950/5 border border-slate-900/5 rounded-[40px] italic text-[10px] font-black text-slate-400 uppercase tracking-widest leading-relaxed">
+                                <div className="p-12 bg-slate-950/5 border border-slate-900/5 rounded-[40px] text-[10px] font-black text-slate-400 uppercase tracking-widest leading-relaxed">
                                     "Accuracy in location indexing ensures your assets are presented to the correct guest tier based on proximity and travel intent."
                                 </div>
                             </div>
@@ -164,10 +164,10 @@ export default function PartnerOnboarding() {
                             <div className="space-y-8">
                                 <div className="flex items-center gap-4">
                                     <span className="h-px w-12 bg-emerald-500" />
-                                    <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-600 italic">Phase 03: Inventory</span>
+                                    <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-600">Phase 03: Inventory</span>
                                 </div>
-                                <h2 className="text-6xl md:text-8xl font-black tracking-tighter text-slate-900 uppercase leading-[0.8] font-serif italic">Primary <br /><span className="lowercase">Listing.</span></h2>
-                                <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest italic leading-relaxed max-w-sm">"Initial asset configuration. Granular details and variance controls can be audited later."</p>
+                                <h2 className="text-6xl md:text-8xl font-black tracking-tighter text-slate-900 uppercase leading-[0.8]">Primary <br /><span className="lowercase">Listing.</span></h2>
+                                <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest leading-relaxed max-w-sm">"Initial asset configuration. Granular details and variance controls can be audited later."</p>
                             </div>
 
                             <div className="space-y-12">
@@ -190,8 +190,8 @@ export default function PartnerOnboarding() {
                                 </div>
                             </div>
                             <div className="space-y-8">
-                                <h2 className="text-7xl font-black tracking-tighter text-slate-900 uppercase leading-[0.8] italic font-serif">Protocol <br /><span className="text-emerald-500">Initialized.</span></h2>
-                                <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.5em] italic max-w-xs mx-auto">
+                                <h2 className="text-7xl font-black tracking-tighter text-slate-900 uppercase leading-[0.8]">Protocol <br /><span className="text-emerald-500">Initialized.</span></h2>
+                                <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.5em] max-w-xs mx-auto">
                                     Your partner signature is ready for audit and network activation.
                                 </p>
                             </div>
@@ -217,7 +217,7 @@ export default function PartnerOnboarding() {
 function FormInput({ label, value, onChange, placeholder, icon }) {
     return (
         <div className="space-y-4 group">
-            <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 group-focus-within:text-emerald-600 transition-colors italic">{label}</label>
+            <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 group-focus-within:text-emerald-600 transition-colors">{label}</label>
             <div className="relative">
                 <div className="absolute left-10 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-emerald-500 transition-colors">{icon}</div>
                 <input
@@ -232,7 +232,7 @@ function FormInput({ label, value, onChange, placeholder, icon }) {
 function FormSelect({ label, value, onChange, options }) {
     return (
         <div className="space-y-4 group">
-            <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 italic">{label}</label>
+            <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2">{label}</label>
             <div className="relative">
                 <select
                     value={value} onChange={e => onChange(e.target.value)}

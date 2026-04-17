@@ -59,7 +59,7 @@ export default function ForgotPassword() {
               <Lock size={32} className="text-emerald-400" />
             </div>
             <h1 className="text-5xl md:text-6xl font-bold text-slate-900 tracking-tight leading-none uppercase mb-8">Account <br /><span className="text-emerald-500">Recovery.</span></h1>
-            <p className="text-slate-400 text-lg font-medium italic leading-relaxed">
+            <p className="text-slate-400 text-lg font-medium leading-relaxed">
               "Forgot your password? No worries. We'll send you a secure link to reset your credentials and get you back to your journey."
             </p>
           </motion.div>

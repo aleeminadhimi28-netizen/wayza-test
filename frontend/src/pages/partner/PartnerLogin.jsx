@@ -79,7 +79,7 @@ export default function PartnerLogin() {
                             <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:scale-110 transition-transform">
                                 <Sparkles size={20} className="text-white" />
                             </div>
-                            <span className="text-3xl font-black italic tracking-tighter uppercase">Wayza<span className="text-emerald-500">Pro.</span></span>
+                            <span className="text-3xl font-black tracking-tighter uppercase">Wayza<span className="text-emerald-500">Pro.</span></span>
                         </Link>
                     </motion.div>
                 </div>
@@ -91,9 +91,9 @@ export default function PartnerLogin() {
                         </div>
                         <h1 className="text-7xl md:text-9xl font-black tracking-tighter uppercase leading-[0.8] mb-12">
                             Partner <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-600 italic font-serif lowercase pr-4">suite.</span>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-600 lowercase pr-4">suite.</span>
                         </h1>
-                        <p className="text-white/40 text-2xl font-medium italic leading-relaxed max-w-lg border-l-2 border-emerald-500/30 pl-8">
+                        <p className="text-white/40 text-2xl font-medium leading-relaxed max-w-lg border-l-2 border-emerald-500/30 pl-8">
                             "Orchestrate your hospitality portfolio with precision. Real-time analytics meets world-class design."
                         </p>
                     </motion.div>
@@ -132,7 +132,7 @@ export default function PartnerLogin() {
                             </div>
                             <h2 className="text-6xl md:text-8xl font-black tracking-tighter text-slate-900 uppercase leading-[0.85]">
                                 Authorized <br />
-                                <span className="text-emerald-500 italic font-serif lowercase">SignIn.</span>
+                                <span className="text-emerald-500 lowercase">SignIn.</span>
                             </h2>
                         </header>
 

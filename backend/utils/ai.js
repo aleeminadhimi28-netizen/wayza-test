@@ -103,3 +103,57 @@ export const answerListingQuery = async (query, listing) => {
     const response = await result.response;
     return response.text();
 };
+
+/**
+ * Generate a neighborhood vibe profile for a specific location.
+ */
+export const generateNeighborhoodVibe = async (location, category) => {
+    if (!process.env.GEMINI_API_KEY) {
+        throw new Error("GEMINI_API_KEY is not defined");
+    }
+
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+    const prompt = `
+    You are a 'Wayza Vibe Architect'. 
+    Create a luxury neighborhood profile for a property located in "${location}" which is a "${category}".
+    
+    Instructions:
+    1. Return a 'vibeTitle' (e.g., "Bohemian Seclusion", "Azure Rhythm").
+    2. Return a 'vibeDesc' (max 20 words, evocative and luxurious).
+    3. Return 'hotspots': An array of 4 objects with { name, iconLabel, label }.
+       - iconLabel MUST be one of: "Compass", "Coffee", "Waves", "Moon", "Utensils", "MapPin".
+       - label should be the category (e.g., "Gourmet", "Nightlife", "Adventure").
+    4. Return exactly in RAW JSON format. No markdown, no backticks.
+    
+    JSON Structure:
+    {
+        "vibeTitle": "...",
+        "vibeDesc": "...",
+        "hotspots": [
+            { "name": "...", "iconLabel": "...", "label": "..." }
+        ]
+    }
+    `;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+
+    try {
+        const cleanJson = text.replace(/```json/g, "").replace(/```/g, "").trim();
+        return JSON.parse(cleanJson);
+    } catch (e) {
+        console.error("Vibe Generation Error:", text);
+        return {
+            vibeTitle: "Coastal Rhapsody",
+            vibeDesc: "A sanctuary where the rhythm of the waves meets the soul of contemporary luxury.",
+            hotspots: [
+                { name: "The Cliff Trail", iconLabel: "Compass", label: "Adventure" },
+                { name: "Soul Food Cafe", iconLabel: "Coffee", label: "Gourmet" },
+                { name: "Private Shore", iconLabel: "Waves", label: "Exclusive" },
+                { name: "Luna Lounge", iconLabel: "Moon", label: "Nightlife" }
+            ]
+        };
+    }
+};

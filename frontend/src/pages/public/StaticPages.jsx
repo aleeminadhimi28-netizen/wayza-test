@@ -136,7 +136,7 @@ export function AboutUs() {
     return (
         <StaticPage title="The Wayza Story" icon={<Compass size={32} />}>
             <p className="text-3xl font-bold tracking-tight text-emerald-600 uppercase mb-10">Extraordinary Stays. Simplified.</p>
-            <p className="text-xl text-slate-600 font-medium italic mb-10 leading-relaxed">
+            <p className="text-xl text-slate-600 font-medium mb-10 leading-relaxed">
                 Wayza is a premier platform for luxury travel, designed to connect discerning travelers with unique stays and unforgettable experiences.
             </p>
             <p className="mb-10">

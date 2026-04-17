@@ -48,9 +48,9 @@ export default function AITripPlanner() {
                             <Sparkles size={14} /> Wayza Intelligence
                         </div>
                         <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight uppercase leading-[0.9]">
-                            AI Trip <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400 italic font-serif lowercase">Architect.</span>
+                            AI Trip <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400 lowercase">Architect.</span>
                         </h1>
-                        <p className="text-slate-400 text-lg md:text-xl font-medium italic border-l-4 border-emerald-500/30 pl-6 mx-auto max-w-xl text-left">
+                        <p className="text-slate-400 text-lg md:text-xl font-medium border-l-4 border-emerald-500/30 pl-6 mx-auto max-w-xl text-left">
                             "Tell us where you want to go and how you want to feel. We will instantly orchestrate the perfect stay, wheels, and experiences."
                         </p>
                     </div>
@@ -122,7 +122,7 @@ export default function AITripPlanner() {
                                     <Sparkles className="absolute inset-0 m-auto text-emerald-500" size={32} />
                                 </div>
                                 <h3 className="text-2xl font-bold text-slate-900 uppercase tracking-tight mb-2">Curating perfection...</h3>
-                                <p className="text-slate-400 font-medium italic">Scouring thousands of verified Stays, Cars, and Experiences for {destination}.</p>
+                                <p className="text-slate-400 font-medium">Scouring thousands of verified Stays, Cars, and Experiences for {destination}.</p>
                             </motion.div>
                         )}
 
@@ -137,7 +137,7 @@ export default function AITripPlanner() {
                                     <div>
                                         <div className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mb-1">Generated Itinerary</div>
                                         <h2 className="text-3xl font-bold text-slate-900 uppercase">{itinerary.destination}</h2>
-                                        <p className="text-slate-500 font-medium italic mt-1 capitalize text-lg">"{itinerary.vibe} Experience"</p>
+                                        <p className="text-slate-500 font-medium mt-1 capitalize text-lg">"{itinerary.vibe} Experience"</p>
                                     </div>
                                     <div className="text-left md:text-right">
                                         <div className="text-sm font-bold text-slate-400 uppercase tracking-widest">Est. Package Total</div>
@@ -164,7 +164,7 @@ export default function AITripPlanner() {
                                                         `}></div>
                                                         <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">{item.time}</div>
                                                         <div className="text-lg font-bold text-slate-900">{item.title}</div>
-                                                        <p className="text-slate-500 italic mt-1">{item.desc}</p>
+                                                        <p className="text-slate-500 mt-1">{item.desc}</p>
                                                     </div>
                                                 ))}
                                             </div>

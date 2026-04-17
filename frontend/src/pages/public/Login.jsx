@@ -75,9 +75,9 @@ export default function Login() {
                         <Sparkles size={16} className="text-emerald-400" /> Curated Travel Experiences
                     </motion.div>
                     <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-7xl md:text-9xl font-bold text-white tracking-tighter leading-[0.8] uppercase">
-                        Your <br /><span className="text-emerald-500 italic font-serif lowercase">Experience</span> <br /> Resumes.
+                        Your <br /><span className="text-emerald-500 lowercase">Experience</span> <br /> Resumes.
                     </motion.h1>
-                    <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="text-xl text-white/60 font-medium leading-relaxed italic">
+                    <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="text-xl text-white/60 font-medium leading-relaxed">
                         "Log in to access your curated collection of unique stays and personalized itineraries."
                     </motion.p>
                 </div>
@@ -100,8 +100,8 @@ export default function Login() {
                     </Link>
 
                     <div className="space-y-4">
-                        <h2 className="text-5xl md:text-6xl font-bold text-slate-900 tracking-tighter leading-none uppercase">Access <span className="text-emerald-500 italic font-serif lowercase">Identity.</span></h2>
-                        <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.4em] italic border-l-2 border-emerald-500/20 pl-4">"Enter your credentials to synchronize with the network."</p>
+                        <h2 className="text-5xl md:text-6xl font-bold text-slate-900 tracking-tighter leading-none uppercase">Access <span className="text-emerald-500 lowercase">Identity.</span></h2>
+                        <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.4em] border-l-2 border-emerald-500/20 pl-4">"Enter your credentials to synchronize with the network."</p>
                     </div>
 
                     <form onSubmit={handleLogin} className="space-y-10 group">

@@ -125,7 +125,7 @@ export default function LandingPage() {
                         >
                             <h1 className="text-3xl md:text-6xl font-medium tracking-tight text-white drop-shadow-md leading-tight">
                                 Escape the ordinary <br className="md:hidden" />
-                                <span className="text-emerald-500 italic font-serif">gracefully.</span>
+                                <span className="text-emerald-500">gracefully.</span>
                             </h1>
                             <p className="text-base md:text-lg font-normal text-white/90 max-w-2xl mx-auto drop-shadow-sm">
                                 Handpicked villas, premium bikes, and local secrets in Varkala.
@@ -303,7 +303,7 @@ export default function LandingPage() {
                                 <div className="space-y-4">
                                     <h2 className="text-4xl md:text-5xl font-medium tracking-tight leading-[1.1]">
                                         Conversational <br />
-                                        <span className="text-emerald-500 italic font-serif">intelligence.</span>
+                                        <span className="text-emerald-500">intelligence.</span>
                                     </h2>
                                     <p className="text-white/40 text-sm font-light leading-relaxed max-w-md">
                                         Forget filters. Describe your mood and vibe. Our AI constructs a verified itinerary in real-time.
@@ -319,7 +319,7 @@ export default function LandingPage() {
                                     <div className="space-y-6">
                                         <div className="flex items-start gap-4">
                                             <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-white/50 text-[10px] font-bold">ME</div>
-                                            <p className="text-white/80 text-sm md:text-base italic">"I need a quiet clifftop villa in Varkala with a bike for exploring secret cafes."</p>
+                                            <p className="text-white/80 text-sm md:text-base">"I need a quiet clifftop villa in Varkala with a bike for exploring secret cafes."</p>
                                         </div>
                                         <div className="flex items-start gap-4">
                                             <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white"><Sparkles size={14} /></div>
@@ -401,7 +401,7 @@ export default function LandingPage() {
                             <div className="md:col-span-4 space-y-6">
                                 <div className="space-y-3">
                                     <h2 className="text-xl font-bold tracking-tighter text-white uppercase">Wayza<span className="text-emerald-500">.</span></h2>
-                                    <p className="text-white/30 text-xs leading-relaxed font-light italic max-w-[240px]">
+                                    <p className="text-white/30 text-xs leading-relaxed font-light max-w-[240px]">
                                         "Defining verified inventory and soulful exploration."
                                     </p>
                                 </div>

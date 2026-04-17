@@ -16,7 +16,7 @@ export default function BookingSuccess() {
                     </div>
                     <div className="space-y-4 max-w-sm">
                         <h3 className="text-3xl font-bold text-slate-900 tracking-tight uppercase">Reservation Not Found.</h3>
-                        <p className="text-slate-400 font-medium italic">We couldn't find your active reservation data. Please check your bookings history.</p>
+                        <p className="text-slate-400 font-medium">We couldn't find your active reservation data. Please check your bookings history.</p>
                     </div>
                     <Link to="/my-bookings" className="px-12 py-5 bg-slate-900 text-white rounded-2xl font-bold uppercase text-[10px] tracking-widest hover:bg-emerald-600 transition-all shadow-xl active:scale-95 inline-flex items-center gap-3">
                         View My Bookings <Calendar size={18} />
@@ -50,13 +50,13 @@ export default function BookingSuccess() {
                         transition={{ delay: 0.2 }}
                         className="space-y-6"
                     >
-                        <div className="inline-flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/20 px-8 py-4 rounded-full text-emerald-600 font-bold text-[11px] uppercase tracking-[0.4em] mb-6 italic">
+                        <div className="inline-flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/20 px-8 py-4 rounded-full text-emerald-600 font-bold text-[11px] uppercase tracking-[0.4em] mb-6">
                             <Sparkles size={18} /> Verified Confirmation
                         </div>
                         <h1 className="text-7xl md:text-9xl font-bold text-slate-900 tracking-tighter leading-[0.8] uppercase">
-                            Voyage <br /><span className="text-emerald-500 italic font-serif lowercase">Commenced.</span>
+                            Voyage <br /><span className="text-emerald-500 lowercase">Commenced.</span>
                         </h1>
-                        <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest italic max-w-xl mx-auto mt-6">
+                        <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest max-w-xl mx-auto mt-6">
                             Pack your bags! Your extraordinary stay is fixed and we can't wait to host you.
                         </p>
                     </motion.div>
@@ -79,7 +79,7 @@ export default function BookingSuccess() {
                                     <p className="text-slate-400 font-bold uppercase text-[9px] tracking-widest">Your Reservation Details</p>
                                 </div>
                                 <div className="text-right">
-                                    <span className="text-[10px] font-bold text-slate-300 uppercase tracking-[0.3em] block mb-3 italic">Manifest Reference</span>
+                                    <span className="text-[10px] font-bold text-slate-300 uppercase tracking-[0.3em] block mb-3">Manifest Reference</span>
                                     <span className="font-mono text-sm font-bold text-emerald-600 bg-emerald-50 px-5 py-2.5 rounded-2xl border border-emerald-100 uppercase tracking-tighter shadow-sm">WZ-{bookingId?.slice(-12).toUpperCase()}</span>
                                 </div>
                             </div>
@@ -104,9 +104,9 @@ export default function BookingSuccess() {
                                 <div className="space-y-3 bg-slate-50 p-8 rounded-[32px] border border-slate-100 shadow-inner group/card hover:bg-white hover:border-emerald-200 transition-all">
                                     <div className="flex items-center gap-3 text-slate-400 group-hover:text-emerald-500 transition-colors">
                                         <CreditCard size={20} />
-                                        <span className="text-[10px] font-bold uppercase tracking-[0.3em] italic">Net Settlement</span>
+                                        <span className="text-[10px] font-bold uppercase tracking-[0.3em]">Net Settlement</span>
                                     </div>
-                                    <p className="text-2xl font-bold text-slate-900 tracking-tighter italic">₹{price.toLocaleString()}</p>
+                                    <p className="text-2xl font-bold text-slate-900 tracking-tighter">₹{price.toLocaleString()}</p>
                                 </div>
 
                                 <div className="space-y-3 bg-slate-50 p-6 rounded-3xl border border-slate-100">

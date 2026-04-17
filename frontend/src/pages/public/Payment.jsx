@@ -81,11 +81,11 @@ export default function Payment() {
                                 Wayza Vault Secure
                             </div>
                         </div>
-                        <h1 className="text-6xl md:text-8xl font-black text-slate-900 tracking-tighter uppercase leading-[0.8] font-serif italic">
+                        <h1 className="text-6xl md:text-8xl font-black text-slate-900 tracking-tighter uppercase leading-[0.8]">
                             Authorization <br />
                             <span className="lowercase">& settlement.</span>
                         </h1>
-                        <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest italic max-w-sm">
+                        <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest max-w-sm">
                             "Execute your commitment via our encrypted liquidity bridge."
                         </p>
                     </header>
@@ -99,7 +99,7 @@ export default function Payment() {
                             <section className="space-y-10">
                                 <div className="flex items-center gap-4">
                                     <span className="h-px w-12 bg-emerald-500" />
-                                    <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-600 italic">Rapid Access</span>
+                                    <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-600">Rapid Access</span>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <button onClick={() => handlePayment('apple')} disabled={submitting} className="h-24 bg-slate-950 text-white rounded-[40px] flex items-center justify-center gap-4 transition-all hover:bg-black active:scale-[0.98] shadow-2xl shadow-slate-950/20 group">
@@ -128,7 +128,7 @@ export default function Payment() {
 
                                 <div className="space-y-10">
                                     <div className="space-y-4 group">
-                                        <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 group-focus-within:text-emerald-600 transition-colors italic">Card Index Identifier</label>
+                                        <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 group-focus-within:text-emerald-600 transition-colors">Card Index Identifier</label>
                                         <div className="relative">
                                             <CreditCard className="absolute left-10 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-emerald-500 transition-colors" size={24} />
                                             <input
@@ -140,14 +140,14 @@ export default function Payment() {
 
                                     <div className="grid grid-cols-2 gap-8">
                                         <div className="space-y-4 group">
-                                            <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 group-focus-within:text-emerald-600 transition-colors italic">Expiry Cycle</label>
+                                            <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 group-focus-within:text-emerald-600 transition-colors">Expiry Cycle</label>
                                             <input
                                                 placeholder="MM / YY"
                                                 className="w-full h-24 bg-white/50 border border-slate-100 rounded-[32px] px-10 font-bold text-2xl tracking-tighter text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-100 shadow-sm text-center"
                                             />
                                         </div>
                                         <div className="space-y-4 group">
-                                            <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 group-focus-within:text-emerald-600 transition-colors italic">Auth Key (CVC)</label>
+                                            <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 group-focus-within:text-emerald-600 transition-colors">Auth Key (CVC)</label>
                                             <input
                                                 type="password" placeholder="•••"
                                                 className="w-full h-24 bg-white/50 border border-slate-100 rounded-[32px] px-10 font-bold text-2xl tracking-[0.5em] text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-100 shadow-sm text-center"
@@ -183,7 +183,7 @@ export default function Payment() {
                                         <div className="space-y-4">
                                             <p className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-400">Settlement Ledger</p>
                                             <div className="flex items-center justify-between">
-                                                <h3 className="text-3xl font-black tracking-tighter uppercase italic font-serif leading-none">{title}</h3>
+                                                <h3 className="text-3xl font-black tracking-tighter uppercase leading-none">{title}</h3>
                                                 <span className="text-[9px] font-black uppercase tracking-widest text-white/30 truncate max-w-[100px]">WZ-{bookingId?.slice(-8).toUpperCase()}</span>
                                             </div>
                                         </div>
@@ -205,13 +205,13 @@ export default function Payment() {
                                             </div>
                                             <div className="flex justify-between items-center pt-8 border-t border-white/10">
                                                 <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-400">Net Commitment</span>
-                                                <span className="text-5xl font-black tracking-tighter font-serif italic text-white">₹{price.toLocaleString()}</span>
+                                                <span className="text-5xl font-black tracking-tighter text-white">₹{price.toLocaleString()}</span>
                                             </div>
                                         </div>
 
                                         <div className="p-8 bg-white/5 backdrop-blur-md rounded-[32px] border border-white/10 flex items-start gap-6">
                                             <ShieldCheck size={24} className="text-emerald-500 shrink-0" />
-                                            <p className="text-[10px] text-white/40 font-black uppercase tracking-widest leading-relaxed italic">
+                                            <p className="text-[10px] text-white/40 font-black uppercase tracking-widest leading-relaxed">
                                                 Your financial signature is protected by military-grade AES-256 encryption. We do not persist sensitive instrument data.
                                             </p>
                                         </div>

@@ -5,16 +5,19 @@
     "scripts": {
         "dev": "vite",
         "build": "npx vite build",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "e2e": "playwright test"
     },
     "dependencies": {
         "@react-google-maps/api": "^2.20.8",
         "date-fns": "^4.1.0",
         "framer-motion": "^12.34.4",
+        "html5-qrcode": "^2.3.8",
         "jspdf": "^4.2.0",
         "leaflet": "^1.9.4",
         "lucide-react": "^0.576.0",
         "posthog-js": "^1.369.1",
+        "qrcode.react": "^4.2.0",
         "react": "^18.2.0",
         "react-countup": "^6.5.3",
         "react-date-range": "^2.0.1",
@@ -31,7 +34,8 @@
         "autoprefixer": "^10.4.27",
         "postcss": "^8.5.6",
         "tailwindcss": "^3.4.19",
-        "vite": "^7.3.1"
+        "vite": "^7.3.1",
+        "@playwright/test": "^1.45.0"
     },
     "engines": {
         "node": ">=20"

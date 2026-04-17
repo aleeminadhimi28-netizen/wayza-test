@@ -16,8 +16,10 @@ export default function Booking() {
     const { showToast } = useToast();
 
     const [listing, setListing] = useState(null);
-    const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
+    const todayStr = new Date().toISOString().split("T")[0];
+    const tomorrowStr = new Date(Date.now() + 86400000).toISOString().split("T")[0];
+    const [startDate, setStartDate] = useState(todayStr);
+    const [endDate, setEndDate] = useState(tomorrowStr);
     const [blocked, setBlocked] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -25,7 +27,6 @@ export default function Booking() {
     const [discountInfo, setDiscountInfo] = useState(null);
     const [validatingCoupon, setValidatingCoupon] = useState(false);
 
-    const todayStr = new Date().toISOString().split("T")[0];
     const minStay = 1;
 
     useEffect(() => {

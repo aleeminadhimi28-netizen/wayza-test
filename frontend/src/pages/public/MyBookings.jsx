@@ -9,6 +9,8 @@ import {
 } from "lucide-react";
 
 import { api } from "../../utils/api.js";
+import { QRCodeCanvas } from "qrcode.react";
+import { Scan, QrCode } from "lucide-react";
 
 export default function MyBookings() {
     const navigate = useNavigate();
@@ -24,6 +26,9 @@ export default function MyBookings() {
     const [rating, setRating] = useState(5);
     const [comment, setComment] = useState("");
     const [submittingReview, setSubmittingReview] = useState(false);
+    
+    // Passport Modal
+    const [passportModal, setPassportModal] = useState(null);
 
     useEffect(() => {
         if (!user?.email) { setLoading(false); return; }
@@ -259,16 +264,24 @@ export default function MyBookings() {
                                                 <div className="flex flex-col w-full gap-2">
                                                     {b.status !== "cancelled" && isFuture && (
                                                         <>
+                                                            {b.status === "paid" && (
+                                                                <button
+                                                                    onClick={() => setPassportModal(b)}
+                                                                    className="h-12 w-full bg-emerald-600 text-white rounded-xl font-bold uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 hover:bg-slate-900 transition-all active:scale-95 shadow-md"
+                                                                >
+                                                                    <QrCode size={16} /> QR Passport
+                                                                </button>
+                                                            )}
                                                             <button
                                                                 onClick={() => navigate("/guest-chat")}
-                                                                className="h-12 w-full bg-slate-900 text-white rounded-xl font-bold uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 hover:bg-emerald-600 transition-all active:scale-95 shadow-sm"
+                                                                className="h-11 w-full text-slate-400 hover:text-emerald-600 font-bold uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 transition-all"
                                                             >
                                                                 <MessageCircle size={16} /> Chat with host
                                                             </button>
                                                             <button
                                                                 onClick={() => cancelBooking(b._id)}
                                                                 disabled={cancellingId === b._id}
-                                                                className="h-10 w-full text-slate-400 hover:text-rose-500 font-bold uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                                                                className="h-10 w-full text-slate-300 hover:text-rose-500 font-bold uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 transition-all disabled:opacity-50"
                                                             >
                                                                 {cancellingId === b._id ? <Loader2 className="w-3 h-3 animate-spin" /> : <XCircle size={14} />}
                                                                 Cancel stay
@@ -334,7 +347,7 @@ export default function MyBookings() {
                                 <Star size={24} />
                             </div>
                             <h3 className="text-2xl font-bold text-slate-900 tracking-tight uppercase mb-2">Rate your stay</h3>
-                            <p className="text-sm font-medium text-slate-500 mb-8 italic">"How was your experience at {reviewModal.title}?"</p>
+                            <p className="text-sm font-medium text-slate-500 mb-8">"How was your experience at {reviewModal.title}?"</p>
 
                             <div className="space-y-6">
                                 <div className="flex justify-center gap-2 py-4 bg-slate-50 rounded-2xl border border-slate-100 shadow-inner">
@@ -359,6 +372,69 @@ export default function MyBookings() {
                                 >
                                     {submittingReview ? <Loader2 className="w-4 h-4 animate-spin" /> : "Submit Review"}
                                 </button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+
+            {/* PASSPORT MODAL */}
+            <AnimatePresence>
+                {passportModal && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
+                        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
+                            className="bg-white rounded-[40px] p-10 w-full max-w-sm shadow-2xl relative text-center overflow-hidden"
+                        >
+                            {/* Decorative background Elements */}
+                            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-500" />
+                            
+                            <button onClick={() => setPassportModal(null)} className="absolute top-6 right-6 text-slate-400 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 p-2 rounded-full transition-all">
+                                <XCircle size={20} />
+                            </button>
+
+                            <div className="flex flex-col items-center space-y-6">
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-600">Verification Passport</p>
+                                    <h3 className="text-xl font-black text-slate-900 uppercase">Neural Handshake</h3>
+                                </div>
+
+                                <div className="p-4 bg-slate-50 border-2 border-emerald-100 rounded-[32px] shadow-inner relative group">
+                                    <div className="absolute inset-0 bg-emerald-500/5 blur-2xl group-hover:bg-emerald-500/10 transition-colors" />
+                                    <div className="relative bg-white p-6 rounded-[24px] shadow-sm">
+                                        <QRCodeCanvas 
+                                            value={`wayza-verify://${passportModal._id}`}
+                                            size={200}
+                                            level="H"
+                                            includeMargin={false}
+                                            imageSettings={{
+                                                src: "https://wayza.com/favicon.png", // Mock logo
+                                                x: undefined, y: undefined, height: 40, width: 40, excavate: true,
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-4 w-full">
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Manual Passcode</p>
+                                        <div className="flex justify-center gap-2">
+                                            {passportModal.checkInPasscode?.split('').map((char, i) => (
+                                                <span key={i} className="w-10 h-12 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center text-xl font-black text-slate-900 shadow-sm">
+                                                    {char}
+                                                </span>
+                                            )) || <span className="text-slate-300 text-sm">Awaiting sync...</span>}
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-2xl flex items-start gap-4 text-left">
+                                        <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shrink-0 text-emerald-600 shadow-sm">
+                                            <Scan size={16} />
+                                        </div>
+                                        <p className="text-[10px] font-bold text-emerald-800 leading-relaxed uppercase tracking-wider">
+                                            Present this QR to the property staff at check-in. This protocol verifies your neural identity and activates your stay.
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
                         </motion.div>
                     </div>
