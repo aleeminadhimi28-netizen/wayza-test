@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../AuthContext.jsx";
 import { useToast } from "../../ToastContext.jsx";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShieldCheck, Mail, Lock, Eye, EyeOff, ArrowRight, Zap, Sparkles, User, LogIn, Heart } from "lucide-react";
+import { ShieldCheck, Mail, Lock, Eye, EyeOff, ArrowRight, Zap, Sparkles, User, LogIn, Heart, Shield, Loader2 } from "lucide-react";
 import VerificationSpinner from "../../components/VerificationSpinner.jsx";
 
 import { api } from "../../utils/api.js";
@@ -16,7 +16,13 @@ export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [show, setShow] = useState(false);
+    const [otp, setOtp] = useState("");
+    const [useOTP, setUseOTP] = useState(false);
+    const [otpSent, setOtpSent] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [showing2FA, setShowing2FA] = useState(false);
+    const [tempToken, setTempToken] = useState("");
+    const [twoFactorCode, setTwoFactorCode] = useState("");
 
     // AUTO REDIRECT IF ALREADY LOGGED IN
     useEffect(() => {
@@ -25,8 +31,55 @@ export default function Login() {
         }
     }, [user, navigate]);
 
+    async function handleRequestOTP() {
+        if (!email) { showToast("Please enter email first", "error"); return; }
+        setLoading(true);
+        try {
+            const res = await api.sendOTP(email);
+            if (res.ok) { 
+                setOtpSent(true); 
+                showToast("OTP sent to your email!", "success"); 
+            } else {
+                showToast(res.message || "Failed to send OTP", "error");
+            }
+        } catch { showToast("Could not send OTP.", "error"); }
+        setLoading(false);
+    }
+
     async function handleLogin(e) {
         if (e) e.preventDefault();
+        
+        if (useOTP) {
+            if (!otpSent) return handleRequestOTP();
+            if (!email || !otp) {
+                showToast("Please enter email and OTP.", "error");
+                return;
+            }
+            try {
+                setLoading(true);
+                const data = await api.verifyOTP({ email, otp });
+                if (!data.ok || !data.data?.token) {
+                    if (data.twoFactorRequired) {
+                        setTempToken(data.tempToken);
+                        setShowing2FA(true);
+                        setLoading(false);
+                        return;
+                    }
+                    showToast(data.message || "Invalid OTP.", "error");
+                    setLoading(false);
+                    return;
+                }
+                login({ email: data.data.email, role: data.data.role, token: data.data.token });
+                showToast("Welcome to Wayza!", "success");
+                navigate("/");
+            } catch (error) {
+                showToast("Server error.", "error");
+            }
+            setLoading(false);
+            return;
+        }
+
+        // Standard Login
         if (!email || !password) {
             showToast("Please enter your credentials.", "error");
             return;
@@ -34,11 +87,17 @@ export default function Login() {
 
         try {
             setLoading(true);
-            await new Promise(r => setTimeout(r, 1200)); // Cinematic delay for identity sync
+            await new Promise(r => setTimeout(r, 1200));
 
             const data = await api.login({ email, password });
 
             if (!data.ok || !data.data?.token) {
+                if (data.twoFactorRequired) {
+                    setTempToken(data.tempToken);
+                    setShowing2FA(true);
+                    setLoading(false);
+                    return;
+                }
                 showToast("Invalid email or password.", "error");
                 setLoading(false);
                 return;
@@ -53,12 +112,31 @@ export default function Login() {
         setLoading(false);
     }
 
+    async function handle2FAVerify(e) {
+        if (e) e.preventDefault();
+        if (twoFactorCode.length !== 6) return;
+        setLoading(true);
+        try {
+            const data = await api.verify2FA({ tempToken, token: twoFactorCode });
+            if (data.ok && data.data?.token) {
+                login({ email: data.data.email, role: data.data.role, token: data.data.token });
+                showToast("Success! Secure connection established.", "success");
+                navigate("/");
+            } else {
+                showToast(data.message || "Invalid Authenticator code", "error");
+            }
+        } catch {
+            showToast("2FA verification failed", "error");
+        }
+        setLoading(false);
+    }
+
     return (
         <div className="min-h-screen bg-slate-50 flex overflow-hidden font-sans selection:bg-emerald-100 selection:text-emerald-900">
             <AnimatePresence>
                 {loading && (
                     <VerificationSpinner
-                        message="Synchronizing Identity..."
+                        message={useOTP && !otpSent ? "Generating OTP..." : "Synchronizing Identity..."}
                         subtext="Verifying Member Presence"
                     />
                 )}
@@ -99,60 +177,121 @@ export default function Login() {
                         <div className="h-1 text-emerald-500 scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
                     </Link>
 
-                    <div className="space-y-4">
-                        <h2 className="text-5xl md:text-6xl font-bold text-slate-900 tracking-tighter leading-none uppercase">Access <span className="text-emerald-500 lowercase">Identity.</span></h2>
-                        <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.4em] border-l-2 border-emerald-500/20 pl-4">"Enter your credentials to synchronize with the network."</p>
-                    </div>
+                    <AnimatePresence mode="wait">
+                        {!showing2FA ? (
+                            <motion.div key="login-form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, x: -20 }}>
+                                <form onSubmit={handleLogin} className="space-y-8 group">
+                                    <div className="space-y-6">
+                                        <div className="space-y-3 group/field">
+                                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within/field:text-emerald-600 transition-colors">Email Address</label>
+                                            <div className="relative">
+                                                <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/field:text-emerald-600 transition-colors" size={20} />
+                                                <input
+                                                    type="email" required value={email} onChange={e => {setEmail(e.target.value); setOtpSent(false);}}
+                                                    autoComplete="email"
+                                                    className="w-full h-18 bg-slate-50 border border-slate-100 rounded-2xl pl-16 pr-6 font-bold text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200 shadow-inner"
+                                                    placeholder="email@example.com"
+                                                />
+                                            </div>
+                                        </div>
 
-                    <form onSubmit={handleLogin} className="space-y-10 group">
-                        <div className="space-y-6">
-                            <div className="space-y-3 group/field">
-                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within/field:text-emerald-600 transition-colors">Email Address</label>
-                                <div className="relative">
-                                    <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/field:text-emerald-600 transition-colors" size={20} />
-                                    <input
-                                        type="email" required value={email} onChange={e => setEmail(e.target.value)}
-                                        autoComplete="email"
-                                        className="w-full h-18 bg-slate-50 border border-slate-100 rounded-2xl pl-16 pr-6 font-bold text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200 shadow-inner"
-                                        placeholder="email@example.com"
-                                    />
-                                </div>
-                            </div>
+                                        {!useOTP ? (
+                                            <div className="space-y-3 group/field">
+                                                <div className="flex justify-between items-center ml-1">
+                                                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest group-focus-within/field:text-emerald-600 transition-colors">Password</label>
+                                                    <Link to="/forgot-password" size={14} className="text-[9px] font-bold uppercase text-emerald-600 tracking-widest hover:text-emerald-700 transition-colors">Recovery Link?</Link>
+                                                </div>
+                                                <div className="relative">
+                                                    <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/field:text-emerald-600 transition-colors" size={20} />
+                                                    <input
+                                                        type={show ? "text" : "password"} required value={password} onChange={e => setPassword(e.target.value)}
+                                                        autoComplete="current-password"
+                                                        className="w-full h-18 bg-slate-50 border border-slate-100 rounded-2xl pl-16 pr-20 font-bold text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200 shadow-inner"
+                                                        placeholder="••••••••"
+                                                    />
+                                                    <button type="button" onClick={() => setShow(!show)} className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-300 hover:text-emerald-600 transition-colors">
+                                                        {show ? <EyeOff size={20} /> : <Eye size={20} />}
+                                                    </button>
+                                                </div>
+                                                <div className="text-right">
+                                                    <button type="button" onClick={() => setUseOTP(true)} className="text-[10px] font-bold uppercase tracking-widest text-emerald-600 hover:text-emerald-700 mt-2">Log in with OTP instead</button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="space-y-3 group/field">
+                                                <div className="flex justify-between items-center ml-1">
+                                                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest group-focus-within/field:text-emerald-600 transition-colors">6-Digit Code</label>
+                                                    <button type="button" onClick={() => setUseOTP(false)} className="text-[9px] font-bold uppercase text-emerald-600 tracking-widest hover:text-emerald-700 transition-colors">Use Password?</button>
+                                                </div>
+                                                {otpSent ? (
+                                                    <div className="relative">
+                                                        <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/field:text-emerald-600 transition-colors" size={20} />
+                                                        <input
+                                                            type="text" required value={otp} onChange={e => setOtp(e.target.value)}
+                                                            className="w-full h-18 bg-slate-50 border border-slate-100 rounded-2xl pl-16 pr-20 font-bold text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200 shadow-inner tracking-[0.5em] text-lg"
+                                                            placeholder="123456" maxLength={6}
+                                                        />
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex bg-slate-50 border border-slate-100 rounded-2xl p-4 items-center justify-center">
+                                                        <p className="text-xs font-medium text-slate-400">Click below to receive an OTP.</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
 
-                            <div className="space-y-3 group/field">
-                                <div className="flex justify-between items-center ml-1">
-                                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest group-focus-within/field:text-emerald-600 transition-colors">Password</label>
-                                    <Link to="/forgot-password" size={14} className="text-[9px] font-bold uppercase text-emerald-600 tracking-widest hover:text-emerald-700 transition-colors">Recovery Link?</Link>
-                                </div>
-                                <div className="relative">
-                                    <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within/field:text-emerald-600 transition-colors" size={20} />
-                                    <input
-                                        type={show ? "text" : "password"} required value={password} onChange={e => setPassword(e.target.value)}
-                                        autoComplete="current-password"
-                                        className="w-full h-18 bg-slate-50 border border-slate-100 rounded-2xl pl-16 pr-20 font-bold text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200 shadow-inner"
-                                        placeholder="••••••••"
-                                    />
-                                    <button type="button" onClick={() => setShow(!show)} className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-300 hover:text-emerald-600 transition-colors">
-                                        {show ? <EyeOff size={20} /> : <Eye size={20} />}
+                                    <button
+                                        type="submit" disabled={loading}
+                                        className="w-full h-20 bg-slate-900 text-white rounded-[32px] font-bold uppercase text-[11px] tracking-[0.3em] hover:bg-emerald-600 shadow-2xl shadow-slate-900/10 active:scale-95 transition-all flex items-center justify-center gap-5 group disabled:opacity-20"
+                                    >
+                                        {loading ? (
+                                            <div className="w-6 h-6 border-4 border-white/20 border-t-white rounded-full animate-spin" />
+                                        ) : (
+                                            <>
+                                                <span>{useOTP && !otpSent ? 'Send OTP' : 'Synchronize Identity'}</span>
+                                                <LogIn size={20} className="group-hover:translate-x-1 transition-transform" />
+                                            </>
+                                        )}
                                     </button>
+                                </form>
+                            </motion.div>
+                        ) : (
+                            <motion.div key="2fa-view" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="space-y-12">
+                                <div className="space-y-4">
+                                    <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-3xl flex items-center justify-center mb-6">
+                                        <Shield size={32} />
+                                    </div>
+                                    <h2 className="text-5xl font-bold text-slate-900 tracking-tighter leading-none uppercase">Secondary <br/><span className="text-emerald-500 lowercase">Protocol.</span></h2>
+                                    <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.4em] border-l-2 border-emerald-500/20 pl-4">"Enter the 6-digit code from your authenticator app."</p>
                                 </div>
-                            </div>
-                        </div>
 
-                        <button
-                            type="submit" disabled={loading}
-                            className="w-full h-20 bg-slate-900 text-white rounded-[32px] font-bold uppercase text-[11px] tracking-[0.3em] hover:bg-emerald-600 shadow-2xl shadow-slate-900/10 active:scale-95 transition-all flex items-center justify-center gap-5 group disabled:opacity-20"
-                        >
-                            {loading ? (
-                                <div className="w-6 h-6 border-4 border-white/20 border-t-white rounded-full animate-spin" />
-                            ) : (
-                                <>
-                                    <span>Synchronize Identity</span>
-                                    <LogIn size={20} className="group-hover:translate-x-1 transition-transform" />
-                                </>
-                            )}
-                        </button>
-                    </form>
+                                <form onSubmit={handle2FAVerify} className="space-y-10">
+                                    <input 
+                                        type="text" maxLength={6} autoFocus
+                                        value={twoFactorCode} onChange={e => setTwoFactorCode(e.target.value.replace(/\D/g, ""))}
+                                        className="w-full h-24 bg-slate-50 border border-slate-100 rounded-[32px] text-center text-5xl font-black tracking-[0.4em] text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all shadow-inner"
+                                        placeholder="000000"
+                                    />
+
+                                    <div className="flex gap-4">
+                                        <button 
+                                            type="button" onClick={() => setShowing2FA(false)}
+                                            className="h-20 px-8 bg-slate-100 text-slate-500 rounded-[32px] font-bold uppercase text-[10px] tracking-widest hover:bg-slate-200 transition-all active:scale-95"
+                                        >
+                                            Back
+                                        </button>
+                                        <button
+                                            type="submit" disabled={loading || twoFactorCode.length !== 6}
+                                            className="flex-1 h-20 bg-emerald-600 text-white rounded-[32px] font-bold uppercase text-[11px] tracking-[0.3em] hover:bg-emerald-700 shadow-2xl shadow-emerald-600/10 active:scale-95 transition-all flex items-center justify-center gap-5 disabled:opacity-20"
+                                        >
+                                            {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <span>Verify Protocol</span>}
+                                        </button>
+                                    </div>
+                                </form>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
                     <div className="text-center space-y-6 pt-6">
                         <p className="font-bold text-slate-400 text-[10px] uppercase tracking-widest">

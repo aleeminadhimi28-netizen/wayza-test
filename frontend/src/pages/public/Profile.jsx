@@ -9,6 +9,7 @@ import {
 import { WayzaLayout } from "../../WayzaUI.jsx";
 import { useAuth } from "../../AuthContext.jsx";
 import { useToast } from "../../ToastContext.jsx";
+import TwoFactorSetup from "../../components/TwoFactorSetup.jsx";
 
 import { api } from "../../utils/api.js";
 
@@ -33,6 +34,10 @@ export default function Profile() {
   const [saving, setSaving] = useState(false);
   const [bookings, setBookings] = useState([]);
   const [wishlist, setWishlist] = useState([]);
+  const [is2FASetupOpen, setIs2FASetupOpen] = useState(false);
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
+  const [disabling2FA, setDisabling2FA] = useState(false);
+  const [disableToken, setDisableToken] = useState("");
 
   useEffect(() => {
     if (location.state?.activeTab) setActiveTab(location.state.activeTab);
@@ -44,7 +49,12 @@ export default function Profile() {
       setLoading(true);
       try {
         const d = await api.getProfile();
-        if (d.ok) { setName(d.data.name || ""); setPhone(d.data.phone || ""); setEmail(d.data.email || ""); }
+        if (d.ok) { 
+          setName(d.data.name || ""); 
+          setPhone(d.data.phone || ""); 
+          setEmail(d.data.email || ""); 
+          setTwoFactorEnabled(!!d.data.twoFactorEnabled);
+        }
       } finally { setLoading(false); }
     }
     loadProfile();
@@ -101,6 +111,22 @@ export default function Profile() {
     } catch { showToast("Failed to update saved list.", "error"); }
   }
 
+  async function handleDisable2FA() {
+    if (disableToken.length !== 6) return;
+    setDisabling2FA(true);
+    try {
+      const res = await api.disable2FA(disableToken);
+      if (res.ok) {
+        showToast("Two-factor authentication disabled.", "success");
+        setTwoFactorEnabled(false);
+        setDisableToken("");
+      } else {
+        showToast(res.message || "Invalid code", "error");
+      }
+    } catch { showToast("Server error.", "error"); }
+    finally { setDisabling2FA(false); }
+  }
+
   if (loading) return (
     <WayzaLayout>
       <div className="flex items-center justify-center min-h-[400px]">
@@ -113,6 +139,7 @@ export default function Profile() {
     { id: "account", label: "My Account", icon: User },
     { id: "bookings", label: "My Bookings", icon: CalendarCheck },
     { id: "wishlist", label: "Saved", icon: Heart },
+    { id: "security", label: "Security", icon: Shield },
   ];
 
   const displayName = name?.split(" ")[0] || email?.split("@")[0] || "Guest";
@@ -402,8 +429,78 @@ export default function Profile() {
                   </motion.div>
                 )}
 
+                {/* ── SECURITY TAB ── */}
+                {activeTab === "security" && (
+                  <motion.div key="security" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="p-8 space-y-8">
+                    <div className="border-b border-slate-100 pb-6">
+                      <div className="flex items-center gap-2 text-emerald-600 font-bold text-xs uppercase tracking-wide mb-1">
+                        <Shield size={13} /> Security Protocols
+                      </div>
+                      <h2 className="text-2xl font-bold text-slate-900">Account Protection</h2>
+                      <p className="text-sm text-slate-500 mt-1">Manage secondary authentication layers for your identity.</p>
+                    </div>
+
+                    <div className="space-y-6">
+                      <div className={`p-6 rounded-3xl border-2 transition-all ${twoFactorEnabled ? "border-emerald-500 bg-emerald-50/30" : "border-slate-100 bg-slate-50/50"}`}>
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                          <div className="flex items-center gap-4">
+                            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${twoFactorEnabled ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20" : "bg-white text-slate-400 border border-slate-200"}`}>
+                              <Smartphone size={24} />
+                            </div>
+                            <div>
+                              <h3 className="font-bold text-slate-900 uppercase tracking-tight">Authenticator App (TOTP)</h3>
+                              <p className="text-xs text-slate-500 mt-0.5">Use Google Authenticator, Authy, or similar apps.</p>
+                            </div>
+                          </div>
+                          
+                          {twoFactorEnabled ? (
+                            <span className="px-3 py-1 bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest rounded-full">Active</span>
+                          ) : (
+                            <button 
+                              onClick={() => setIs2FASetupOpen(true)}
+                              className="h-10 px-6 bg-slate-900 text-white rounded-xl font-bold uppercase text-[10px] tracking-widest hover:bg-emerald-600 transition-all active:scale-95 shadow-lg shadow-slate-900/10"
+                            >
+                              Activate 2FA
+                            </button>
+                          )}
+                        </div>
+
+                        {twoFactorEnabled && (
+                          <div className="mt-8 pt-8 border-t border-emerald-100/50 space-y-4">
+                            <div className="flex items-start gap-3 text-emerald-700 bg-emerald-100/30 p-4 rounded-2xl">
+                              <AlertCircle size={16} className="shrink-0 mt-0.5" />
+                              <p className="text-[11px] font-semibold leading-relaxed uppercase tracking-wide">
+                                2FA is active. To disable it, enter the code from your app below.
+                              </p>
+                            </div>
+                            <div className="flex gap-3">
+                              <input 
+                                type="text" maxLength={6} placeholder="6-digit code"
+                                value={disableToken} onChange={e => setDisableToken(e.target.value.replace(/\D/g, ""))}
+                                className="h-12 w-32 bg-white border border-emerald-100 rounded-xl text-center font-bold tracking-[0.2em] text-emerald-900 focus:border-emerald-500 outline-none transition-all"
+                              />
+                              <button 
+                                onClick={handleDisable2FA}
+                                disabled={disabling2FA || disableToken.length !== 6}
+                                className="h-12 px-6 bg-rose-500 text-white rounded-xl font-bold uppercase text-[10px] tracking-widest hover:bg-rose-600 transition-all disabled:opacity-20 shadow-lg shadow-rose-500/10"
+                              >
+                                {disabling2FA ? <Loader2 className="w-4 h-4 animate-spin" /> : "Disable 2FA"}
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
               </AnimatePresence>
             </div>
+            
+            <TwoFactorSetup 
+              isOpen={is2FASetupOpen} 
+              onClose={() => setIs2FASetupOpen(false)} 
+              onComplete={() => setTwoFactorEnabled(true)} 
+            />
           </main>
         </div>
       </div>

@@ -8,6 +8,7 @@ import { getTransporter } from "../utils/emailTemplates.js";
 import { z } from "zod";
 import { BCRYPT_ROUNDS, JWT_EXPIRY } from "../config/constants.js";
 import { captureEvent } from "../utils/posthog.js";
+import { generateSecret, generateQRCode, verifyToken } from "../utils/twoFactor.js";
 
 
 const signupSchema = z.object({
@@ -66,6 +67,11 @@ router.post("/login", async (req, res, next) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(401).json({ ok: false, message: "Invalid email or password" });
+        }
+
+        if (user.twoFactorEnabled) {
+            const tempToken = jwt.sign({ email: user.email, temp: true }, SECRET, { expiresIn: "10m" });
+            return res.json({ ok: true, twoFactorRequired: true, tempToken });
         }
 
         if (!SECRET) throw new Error("JWT_SECRET is not configured");
@@ -127,13 +133,13 @@ router.post("/forgot-password", async (req, res, next) => {
         await resetTokens.insertOne({ email, token, expiry, createdAt: new Date() });
 
         // Send reset email
-        const transporter = getTransporter();
+        const transporter = await getTransporter();
         const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
         const resetUrl = `${frontendUrl}/reset-password?token=${token}&email=${encodeURIComponent(email)}`;
 
         if (transporter) {
-            transporter.sendMail({
-                from: process.env.EMAIL_USER || "noreply@wayza.com",
+            const info = await transporter.sendMail({
+                from: process.env.SMTP_FROM || process.env.EMAIL_USER || "noreply@wayza.com",
                 to: email,
                 subject: "Wayza — Reset Your Password",
                 html: `
@@ -144,7 +150,13 @@ router.post("/forgot-password", async (req, res, next) => {
                         <p style="color:#94a3b8;font-size:12px;">If you didn't request this, please ignore this email.</p>
                     </div>
                 `
-            }).catch(e => console.error("Reset email error:", e));
+            });
+            if (info.messageId) {
+                // If using free ethereal email setup, log the preview URL
+                const nodemailer = await import('nodemailer');
+                const previewUrl = nodemailer.getTestMessageUrl(info);
+                if (previewUrl) console.log("Account Email Preview URL: ", previewUrl);
+            }
         }
 
         res.json({ ok: true, message: "If this email exists, a reset link has been sent." });
@@ -180,6 +192,79 @@ router.post("/reset-password", async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
+/* ================= OTP SYSTEM ================= */
+
+router.post("/send-otp", async (req, res, next) => {
+    try {
+        const { email } = req.body;
+        if (!email) return res.status(400).json({ ok: false, message: "Email required" });
+        
+        const db = getDB();
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const expiry = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
+        
+        await db.collection("otps").deleteMany({ email: email.toLowerCase().trim() });
+        await db.collection("otps").insertOne({ email: email.toLowerCase().trim(), otp, expiry });
+        
+        const transporter = await getTransporter();
+        const info = await transporter.sendMail({
+            from: process.env.SMTP_FROM || process.env.EMAIL_USER || "noreply@wayza.com",
+            to: email,
+            subject: "Your Wayza Authentication Code",
+            html: `
+                <div style="font-family:system-ui;max-width:500px;margin:0 auto;padding:40px;background:#fff;text-align:center;">
+                    <h2 style="color:#0f172a;">Authentication Code</h2>
+                    <p style="color:#64748b;">Use the following 6-digit code to log in or sign up. It expires in 10 minutes.</p>
+                    <div style="font-size:32px;font-weight:900;letter-spacing:0.25em;color:#059669;margin:30px 0;">${otp}</div>
+                </div>
+            `
+        });
+        
+        const nodemailer = await import('nodemailer');
+        const previewUrl = nodemailer.getTestMessageUrl(info);
+        if (previewUrl) console.log("OTP Email URL: ", previewUrl);
+        
+        res.json({ ok: true });
+    } catch (err) { next(err); }
+});
+
+router.post("/verify-otp", async (req, res, next) => {
+    try {
+        const { email, otp } = req.body;
+        if (!email || !otp) return res.status(400).json({ ok: false, message: "Email and OTP required" });
+        
+        const db = getDB();
+        const record = await db.collection("otps").findOne({ email: email.toLowerCase().trim(), otp: otp.trim() });
+        
+        if (!record || new Date(record.expiry) < new Date()) {
+            return res.status(400).json({ ok: false, message: "Invalid or expired OTP" });
+        }
+        
+        await db.collection("otps").deleteMany({ email: email.toLowerCase().trim() });
+        
+        let user = await db.collection("users").findOne({ email: email.toLowerCase().trim() });
+        if (!user) {
+            // Register if new
+            await db.collection("users").insertOne({ email: email.toLowerCase().trim(), role: "guest", createdAt: new Date() });
+            user = await db.collection("users").findOne({ email: email.toLowerCase().trim() });
+            captureEvent(user.email, "User Signed Up via OTP", { role: "guest" });
+        } else {
+            captureEvent(user.email, "User Logged In via OTP", { role: user.role });
+        }
+
+        if (user.twoFactorEnabled) {
+            const tempToken = jwt.sign({ email: user.email, temp: true }, SECRET, { expiresIn: "10m" });
+            return res.json({ ok: true, twoFactorRequired: true, tempToken });
+        }
+        
+        if (!SECRET) throw new Error("JWT_SECRET is not configured");
+        const token = jwt.sign({ email: user.email, role: user.role }, SECRET, { expiresIn: JWT_EXPIRY });
+        
+        res.cookie("token", token, { httpOnly: true, secure: true, sameSite: "none", maxAge: 7*24*60*60*1000 });
+        res.json({ ok: true, data: { email: user.email, role: user.role, token } });
+    } catch (err) { next(err); }
+});
+
 /* ================= PROFILE UPDATE ================= */
 
 router.put("/profile", requireAuth, async (req, res, next) => {
@@ -198,6 +283,78 @@ router.put("/profile", requireAuth, async (req, res, next) => {
 
         await db.collection("users").updateOne({ email: req.user.email }, { $set: updates });
         res.json({ ok: true });
+    } catch (err) { next(err); }
+});
+
+/* ================= 2FA SYSTEM ================= */
+
+router.get("/2fa/setup", requireAuth, async (req, res, next) => {
+    try {
+        const secret = generateSecret();
+        const qrCode = await generateQRCode(req.user.email, secret);
+        
+        const db = getDB();
+        await db.collection("users").updateOne({ email: req.user.email }, { $set: { tempTwoFactorSecret: secret } });
+        
+        res.json({ ok: true, data: { qrCode, secret } });
+    } catch (err) { next(err); }
+});
+
+router.post("/2fa/enable", requireAuth, async (req, res, next) => {
+    try {
+        const { token } = req.body;
+        const db = getDB();
+        const user = await db.collection("users").findOne({ email: req.user.email });
+        
+        if (!user.tempTwoFactorSecret) return res.status(400).json({ ok: false, message: "Setup not initiated" });
+        
+        const valid = verifyToken(token, user.tempTwoFactorSecret);
+        if (!valid) return res.status(400).json({ ok: false, message: "Invalid code" });
+        
+        await db.collection("users").updateOne(
+            { email: req.user.email }, 
+            { $set: { twoFactorEnabled: true, twoFactorSecret: user.tempTwoFactorSecret }, $unset: { tempTwoFactorSecret: "" } }
+        );
+        
+        res.json({ ok: true });
+    } catch (err) { next(err); }
+});
+
+router.post("/2fa/disable", requireAuth, async (req, res, next) => {
+    try {
+        const { token } = req.body;
+        const db = getDB();
+        const user = await db.collection("users").findOne({ email: req.user.email });
+        
+        if (!user.twoFactorEnabled) return res.status(400).json({ ok: false, message: "2FA not enabled" });
+        
+        const valid = verifyToken(token, user.twoFactorSecret);
+        if (!valid) return res.status(400).json({ ok: false, message: "Invalid code" });
+        
+        await db.collection("users").updateOne({ email: req.user.email }, { $set: { twoFactorEnabled: false }, $unset: { twoFactorSecret: "" } });
+        
+        res.json({ ok: true });
+    } catch (err) { next(err); }
+});
+
+router.post("/2fa/verify", async (req, res, next) => {
+    try {
+        const { tempToken, token: totpToken } = req.body;
+        if (!tempToken || !totpToken) return res.status(400).json({ ok: false, message: "Input missing" });
+        
+        const decoded = jwt.verify(tempToken, SECRET);
+        if (!decoded.temp) return res.status(401).json({ ok: false, message: "Invalid token" });
+        
+        const db = getDB();
+        const user = await db.collection("users").findOne({ email: decoded.email });
+        
+        const valid = verifyToken(totpToken, user.twoFactorSecret);
+        if (!valid) return res.status(400).json({ ok: false, message: "Invalid code" });
+        
+        const token = jwt.sign({ email: user.email, role: user.role }, SECRET, { expiresIn: JWT_EXPIRY });
+        res.cookie("token", token, { httpOnly: true, secure: true, sameSite: "none", maxAge: 7*24*60*60*1000 });
+        
+        res.json({ ok: true, data: { email: user.email, role: user.role, token } });
     } catch (err) { next(err); }
 });
 

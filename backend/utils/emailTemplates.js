@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 let transporter = null;
+let testAccount = null;
 
 if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
     transporter = nodemailer.createTransport({
@@ -16,7 +17,30 @@ if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
     });
 }
 
-export const getTransporter = () => transporter;
+export const getTransporter = async () => {
+    if (transporter) return transporter;
+    
+    // Provide a FREE Ethereal setup automatically if no credentials are given
+    if (!testAccount) {
+        testAccount = await nodemailer.createTestAccount();
+        console.log("------------------------------------------");
+        console.log("FREE OTP/EMAIL SETUP: Created Ethereal Account");
+        console.log("Email:", testAccount.user);
+        console.log("Pass:", testAccount.pass);
+        console.log("Emails sent will be mock emails loggable via URLs.");
+        console.log("------------------------------------------");
+    }
+    
+    return nodemailer.createTransport({
+        host: "smtp.ethereal.email",
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+            user: testAccount.user,
+            pass: testAccount.pass
+        }
+    });
+};
 
 export const guestBookingEmail = (data) => {
     const { guestEmail, title, checkIn, checkOut, nights, totalPrice, bookingId } = data;
@@ -48,7 +72,7 @@ export const guestBookingEmail = (data) => {
     </div>`;
 
     return {
-        from: `"Wayza" <${process.env.EMAIL_USER}>`,
+        from: `"Wayza" <${process.env.SMTP_FROM || process.env.EMAIL_USER}>`,
         to: guestEmail,
         subject: "Booking Confirmed — " + title,
         html
@@ -85,7 +109,7 @@ export const ownerBookingEmail = (data) => {
     </div>`;
 
     return {
-        from: `"Wayza" <${process.env.EMAIL_USER}>`,
+        from: `"Wayza" <${process.env.SMTP_FROM || process.env.EMAIL_USER}>`,
         to: ownerEmail,
         subject: "New Booking — " + title,
         html
@@ -110,7 +134,7 @@ export const payoutSettledEmail = ({ ownerEmail, amount, bookingTitle }) => {
     </div>
     <p style='color:#9ca3af;font-size:12px;text-align:center;'>© ${year} Wayza Partner Program</p>
     </div>`;
-    return { from: `"Wayza" <${process.env.EMAIL_USER}>`, to: ownerEmail, subject: "Payout Processed — ₹" + Number(amount).toLocaleString(), html };
+    return { from: `"Wayza" <${process.env.SMTP_FROM || process.env.EMAIL_USER}>`, to: ownerEmail, subject: "Payout Processed — ₹" + Number(amount).toLocaleString(), html };
 };
 
 export const withdrawalStatusEmail = ({ ownerEmail, amount, status, reason }) => {
@@ -135,5 +159,5 @@ export const withdrawalStatusEmail = ({ ownerEmail, amount, status, reason }) =>
     </div>
     <p style='color:#9ca3af;font-size:12px;text-align:center;'>© ${year} Wayza Partner Program</p>
     </div>`;
-    return { from: `"Wayza" <${process.env.EMAIL_USER}>`, to: ownerEmail, subject: `Withdrawal ${approved ? "Approved" : "Update"} — ₹${Number(amount).toLocaleString()}`, html };
+    return { from: `"Wayza" <${process.env.SMTP_FROM || process.env.EMAIL_USER}>`, to: ownerEmail, subject: `Withdrawal ${approved ? "Approved" : "Update"} — ₹${Number(amount).toLocaleString()}`, html };
 };

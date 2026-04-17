@@ -49,6 +49,41 @@ export const api = {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
     }).then(r => r.json()),
+    
+    sendOTP: (email) => customFetch(`${API_URL}/auth/send-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+    }).then(r => r.json()),
+
+    verifyOTP: (data) => customFetch(`${API_URL}/auth/verify-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    }).then(r => r.json()),
+
+    // 2FA
+    setup2FA: () => customFetch(`${API_URL}/auth/2fa/setup`, {
+        headers: getAuthHeaders()
+    }).then(r => r.json()),
+
+    enable2FA: (token) => customFetch(`${API_URL}/auth/2fa/enable`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+        body: JSON.stringify({ token })
+    }).then(r => r.json()),
+
+    disable2FA: (token) => customFetch(`${API_URL}/auth/2fa/disable`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+        body: JSON.stringify({ token })
+    }).then(r => r.json()),
+
+    verify2FA: (data) => customFetch(`${API_URL}/auth/2fa/verify`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    }).then(r => r.json()),
 
     // Listings
     getListings: (params) => {
