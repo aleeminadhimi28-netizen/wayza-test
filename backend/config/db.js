@@ -9,7 +9,7 @@ if (dns.setDefaultResultOrder) {
 
 dotenv.config();
 
-const MONGO_URL = process.env.MONGO_URL;
+const MONGO_URL = process.env.MONGO_URL ? process.env.MONGO_URL.trim() : null;
 
 if (!MONGO_URL) {
     throw new Error("MONGO_URL is not configured in .env file");

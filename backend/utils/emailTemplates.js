@@ -6,14 +6,16 @@ let transporter = null;
 let testAccount = null;
 
 if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+    const host = (process.env.SMTP_HOST || "smtp.resend.com").trim();
+    const port = parseInt(process.env.SMTP_PORT || "465");
+    const user = process.env.EMAIL_USER.trim();
+    const pass = process.env.EMAIL_PASS.trim();
+
     transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST || "smtp.gmail.com",
-        port: process.env.SMTP_PORT || 465,
-        secure: process.env.SMTP_SECURE === "false" ? false : true,
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-        }
+        host,
+        port,
+        secure: port === 465,
+        auth: { user, pass }
     });
 }
 
