@@ -69,14 +69,15 @@ export default function LandingPage() {
     const [isTyping, setIsTyping] = useState(false);
 
     useEffect(() => {
-        api.getListings()
+        setLoading(true);
+        api.getListings({ category: tab, limit: 8 })
             .then((data) => {
                 const list = data.rows || data;
                 if (Array.isArray(list)) setListings(list);
                 setLoading(false);
             })
             .catch(() => setLoading(false));
-    }, []);
+    }, [tab]);
 
     const fixImg = (img) => {
         if (!img) return "/images/varkala_hero.png";
@@ -95,7 +96,7 @@ export default function LandingPage() {
         navigate(`/listings?${params.toString()}`);
     };
 
-    const trendingList = listings.filter(l => (l.category === "hotel" || !l.category)).slice(0, 8);
+    const trendingList = listings.slice(0, 8);
 
     return (
         <WayzaLayout noPadding hideFooter>
@@ -242,22 +243,27 @@ export default function LandingPage() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                             {[1, 2, 3, 4].map(i => <WayzaSkeleton key={i} className="h-80 rounded-3xl" />)}
                         </div>
-                    ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                            {trendingList.map(l => (
-                                <motion.div key={l._id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-                                    <WayzaHotelItem
-                                        hotel={{
-                                            id: l._id,
-                                            name: l.title,
-                                            location: l.location || "Varkala Coast",
-                                            price: l.price,
-                                            image: fixImg(l.image)
-                                        }}
-                                    />
-                                </motion.div>
-                            ))}
-                        </div>
+                    ) : trendingList.length === 0 ? (
+                            <div className="col-span-full py-20 text-center text-slate-400 font-bold uppercase tracking-widest text-sm bg-slate-50 rounded-[32px] border border-slate-100 flex items-center justify-center min-h-[300px]">
+                                No {CATEGORIES.find(c => c.key === tab)?.label.toLowerCase() || "items"} available at the moment.
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                                {trendingList.map(l => (
+                                    <motion.div key={l._id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+                                        <WayzaHotelItem
+                                            hotel={{
+                                                id: l._id,
+                                                name: l.title,
+                                                location: l.location || "Varkala Coast",
+                                                price: l.price,
+                                                image: fixImg(l.image)
+                                            }}
+                                        />
+                                    </motion.div>
+                                ))}
+                            </div>
+                        )
                     )}
                 </section>
 

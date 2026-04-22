@@ -178,7 +178,7 @@ export default function AdminDashboard() {
         { id: 'overview', icon: LayoutDashboard, label: 'Overview' },
         { id: 'users', icon: Users, label: 'Users' },
         { id: 'partners', icon: Briefcase, label: 'Partners' },
-        { id: 'listings', icon: Home, label: 'Properties' },
+        { id: 'listings', icon: Home, label: 'Inventory' },
         { id: 'bookings', icon: CalendarCheck, label: 'Bookings' },
         { id: 'withdrawals', icon: Banknote, label: 'Finance' },
         { id: 'support', icon: MessageSquare, label: 'Support' },
@@ -310,8 +310,8 @@ export default function AdminDashboard() {
                                                 <Clock size={18} />
                                             </div>
                                             <div>
-                                                <h3 className="font-bold text-sm text-amber-900">Pending Property Approvals</h3>
-                                                <p className="text-xs text-amber-700">{dataList.filter(i => !i.approved).length} properties waiting for review</p>
+                                                <h3 className="font-bold text-sm text-amber-900">Pending Inventory Approvals</h3>
+                                                <p className="text-xs text-amber-700">{dataList.filter(i => !i.approved).length} listings waiting for review</p>
                                             </div>
                                         </div>
                                         <div className="space-y-2">
@@ -322,7 +322,10 @@ export default function AdminDashboard() {
                                                             {(item.title || "P").charAt(0).toUpperCase()}
                                                         </div>
                                                         <div>
-                                                            <p className="font-semibold text-sm text-slate-900">{item.title}</p>
+                                                            <div className="flex items-center gap-2">
+                                                                <p className="font-semibold text-sm text-slate-900">{item.title}</p>
+                                                                <span className="text-[9px] bg-amber-200/50 text-amber-800 px-2 py-0.5 rounded-full uppercase font-bold">{item.category === 'activity' ? 'Experience' : 'Property'}</span>
+                                                            </div>
                                                             <p className="text-xs text-slate-400">{item.ownerEmail} · {item.location || "No location"} · ₹{item.price?.toLocaleString()}</p>
                                                         </div>
                                                     </div>
@@ -344,7 +347,7 @@ export default function AdminDashboard() {
                                 <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
                                     <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                                         <div>
-                                            <h3 className="text-xl font-bold text-slate-900 capitalize">{activeTab === "listings" ? "All Properties" : activeTab}</h3>
+                                            <h3 className="text-xl font-bold text-slate-900 capitalize">{activeTab === "listings" ? "All Inventory" : activeTab}</h3>
                                             <p className="text-sm text-slate-500">{filteredData.length} records found</p>
                                         </div>
                                         <div className="relative w-full sm:w-72">
@@ -379,6 +382,7 @@ export default function AdminDashboard() {
                                                                     <div className="flex items-center gap-2">
                                                                         <p className="font-semibold text-sm text-slate-900 truncate max-w-[200px]">{item.title || item.businessName || item.email}</p>
                                                                         {item.muted && <span className="text-[10px] font-bold text-rose-500 bg-rose-50 px-1.5 py-0.5 rounded">MUTED</span>}
+                                                                        {activeTab === "listings" && <span className="text-[9px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded uppercase font-bold">{item.category === 'activity' ? 'Exp.' : 'Prop.'}</span>}
                                                                     </div>
                                                                     <p className="text-xs text-slate-400">{item.ownerEmail || item.email || `#${item._id?.slice(-8).toUpperCase()}`}</p>
                                                                 </div>
