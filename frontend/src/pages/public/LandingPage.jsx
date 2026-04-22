@@ -25,9 +25,9 @@ const CATEGORIES = [
 ];
 
 const DESTINATIONS = [
-    { name: "Varkala Cliff", properties: "45+ Properties", image: "/images/varkala_cliff.png", colSpan: 2 },
-    { name: "Edava", properties: "20+ Properties", image: "/images/varkala_edava.png", colSpan: 1 },
-    { name: "Odayam", properties: "15+ Properties", image: "/images/varkala_odayam.png", colSpan: 1 },
+    { name: "Varkala Cliff", properties: "45+ Properties", image: "/images/varkala_cliff.png", className: "md:col-span-8 md:row-span-2 h-[400px] md:h-full" },
+    { name: "Edava", properties: "20+ Properties", image: "/images/varkala_edava.png", className: "md:col-span-4 h-[300px] md:h-[284px]" },
+    { name: "Odayam", properties: "15+ Properties", image: "/images/varkala_odayam.png", className: "md:col-span-4 h-[300px] md:h-[284px]" },
 ];
 
 export default function LandingPage() {
@@ -283,7 +283,7 @@ export default function LandingPage() {
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ delay: i * 0.1 }}
-                                    className={`group cursor-pointer relative h-[500px] rounded-[56px] overflow-hidden shadow-2xl-soft transition-all duration-700 hover:shadow-3xl ${d.colSpan === 2 ? 'md:col-span-8' : 'md:col-span-4'}`}
+                                    className={`group cursor-pointer relative rounded-[56px] overflow-hidden shadow-2xl-soft transition-all duration-700 hover:shadow-3xl ${d.className}`}
                                     onClick={() => navigate(`/listings?location=${d.name}`)}
                                 >
                                     <img src={d.image} alt={d.name} className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110 group-hover:rotate-1" />
