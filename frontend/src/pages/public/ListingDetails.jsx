@@ -229,15 +229,32 @@ export default function ListingDetails() {
                   </div>
                 </div>
                 <div className="h-10 w-px bg-slate-100 hidden md:block" />
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-slate-50 flex items-center justify-center rounded-xl text-slate-400">
-                    <MapPin size={20} />
+                {listing.latitude && listing.longitude ? (
+                  <a 
+                    href={`https://www.google.com/maps?q=${listing.latitude},${listing.longitude}`}
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 hover:bg-slate-50 p-2 -m-2 rounded-xl transition-colors"
+                  >
+                    <div className="w-10 h-10 bg-emerald-50 border border-emerald-100 flex items-center justify-center rounded-xl text-emerald-600 shadow-sm">
+                      <MapPin size={20} />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-900">{listing.location || "Kerala, India"}</p>
+                      <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest leading-none mt-1 hover:underline">Open in Maps ↗</p>
+                    </div>
+                  </a>
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-slate-50 flex items-center justify-center rounded-xl text-slate-400">
+                      <MapPin size={20} />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-900">{listing.location || "Kerala, India"}</p>
+                      <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest leading-none mt-1">Prime Location</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-900">{listing.location || "Kerala, India"}</p>
-                    <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest leading-none mt-1">Prime Location</p>
-                  </div>
-                </div>
+                )}
                 {listing.wifiSpeed > 0 && (
                   <>
                     <div className="h-10 w-px bg-slate-100 hidden md:block" />
