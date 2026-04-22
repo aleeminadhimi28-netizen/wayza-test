@@ -263,8 +263,7 @@ export default function LandingPage() {
                                     </motion.div>
                                 ))}
                             </div>
-                        )
-                    )}
+                        )}
                 </section>
 
                 {/* ════ DESTINATIONS MASONRY ════ */}
