@@ -17,17 +17,9 @@ import SEO from "../../components/SEO.jsx";
 import ListingConcierge from "../../components/ListingConcierge.jsx";
 import NeighborhoodVibes from "../../components/NeighborhoodVibes.jsx";
 import { api } from "../../utils/api.js";
+import { AMENITY_CATEGORIES, getAmenityByLabel } from "../../utils/amenities.js";
 
-const AMENITIES = [
-  { icon: Wifi, label: "Free WiFi" },
-  { icon: Coffee, label: "Breakfast included" },
-  { icon: Wind, label: "Air conditioning" },
-  { icon: Tv, label: "Flat-screen TV" },
-  { icon: Utensils, label: "Kitchen access" },
-  { icon: Shield, label: "24hr security" },
-  { icon: Car, label: "Free parking" },
-  { icon: Zap, label: "Power backup" },
-];
+const AMENITIES = []; // Legacy
 
 function StarRow({ rating, size = 16, interactive = false, onSet, onHover }) {
   const [hov, setHov] = useState(0);
@@ -246,6 +238,18 @@ export default function ListingDetails() {
                     <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest leading-none mt-1">Prime Location</p>
                   </div>
                 </div>
+                {listing.wifiSpeed > 0 && (
+                  <>
+                    <div className="h-10 w-px bg-slate-100 hidden md:block" />
+                    <div className="flex items-center gap-3 bg-emerald-50 px-4 py-2 rounded-xl border border-emerald-100">
+                      <Wifi size={14} className="text-emerald-600" />
+                      <div>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-900">Verified Wi-Fi</p>
+                        <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">{listing.wifiSpeed} MBPS</p>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
@@ -311,19 +315,47 @@ export default function ListingDetails() {
               <NeighborhoodVibes location={listing.location} category={listing.category} />
 
               {/* Artifacts (Amenities) */}
-              <section className="space-y-12 bg-slate-50/50 p-12 rounded-[48px] border border-slate-100">
-                <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-300">Available Utilities</h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-x-12 gap-y-10">
-                  {AMENITIES.map((a, i) => (
-                    <div key={i} className="flex flex-col gap-4 group">
-                      <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm border border-slate-100 group-hover:bg-emerald-500 group-hover:text-white transition-all">
-                        <a.icon size={20} />
-                      </div>
-                      <span className="text-xs font-black uppercase tracking-widest text-slate-900">{a.label}</span>
+              {listing.amenities && listing.amenities.length > 0 && (
+                <section className="space-y-12">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <span className="h-px w-12 bg-slate-200" />
+                      <span className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-300">Available Utilities</span>
                     </div>
-                  ))}
-                </div>
-              </section>
+                  </div>
+
+                  <div className="space-y-16">
+                    {AMENITY_CATEGORIES.map(category => {
+                      const presentInListing = category.amenities.filter(a => listing.amenities.includes(a.label));
+                      if (presentInListing.length === 0) return null;
+
+                      return (
+                        <div key={category.id} className="space-y-8">
+                          <div className="space-y-1">
+                            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-900">{category.label}</h3>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{category.description}</p>
+                          </div>
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
+                            {presentInListing.map((a, i) => (
+                              <div key={i} className="flex items-center gap-5 group">
+                                <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center border border-slate-100 group-hover:bg-emerald-500 group-hover:text-white group-hover:border-emerald-500 transition-all duration-300">
+                                  <a.icon size={20} />
+                                </div>
+                                <div className="space-y-0.5">
+                                  <span className="text-xs font-black uppercase tracking-widest text-slate-900 block">{a.label}</span>
+                                  {a.id === 'wifi' && listing.wifiSpeed > 0 && (
+                                    <span className="text-[9px] font-bold text-emerald-600 uppercase tracking-widest">Verified {listing.wifiSpeed} Mbps</span>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </section>
+              )}
 
               {/* Variants Detail */}
               {listing.variants?.length > 0 && (

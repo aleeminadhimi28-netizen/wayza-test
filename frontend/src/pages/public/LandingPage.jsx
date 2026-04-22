@@ -25,9 +25,9 @@ const CATEGORIES = [
 ];
 
 const DESTINATIONS = [
-    { name: "Varkala Cliff", properties: "45+ Properties", image: "https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?auto=format&fit=crop&w=800&q=80", colSpan: 2 },
-    { name: "Edava", properties: "20+ Properties", image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80", colSpan: 1 },
-    { name: "Bali", properties: "Exploring", image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=600&q=80", colSpan: 1 },
+    { name: "Varkala Cliff", properties: "45+ Properties", image: "/images/varkala_cliff.png", colSpan: 2 },
+    { name: "Edava", properties: "20+ Properties", image: "/images/varkala_edava.png", colSpan: 1 },
+    { name: "Odayam", properties: "15+ Properties", image: "/images/varkala_odayam.png", colSpan: 1 },
 ];
 
 export default function LandingPage() {
@@ -79,7 +79,7 @@ export default function LandingPage() {
     }, []);
 
     const fixImg = (img) => {
-        if (!img) return "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&q=80";
+        if (!img) return "/images/varkala_hero.png";
         if (img.startsWith("http")) return img;
         const BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
         return `${BASE}/uploads/${img}`;
@@ -102,94 +102,112 @@ export default function LandingPage() {
             <SEO title="Escape the ordinary" />
             <div className="bg-white font-sans text-slate-900 selection:bg-emerald-50 selection:text-emerald-900 leading-relaxed antialiased">
 
-                {/* ════ SECTION: REFINED MINI-HERO ════ */}
-                <header className="relative h-[55vh] min-h-[500px] flex flex-col items-center justify-end pb-16">
-                    <div className="absolute inset-0 z-0 overflow-hidden">
-                        <motion.img
-                            initial={{ scale: 1.1 }}
+                {/* ════ SECTION: PREMIUM HERO ════ */}
+                <header className="relative h-[85vh] min-h-[700px] flex flex-col items-center justify-center overflow-hidden">
+                    <div className="absolute inset-0 z-0">
+                        <motion.div
+                            initial={{ scale: 1.2 }}
                             animate={{ scale: 1 }}
-                            transition={{ duration: 1.5, ease: "easeOut" }}
-                            src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=2400&q=85"
-                            alt="Luxury Background"
-                            className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-black/10" />
-                        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-white to-transparent" />
+                            transition={{ duration: 2.5, ease: "easeOut" }}
+                            className="w-full h-full"
+                        >
+                            <img
+                                src="/images/varkala_hero.png"
+                                alt="Luxury Sanctuary"
+                                className="w-full h-full object-cover"
+                            />
+                        </motion.div>
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-white" />
                     </div>
 
-                    <div className="relative z-10 w-full max-w-7xl mx-auto px-6 text-center">
+                    <div className="relative z-10 w-full max-w-7xl mx-auto px-10 text-center space-y-16">
                         <motion.div
-                            initial={{ opacity: 0, y: 15 }}
+                            initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="space-y-4 mb-10 pt-36 md:pt-0"
+                            className="space-y-6"
                         >
-                            <h1 className="text-3xl md:text-6xl font-medium tracking-tight text-white drop-shadow-md leading-tight">
-                                Escape the ordinary <br className="md:hidden" />
-                                <span className="text-emerald-500">gracefully.</span>
+                            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white text-[10px] font-bold uppercase tracking-[0.3em] mb-4">
+                                <Sparkles size={12} className="text-emerald-400" /> Curated Luxury
+                            </div>
+                            <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-white leading-[0.9] drop-shadow-2xl">
+                                Escape the ordinary <br />
+                                <span className="text-emerald-400 italic">gracefully.</span>
                             </h1>
-                            <p className="text-base md:text-lg font-normal text-white/90 max-w-2xl mx-auto drop-shadow-sm">
-                                Handpicked villas, premium bikes, and local secrets in Varkala.
+                            <p className="text-lg md:text-xl font-medium text-white/90 max-w-2xl mx-auto drop-shadow-lg leading-relaxed">
+                                Handpicked sanctuaries and high-performance mobility curated <br className="hidden md:block" /> for the modern explorer.
                             </p>
                         </motion.div>
 
                         {/* PILL SEARCH ORCHESTRATOR */}
                         <motion.div
-                            initial={{ opacity: 0, y: 20 }}
+                            initial={{ opacity: 0, y: 40 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2 }}
-                            className="max-w-4xl mx-auto w-full px-4 md:px-0"
+                            transition={{ delay: 0.3 }}
+                            className="max-w-5xl mx-auto w-full px-4"
                         >
-                            <div className="bg-white rounded-3xl md:rounded-full p-2 md:p-3 shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-slate-100 flex flex-col md:flex-row items-center gap-1">
+                            <div className="bg-white/90 backdrop-blur-2xl rounded-[40px] p-3 shadow-[0_40px_100px_rgba(0,0,0,0.15)] border border-white/50 flex flex-col md:flex-row items-center gap-2">
 
                                 {/* Location */}
-                                <div className="flex-[1.5] w-full group px-8 py-3 rounded-full hover:bg-slate-50 transition-colors text-left cursor-pointer">
-                                    <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-0.5">Location</p>
+                                <div className="flex-[1.5] w-full px-10 py-5 rounded-[32px] hover:bg-slate-50/50 transition-all text-left cursor-pointer group">
+                                    <p className="text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mb-1.5 group-hover:text-emerald-600 transition-colors">Destinations</p>
                                     <input
                                         placeholder="Where to go?"
                                         value={search}
                                         onChange={(e) => setSearch(e.target.value)}
-                                        className="w-full bg-transparent border-none outline-none font-medium text-slate-800 text-sm p-0 placeholder:text-slate-300"
+                                        className="w-full bg-transparent border-none outline-none font-bold text-slate-900 text-lg p-0 placeholder:text-slate-300"
                                     />
                                 </div>
 
-                                <div className="hidden md:block w-px h-10 bg-slate-100" />
+                                <div className="hidden md:block w-px h-12 bg-slate-200/50" />
 
                                 {/* Check In/Out */}
-                                <div className="flex-1 w-full px-8 py-3 rounded-full hover:bg-slate-50 transition-colors text-left cursor-pointer">
-                                    <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-0.5">Stay Dates</p>
-                                    <div className="flex items-center gap-2">
-                                        <input type="date" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} className="bg-transparent border-none outline-none font-medium text-slate-800 text-xs p-0 w-24 cursor-pointer" />
+                                <div className="flex-1 w-full px-10 py-5 rounded-[32px] hover:bg-slate-50/50 transition-all text-left cursor-pointer group">
+                                    <p className="text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mb-1.5 group-hover:text-emerald-600 transition-colors">Timeframe</p>
+                                    <div className="flex items-center gap-3">
+                                        <input type="date" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} className="bg-transparent border-none outline-none font-bold text-slate-900 text-sm p-0 w-28 cursor-pointer" />
                                         <span className="text-slate-300">-</span>
-                                        <input type="date" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} className="bg-transparent border-none outline-none font-medium text-slate-800 text-xs p-0 w-24 cursor-pointer" />
+                                        <input type="date" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} className="bg-transparent border-none outline-none font-bold text-slate-900 text-sm p-0 w-28 cursor-pointer" />
                                     </div>
                                 </div>
 
-                                <div className="hidden md:block w-px h-10 bg-slate-100" />
+                                <div className="hidden md:block w-px h-12 bg-slate-200/50" />
 
                                 {/* Guests */}
-                                <div className="flex-1 w-full px-8 py-3 rounded-full hover:bg-slate-50 transition-colors text-left cursor-pointer">
-                                    <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-0.5">Guests</p>
-                                    <input
-                                        type="number"
-                                        min="1"
-                                        value={guests}
-                                        onChange={e => setGuests(e.target.value)}
-                                        className="w-full bg-transparent border-none outline-none font-medium text-slate-800 text-sm p-0 cursor-pointer"
-                                    />
+                                <div className="flex-1 w-full px-10 py-5 rounded-[32px] hover:bg-slate-50/50 transition-all text-left cursor-pointer group">
+                                    <p className="text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mb-1.5 group-hover:text-emerald-600 transition-colors">Guests</p>
+                                    <div className="flex items-center gap-3">
+                                        <Users size={16} className="text-slate-400" />
+                                        <input
+                                            type="number"
+                                            min="1"
+                                            value={guests}
+                                            onChange={e => setGuests(e.target.value)}
+                                            className="w-full bg-transparent border-none outline-none font-bold text-slate-900 text-lg p-0 cursor-pointer"
+                                        />
+                                    </div>
                                 </div>
 
                                 {/* Search Button */}
-                                <button onClick={handleSearch} className="w-full md:w-auto bg-emerald-500 hover:bg-emerald-600 text-white p-5 md:p-5 rounded-2xl md:rounded-full shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02] md:hover:scale-105 active:scale-95 group flex items-center justify-center gap-3">
-                                    <Search size={20} strokeWidth={2.5} className="group-hover:rotate-6 transition-transform" />
-                                    <span className="md:hidden font-bold uppercase tracking-widest text-xs">Search Stays</span>
+                                <button onClick={handleSearch} className="w-full md:w-auto bg-slate-900 text-white px-10 py-6 rounded-[32px] shadow-2xl shadow-slate-900/20 transition-all hover:bg-emerald-600 hover:scale-[1.02] active:scale-95 group flex items-center justify-center gap-4">
+                                    <Search size={22} strokeWidth={3} className="transition-transform group-hover:rotate-12" />
+                                    <span className="font-black uppercase tracking-[0.3em] text-[11px]">Explore</span>
                                 </button>
                             </div>
                         </motion.div>
                     </div>
+
+                    {/* Scroll Indicator */}
+                    <motion.div 
+                        animate={{ y: [0, 10, 0] }}
+                        transition={{ repeat: Infinity, duration: 2 }}
+                        className="absolute bottom-10 left-1/2 -translate-x-1/2 border border-slate-300/30 rounded-full p-2"
+                    >
+                        <div className="w-1 h-3 bg-slate-300 rounded-full" />
+                    </motion.div>
                 </header>
 
                 {/* ════ TAB STRIP ════ */}
-                <div className="max-w-7xl mx-auto px-6 mt-12 mb-20 flex flex-wrap items-center justify-center gap-4">
+                <div className="max-w-7xl mx-auto px-6 -mt-20 relative z-20 mb-32 flex flex-wrap items-center justify-center gap-6">
                     {CATEGORIES.map(c => (
                         <button
                             key={c.key}
@@ -197,23 +215,26 @@ export default function LandingPage() {
                                 if (c.key === 'experience') navigate('/experiences');
                                 else setTab(c.key);
                             }}
-                            className={`flex items-center gap-3 px-8 py-3.5 rounded-full transition-all border ${tab === c.key ? 'bg-slate-900 border-slate-900 text-white shadow-xl translate-y-[-2px]' : 'bg-white border-slate-100 text-slate-400 hover:border-slate-300 hover:text-slate-700'}`}
+                            className={`group flex items-center gap-4 px-10 py-5 rounded-[32px] transition-all duration-500 border ${tab === c.key ? 'bg-slate-900 border-slate-900 text-white shadow-[0_20px_40px_rgba(0,0,0,0.2)] -translate-y-2' : 'bg-white/80 backdrop-blur-md border-slate-100 text-slate-400 hover:border-emerald-200 hover:text-slate-900 hover:-translate-y-1'}`}
                         >
-                            <c.icon size={16} />
-                            <span className="text-[13px] font-semibold uppercase tracking-widest">{c.label}</span>
+                            <c.icon size={18} className={`${tab === c.key ? 'text-emerald-400' : 'group-hover:text-emerald-500'} transition-colors`} />
+                            <span className="text-[14px] font-bold uppercase tracking-[0.2em]">{c.label}</span>
                         </button>
                     ))}
                 </div>
 
                 {/* ════ TRENDING COLLECTION ════ */}
                 <section className="px-6 max-w-7xl mx-auto mb-32">
-                    <div className="flex flex-col md:flex-row items-baseline justify-between gap-4 mb-12 border-b border-slate-50 pb-8">
-                        <div>
-                            <h2 className="text-3xl font-medium tracking-tight text-slate-900">Featured collection.</h2>
-                            <p className="text-slate-400 text-sm font-normal mt-1">Directly from our verified local hosts.</p>
+                    <div className="flex flex-col md:flex-row items-end justify-between gap-8 mb-16 border-b border-slate-100 pb-12">
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-3 text-emerald-500 font-black uppercase tracking-[0.4em] text-[10px]">
+                                <Award size={14} /> Curated Selection
+                            </div>
+                            <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900">Featured collection.</h2>
+                            <p className="text-slate-400 text-lg font-medium">Directly from our verified local hosts.</p>
                         </div>
-                        <Link to="/listings" className="text-emerald-500 font-semibold text-sm flex items-center gap-1.5 hover:gap-2.5 transition-all">
-                            View inventory <ArrowRight size={14} />
+                        <Link to="/listings" className="group h-14 px-8 bg-slate-50 text-slate-950 hover:bg-slate-900 hover:text-white rounded-2xl font-bold text-xs flex items-center gap-3 transition-all">
+                            View all inventory <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                         </Link>
                     </div>
 
@@ -240,154 +261,243 @@ export default function LandingPage() {
                     )}
                 </section>
 
-                {/* ════ DESTINATIONS MASONRYish ════ */}
-                <section className="py-24 bg-slate-50 px-6">
+                {/* ════ DESTINATIONS MASONRY ════ */}
+                <section className="py-32 bg-slate-50 px-6 relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-white to-transparent" />
                     <div className="max-w-7xl mx-auto">
-                        <h2 className="text-2xl font-medium text-slate-800 mb-12 text-center">Where we operate.</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div className="flex flex-col md:flex-row items-end justify-between gap-10 mb-20">
+                            <div className="space-y-4">
+                                <p className="text-emerald-500 font-black uppercase tracking-[0.4em] text-[10px]">Territories</p>
+                                <h2 className="text-4xl md:text-6xl font-bold tracking-tighter text-slate-900">Where we operate.</h2>
+                            </div>
+                            <p className="text-slate-400 font-medium max-w-sm text-lg leading-relaxed">
+                                Our network spans unique ecosystems, each personally verified for soul and security.
+                            </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
                             {DESTINATIONS.map((d, i) => (
-                                <div
+                                <motion.div
                                     key={i}
-                                    className={`group cursor-pointer relative h-80 rounded-[40px] overflow-hidden shadow-2xl-soft ${d.colSpan === 2 ? 'md:col-span-2' : 'md:col-span-1'}`}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: i * 0.1 }}
+                                    className={`group cursor-pointer relative h-[500px] rounded-[56px] overflow-hidden shadow-2xl-soft transition-all duration-700 hover:shadow-3xl ${d.colSpan === 2 ? 'md:col-span-8' : 'md:col-span-4'}`}
                                     onClick={() => navigate(`/listings?location=${d.name}`)}
                                 >
-                                    <img src={d.image} alt={d.name} className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110" />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                                    <div className="absolute bottom-8 left-8 text-white">
-                                        <p className="font-medium text-2xl tracking-tight mb-1">{d.name}</p>
-                                        <p className="text-[10px] uppercase font-bold tracking-[0.2em] text-white/60">{d.properties}</p>
+                                    <img src={d.image} alt={d.name} className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110 group-hover:rotate-1" />
+                                    <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                                    
+                                    <div className="absolute inset-0 bg-emerald-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                                    <div className="absolute bottom-12 left-12 right-12 flex justify-between items-end">
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] uppercase font-black tracking-[0.3em] text-emerald-400">{d.properties}</p>
+                                            <h3 className="font-bold text-4xl text-white tracking-tight">{d.name}</h3>
+                                        </div>
+                                        <div className="w-16 h-16 rounded-[24px] bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center group-hover:bg-emerald-500 group-hover:border-emerald-400 transition-all duration-500">
+                                            <ArrowRight size={24} className="text-white group-hover:translate-x-1 transition-transform" />
+                                        </div>
                                     </div>
-                                    <div className="absolute top-8 right-8 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
-                                        <ArrowRight size={20} className="text-white" />
-                                    </div>
-                                </div>
+                                </motion.div>
                             ))}
                         </div>
                     </div>
                 </section>
 
                 {/* ════ TRUST STRIP ════ */}
-                <section className="py-20 px-6 max-w-7xl mx-auto">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
+                <section className="py-32 px-6 max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {[
-                            { icon: CheckCircle2, title: "Verified Stays", desc: "Every property is personally inspected by our team for absolute quality." },
-                            { icon: Compass, title: "Local Secrets", desc: "Access hidden beaches and cafes curated by our native guides." },
-                            { icon: Sparkles, title: "Wayza AI", desc: "Plan your entire stay + vehicle combination in seconds with our AI engine." }
+                            { icon: CheckCircle2, title: "Verified Stays", desc: "Every property is personally inspected by our team for absolute quality.", color: "emerald" },
+                            { icon: Compass, title: "Local Secrets", desc: "Access hidden beaches and cafes curated by our native guides.", color: "blue" },
+                            { icon: Sparkles, title: "Wayza AI", desc: "Plan your entire stay + vehicle combination in seconds with our AI engine.", color: "indigo" }
                         ].map((item, i) => (
-                            <div key={i} className="flex gap-6 items-start">
-                                <div className="shrink-0 w-12 h-12 bg-emerald-50 text-emerald-500 rounded-2xl flex items-center justify-center">
-                                    <item.icon size={24} strokeWidth={1.5} />
+                            <motion.div 
+                                key={i} 
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                whileInView={{ opacity: 1, scale: 1 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: i * 0.1 }}
+                                className="group p-10 bg-white border border-slate-100 rounded-[48px] hover:border-slate-300 hover:shadow-2xl-soft transition-all duration-500"
+                            >
+                                <div className={`w-16 h-16 bg-slate-50 rounded-[24px] flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500`}>
+                                    <item.icon size={28} strokeWidth={1.5} className="text-slate-900" />
                                 </div>
-                                <div>
-                                    <h3 className="font-semibold text-slate-900 mb-2">{item.title}</h3>
-                                    <p className="text-slate-500 text-sm leading-relaxed">{item.desc}</p>
-                                </div>
-                            </div>
+                                <h3 className="text-2xl font-bold text-slate-900 mb-4 tracking-tight">{item.title}</h3>
+                                <p className="text-slate-500 font-medium leading-relaxed">{item.desc}</p>
+                            </motion.div>
                         ))}
                     </div>
                 </section>
 
-                {/* ════ SECTION: AI TRIP ARCHITECT ════ */}
-                <section className="py-20 px-6 bg-slate-950 text-white overflow-hidden relative">
-                    {/* Abstract Decorative Elements */}
-                    <div className="absolute top-0 right-0 w-[50%] h-full bg-emerald-500/5 blur-[150px] pointer-events-none" />
-                    <div className="absolute bottom-0 left-0 w-[30%] h-1/2 bg-blue-500/5 blur-[120px] pointer-events-none" />
+                {/* ════ SECTION: AI TRIP PLANNER ════ */}
+                <section className="py-24 px-6 bg-[#030a07] text-white overflow-hidden relative">
+                    {/* Rich background gradient */}
+                    <div className="absolute inset-0 pointer-events-none">
+                        <div className="absolute top-[-20%] left-[20%] w-[60%] h-[80%] bg-emerald-500/10 blur-[140px] rounded-full" />
+                        <div className="absolute bottom-0 right-[10%] w-[40%] h-[50%] bg-emerald-700/8 blur-[120px] rounded-full" />
+                        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-950/30 via-transparent to-transparent" />
+                    </div>
 
-                    <div className="max-w-7xl mx-auto">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-                            {/* Content Side */}
-                            <div className="space-y-8">
-                                <div className="inline-flex items-center gap-2.5 px-5 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 text-[9px] font-bold uppercase tracking-[0.3em]">
-                                    <Cpu size={12} className="animate-pulse" /> Neural Mapping v4.0
-                                </div>
-                                <div className="space-y-4">
-                                    <h2 className="text-4xl md:text-5xl font-medium tracking-tight leading-[1.1]">
-                                        Conversational <br />
-                                        <span className="text-emerald-500">intelligence.</span>
-                                    </h2>
-                                    <p className="text-white/40 text-sm font-light leading-relaxed max-w-md">
-                                        Forget filters. Describe your mood and vibe. Our AI constructs a verified itinerary in real-time.
-                                    </p>
-                                </div>
+                    <div className="max-w-5xl mx-auto relative z-10">
 
-                                {/* Interactive Chat Simulation */}
-                                <div className="bg-white/5 backdrop-blur-3xl border border-white/10 rounded-[40px] p-8 space-y-8 relative group overflow-hidden">
-                                    <div className="flex items-center gap-4 text-white/20 border-b border-white/5 pb-6">
-                                        <Terminal size={18} />
-                                        <span className="text-[10px] font-bold tracking-widest uppercase">Live Session</span>
-                                    </div>
-                                    <div className="space-y-6">
-                                        <div className="flex items-start gap-4">
-                                            <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-white/50 text-[10px] font-bold">ME</div>
-                                            <p className="text-white/80 text-sm md:text-base">"I need a quiet clifftop villa in Varkala with a bike for exploring secret cafes."</p>
-                                        </div>
-                                        <div className="flex items-start gap-4">
-                                            <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white"><Sparkles size={14} /></div>
-                                            <div className="space-y-3 flex-1">
-                                                <div className="flex gap-2">
-                                                    <div className="h-2 w-2 rounded-full bg-emerald-500 animate-bounce" />
-                                                    <div className="h-2 w-2 rounded-full bg-emerald-500 animate-bounce [animation-delay:0.2s]" />
-                                                    <div className="h-2 w-2 rounded-full bg-emerald-500 animate-bounce [animation-delay:0.4s]" />
-                                                </div>
-                                                <div className="bg-emerald-500/10 rounded-2xl p-4 border border-emerald-500/20">
-                                                    <p className="text-emerald-400 text-sm font-medium">Analyzing 142 properties... Matching 'Clifftop' + 'Cafe Access' + 'Verify Mobility'...</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {/* Fake Input */}
-                                    <div className="flex items-center gap-4 bg-black/40 rounded-3xl px-6 py-4 border border-white/5">
-                                        <input
-                                            placeholder="Ask for your dream stay..."
-                                            className="bg-transparent border-none outline-none flex-1 text-sm text-white/30"
-                                            readOnly
-                                        />
-                                        <button className="text-emerald-500"><Send size={18} /></button>
-                                    </div>
-                                </div>
+                        {/* ── Section Header ── */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            className="text-center mb-16 space-y-6"
+                        >
+                            <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/25 rounded-full">
+                                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                                <span className="text-[11px] font-black uppercase tracking-widest text-emerald-400">Wayza AI · Live</span>
+                            </div>
+                            <h2 className="text-5xl md:text-6xl font-black tracking-tighter text-white leading-tight">
+                                Your trip, planned by AI.
+                            </h2>
+                            <p className="text-slate-400 text-lg max-w-xl mx-auto leading-relaxed">
+                                Describe your vibe in plain English. Our AI instantly finds the perfect villa, vehicle, and local experiences.
+                            </p>
+                        </motion.div>
 
-                                <button onClick={() => navigate('/ai-trip-planner')} className="h-14 px-10 bg-white text-slate-950 hover:bg-emerald-500 hover:text-white rounded-full font-bold uppercase text-[10px] tracking-[0.3em] transition-all flex items-center gap-4 shadow-xl">
-                                    Launch Planner <ArrowRight size={14} />
-                                </button>
+                        {/* ── Chat Card (full width, rich) ── */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.15 }}
+                            className="bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.5)]"
+                        >
+                            {/* Chat titlebar */}
+                            <div className="flex items-center gap-3 px-6 py-4 border-b border-white/8 bg-white/[0.03]">
+                                <div className="flex gap-1.5">
+                                    <div className="w-3 h-3 rounded-full bg-rose-500/70" />
+                                    <div className="w-3 h-3 rounded-full bg-amber-500/70" />
+                                    <div className="w-3 h-3 rounded-full bg-emerald-500/70" />
+                                </div>
+                                <div className="flex-1 flex items-center justify-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                                    <span className="text-[11px] font-bold text-white/40 uppercase tracking-widest">Wayza AI Trip Planner</span>
+                                </div>
                             </div>
 
-                            <div className="relative hidden lg:block">
-                                <div className="aspect-square rounded-[48px] overflow-hidden border border-white/10 shadow-3xl bg-slate-900 group">
-                                    <motion.img
-                                        initial={{ scale: 1.2, opacity: 0.6 }}
-                                        whileInView={{ scale: 1, opacity: 1 }}
-                                        transition={{ duration: 1.5 }}
-                                        src="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80"
-                                        alt="AI Visualization"
-                                        className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
+                            {/* Messages area */}
+                            <div className="p-8 space-y-6 min-h-[280px]">
+                                {/* User message */}
+                                <motion.div
+                                    initial={{ opacity: 0, x: 20 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: true }}
+                                    className="flex justify-end"
+                                >
+                                    <div className="bg-slate-700/80 rounded-2xl rounded-tr-sm px-5 py-3.5 max-w-lg">
+                                        <p className="text-sm text-white/90 leading-relaxed">
+                                            I want a quiet clifftop villa in Varkala for 3 nights, with a motorbike and tips for hidden cafes. Budget around ₹15,000/night.
+                                        </p>
+                                    </div>
+                                </motion.div>
 
-                                    {/* Data Blobs */}
-                                    <motion.div
-                                        animate={{ y: [0, -20, 0] }}
-                                        transition={{ repeat: Infinity, duration: 4 }}
-                                        className="absolute top-12 left-12 p-6 bg-white/10 backdrop-blur-3xl border border-white/20 rounded-3xl"
-                                    >
-                                        <BrainCircuit size={32} className="text-emerald-400 mb-2" />
-                                        <p className="text-[10px] font-bold uppercase tracking-widest text-white/60">Semantic Match</p>
-                                        <p className="text-xl font-bold">98.4% Accuracy</p>
-                                    </motion.div>
+                                {/* AI response */}
+                                <motion.div
+                                    initial={{ opacity: 0, x: -20 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: 0.25 }}
+                                    className="flex items-start gap-4"
+                                >
+                                    <div className="w-9 h-9 bg-emerald-500 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-emerald-500/30">
+                                        <Sparkles size={15} className="text-slate-950" />
+                                    </div>
+                                    <div className="flex-1 space-y-4">
+                                        <p className="text-sm text-white/70">Here's your curated Varkala plan 🌿</p>
+                                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                            {[
+                                                { emoji: "🏡", title: "Sea Cliff Retreat", sub: "₹12,500 · night · Clifftop", tag: "Best match" },
+                                                { emoji: "🏍️", title: "Royal Enfield 350", sub: "₹850 · day · Includes helmet", tag: "Available" },
+                                                { emoji: "☕", title: "Secret Café Trail", sub: "6 hidden spots · 2.4km route", tag: "Exclusive" },
+                                            ].map((card, i) => (
+                                                <div key={i} className="bg-white/[0.05] border border-white/10 rounded-2xl p-4 space-y-2 hover:border-emerald-500/30 transition-colors cursor-default">
+                                                    <div className="flex items-center justify-between">
+                                                        <span className="text-xl">{card.emoji}</span>
+                                                        <span className="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 bg-emerald-500/15 text-emerald-400 rounded-full">{card.tag}</span>
+                                                    </div>
+                                                    <p className="text-sm font-bold text-white">{card.title}</p>
+                                                    <p className="text-[11px] text-white/40 leading-snug">{card.sub}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div className="flex items-center gap-2 text-xs text-emerald-400/70 font-medium">
+                                            <CheckCircle2 size={13} className="text-emerald-500" />
+                                            3-night stay · ₹42,550 total · Instant booking available
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            </div>
 
-                                    <motion.div
-                                        animate={{ y: [0, 20, 0] }}
-                                        transition={{ repeat: Infinity, duration: 5 }}
-                                        className="absolute bottom-12 right-12 p-6 bg-emerald-500/20 backdrop-blur-3xl border border-emerald-500/30 rounded-3xl text-right"
-                                    >
-                                        <Waves size={32} className="text-emerald-400 mb-2 ml-auto" />
-                                        <p className="text-[10px] font-bold uppercase tracking-widest text-white/60">Vibration Index</p>
-                                        <p className="text-xl font-bold">Ocean Calm</p>
-                                    </motion.div>
+                            {/* Input bar + suggestions */}
+                            <div className="border-t border-white/8 p-5 space-y-3 bg-white/[0.02]">
+                                {/* Suggestion pills */}
+                                <div className="flex flex-wrap gap-2">
+                                    {["Beachfront villa Varkala 🌊", "Budget under ₹5k", "Couples getaway", "Solo adventure 🏍️"].map((pill, i) => (
+                                        <button
+                                            key={i}
+                                            onClick={() => navigate('/ai-trip-planner')}
+                                            className="text-[11px] font-semibold text-white/50 border border-white/10 rounded-full px-3 py-1.5 hover:border-emerald-500/40 hover:text-emerald-400 transition-all"
+                                        >
+                                            {pill}
+                                        </button>
+                                    ))}
+                                </div>
+                                {/* Input */}
+                                <div
+                                    onClick={() => navigate('/ai-trip-planner')}
+                                    className="flex items-center gap-3 bg-white/5 hover:bg-white/8 border border-white/10 hover:border-emerald-500/30 rounded-2xl px-5 py-3.5 cursor-pointer transition-all group"
+                                >
+                                    <MessageSquare size={16} className="text-white/25 shrink-0" />
+                                    <span className="flex-1 text-sm text-white/25">Describe your dream trip...</span>
+                                    <div className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 rounded-xl px-4 py-2 transition-colors shrink-0">
+                                        <span className="text-[11px] font-black text-slate-950 uppercase tracking-wider">Plan it</span>
+                                        <ArrowRight size={13} className="text-slate-950 group-hover:translate-x-0.5 transition-transform" />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </motion.div>
+
+                        {/* ── Bottom CTA strip ── */}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.3 }}
+                            className="flex flex-col sm:flex-row items-center justify-between gap-6 mt-12 pt-10 border-t border-white/8"
+                        >
+                            <div className="flex items-center gap-10">
+                                {[
+                                    { value: "< 2s", label: "Response time" },
+                                    { value: "98%", label: "Accuracy" },
+                                    { value: "500+", label: "Trips planned" },
+                                ].map((s, i) => (
+                                    <div key={i} className="text-center">
+                                        <p className="text-xl font-black text-emerald-400">{s.value}</p>
+                                        <p className="text-[10px] text-slate-600 uppercase tracking-wider font-bold">{s.label}</p>
+                                    </div>
+                                ))}
+                            </div>
+                            <button
+                                onClick={() => navigate('/ai-trip-planner')}
+                                className="group h-12 px-8 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-xl font-black text-xs uppercase tracking-widest transition-all flex items-center gap-3 shadow-lg shadow-emerald-500/20 shrink-0"
+                            >
+                                Open AI Planner
+                                <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
+                            </button>
+                        </motion.div>
+
                     </div>
                 </section>
+
+
 
                 <footer className="bg-slate-950 pt-16 pb-8 px-6 overflow-hidden relative border-t border-white/5">
                     {/* Subtle Watermark */}

@@ -2,13 +2,16 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-    Plus, Edit2, Trash2, Image as ImageIcon, CheckCircle2, X,
+    Plus, Edit2, Trash2, Image as ImageIcon, CheckCircle2, X, Wifi,
     Settings2, Activity, Database, ShieldCheck, Zap, Layers,
     ChevronLeft, ArrowRight, Target, HardDrive, Cpu, Sparkles, Navigation, History
 } from "lucide-react";
 import { useToast } from "../../ToastContext.jsx";
 
 import { api } from "../../utils/api.js";
+import { AMENITY_CATEGORIES } from "../../utils/amenities.js";
+
+const AVAILABLE_AMENITIES = []; // Legacy constant for safety
 
 export default function PartnerProperty() {
     const { id } = useParams();
@@ -32,6 +35,8 @@ export default function PartnerProperty() {
     const [isEditingMain, setIsEditingMain] = useState(false);
     const [mainTitle, setMainTitle] = useState("");
     const [mainVideo, setMainVideo] = useState("");
+    const [mainAmenities, setMainAmenities] = useState([]);
+    const [mainWifiSpeed, setMainWifiSpeed] = useState("");
     const [mainLoading, setMainLoading] = useState(false);
 
     useEffect(() => { load(); }, [id]);
@@ -43,6 +48,8 @@ export default function PartnerProperty() {
             setListing(l);
             setMainTitle(l.title || "");
             setMainVideo(l.walkthroughVideo || "");
+            setMainAmenities(l.amenities || []);
+            setMainWifiSpeed(l.wifiSpeed || "");
 
             if (editIndex === null) {
                 setType((l.category === "bike" || l.category === "car") ? "Vehicle" : "Room");
@@ -171,7 +178,12 @@ export default function PartnerProperty() {
     async function updateMainDetails() {
         setMainLoading(true);
         try {
-            const data = await api.updateListing(id, { title: mainTitle, walkthroughVideo: mainVideo });
+            const data = await api.updateListing(id, { 
+                title: mainTitle, 
+                walkthroughVideo: mainVideo,
+                amenities: mainAmenities,
+                wifiSpeed: Number(mainWifiSpeed) || 0
+            });
             if (data.ok) {
                 showToast("Core property manifest updated.", "success");
                 setIsEditingMain(false);
@@ -265,6 +277,63 @@ export default function PartnerProperty() {
                                     placeholder="https://www.youtube.com/embed/..."
                                     className="w-full bg-white/5 border border-white/10 rounded-2xl h-14 px-6 text-white font-bold text-sm outline-none focus:border-emerald-500 transition-all font-mono"
                                 />
+                            </div>
+                            
+                            <div className="md:col-span-2 space-y-6 pt-6 border-t border-white/10">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40">Available Utilities</h3>
+                                    <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">{mainAmenities.length} Active</span>
+                                </div>
+
+                                {/* Wifi Speed Edit */}
+                                <div className="space-y-2 bg-white/5 p-4 rounded-2xl border border-white/10 max-w-xs">
+                                    <label className="text-[9px] font-black uppercase tracking-widest text-white/30 block ml-1">Verified Wi-Fi Speed (Mbps)</label>
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center border border-white/10">
+                                            <Wifi size={16} className="text-emerald-500" />
+                                        </div>
+                                        <input 
+                                            type="number" 
+                                            placeholder="e.g. 100" 
+                                            value={mainWifiSpeed} 
+                                            onChange={e => setMainWifiSpeed(e.target.value)}
+                                            className="h-10 flex-1 bg-transparent border-b border-white/10 px-2 text-sm font-bold text-white outline-none focus:border-emerald-500 transition-all"
+                                        />
+                                        <span className="text-[9px] font-black text-white/20 uppercase">MBPS</span>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-8">
+                                    {AMENITY_CATEGORIES.map(cat => (
+                                        <div key={cat.id} className="space-y-3">
+                                            <div className="flex items-center gap-2">
+                                                <div className="h-[1px] w-4 bg-white/10" />
+                                                <h4 className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20">{cat.label}</h4>
+                                            </div>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+                                                {cat.amenities.map(a => (
+                                                    <button
+                                                        key={a.id}
+                                                        type="button"
+                                                        onClick={() => {
+                                                            if (mainAmenities.includes(a.label)) {
+                                                                setMainAmenities(mainAmenities.filter(x => x !== a.label));
+                                                            } else {
+                                                                setMainAmenities([...mainAmenities, a.label]);
+                                                            }
+                                                        }}
+                                                        className={`h-11 px-4 rounded-xl text-[9px] font-bold uppercase tracking-widest border transition-all flex items-center gap-3 ${mainAmenities.includes(a.label) 
+                                                            ? 'bg-emerald-500 border-emerald-500 text-slate-900 shadow-lg shadow-emerald-500/20' 
+                                                            : 'bg-white/5 border-white/10 text-white/40 hover:border-emerald-500/50 hover:text-emerald-500 shadow-sm'}`}
+                                                    >
+                                                        <a.icon size={13} className={mainAmenities.includes(a.label) ? "text-slate-900" : "text-white/20"} />
+                                                        <span className="truncate">{a.label}</span>
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                         <div className="flex justify-end gap-4 mt-8">

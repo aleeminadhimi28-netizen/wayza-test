@@ -16,7 +16,9 @@ const createListingSchema = z.object({
     category: z.string().optional().default("hotel"),
     latitude: z.number().optional(),
     longitude: z.number().optional(),
-    walkthroughVideo: z.string().optional()
+    walkthroughVideo: z.string().optional(),
+    amenities: z.array(z.string()).optional().default([]),
+    wifiSpeed: z.number().optional().default(0)
 });
 
 const variantSchema = z.object({
@@ -127,7 +129,7 @@ router.post("/", requireAuth, async (req, res, next) => {
 
         const db = getDB();
         const listings = db.collection("listings");
-        const { title, location, price, description, image, images, category, latitude, longitude } = parsed.data;
+        const { title, location, price, description, image, images, category, latitude, longitude, walkthroughVideo, amenities, wifiSpeed } = parsed.data;
 
         const result = await listings.insertOne({
             title, location,
@@ -141,6 +143,8 @@ router.post("/", requireAuth, async (req, res, next) => {
             latitude: latitude ? Number(latitude) : null,
             longitude: longitude ? Number(longitude) : null,
             walkthroughVideo: walkthroughVideo || null,
+            amenities: amenities || [],
+            wifiSpeed: Number(wifiSpeed) || 0,
             createdAt: new Date()
         });
 
@@ -169,7 +173,7 @@ router.put("/:id", requireAuth, async (req, res, next) => {
         }
 
         const updates = {};
-        const fields = ["title", "location", "description", "category", "latitude", "longitude", "walkthroughVideo", "image"];
+        const fields = ["title", "location", "description", "category", "latitude", "longitude", "walkthroughVideo", "image", "amenities", "wifiSpeed"];
         fields.forEach(f => {
             if (req.body[f] !== undefined) {
                 if (["latitude", "longitude"].includes(f) && req.body[f] !== null) {

@@ -4,11 +4,12 @@ import { useAuth } from "../../AuthContext.jsx";
 import { useToast } from "../../ToastContext.jsx";
 import { motion } from "framer-motion";
 import {
-    UploadCloud, Building, MapPin, X,
+    UploadCloud, Building, MapPin, X, Wifi,
     Plus, Info, ArrowRight, CheckCircle, Navigation, Crosshair, Loader2, Check
 } from "lucide-react";
 
 import { api } from "../../utils/api.js";
+import { AMENITY_CATEGORIES } from "../../utils/amenities.js";
 
 const CATEGORIES = [
     { value: "hotel", label: "🏨 Stays (Hotels, Villas, Houses)" },
@@ -33,6 +34,8 @@ export default function PartnerCreateProperty() {
     const [loading, setLoading] = useState(false);
     const [locationLoading, setLocationLoading] = useState(false);
     const [locationLocked, setLocationLocked] = useState(false);
+    const [selectedAmenities, setSelectedAmenities] = useState([]);
+    const [wifiSpeed, setWifiSpeed] = useState("");
 
     const fetchGPSLocation = useCallback(async () => {
         if (!navigator.geolocation) {
@@ -120,7 +123,9 @@ export default function PartnerCreateProperty() {
                 ownerEmail: user?.email, 
                 latitude: latitude ? Number(latitude) : null, 
                 longitude: longitude ? Number(longitude) : null,
-                walkthroughVideo
+                walkthroughVideo,
+                amenities: selectedAmenities,
+                wifiSpeed: Number(wifiSpeed) || 0
             });
 
             if (data.ok) {
@@ -280,6 +285,66 @@ export default function PartnerCreateProperty() {
                                         />
                                     </div>
                                     <p className="text-[10px] text-slate-400 font-medium ml-1">Optional: Paste an 'embed' link for a high-fidelity virtual tour.</p>
+                                </div>
+
+                                <div className="space-y-6 pt-6 border-t border-slate-100">
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <h3 className="text-sm font-bold text-slate-900">Available Utilities</h3>
+                                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Professional Inventory Management</p>
+                                        </div>
+                                        <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md uppercase tracking-widest">{selectedAmenities.length} selected</span>
+                                    </div>
+
+                                    {/* Wifi Speed Input */}
+                                    <div className="space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block ml-1">Verified Wi-Fi Speed (Mbps)</label>
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center border border-slate-200">
+                                                <Wifi size={16} className="text-emerald-500" />
+                                            </div>
+                                            <input 
+                                                type="number" 
+                                                placeholder="e.g. 100" 
+                                                value={wifiSpeed} 
+                                                onChange={e => setWifiSpeed(e.target.value)}
+                                                className="h-10 flex-1 bg-white border border-slate-200 rounded-lg px-4 text-sm font-bold text-slate-900 outline-none focus:border-emerald-500 transition-all"
+                                            />
+                                            <span className="text-[10px] font-black text-slate-400">MBPS</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-8">
+                                        {AMENITY_CATEGORIES.map(cat => (
+                                            <div key={cat.id} className="space-y-3">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="h-px w-4 bg-slate-200" />
+                                                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{cat.label}</h4>
+                                                </div>
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                                    {cat.amenities.map(a => (
+                                                        <button
+                                                            key={a.id}
+                                                            type="button"
+                                                            onClick={() => {
+                                                                if (selectedAmenities.includes(a.label)) {
+                                                                    setSelectedAmenities(selectedAmenities.filter(x => x !== a.label));
+                                                                } else {
+                                                                    setSelectedAmenities([...selectedAmenities, a.label]);
+                                                                }
+                                                            }}
+                                                            className={`h-11 px-4 rounded-xl text-[10px] font-bold uppercase tracking-widest border transition-all flex items-center gap-3 ${selectedAmenities.includes(a.label) 
+                                                                ? 'bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-500/20' 
+                                                                : 'bg-white border-slate-100 text-slate-500 hover:border-emerald-200 hover:text-emerald-600 shadow-sm'}`}
+                                                        >
+                                                            <a.icon size={14} className={selectedAmenities.includes(a.label) ? "text-white" : "text-slate-400"} />
+                                                            <span className="truncate">{a.label}</span>
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         </div>
