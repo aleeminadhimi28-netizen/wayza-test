@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wayza – Listing Details Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f8faf9;
+      --white: #ffffff;
+      --green: #00c060;
+      --green-light: #00e87a;
+      --green-dim: rgba(0,192,96,0.08);
+      --green-border: rgba(0,192,96,0.2);
+      --dark: #0a0a0a;
+      --dark2: #1a1a1a;
+      --muted: #8a9490;
+      --muted2: #b5bdb9;
+      --border: #e8edeb;
+      --radius: 16px;
+      --shadow: 0 4px 24px rgba(0,0,0,0.06);
+      --shadow-green: 0 8px 32px rgba(0,192,96,0.15);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--dark);
+      min-height: 100vh;
+    }
+
+    /* Preview Banner */
+    .preview-banner {
+      background: var(--green-dim);
+      border-bottom: 1px solid var(--green-border);
+      color: var(--green);
+      text-align: center;
+      padding: 10px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .preview-banner span { color: var(--muted); font-weight: 400; text-transform: none; letter-spacing: 0; margin-left: 8px; }
+
+    /* ─── NAVBAR ─────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 68px;
+    }
+    .nav-logo {
+      font-family: 'Outfit', sans-serif;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      color: var(--dark);
+    }
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+    .nav-links a.ai { color: var(--green); }
+    .nav-links a:hover { color: var(--dark); }
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+    .nav-avatar {
+      width: 38px; height: 38px;
+      background: var(--dark);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 800; font-size: 14px; cursor: pointer;
+    }
+    .nav-icon-btn {
+      width: 36px; height: 36px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; background: var(--white); font-size: 14px;
+      color: var(--muted); transition: all 0.2s;
+    }
+    .nav-icon-btn:hover { border-color: var(--green); color: var(--green); }
+
+    /* ─── PAGE WRAPPER ───────────────────────────── */
+    .page-wrapper {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 48px 80px;
+    }
+
+    /* ─── HEADER ─────────────────────────────────── */
+    .listing-header { padding: 40px 0 24px; }
+    .badge-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .type-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--green-dim);
+      color: var(--green);
+      border: 1px solid var(--green-border);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 999px;
+    }
+    .action-btns { display: flex; gap: 10px; }
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--border);
+      background: var(--white);
+      color: var(--muted);
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .action-btn:hover { border-color: var(--green); color: var(--green); }
+
+    .listing-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 72px;
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: -3px;
+      color: var(--dark);
+      margin-bottom: 24px;
+      text-transform: uppercase;
+    }
+
+    .meta-row { display: flex; align-items: center; gap: 24px; }
+    .meta-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+    }
+    .meta-chip .rating-num {
+      font-family: 'Outfit', sans-serif;
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--green);
+    }
+    .meta-chip .rating-label { font-size: 13px; color: var(--dark2); font-weight: 600; }
+    .meta-chip .location-tag {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--green);
+      background: var(--green-dim);
+      border: 1px solid var(--green-border);
+      padding: 3px 10px;
+      border-radius: 4px;
+    }
+    .meta-divider { width: 1px; height: 20px; background: var(--border); }
+
+    /* ─── GALLERY ────────────────────────────────── */
+    .gallery {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 8px;
+      height: 540px;
+      border-radius: 24px;
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 52px;
+    }
+    .gallery-main { grid-row: 1 / 3; position: relative; overflow: hidden; }
+    .gallery-main img, .gallery-thumb img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .gallery-main:hover img, .gallery-thumb:hover img { transform: scale(1.05); }
+    .gallery-thumb { overflow: hidden; position: relative; }
+    .gallery-overlay {
+      position: absolute;
+      bottom: 18px; right: 18px;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--green-border);
+      color: var(--green);
+      padding: 10px 20px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: var(--shadow);
+    }
+    .gallery-overlay:hover { background: var(--green); color: white; border-color: var(--green); }
+
+    /* ─── CONTENT GRID ───────────────────────────── */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 390px;
+      gap: 64px;
+      align-items: start;
+    }
+
+    /* ─── LEFT COLUMN ────────────────────────────── */
+    .section { margin-bottom: 52px; }
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 14px;
+    }
+    .section-label::before {
+      content: '';
+      width: 32px;
+      height: 2px;
+      background: var(--green);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 14px;
+      letter-spacing: -0.5px;
+      color: var(--dark);
+    }
+    .section-text {
+      font-size: 15px;
+      line-height: 1.85;
+      color: var(--muted);
+    }
+
+    .divider { height: 1px; background: var(--border); margin-bottom: 52px; }
+
+    /* Host row */
+    .host-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 52px;
+    }
+    .host-avatar {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--green), #00a855);
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 800; font-size: 20px; flex-shrink: 0;
+    }
+    .host-info h4 { font-size: 15px; font-weight: 700; color: var(--dark); margin-bottom: 3px; }
+    .host-info p { font-size: 13px; color: var(--muted); }
+    .superhost-badge {
+      margin-left: auto;
+      display: flex; align-items: center; gap: 6px;
+      font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+      color: var(--green);
+      border: 1px solid var(--green-border);
+      background: var(--green-dim);
+      padding: 6px 14px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    /* Amenities */
+    .amenities-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .amenity-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: all 0.25s;
+      cursor: default;
+    }
+    .amenity-card:hover {
+      border-color: var(--green);
+      background: var(--green-dim);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-green);
+    }
+    .amenity-icon { font-size: 22px; }
+    .amenity-name { font-size: 13px; font-weight: 600; color: var(--dark); }
+    .amenity-sub { font-size: 11px; color: var(--muted); }
+    .amenity-card:hover .amenity-name { color: var(--green); }
+
+    /* Map */
+    .map-placeholder {
+      width: 100%;
+      height: 260px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* Reviews */
+    .rating-summary {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      margin-bottom: 24px;
+      padding: 28px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+    .big-rating {
+      font-family: 'Outfit', sans-serif;
+      font-size: 80px;
+      font-weight: 900;
+      line-height: 1;
+      color: var(--green);
+    }
+    .big-rating-label { font-size: 11px; color: var(--muted); margin-top: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    .rating-bars { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .bar-row { display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--muted); }
+    .bar-label { width: 80px; flex-shrink: 0; font-weight: 500; }
+    .bar-track { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .bar-fill { height: 100%; background: var(--green); border-radius: 2px; }
+    .bar-val { width: 24px; text-align: right; font-weight: 600; color: var(--dark); }
+
+    .review-cards { display: flex; flex-direction: column; gap: 14px; }
+    .review-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .review-card:hover { border-color: var(--green-border); box-shadow: var(--shadow-green); }
+    .review-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .review-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 14px; color: white; flex-shrink: 0;
+    }
+    .review-meta h5 { font-size: 14px; font-weight: 700; color: var(--dark); }
+    .review-meta p { font-size: 12px; color: var(--muted); }
+    .review-stars { margin-left: auto; color: var(--green); font-size: 13px; letter-spacing: 2px; }
+    .review-text { font-size: 14px; line-height: 1.75; color: var(--muted); }
+
+    /* ─── BOOKING CARD ───────────────────────────── */
+    .booking-card {
+      position: sticky;
+      top: 88px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.04);
+    }
+
+    .price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    .price-main {
+      font-family: 'Outfit', sans-serif;
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--dark);
+      letter-spacing: -1px;
+    }
+    .price-per { font-size: 14px; color: var(--muted); }
+    .rating-mini {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .rating-mini .star { color: #f59e0b; }
+
+    .date-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .date-field {
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .date-field:first-child { border-right: 1px solid var(--border); }
+    .date-field:hover { background: var(--bg); }
+    .date-field label {
+      display: block;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .date-field span { font-size: 14px; font-weight: 600; color: var(--dark); }
+
+    .guest-field {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .guest-field:hover { background: var(--bg); }
+    .guest-field label {
+      display: block;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .guest-field span { font-size: 14px; font-weight: 600; color: var(--dark); }
+
+    .reserve-btn {
+      width: 100%;
+      padding: 18px;
+      background: var(--dark);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .reserve-btn:hover {
+      background: #1a1a1a;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    }
+
+    .price-breakdown {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      color: var(--dark2);
+    }
+    .breakdown-row.total {
+      font-weight: 700;
+      font-size: 16px;
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+      margin-top: 4px;
+      color: var(--dark);
+    }
+
+    .no-charge-note {
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted2);
+      margin-top: 14px;
+    }
+
+    .card-badges {
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .card-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .badge-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .badge-icon.secure { background: #f5f5f5; }
+    .badge-icon.verified { background: #dcfce7; }
+    .badge-icon.pay { background: #fef9c3; }
+
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
+  </style>
+</head>
+<body>
+
+  <div class="preview-banner">
+    ◆ Design Preview
+    <span>White + Green theme · Static mockup</span>
+  </div>
+
+  <nav>
+    <div class="nav-logo">WAYZA.</div>
+    <ul class="nav-links">
+      <li><a href="#">Stays</a></li>
+      <li><a href="#">Experiences</a></li>
+      <li><a href="#">Bikes</a></li>
+      <li><a href="#">Cars</a></li>
+      <li><a href="#" class="ai">⚡ AI Trip</a></li>
+    </ul>
+    <div class="nav-right">
+      <div class="nav-icon-btn">🌐</div>
+      <div class="nav-icon-btn">🔔</div>
+      <div class="nav-avatar">W</div>
+    </div>
+  </nav>
+
+  <div class="page-wrapper">
+
+    <!-- HEADER -->
+    <div class="listing-header">
+      <div class="badge-row">
+        <div class="type-badge">◈ Hotel</div>
+        <div class="action-btns">
+          <button class="action-btn">♡ &nbsp;Wishlist</button>
+          <button class="action-btn">↗ Share</button>
+        </div>
+      </div>
+      <h1 class="listing-title">Neural<br/>Sanctuary E2E</h1>
+      <div class="meta-row">
+        <div class="meta-chip">
+          <span class="rating-num">4.9</span>
+          <span class="rating-label">Exceptional</span>
+          <span>· 84 reviews</span>
+        </div>
+        <div class="meta-divider"></div>
+        <div class="meta-chip">
+          📍 Munnar, Kerala &nbsp;
+          <span class="location-tag">Prime Location</span>
+        </div>
+        <div class="meta-divider"></div>
+        <div class="meta-chip">🏠 6 guests · 3 beds · 2 baths</div>
+      </div>
+    </div>
+
+    <!-- GALLERY -->
+    <div class="gallery">
+      <div class="gallery-main">
+        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&q=80" alt="Main"/>
+      </div>
+      <div class="gallery-thumb">
+        <img src="https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=600&q=80" alt="2"/>
+      </div>
+      <div class="gallery-thumb">
+        <img src="https://images.unsplash.com/photo-1615460549969-36fa19521a4f?w=600&q=80" alt="3"/>
+      </div>
+      <button class="gallery-overlay">◈ Show all photos (18)</button>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content-grid">
+
+      <div>
+        <!-- Host -->
+        <div class="host-row">
+          <div class="host-avatar">R</div>
+          <div class="host-info">
+            <h4>Hosted by Rajan Nair</h4>
+            <p>Superhost · 4 years hosting · 312 stays</p>
+          </div>
+          <div class="superhost-badge">◆ Superhost</div>
+        </div>
+
+        <!-- Description -->
+        <div class="section">
+          <p class="section-label">Project Narrative</p>
+          <h2 class="section-title">A hilltop sanctuary above the clouds.</h2>
+          <p class="section-text">
+            Perched at 1,600m in the lush hills of Munnar, Neural Sanctuary E2E is a premium boutique retreat designed for those who seek stillness without sacrificing luxury. Wake up to cascading mist rolling through the tea gardens, sip hand-picked estate tea on your private deck, and surrender to the silence of Kerala's most enchanting highlands.
+          </p>
+          <br/>
+          <p class="section-text">
+            The property features sustainably sourced teakwood interiors, a heated infinity pool, and a curated in-room experience crafted by our on-site concierge team.
+          </p>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Amenities -->
+        <div class="section">
+          <p class="section-label">Available Utilities</p>
+          <h2 class="section-title">What this place offers</h2>
+          <div class="amenities-grid">
+            <div class="amenity-card">
+              <div class="amenity-icon">📶</div>
+              <div><div class="amenity-name">High-Speed WiFi</div><div class="amenity-sub">200 Mbps verified</div></div>
+            </div>
+            <div class="amenity-card">
+              <div class="amenity-icon">❄️</div>
+              <div><div class="amenity-name">Air Conditioning</div><div class="amenity-sub">All rooms</div></div>
+            </div>
+            <div class="amenity-card">
+              <div class="amenity-icon">🏊</div>
+              <div><div class="amenity-name">Infinity Pool</div><div class="amenity-sub">Heated, hilltop</div></div>
+            </div>
+            <div class="amenity-card">
+              <div class="amenity-icon">🍳</div>
+              <div><div class="amenity-name">Full Kitchen</div><div class="amenity-sub">With appliances</div></div>
+            </div>
+            <div class="amenity-card">
+              <div class="amenity-icon">🚗</div>
+              <div><div class="amenity-name">Free Parking</div><div class="amenity-sub">Covered garage</div></div>
+            </div>
+            <div class="amenity-card">
+              <div class="amenity-icon">💪</div>
+              <div><div class="amenity-name">Gym Access</div><div class="amenity-sub">24/7 open</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Location -->
+        <div class="section">
+          <p class="section-label">Local Soul</p>
+          <h2 class="section-title">Munnar, Kerala</h2>
+          <div class="map-placeholder">
+            <span style="font-size:36px">🗺️</span>
+            <span>Interactive map – Munnar, Kerala</span>
+            <span style="font-size:12px">Exact address shared after booking</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Reviews -->
+        <div class="section">
+          <p class="section-label">Guest Audit</p>
+          <div class="rating-summary">
+            <div>
+              <div class="big-rating">4.9</div>
+              <div class="big-rating-label">Protocol Score</div>
+            </div>
+            <div class="rating-bars">
+              <div class="bar-row"><span class="bar-label">Cleanliness</span><div class="bar-track"><div class="bar-fill" style="width:98%"></div></div><span class="bar-val">4.9</span></div>
+              <div class="bar-row"><span class="bar-label">Accuracy</span><div class="bar-track"><div class="bar-fill" style="width:95%"></div></div><span class="bar-val">4.8</span></div>
+              <div class="bar-row"><span class="bar-label">Location</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">5.0</span></div>
+              <div class="bar-row"><span class="bar-label">Value</span><div class="bar-track"><div class="bar-fill" style="width:92%"></div></div><span class="bar-val">4.7</span></div>
+            </div>
+          </div>
+          <div class="review-cards">
+            <div class="review-card">
+              <div class="review-header">
+                <div class="review-avatar" style="background:linear-gradient(135deg,#f093fb,#f5576c)">A</div>
+                <div class="review-meta"><h5>Aditya M.</h5><p>March 2026 · Chennai</p></div>
+                <div class="review-stars">★★★★★</div>
+              </div>
+              <p class="review-text">Absolutely magical experience. The mist rolling in at 6AM over your infinity pool is something you never forget. The staff was unbelievably warm and attentive. Worth every rupee.</p>
+            </div>
+            <div class="review-card">
+              <div class="review-header">
+                <div class="review-avatar" style="background:linear-gradient(135deg,#4facfe,#00f2fe)">S</div>
+                <div class="review-meta"><h5>Shreya K.</h5><p>February 2026 · Bangalore</p></div>
+                <div class="review-stars">★★★★★</div>
+              </div>
+              <p class="review-text">Best property I've stayed in India. Premium interiors, cloud-touching views, and the WiFi was actually fast — rare for hill stations! Digital nomad approved ✅</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOOKING CARD – clean white Airbnb style -->
+      <div>
+        <div class="booking-card">
+          <div class="price-row">
+            <span class="price-main">₹8,500</span>
+            <span class="price-per">/ night</span>
+          </div>
+          <div class="rating-mini">
+            <span class="star">⭐</span>
+            <span>4.9 · 84 reviews · Exceptional</span>
+          </div>
+
+          <div class="date-fields">
+            <div class="date-field">
+              <label>Check-in</label>
+              <span>Apr 28, 2026</span>
+            </div>
+            <div class="date-field">
+              <label>Check-out</label>
+              <span>May 3, 2026</span>
+            </div>
+          </div>
+          <div class="guest-field">
+            <label>Guests</label>
+            <span>2 guests</span>
+          </div>
+
+          <button class="reserve-btn">Reserve Now</button>
+
+          <div class="price-breakdown">
+            <div class="breakdown-row"><span>₹8,500 × 5 nights</span><span>₹42,500</span></div>
+            <div class="breakdown-row"><span>Cleaning fee</span><span>₹1,200</span></div>
+            <div class="breakdown-row"><span>Wayza service fee</span><span>₹2,100</span></div>
+            <div class="breakdown-row total"><span>Total</span><span>₹45,800</span></div>
+          </div>
+
+          <p class="no-charge-note">You won't be charged yet</p>
+
+          <div class="card-badges">
+            <div class="card-badge">
+              <div class="badge-icon secure">🔒</div>
+              <span>Secure</span>
+            </div>
+            <div class="card-badge">
+              <div class="badge-icon verified">✅</div>
+              <span>Verified</span>
+            </div>
+            <div class="card-badge">
+              <div class="badge-icon pay">💳</div>
+              <span>Razorpay</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

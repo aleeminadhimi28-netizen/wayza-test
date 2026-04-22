@@ -270,17 +270,55 @@ export default function ListingDetails() {
             </div>
           </div>
 
-          {/* ─── GALLERY ─── */}
-          <div className="relative mb-20 rounded-[40px] overflow-hidden bg-slate-50 h-[400px] md:h-[650px] group cursor-pointer border border-slate-100" onClick={() => setGalleryOpen(true)}>
-            <img src={images[0]} alt="Hero" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[2s]" />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+          {/* ─── GALLERY GRID ─── */}
+          <div className="grid grid-cols-[3fr_2fr] grid-rows-2 gap-2 h-[480px] md:h-[560px] rounded-3xl overflow-hidden relative mb-20">
 
-            <div className="absolute bottom-10 right-10 flex items-center gap-4">
-              <div className="bg-white/80 backdrop-blur-xl border border-white/20 px-6 py-4 rounded-3xl flex items-center gap-4 shadow-2xl">
-                <Grid3x3 size={20} className="text-slate-900" />
-                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-900">Catalog ({images.length} frames)</span>
-              </div>
+            {/* Main large image – spans both rows */}
+            <div
+              className="row-span-2 relative overflow-hidden group cursor-pointer"
+              onClick={() => { setGalleryIndex(0); setGalleryOpen(true); }}
+            >
+              <img
+                src={images[0]}
+                alt="Main"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             </div>
+
+            {/* Top thumbnail */}
+            <div
+              className="relative overflow-hidden group cursor-pointer"
+              onClick={() => { setGalleryIndex(1); setGalleryOpen(true); }}
+            >
+              <img
+                src={images[1]}
+                alt="Photo 2"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            </div>
+
+            {/* Bottom thumbnail + Show all button */}
+            <div
+              className="relative overflow-hidden group cursor-pointer"
+              onClick={() => { setGalleryIndex(2); setGalleryOpen(true); }}
+            >
+              <img
+                src={images[2]}
+                alt="Photo 3"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <button
+                onClick={e => { e.stopPropagation(); setGalleryIndex(0); setGalleryOpen(true); }}
+                className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm border border-slate-200 text-slate-900 px-4 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-slate-950 hover:text-white transition-all shadow-md"
+              >
+                <Grid3x3 size={12} />
+                Show all photos ({images.length})
+              </button>
+            </div>
+
           </div>
 
           {/* ─── MAIN CONTENT ─── */}
@@ -417,77 +455,111 @@ export default function ListingDetails() {
 
             {/* RIGHT: RESERVATION CONSOLE */}
             <div className="lg:col-span-5 relative">
-              <div className="sticky top-32 space-y-8">
-                <div className="bg-slate-950 rounded-[48px] p-12 text-white shadow-3xl shadow-slate-900/40 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[100px] rounded-full pointer-events-none" />
+              <div className="sticky top-32 space-y-6">
 
-                  <div className="relative z-10 space-y-10">
-                    <div className="flex justify-between items-end">
-                      <div>
-                        <p className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-400 mb-2">Access Rate</p>
-                        <div className="flex items-baseline gap-2">
-                          <span className="text-6xl font-black tracking-tighter">₹{basePrice.toLocaleString()}</span>
-                          <span className="text-white/40 text-[10px] font-black uppercase tracking-widest">/ Slot</span>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-2xl font-black text-emerald-500">{avgRating}</p>
-                        <p className="text-[9px] font-black uppercase tracking-widest text-white/30">Protocol Score</p>
-                      </div>
+                {/* ── White Airbnb-style Booking Card ── */}
+                <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-xl shadow-slate-900/8">
+
+                  {/* Price */}
+                  <div className="flex items-baseline gap-2 mb-1">
+                    <span className="text-4xl font-black text-slate-900 tracking-tight">₹{basePrice.toLocaleString()}</span>
+                    <span className="text-sm text-slate-400 font-medium">/ night</span>
+                  </div>
+
+                  {/* Rating */}
+                  <div className="flex items-center gap-1.5 text-sm text-slate-500 mb-6">
+                    <Star size={13} className="fill-amber-400 text-amber-400" />
+                    <span>{avgRating} · {reviews.length} reviews · Exceptional</span>
+                  </div>
+
+                  {/* Dates */}
+                  <div className="grid grid-cols-2 border border-slate-200 rounded-xl overflow-hidden mb-3">
+                    <div className="p-3 border-r border-slate-200 hover:bg-slate-50 transition-colors cursor-pointer">
+                      <label className="block text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Check-in</label>
+                      <input
+                        type="date" value={checkIn} min={today}
+                        onChange={e => setCheckIn(e.target.value)}
+                        className="w-full text-sm font-semibold text-slate-900 bg-transparent outline-none cursor-pointer"
+                      />
                     </div>
-
-                    <div className="space-y-4">
-                      <div className="bg-white/5 backdrop-blur-md rounded-3xl p-6 border border-white/10 space-y-6">
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Check-in</label>
-                            <input
-                              type="date" value={checkIn} onChange={e => setCheckIn(e.target.value)}
-                              className="w-full bg-transparent border-b border-white/10 py-2 font-bold text-sm outline-none focus:border-emerald-500 transition-colors"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Check-out</label>
-                            <input
-                              type="date" value={checkOut} onChange={e => setCheckOut(e.target.value)}
-                              className="w-full bg-transparent border-b border-white/10 py-2 font-bold text-sm outline-none focus:border-emerald-500 transition-colors"
-                            />
-                          </div>
-                        </div>
-                      </div>
+                    <div className="p-3 hover:bg-slate-50 transition-colors cursor-pointer">
+                      <label className="block text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Check-out</label>
+                      <input
+                        type="date" value={checkOut} min={checkIn || today}
+                        onChange={e => setCheckOut(e.target.value)}
+                        className="w-full text-sm font-semibold text-slate-900 bg-transparent outline-none cursor-pointer"
+                      />
                     </div>
+                  </div>
 
-                    <div className="space-y-4 pt-4 border-t border-white/5">
-                      {nights > 0 && (
-                        <div className="space-y-3">
-                          <div className="flex justify-between text-xs font-bold uppercase tracking-widest text-white/60">
-                            <span>Residency x {nights}</span>
-                            <span>₹{(basePrice * nights).toLocaleString()}</span>
-                          </div>
-                          <div className="flex justify-between text-xs font-black uppercase tracking-widest text-emerald-400 pt-3 border-t border-white/10">
-                            <span>Final Commitment</span>
-                            <span className="text-2xl tracking-tighter">₹{total.toLocaleString()}</span>
-                          </div>
+                  {/* Guests */}
+                  <div className="border border-slate-200 rounded-xl p-3 mb-5 hover:bg-slate-50 transition-colors cursor-pointer">
+                    <label className="block text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Guests</label>
+                    <span className="text-sm font-semibold text-slate-900">1 guest</span>
+                  </div>
+
+                  {/* Reserve Button */}
+                  <button
+                    onClick={handleReserve}
+                    className="w-full py-4 bg-slate-950 hover:bg-slate-800 text-white font-black uppercase text-xs tracking-[0.3em] rounded-xl transition-all active:scale-[0.98] shadow-sm"
+                  >
+                    Reserve Now
+                  </button>
+
+                  {/* Price Breakdown */}
+                  <div className="mt-5 space-y-3">
+                    {nights > 0 ? (
+                      <>
+                        <div className="flex justify-between text-sm text-slate-600">
+                          <span>₹{basePrice.toLocaleString()} × {nights} night{nights > 1 ? "s" : ""}</span>
+                          <span>₹{(basePrice * nights).toLocaleString()}</span>
                         </div>
-                      )}
+                        {!isVehicle && gst > 0 && (
+                          <div className="flex justify-between text-sm text-slate-600">
+                            <span>GST ({Math.round(gstRate * 100)}%)</span>
+                            <span>₹{gst.toLocaleString()}</span>
+                          </div>
+                        )}
+                        <div className="flex justify-between text-sm text-slate-600">
+                          <span>Wayza service fee</span>
+                          <span>₹{serviceFee.toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between font-black text-slate-900 pt-3 border-t border-slate-100 text-base">
+                          <span>Total</span>
+                          <span>₹{total.toLocaleString()}</span>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-center text-xs text-slate-400 py-2">Select dates to see pricing</p>
+                    )}
+                  </div>
 
-                      <button
-                        onClick={handleReserve}
-                        className="w-full h-20 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black uppercase text-xs tracking-[0.5em] rounded-[28px] transition-all shadow-xl shadow-emerald-500/20 active:scale-[0.98] flex items-center justify-center gap-4"
-                      >
-                        <span>Initialize Reservation</span>
-                        <ArrowRight size={18} />
-                      </button>
-                    </div>
+                  <p className="text-center text-xs text-slate-400 mt-3">You won't be charged yet</p>
 
-                    <div className="flex flex-col items-center gap-4 pt-4">
-                      <div className="flex items-center gap-3 text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">
-                        <ShieldCheck size={14} className="text-emerald-500" /> Secure Encryption Protocol
+                  {/* Trust Badges */}
+                  <div className="flex justify-center gap-8 mt-5 pt-5 border-t border-slate-100">
+                    <div className="flex flex-col items-center gap-1.5">
+                      <div className="w-9 h-9 bg-slate-100 rounded-lg flex items-center justify-center">
+                        <Shield size={16} className="text-slate-500" />
                       </div>
+                      <span className="text-[10px] text-slate-400 font-medium">Secure</span>
+                    </div>
+                    <div className="flex flex-col items-center gap-1.5">
+                      <div className="w-9 h-9 bg-emerald-50 rounded-lg flex items-center justify-center">
+                        <CheckCircle size={16} className="text-emerald-500" />
+                      </div>
+                      <span className="text-[10px] text-slate-400 font-medium">Verified</span>
+                    </div>
+                    <div className="flex flex-col items-center gap-1.5">
+                      <div className="w-9 h-9 bg-amber-50 rounded-lg flex items-center justify-center">
+                        <CreditCard size={16} className="text-amber-500" />
+                      </div>
+                      <span className="text-[10px] text-slate-400 font-medium">Razorpay</span>
                     </div>
                   </div>
                 </div>
 
+                {/* Direct Inquiries */}
                 <div className="bg-slate-50 border border-slate-100 rounded-[32px] p-8 flex items-center gap-6 group hover:bg-white hover:shadow-xl transition-all duration-500">
                   <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
                     <MessageSquare size={20} className="text-emerald-600" />
@@ -498,6 +570,7 @@ export default function ListingDetails() {
                   </div>
                   <ChevronRight size={16} className="ml-auto text-slate-300" />
                 </div>
+
               </div>
             </div>
 

@@ -105,184 +105,117 @@ export default function Payment() {
 
     return (
         <WayzaLayout noPadding>
-            <div className="bg-white min-h-screen font-sans selection:bg-emerald-100 selection:text-emerald-900">
+            <div className="bg-white min-h-screen font-sans">
+                <div className="max-w-6xl mx-auto px-6 md:px-12 py-10 md:py-16">
 
-                {/* ─── PREMIUM MESH BACKGROUND ─── */}
-                <div className="fixed inset-0 z-0 pointer-events-none opacity-40">
-                    <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-emerald-100/30 blur-[120px] rounded-full" />
-                    <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-slate-100/50 blur-[120px] rounded-full" />
-                </div>
-
-                <div className="max-w-[1400px] mx-auto px-6 md:px-12 py-10 md:py-16 relative z-10">
-
-                    {/* ─── BREADCRUMB / BACK ─── */}
-                    <div className="flex items-center justify-between mb-16">
-                        <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-slate-300 overflow-x-auto no-scrollbar whitespace-nowrap">
-                            <button onClick={() => navigate("/")} className="hover:text-emerald-600 transition-colors">Protocol</button>
+                    {/* ─── HEADER ─── */}
+                    <div className="flex items-center justify-between mb-10">
+                        <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-slate-300">
+                            <button onClick={() => navigate("/")} className="hover:text-emerald-600 transition-colors">Wayza</button>
                             <ChevronRight size={10} />
                             <span className="text-slate-900">Secure Checkout</span>
                         </div>
-                        <button onClick={() => navigate(-1)} className="w-12 h-12 bg-white border border-slate-100 rounded-2xl flex items-center justify-center text-slate-900 hover:border-emerald-200 transition-all shadow-sm">
-                            <ArrowLeft size={18} />
+                        <button
+                            onClick={() => navigate(-1)}
+                            className="w-10 h-10 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-slate-500 hover:border-emerald-400 hover:text-emerald-600 transition-all"
+                        >
+                            <ArrowLeft size={16} />
                         </button>
                     </div>
 
-                    <header className="mb-20 space-y-6">
-                        <div className="flex items-center gap-4">
-                            <div className="px-3 py-1 bg-slate-950 text-white text-[9px] font-black uppercase tracking-[0.4em] rounded-md flex items-center gap-2">
-                                <ShieldCheck size={12} className="text-emerald-400" />
-                                Wayza Vault Secure
-                            </div>
-                        </div>
-                        <h1 className="text-6xl md:text-8xl font-black text-slate-900 tracking-tighter uppercase leading-[0.8]">
-                            Authorization <br />
-                            <span className="lowercase">& settlement.</span>
-                        </h1>
-                        <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest max-w-sm">
-                            "Execute your commitment via our encrypted liquidity bridge."
-                        </p>
-                    </header>
+                    <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight mb-2">
+                        Complete your payment
+                    </h1>
+                    <p className="text-slate-400 text-sm mb-10">Your booking is held for 10 minutes. Complete payment to confirm.</p>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 items-start">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
 
-                        {/* LEFT: PAYMENT INSTRUMENTS */}
-                        <div className="lg:col-span-7 space-y-20">
-
-                            {/* Rapid Access */}
-                            <section className="space-y-10">
-                                <div className="flex items-center gap-4">
-                                    <span className="h-px w-12 bg-emerald-500" />
-                                    <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-600">Rapid Access</span>
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <button onClick={() => handlePayment('apple')} disabled={submitting} className="h-24 bg-slate-950 text-white rounded-[40px] flex items-center justify-center gap-4 transition-all hover:bg-black active:scale-[0.98] shadow-2xl shadow-slate-950/20 group">
-                                        <Apple size={28} className="group-hover:scale-110 transition-transform" />
-                                        <div className="text-left">
-                                            <p className="text-[9px] font-black uppercase tracking-widest text-white/40">Pay with</p>
-                                            <p className="text-xl font-black tracking-tighter">Apple Pay</p>
+                        {/* ── LEFT: PAYMENT FORM ── */}
+                        <div className="lg:col-span-7 space-y-8">
+                            {/* Payment Options */}
+                            <section>
+                                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Select Payment Method</p>
+                                <div className="space-y-3">
+                                    <button
+                                        onClick={() => handlePayment('upi')}
+                                        disabled={submitting}
+                                        className="w-full h-16 bg-white border border-slate-200 text-slate-900 rounded-xl px-6 flex items-center justify-between font-bold text-sm hover:border-emerald-400 hover:shadow-md transition-all active:scale-[0.99] disabled:opacity-50 group"
+                                    >
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-8 h-8 bg-purple-50 text-purple-600 rounded-lg flex items-center justify-center font-black text-[10px]">UPI</div>
+                                            <span>Pay via UPI (GPay, PhonePe, Paytm)</span>
                                         </div>
+                                        <ChevronRight size={18} className="text-slate-300 group-hover:text-emerald-500 transition-colors" />
                                     </button>
-                                    <button onClick={() => handlePayment('google')} disabled={submitting} className="h-24 bg-white border border-slate-100 text-slate-900 rounded-[40px] flex items-center justify-center gap-4 transition-all hover:border-emerald-500 active:scale-[0.98] shadow-sm group">
-                                        <div className="w-10 h-10 bg-slate-50 border border-slate-100 rounded-full flex items-center justify-center font-black text-xs group-hover:bg-emerald-50 transition-colors">G</div>
-                                        <div className="text-left">
-                                            <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Secure via</p>
-                                            <p className="text-xl font-black tracking-tighter">Google Pay</p>
-                                        </div>
-                                    </button>
-                                </div>
-                            </section>
-
-                            {/* Card Protocol */}
-                            <section className="space-y-10 bg-slate-50/50 p-12 rounded-[48px] border border-slate-100">
-                                <div className="flex items-center gap-4">
-                                    <span className="h-px w-12 bg-slate-200" />
-                                    <span className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-300">Residency Instrument Protocol</span>
-                                </div>
-
-                                <div className="space-y-10">
-                                    <div className="space-y-4 group">
-                                        <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 group-focus-within:text-emerald-600 transition-colors">Card Index Identifier</label>
-                                        <div className="relative">
-                                            <CreditCard className="absolute left-10 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-emerald-500 transition-colors" size={24} />
-                                            <input
-                                                placeholder="0000 0000 0000 0000"
-                                                className="w-full h-24 bg-white/50 border border-slate-100 rounded-[32px] pl-24 pr-10 font-bold text-2xl tracking-tighter text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-100 shadow-sm"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="grid grid-cols-2 gap-8">
-                                        <div className="space-y-4 group">
-                                            <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 group-focus-within:text-emerald-600 transition-colors">Expiry Cycle</label>
-                                            <input
-                                                placeholder="MM / YY"
-                                                className="w-full h-24 bg-white/50 border border-slate-100 rounded-[32px] px-10 font-bold text-2xl tracking-tighter text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-100 shadow-sm text-center"
-                                            />
-                                        </div>
-                                        <div className="space-y-4 group">
-                                            <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 group-focus-within:text-emerald-600 transition-colors">Auth Key (CVC)</label>
-                                            <input
-                                                type="password" placeholder="•••"
-                                                className="w-full h-24 bg-white/50 border border-slate-100 rounded-[32px] px-10 font-bold text-2xl tracking-[0.5em] text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-100 shadow-sm text-center"
-                                            />
-                                        </div>
-                                    </div>
 
                                     <button
                                         onClick={() => handlePayment('card')}
                                         disabled={submitting}
-                                        className="w-full h-24 bg-slate-950 text-white rounded-[40px] font-black uppercase text-xs tracking-[0.5em] transition-all hover:bg-emerald-500 shadow-3xl shadow-slate-950/20 active:scale-[0.98] flex items-center justify-center gap-6 disabled:opacity-20 mt-4 group"
+                                        className="w-full h-16 bg-white border border-slate-200 text-slate-900 rounded-xl px-6 flex items-center justify-between font-bold text-sm hover:border-emerald-400 hover:shadow-md transition-all active:scale-[0.99] disabled:opacity-50 group"
                                     >
-                                        {submitting ? (
-                                            <div className="w-8 h-8 border-4 border-white/20 border-t-white rounded-full animate-spin" />
-                                        ) : (
-                                            <>
-                                                <span>Authorize Entry: ₹{price.toLocaleString()}</span>
-                                                <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
-                                            </>
-                                        )}
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center">
+                                                <CreditCard size={16} />
+                                            </div>
+                                            <span>Credit / Debit Card</span>
+                                        </div>
+                                        <ChevronRight size={18} className="text-slate-300 group-hover:text-emerald-500 transition-colors" />
                                     </button>
                                 </div>
+                                <p className="flex items-center gap-2 text-[10px] text-slate-400 font-medium mt-6">
+                                    <Shield size={12} className="text-emerald-500" />
+                                    Payments are securely processed by Razorpay Checkout.
+                                </p>
                             </section>
                         </div>
 
-                        {/* RIGHT: SETTLEMENT SUMMARY */}
-                        <div className="lg:col-span-5 relative">
-                            <div className="sticky top-32 space-y-8">
-                                <div className="bg-slate-950 rounded-[48px] p-12 text-white shadow-3xl shadow-slate-900/40 relative overflow-hidden">
-                                    <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[100px] rounded-full pointer-events-none" />
+                        {/* ── RIGHT: ORDER SUMMARY ── */}
+                        <aside className="lg:col-span-5 lg:sticky lg:top-24">
+                            <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-lg">
 
-                                    <div className="relative z-10 space-y-12">
-                                        <div className="space-y-4">
-                                            <p className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-400">Settlement Ledger</p>
-                                            <div className="flex items-center justify-between">
-                                                <h3 className="text-3xl font-black tracking-tighter uppercase leading-none">{title}</h3>
-                                                <span className="text-[9px] font-black uppercase tracking-widest text-white/30 truncate max-w-[100px]">WZ-{bookingId?.slice(-8).toUpperCase()}</span>
-                                            </div>
-                                        </div>
+                                {/* Property Info */}
+                                <div className="p-6 border-b border-slate-100">
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Your Booking</p>
+                                    <h3 className="text-lg font-black text-slate-900 leading-tight">{title}</h3>
+                                    <p className="text-sm text-slate-400 mt-1">
+                                        {nights} night{nights > 1 ? "s" : ""} · Ref: WZ-{bookingId?.slice(-6).toUpperCase()}
+                                    </p>
+                                </div>
 
-                                        <div className="space-y-6 pt-10 border-t border-white/10">
-                                            <div className="flex justify-between items-center text-xs font-black uppercase tracking-widest text-white/40">
-                                                <span>Audit Period</span>
-                                                <span className="text-white bg-white/5 px-4 py-2 rounded-xl">{nights} {nights > 1 ? 'Stages' : 'Stage'}</span>
-                                            </div>
-                                            {couponCode && (
-                                                <div className="flex justify-between items-center text-xs font-black uppercase tracking-widest text-white/40">
-                                                    <span>Promo Sequence</span>
-                                                    <span className="text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-xl">{couponCode}</span>
-                                                </div>
-                                            )}
-                                            <div className="flex justify-between items-center text-xs font-black uppercase tracking-widest text-white/40">
-                                                <span>Security Protocol</span>
-                                                <span className="text-emerald-400">WAYZA VAULT</span>
-                                            </div>
-                                            <div className="flex justify-between items-center pt-8 border-t border-white/10">
-                                                <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-400">Net Commitment</span>
-                                                <span className="text-5xl font-black tracking-tighter text-white">₹{price.toLocaleString()}</span>
-                                            </div>
+                                {/* Price Breakdown */}
+                                <div className="p-6 space-y-3">
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">Price Summary</p>
+                                    <div className="flex justify-between text-sm text-slate-600">
+                                        <span>Accommodation</span>
+                                        <span>₹{(price * 0.85).toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
+                                    </div>
+                                    <div className="flex justify-between text-sm text-slate-600">
+                                        <span>Taxes & fees</span>
+                                        <span>₹{(price * 0.15).toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
+                                    </div>
+                                    {couponCode && (
+                                        <div className="flex justify-between text-sm text-emerald-600 font-semibold">
+                                            <span>Promo: {couponCode}</span>
+                                            <span>Applied ✓</span>
                                         </div>
-
-                                        <div className="p-8 bg-white/5 backdrop-blur-md rounded-[32px] border border-white/10 flex items-start gap-6">
-                                            <ShieldCheck size={24} className="text-emerald-500 shrink-0" />
-                                            <p className="text-[10px] text-white/40 font-black uppercase tracking-widest leading-relaxed">
-                                                Your financial signature is protected by military-grade AES-256 encryption. We do not persist sensitive instrument data.
-                                            </p>
-                                        </div>
+                                    )}
+                                    <div className="flex justify-between font-black text-slate-900 text-base pt-4 border-t border-slate-100">
+                                        <span>Total</span>
+                                        <span>₹{price.toLocaleString()}</span>
                                     </div>
                                 </div>
 
-                                <div className="bg-slate-50 border border-slate-100 rounded-[32px] p-8 flex items-center gap-6 group hover:bg-white hover:shadow-xl transition-all duration-500">
-                                    <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
-                                        <Globe size={20} className="text-emerald-600" />
+                                {/* Trust */}
+                                <div className="px-6 pb-6">
+                                    <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4 flex items-start gap-3">
+                                        <ShieldCheck size={18} className="text-emerald-600 shrink-0 mt-0.5" />
+                                        <p className="text-xs text-emerald-700 font-medium leading-relaxed">
+                                            Free cancellation available. Your payment is protected by Razorpay's secure gateway.
+                                        </p>
                                     </div>
-                                    <div className="space-y-1">
-                                        <p className="text-sm font-black uppercase tracking-widest text-slate-900">Regional Node</p>
-                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Global Dispatch Protocol Active</p>
-                                    </div>
-                                    <ChevronRight size={16} className="ml-auto text-slate-300" />
                                 </div>
                             </div>
-                        </div>
+                        </aside>
 
                     </div>
                 </div>
@@ -290,3 +223,4 @@ export default function Payment() {
         </WayzaLayout>
     );
 }
+
