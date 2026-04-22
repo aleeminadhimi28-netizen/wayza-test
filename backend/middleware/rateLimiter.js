@@ -13,14 +13,13 @@ import { captureEvent } from "../utils/posthog.js";
 // Global Limiter - Applies to all requests
 export const globalLimiter = rateLimit({
   windowMs: (parseInt(process.env.RATE_LIMIT_WINDOW_MINS) || 1) * 60 * 1000, 
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100,
+  limit: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100,
   standardHeaders: true,
   legacyHeaders: false,
   message: {
     ok: false,
     message: "System busy. Please try again in 1 minute.",
   },
-  keyGenerator: (req) => req.ip,
   handler: (req, res, next, options) => {
     captureEvent(req.ip, "Global Rate Limit Hit", { url: req.originalUrl });
     res.status(options.statusCode).send(options.message);
@@ -30,7 +29,7 @@ export const globalLimiter = rateLimit({
 // Sensitive Routes Limiter (Login, Signup, Password Resets)
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10, // Limit each IP to 10 requests per 15 mins for auth
+  limit: 10, // Limit each IP to 10 requests per 15 mins for auth
   standardHeaders: true,
   legacyHeaders: false,
   skipSuccessfulRequests: false,
@@ -69,7 +68,7 @@ export const paymentLimiter = rateLimit({
 // File Upload Limiter
 export const uploadLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 20, // Limit to 20 uploads per hour per IP
+  limit: 20, // Limit to 20 uploads per hour per IP
   standardHeaders: true,
   legacyHeaders: false,
   message: {

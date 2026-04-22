@@ -13,13 +13,7 @@ export const speedLimiter = slowDown({
   windowMs: 15 * 60 * 1000, // 15 minutes
   delayAfter: 50, // allow 50 requests per 15 minutes, then...
   delayMs: (hits) => (hits - 50) * 500, // add 500ms of delay per hit after the 50th
-  maxDelayMs: 20000, // maximum delay of 20 seconds
-  onLimitReached: (req) => {
-    captureEvent(req.ip, "Security Throttling Initiated", {
-        url: req.originalUrl,
-        hits: req.slowDown?.current || "multiple"
-    });
-  }
+  maxDelayMs: 20000 // maximum delay of 20 seconds
 });
 
 /**
