@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useCurrency } from "../../CurrencyContext.jsx";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Wifi } from "lucide-react";
 
 export function HotelItem({ hotel, isSaved, onToggleWishlist }) {
     const { formatPrice } = useCurrency();
@@ -50,7 +50,15 @@ export function HotelItem({ hotel, isSaved, onToggleWishlist }) {
                                 4.9
                             </div>
                         </div>
-                        <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest mb-4">{hotel.location}</p>
+                        <div className="flex justify-between items-center mb-4">
+                            <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest truncate pr-2">{hotel.location}</p>
+                            {hotel.wifiSpeed > 0 && (
+                                <div className="flex items-center gap-1.5 px-2 py-1 bg-emerald-50 rounded-lg border border-emerald-100/50 shadow-sm shrink-0">
+                                    <Wifi size={10} className="text-emerald-500" />
+                                    <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest">{hotel.wifiSpeed} Mbps</span>
+                                </div>
+                            )}
+                        </div>
                         <div className="flex items-baseline gap-2">
                             <div className="flex flex-col">
                                 <span className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Starting from</span>

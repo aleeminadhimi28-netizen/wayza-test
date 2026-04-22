@@ -257,7 +257,8 @@ export default function LandingPage() {
                                                 name: l.title,
                                                 location: l.location || "Varkala Coast",
                                                 price: l.price,
-                                                image: fixImg(l.image)
+                                                image: fixImg(l.image),
+                                                wifiSpeed: l.wifiSpeed || 0
                                             }}
                                         />
                                     </motion.div>
