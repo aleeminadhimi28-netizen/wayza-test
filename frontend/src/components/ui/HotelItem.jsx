@@ -26,6 +26,14 @@ export function HotelItem({ hotel, isSaved, onToggleWishlist }) {
                 <div className="flex flex-col gap-6">
                     <div className="relative aspect-[4/5] overflow-hidden rounded-[32px] shadow-sm bg-slate-100">
                         <img src={hotel.image} alt={hotel.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                        
+                        {/* Agoda-style Carousel Dots */}
+                        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                            <div className="w-1.5 h-1.5 rounded-full bg-white shadow-sm" />
+                            <div className="w-1.5 h-1.5 rounded-full bg-white/40 backdrop-blur-md" />
+                            <div className="w-1.5 h-1.5 rounded-full bg-white/40 backdrop-blur-md" />
+                        </div>
+
                         <div className="absolute top-6 left-6 flex flex-col gap-2">
                             {isRare && (
                                 <span className="bg-white/95 backdrop-blur-md text-slate-950 text-[9px] font-bold px-4 py-2 rounded-full uppercase tracking-widest border border-white shadow-md">Rare Find</span>
