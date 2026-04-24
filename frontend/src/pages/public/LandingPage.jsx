@@ -100,7 +100,7 @@ export default function LandingPage() {
 
     return (
         <WayzzaLayout noPadding hideFooter>
-            <SEO title="Escape the ordinary" />
+            <SEO title="Curated Sanctuaries & Elite Mobility" />
             <div className="bg-white font-sans text-slate-900 selection:bg-emerald-50 selection:text-emerald-900 leading-relaxed antialiased">
 
                 {/* ════ SECTION: PREMIUM HERO ════ */}
