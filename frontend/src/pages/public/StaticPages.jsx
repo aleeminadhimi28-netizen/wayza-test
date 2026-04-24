@@ -134,38 +134,165 @@ export function TermsOfService() {
 
 export function AboutUs() {
     return (
-        <StaticPage title="The Wayzza Story" icon={<Compass size={32} />}>
-            <p className="text-3xl font-bold tracking-tight text-emerald-600 uppercase mb-10">Extraordinary Stays. Simplified.</p>
-            <p className="text-xl text-slate-600 font-medium mb-10 leading-relaxed">
-                Wayzza is a premier platform for luxury travel, designed to connect discerning travelers with unique stays and unforgettable experiences.
-            </p>
-            <p className="mb-10">
-                Founded on the principles of quality and transparency, Wayzza curates peaceful retreats, adventurous stays, and professional hosting services into one seamless platform. Whether you're looking for a coastal sanctuary or a city hideaway, our platform ensures a seamless and premium experience from start to finish.
-            </p>
+        <WayzzaLayout noPadding>
+            <div className="bg-white font-sans text-slate-900 selection:bg-emerald-50 leading-relaxed antialiased overflow-hidden">
+                
+                {/* ════ SECTION: CINEMATIC HERO ════ */}
+                <header className="relative h-[70vh] min-h-[600px] flex items-center justify-center overflow-hidden bg-slate-950">
+                    <div className="absolute inset-0 z-0">
+                        <motion.div
+                            initial={{ scale: 1.1 }}
+                            animate={{ scale: 1 }}
+                            transition={{ duration: 2, ease: "easeOut" }}
+                            className="w-full h-full"
+                        >
+                            <img
+                                src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=2000"
+                                alt="Luxury Sanctuary"
+                                className="w-full h-full object-cover opacity-50 grayscale-[0.3]"
+                            />
+                        </motion.div>
+                        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-950/50 to-slate-950" />
+                    </div>
 
-            <h2 className="text-2xl mt-20 mb-10 uppercase tracking-tight font-bold border-b border-slate-100 pb-6">Our Core Values</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
-                <div className="bg-slate-50 p-10 rounded-[32px] border border-slate-100 hover:border-emerald-500 hover:bg-white transition-all duration-300 group">
-                    <Star size={32} className="text-emerald-500 mb-6 group-hover:scale-110 transition-transform" />
-                    <h4 className="font-bold text-lg uppercase tracking-tight text-slate-900 m-0">Curated Properties</h4>
-                    <p className="text-sm mt-4 mb-0 text-slate-400 font-medium leading-relaxed">Every property on Wayzza undergoes a rigorous quality check to ensure a premium stay for our guests.</p>
-                </div>
-                <div className="bg-slate-50 p-10 rounded-[32px] border border-slate-100 hover:border-emerald-500 hover:bg-white transition-all duration-300 group">
-                    <Lock size={32} className="text-emerald-500 mb-6 group-hover:scale-110 transition-transform" />
-                    <h4 className="font-bold text-lg uppercase tracking-tight text-slate-900 m-0">Safe & Secure</h4>
-                    <p className="text-sm mt-4 mb-0 text-slate-400 font-medium leading-relaxed">We use industry-standard security to protect your data and transactions throughout your journey.</p>
-                </div>
-                <div className="bg-slate-50 p-10 rounded-[32px] border border-slate-100 hover:border-emerald-500 hover:bg-white transition-all duration-300 group">
-                    <Sparkles size={32} className="text-emerald-500 mb-6 group-hover:scale-110 transition-transform" />
-                    <h4 className="font-bold text-lg uppercase tracking-tight text-slate-900 m-0">Transparent Pricing</h4>
-                    <p className="text-sm mt-4 mb-0 text-slate-400 font-medium leading-relaxed">What you see is what you pay. No hidden fees, just honest pricing from our verified hosts.</p>
-                </div>
-                <div className="bg-slate-50 p-10 rounded-[32px] border border-slate-100 hover:border-emerald-500 hover:bg-white transition-all duration-300 group">
-                    <Heart size={32} className="text-emerald-500 mb-6 group-hover:scale-110 transition-transform" />
-                    <h4 className="font-bold text-lg uppercase tracking-tight text-slate-900 m-0">Always Here for You</h4>
-                    <p className="text-sm mt-4 mb-0 text-slate-400 font-medium leading-relaxed">Our support team is available around the clock to assist you with any of your travel needs.</p>
-                </div>
+                    <div className="relative z-10 text-center space-y-8 px-6">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-500/10 backdrop-blur-md border border-emerald-500/20 rounded-full text-emerald-400 text-[10px] font-black uppercase tracking-[0.3em]"
+                        >
+                            <Compass size={12} /> The Wayzza Manifesto
+                        </motion.div>
+                        <motion.h1
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.1 }}
+                            className="text-6xl md:text-8xl font-black tracking-tighter text-white leading-none uppercase"
+                        >
+                            Escape the <br />
+                            <span className="text-emerald-500 italic font-light">Ordinary.</span>
+                        </motion.h1>
+                        <motion.p
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.3 }}
+                            className="text-lg md:text-xl font-medium text-white/60 max-w-2xl mx-auto leading-relaxed"
+                        >
+                            Wayzza is not just a booking engine. It is a curator of sanctuaries, verified for the modern explorer who demands soul, security, and style.
+                        </motion.p>
+                    </div>
+
+                    <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4">
+                        <div className="w-px h-16 bg-gradient-to-b from-emerald-500/0 to-emerald-500" />
+                    </div>
+                </header>
+
+                {/* ════ SECTION: OUR MISSION (SPLIT) ════ */}
+                <section className="py-32 px-6 max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                        <motion.div 
+                            initial={{ opacity: 0, x: -30 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            className="space-y-8"
+                        >
+                            <div className="space-y-4">
+                                <span className="text-emerald-500 font-black uppercase tracking-[0.4em] text-[10px]">The Mission</span>
+                                <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900 leading-tight">Defining the new standard for <span className="italic text-emerald-600">verified inventory.</span></h2>
+                            </div>
+                            <p className="text-slate-500 text-lg leading-relaxed font-medium">
+                                We realized that the biggest problem for digital nomads and luxury travelers wasn't finding a place to stay—it was finding a place they could trust. 
+                            </p>
+                            <p className="text-slate-500 text-lg leading-relaxed font-medium">
+                                Wayzza was founded to bridge that gap. We personally verify every clifftop villa, every Royal Enfield, and every local experience to ensure it meets our rigorous standards of quality and soul.
+                            </p>
+                            <div className="flex gap-10 pt-6">
+                                <div>
+                                    <p className="text-3xl font-black text-slate-900">100%</p>
+                                    <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest mt-1">Verified Stays</p>
+                                </div>
+                                <div>
+                                    <p className="text-3xl font-black text-slate-900">24/7</p>
+                                    <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest mt-1">Nomad Support</p>
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        <motion.div 
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
+                            className="relative aspect-square rounded-[64px] overflow-hidden shadow-3xl"
+                        >
+                            <img 
+                                src="https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?auto=format&fit=crop&q=80&w=1200" 
+                                alt="Varkala View" 
+                                className="w-full h-full object-cover"
+                            />
+                            <div className="absolute inset-0 bg-emerald-600/10 mix-blend-overlay" />
+                        </motion.div>
+                    </div>
+                </section>
+
+                {/* ════ SECTION: CORE VALUES (CARDS) ════ */}
+                <section className="py-32 bg-slate-50 px-6 relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-white to-transparent" />
+                    <div className="max-w-7xl mx-auto">
+                        <div className="text-center mb-20 space-y-4">
+                            <span className="text-emerald-500 font-black uppercase tracking-[0.4em] text-[10px]">The Wayzza Code</span>
+                            <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900">What we stand for.</h2>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                            {[
+                                { icon: Star, title: "Curated Soul", desc: "No generic listings. Only sanctuaries that pass our rigorous vibe and quality check." },
+                                { icon: Shield, title: "Ironclad Security", desc: "Your data and payments are secured with industry-leading encryption protocols." },
+                                { icon: Sparkles, title: "Honest Pricing", desc: "Zero hidden fees. What you see is exactly what you pay. Transparent & fair." },
+                                { icon: Heart, title: "Native Care", desc: "Our team lives where you stay. We provide authentic, round-the-clock local support." }
+                            ].map((v, i) => (
+                                <motion.div
+                                    key={i}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: i * 0.1 }}
+                                    className="p-10 bg-white rounded-[40px] border border-slate-100 hover:border-emerald-500 hover:shadow-2xl-soft transition-all duration-500 group"
+                                >
+                                    <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500">
+                                        <v.icon size={28} className="text-slate-900 group-hover:text-emerald-500 transition-colors" />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-slate-900 mb-4 tracking-tight uppercase">{v.title}</h3>
+                                    <p className="text-slate-400 font-medium text-sm leading-relaxed">{v.desc}</p>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* ════ SECTION: FINAL CTA ════ */}
+                <section className="py-40 px-6 text-center bg-white">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        className="max-w-3xl mx-auto space-y-12"
+                    >
+                        <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-slate-900 leading-[0.9] uppercase">
+                            Ready to see the <br /> 
+                            <span className="text-emerald-500 italic">other side?</span>
+                        </h2>
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+                            <button 
+                                onClick={() => window.location.href = '/listings'}
+                                className="h-16 px-12 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-[0.3em] hover:bg-emerald-600 transition-all shadow-2xl shadow-slate-900/20 active:scale-95"
+                            >
+                                Explore Sanctuaries
+                            </button>
+                        </div>
+                    </motion.div>
+                </section>
+
             </div>
-        </StaticPage>
+        </WayzzaLayout>
     );
 }
