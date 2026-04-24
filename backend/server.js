@@ -139,7 +139,7 @@ app.use("/api/v1/payments", paymentLimiter, payRoutes);
 app.use("/api/v1/webhooks/razorpay", express.raw({ type: "application/json" }));
 app.use("/api/v1/webhooks", webhookRoutes);
 
-app.get("/", (_, res) => res.json({ ok: true, status: "Wayza API v1 Running" }));
+app.get("/", (_, res) => res.json({ ok: true, status: "Wayzza API v1 Running" }));
 
 app.use((err, req, res, next) => {
   console.error(`[Error] ${req.method} ${req.url}:`, err);
@@ -148,7 +148,7 @@ app.use((err, req, res, next) => {
 
 
 httpServer.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Wayza backend running with WebSockets on PORT ${PORT}`);
+  console.log(`🚀 Wayzza backend running with WebSockets on PORT ${PORT}`);
 });
 
 process.on("SIGTERM", async () => {

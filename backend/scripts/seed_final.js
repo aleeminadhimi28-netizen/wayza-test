@@ -17,7 +17,7 @@ async function run() {
         const users = db.collection("users");
         const partners = db.collection("partners");
 
-        const email = "partner@wayza.com";
+        const email = "partner@wayzza.com";
         const password = "password";
 
         await users.deleteOne({ email });
@@ -27,7 +27,7 @@ async function run() {
         await users.insertOne({ email, password: hash, role: "partner", createdAt: new Date() });
         await partners.insertOne({
             email,
-            businessName: "Wayza Test Partner",
+            businessName: "Wayzza Test Partner",
             type: "mixed",
             onboarded: true,
             createdAt: new Date()

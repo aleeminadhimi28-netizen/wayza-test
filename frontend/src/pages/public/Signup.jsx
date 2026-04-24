@@ -114,7 +114,7 @@ export default function Signup() {
                 <div className="max-w-md w-full mx-auto space-y-10">
 
                     <Link to="/" className="inline-block text-2xl font-bold tracking-tight mb-8 group uppercase">
-                        WAYZA<span className="text-emerald-600">.</span>
+                        WAYZZA<span className="text-emerald-600">.</span>
                         <div className="h-0.5 w-0 group-hover:w-full bg-emerald-500 transition-all duration-500 shadow-xl" />
                     </Link>
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { WayzaLayout } from "../../WayzaUI.jsx";
+import { WayzzaLayout } from "../../WayzzaUI.jsx";
 import { useAuth } from "../../AuthContext.jsx";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -111,11 +111,11 @@ export default function MyBookings() {
             @media print{body{padding:0;background:#fff;}.card{box-shadow:none;border-radius:0;padding:32px;}}
         </style></head><body><div class="card">
             <div class="header">
-                <div class="brand"><div class="brand-icon">W</div><div><div class="brand-name">Wayza</div><div class="brand-sub">Premium Stays</div></div></div>
+                <div class="brand"><div class="brand-icon">W</div><div><div class="brand-name">Wayzza</div><div class="brand-sub">Premium Stays</div></div></div>
                 <div class="invoice-meta"><div class="invoice-id">INVOICE #${invoiceId}</div><div class="invoice-date">${invoiceDate}</div></div>
             </div>
             <h2>${b.title}</h2>
-            <p class="subtitle">Booking Confirmed &nbsp;•&nbsp; Paid via Wayza Secure Checkout</p>
+            <p class="subtitle">Booking Confirmed &nbsp;•&nbsp; Paid via Wayzza Secure Checkout</p>
             <div class="details-grid">
                 <div class="detail-item"><div class="label">Guest</div><div class="value">${b.guestEmail}</div></div>
                 <div class="detail-item"><div class="label">Booking ID</div><div class="value">${invoiceId}</div></div>
@@ -135,8 +135,8 @@ export default function MyBookings() {
             </table>
             <div class="badge">✓ Payment Confirmed</div>
             <div class="footer">
-                <div class="footer-note">Thank you for staying with Wayza.<br>For support: support@wayza.com</div>
-                <div class="footer-note">© ${new Date().getFullYear()} Wayza Inc.</div>
+                <div class="footer-note">Thank you for staying with Wayzza.<br>For support: support@wayzza.com</div>
+                <div class="footer-note">© ${new Date().getFullYear()} Wayzza Inc.</div>
             </div>
         </div></body></html>`;
         const w = window.open('', '_blank', 'width=780,height=900');
@@ -161,23 +161,23 @@ export default function MyBookings() {
     ];
 
     if (loading) return (
-        <WayzaLayout noPadding>
+        <WayzzaLayout noPadding>
             <div className="min-h-screen flex flex-col items-center justify-center bg-white gap-4 font-sans text-slate-400">
                 <div className="w-10 h-10 border-4 border-slate-100 border-t-emerald-500 rounded-full animate-spin" />
                 <p className="text-xs font-bold uppercase tracking-widest">Loading bookings...</p>
             </div>
-        </WayzaLayout>
+        </WayzzaLayout>
     );
 
     return (
-        <WayzaLayout noPadding>
+        <WayzzaLayout noPadding>
             <div className="bg-white min-h-screen font-sans pb-32 selection:bg-emerald-50 selection:text-emerald-900">
 
                 <header className="max-w-7xl mx-auto px-6 lg:px-12 py-12 md:py-20">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
                         <div className="space-y-2">
                             <h1 className="text-3xl md:text-5xl font-bold text-slate-900 tracking-tight">My Bookings</h1>
-                            <p className="text-slate-500 font-medium">Manage your stays and travel history with Wayza.</p>
+                            <p className="text-slate-500 font-medium">Manage your stays and travel history with Wayzza.</p>
                         </div>
 
                         <div className="flex flex-wrap gap-2 p-1.5 bg-slate-50 rounded-2xl border border-slate-100">
@@ -402,12 +402,12 @@ export default function MyBookings() {
                                     <div className="absolute inset-0 bg-emerald-500/5 blur-2xl group-hover:bg-emerald-500/10 transition-colors" />
                                     <div className="relative bg-white p-6 rounded-[24px] shadow-sm">
                                         <QRCodeCanvas 
-                                            value={`wayza-verify://${passportModal._id}`}
+                                            value={`wayzza-verify://${passportModal._id}`}
                                             size={200}
                                             level="H"
                                             includeMargin={false}
                                             imageSettings={{
-                                                src: "https://wayza.com/favicon.png", // Mock logo
+                                                src: "https://wayzza.com/favicon.png", // Mock logo
                                                 x: undefined, y: undefined, height: 40, width: 40, excavate: true,
                                             }}
                                         />
@@ -440,7 +440,7 @@ export default function MyBookings() {
                     </div>
                 )}
             </AnimatePresence>
-        </WayzaLayout>
+        </WayzzaLayout>
     );
 }
 

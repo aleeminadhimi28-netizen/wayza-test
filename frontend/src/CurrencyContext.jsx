@@ -13,7 +13,7 @@ export function CurrencyProvider({ children }) {
     const [currency, setCurrency] = useState(CURRENCIES[0]);
 
     useEffect(() => {
-        const saved = localStorage.getItem("wayza_currency");
+        const saved = localStorage.getItem("wayzza_currency");
         if (saved) {
             const found = CURRENCIES.find(c => c.code === saved);
             if (found) setCurrency(found);
@@ -24,7 +24,7 @@ export function CurrencyProvider({ children }) {
         const found = CURRENCIES.find(c => c.code === code);
         if (found) {
             setCurrency(found);
-            localStorage.setItem("wayza_currency", code);
+            localStorage.setItem("wayzza_currency", code);
         }
     };
 

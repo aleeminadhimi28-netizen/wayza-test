@@ -3,7 +3,7 @@ import bcryptjs from 'bcryptjs';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const url = "mongodb://wayza:pudols123@ac-t1bgulx-shard-00-00.k5x8kar.mongodb.net:27017,ac-t1bgulx-shard-00-01.k5x8kar.mongodb.net:27017,ac-t1bgulx-shard-00-02.k5x8kar.mongodb.net:27017/wayza?ssl=true&authSource=admin&retryWrites=true&w=majority";
+const url = "mongodb://wayza:pudols123@ac-t1bgulx-shard-00-00.k5x8kar.mongodb.net:27017,ac-t1bgulx-shard-00-01.k5x8kar.mongodb.net:27017,ac-t1bgulx-shard-00-02.k5x8kar.mongodb.net:27017/wayzza?ssl=true&authSource=admin&retryWrites=true&w=majority";
 
 const client = new MongoClient(url);
 
@@ -17,9 +17,9 @@ async function masterReset() {
         const hash = await bcryptjs.hash(password, 8);
 
         const accounts = [
-            "partner@wayza.com",
-            "admin@wayza.com",
-            "test@wayza.com"
+            "partner@wayzza.com",
+            "admin@wayzza.com",
+            "test@wayzza.com"
         ];
 
         for (const email of accounts) {

@@ -10,7 +10,7 @@ export const generateItinerary = async (destination, vibe, listings) => {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const prompt = `
-    You are a professional travel architect for 'Wayza', a premium travel platform.
+    You are a professional travel architect for 'Wayzza', a premium travel platform.
     Your task is to create a personalized 2-day itinerary for a traveler going to ${destination} with a "${vibe}" vibe.
     
     I will provide you with a list of available inventory (Stays, Vehicles, and Activities) in that location. 
@@ -78,7 +78,7 @@ export const answerListingQuery = async (query, listing) => {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const prompt = `
-    You are the 'Wayza Digital Concierge', an elite, helpful, and highly sophisticated AI assistant for a premium property called "${listing.title}".
+    You are the 'Wayzza Digital Concierge', an elite, helpful, and highly sophisticated AI assistant for a premium property called "${listing.title}".
     
     Context about the property:
     - Description: ${listing.description}
@@ -115,7 +115,7 @@ export const generateNeighborhoodVibe = async (location, category) => {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const prompt = `
-    You are a 'Wayza Vibe Architect'. 
+    You are a 'Wayzza Vibe Architect'. 
     Create a luxury neighborhood profile for a property located in "${location}" which is a "${category}".
     
     Instructions:

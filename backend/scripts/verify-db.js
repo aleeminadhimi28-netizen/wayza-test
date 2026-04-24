@@ -4,14 +4,14 @@ import { MongoClient } from "mongodb";
 
 dotenv.config();
 
-const url = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/wayza_db";
+const url = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/wayzza_db";
 
 async function verify() {
     const client = new MongoClient(url);
     try {
         await client.connect();
         const db = client.db();
-        const users = await db.collection("users").find({ email: { $in: ["admin@wayza.com", "partner@wayza.com"] } }).toArray();
+        const users = await db.collection("users").find({ email: { $in: ["admin@wayzza.com", "partner@wayzza.com"] } }).toArray();
 
         console.log("Found users:");
         for (const u of users) {

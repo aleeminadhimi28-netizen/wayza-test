@@ -1,5 +1,5 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { WayzaLayout, WayzaButton } from "../../WayzaUI.jsx"
+import { WayzzaLayout, WayzzaButton } from "../../WayzzaUI.jsx"
 import { useAuth } from "../../AuthContext.jsx"
 import { motion, AnimatePresence } from "framer-motion";
 import { ShieldCheck, CreditCard, Apple, Wallet, CheckCircle, Lock, Zap, ArrowLeft, ArrowRight, Shield, Activity, Globe, CreditCard as CardIcon, Sparkles, ChevronRight } from "lucide-react";
@@ -59,7 +59,7 @@ export default function Payment() {
                 key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_SefBe7ldCASLlG",
                 amount: orderData.amount,
                 currency: orderData.currency,
-                name: "Wayza",
+                name: "Wayzza",
                 description: `Booking: ${title}`,
                 order_id: orderData.orderId,
                 handler: async function (response) {
@@ -104,14 +104,14 @@ export default function Payment() {
     }
 
     return (
-        <WayzaLayout noPadding>
+        <WayzzaLayout noPadding>
             <div className="bg-white min-h-screen font-sans">
                 <div className="max-w-6xl mx-auto px-6 md:px-12 py-10 md:py-16">
 
                     {/* ─── HEADER ─── */}
                     <div className="flex items-center justify-between mb-10">
                         <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-slate-300">
-                            <button onClick={() => navigate("/")} className="hover:text-emerald-600 transition-colors">Wayza</button>
+                            <button onClick={() => navigate("/")} className="hover:text-emerald-600 transition-colors">Wayzza</button>
                             <ChevronRight size={10} />
                             <span className="text-slate-900">Secure Checkout</span>
                         </div>
@@ -220,7 +220,7 @@ export default function Payment() {
                     </div>
                 </div>
             </div>
-        </WayzaLayout>
+        </WayzzaLayout>
     );
 }
 

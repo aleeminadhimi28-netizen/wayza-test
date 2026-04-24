@@ -167,7 +167,7 @@ router.post("/confirm", requireAuth, async (req, res, next) => {
         const totalPrice = booking.totalPrice || 0;
         const config = await db.collection("settings").findOne({ type: "financials" }) || { commissionRate: 0.10 };
         
-        // Use the frozen platformCommissionAmount if available, to protect Wayza's revenue despite discounts.
+        // Use the frozen platformCommissionAmount if available, to protect Wayzza's revenue despite discounts.
         const commissionAmount = booking.platformCommissionAmount !== undefined 
             ? booking.platformCommissionAmount 
             : Math.round(totalPrice * config.commissionRate);

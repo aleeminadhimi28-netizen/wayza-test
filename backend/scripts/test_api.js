@@ -8,7 +8,7 @@ async function test() {
         const r = await fetch(`${API}/partner/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: "partner@wayza.com", password: "password" })
+            body: JSON.stringify({ email: "partner@wayzza.com", password: "password" })
         });
         const data = await r.json();
         console.log("Login Status:", r.status);

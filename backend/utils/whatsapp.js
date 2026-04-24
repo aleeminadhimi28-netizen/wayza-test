@@ -1,5 +1,5 @@
 /**
- * Wayza WhatsApp Notification Service (Simulation)
+ * Wayzza WhatsApp Notification Service (Simulation)
  * In a real production environment, you would use the Meta WhatsApp Business API or Twilio.
  */
 
@@ -18,7 +18,7 @@ export async function sendWhatsAppAlert(phone, message, buttons = []) {
 }
 
 export const formatWhatsAppBookingMsg = (data) => {
-    return `*🌊 New Wayza Booking!*
+    return `*🌊 New Wayzza Booking!*
     
 Property: *${data.title}*
 Guest: ${data.guestEmail}
@@ -37,7 +37,7 @@ Partner: *${data.ownerEmail}*
 Property: *${data.title}*
 Location: ${data.location}
 
-_Please review the listing in the Wayza Admin Dashboard for approval._`;
+_Please review the listing in the Wayzza Admin Dashboard for approval._`;
 };
 
 export const formatWhatsAppListingApproved = (data) => {
@@ -46,11 +46,11 @@ export const formatWhatsAppListingApproved = (data) => {
 Property: *${data.title}*
 Status: *PUBLISHED*
 
-_Your listing is now visible to all Wayza guests and ready for bookings._`;
+_Your listing is now visible to all Wayzza guests and ready for bookings._`;
 };
 
 export const formatWhatsAppPartnerOnboarded = (data) => {
-    return `*🚀 Welcome to Wayza Pro!*
+    return `*🚀 Welcome to Wayzza Pro!*
 
 Your partner account has been verified. You can now start listing your premium properties and experiences.
 

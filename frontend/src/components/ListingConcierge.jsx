@@ -6,7 +6,7 @@ export default function ListingConcierge({ listingId, listingTitle }) {
     const [isOpen, setIsOpen] = useState(false);
     const [query, setQuery] = useState("");
     const [messages, setMessages] = useState([
-        { role: "bot", text: `Welcome. I am the Wayza Concierge for ${listingTitle}. How may I assist you with your stay today?` }
+        { role: "bot", text: `Welcome. I am the Wayzza Concierge for ${listingTitle}. How may I assist you with your stay today?` }
     ]);
     const [isThinking, setIsThinking] = useState(false);
     const scrollRef = useRef(null);
@@ -64,7 +64,7 @@ export default function ListingConcierge({ listingId, listingTitle }) {
                                 </div>
                                 <div>
                                     <h3 className="font-black uppercase tracking-widest text-[10px] text-emerald-400">Concierge Intelligence</h3>
-                                    <p className="font-black text-sm tracking-tighter">Wayza Assistant</p>
+                                    <p className="font-black text-sm tracking-tighter">Wayzza Assistant</p>
                                 </div>
                             </div>
                             <button onClick={() => setIsOpen(false)} className="text-white/40 hover:text-white transition-colors">
@@ -135,7 +135,7 @@ export default function ListingConcierge({ listingId, listingTitle }) {
                                 </button>
                             </div>
                             <p className="text-[9px] text-slate-300 font-bold uppercase tracking-[0.2em] text-center mt-4">
-                                Orchestrated by Wayza AI Protocol
+                                Orchestrated by Wayzza AI Protocol
                             </p>
                         </div>
                     </motion.div>

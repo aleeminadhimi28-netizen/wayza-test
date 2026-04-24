@@ -18,7 +18,7 @@ export const generateSecret = () => {
  * @returns {Promise<string>} Data URL of the QR code image.
  */
 export const generateQRCode = async (userEmail, secret) => {
-    const service = 'Wayza';
+    const service = 'Wayzza';
     const otpauth = authenticator.keyuri(userEmail, service, secret);
     return await QRCode.toDataURL(otpauth);
 };

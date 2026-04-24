@@ -222,7 +222,7 @@ export default function PartnerProperty() {
                     </div>
                     <div>
                         <h3 className="font-bold text-sm text-amber-900">Pending Admin Approval</h3>
-                        <p className="text-xs text-amber-700 mt-0.5">This property is awaiting review by the Wayza team. It will not appear in public listings until approved. You can still add variants and configure details while you wait.</p>
+                        <p className="text-xs text-amber-700 mt-0.5">This property is awaiting review by the Wayzza team. It will not appear in public listings until approved. You can still add variants and configure details while you wait.</p>
                     </div>
                 </div>
             )}

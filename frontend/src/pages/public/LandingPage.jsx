@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { WayzaLayout, WayzaHotelItem, WayzaSkeleton } from "../../WayzaUI.jsx";
+import { WayzzaLayout, WayzzaHotelItem, WayzzaSkeleton } from "../../WayzzaUI.jsx";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -53,7 +53,7 @@ export default function LandingPage() {
         try {
             const data = await api.subscribeNewsletter(newsletterEmail);
             if (data.ok) {
-                showToast("Subscribed to the Wayza Newsletter!", "success");
+                showToast("Subscribed to the Wayzza Newsletter!", "success");
                 setNewsletterEmail("");
             } else {
                 showToast(data.message || "Failed to subscribe.", "error");
@@ -99,7 +99,7 @@ export default function LandingPage() {
     const trendingList = listings.slice(0, 8);
 
     return (
-        <WayzaLayout noPadding hideFooter>
+        <WayzzaLayout noPadding hideFooter>
             <SEO title="Escape the ordinary" />
             <div className="bg-white font-sans text-slate-900 selection:bg-emerald-50 selection:text-emerald-900 leading-relaxed antialiased">
 
@@ -241,7 +241,7 @@ export default function LandingPage() {
 
                     {loading ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                            {[1, 2, 3, 4].map(i => <WayzaSkeleton key={i} className="h-80 rounded-3xl" />)}
+                            {[1, 2, 3, 4].map(i => <WayzzaSkeleton key={i} className="h-80 rounded-3xl" />)}
                         </div>
                     ) : trendingList.length === 0 ? (
                             <div className="col-span-full py-20 text-center text-slate-400 font-bold uppercase tracking-widest text-sm bg-slate-50 rounded-[32px] border border-slate-100 flex items-center justify-center min-h-[300px]">
@@ -251,7 +251,7 @@ export default function LandingPage() {
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                                 {trendingList.map(l => (
                                     <motion.div key={l._id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-                                        <WayzaHotelItem
+                                        <WayzzaHotelItem
                                             hotel={{
                                                 id: l._id,
                                                 name: l.title,
@@ -318,7 +318,7 @@ export default function LandingPage() {
                         {[
                             { icon: CheckCircle2, title: "Verified Stays", desc: "Every property is personally inspected by our team for absolute quality.", color: "emerald" },
                             { icon: Compass, title: "Local Secrets", desc: "Access hidden beaches and cafes curated by our native guides.", color: "blue" },
-                            { icon: Sparkles, title: "Wayza AI", desc: "Plan your entire stay + vehicle combination in seconds with our AI engine.", color: "indigo" }
+                            { icon: Sparkles, title: "Wayzza AI", desc: "Plan your entire stay + vehicle combination in seconds with our AI engine.", color: "indigo" }
                         ].map((item, i) => (
                             <motion.div 
                                 key={i} 
@@ -358,7 +358,7 @@ export default function LandingPage() {
                         >
                             <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/25 rounded-full">
                                 <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                                <span className="text-[11px] font-black uppercase tracking-widest text-emerald-400">Wayza AI · Live</span>
+                                <span className="text-[11px] font-black uppercase tracking-widest text-emerald-400">Wayzza AI · Live</span>
                             </div>
                             <h2 className="text-5xl md:text-6xl font-black tracking-tighter text-white leading-tight">
                                 Your trip, planned by AI.
@@ -385,7 +385,7 @@ export default function LandingPage() {
                                 </div>
                                 <div className="flex-1 flex items-center justify-center gap-2">
                                     <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                                    <span className="text-[11px] font-bold text-white/40 uppercase tracking-widest">Wayza AI Trip Planner</span>
+                                    <span className="text-[11px] font-bold text-white/40 uppercase tracking-widest">Wayzza AI Trip Planner</span>
                                 </div>
                             </div>
 
@@ -508,7 +508,7 @@ export default function LandingPage() {
                 <footer className="bg-slate-950 pt-16 pb-8 px-6 overflow-hidden relative border-t border-white/5">
                     {/* Subtle Watermark */}
                     <div className="absolute -bottom-6 -right-6 text-[10vw] font-black text-white/[0.02] select-none pointer-events-none uppercase tracking-tighter">
-                        Wayza
+                        Wayzza
                     </div>
 
                     <div className="max-w-7xl mx-auto">
@@ -516,7 +516,7 @@ export default function LandingPage() {
                             {/* Brand DNA */}
                             <div className="md:col-span-4 space-y-6">
                                 <div className="space-y-3">
-                                    <h2 className="text-xl font-bold tracking-tighter text-white uppercase">Wayza<span className="text-emerald-500">.</span></h2>
+                                    <h2 className="text-xl font-bold tracking-tighter text-white uppercase">Wayzza<span className="text-emerald-500">.</span></h2>
                                     <p className="text-white/30 text-xs leading-relaxed font-light max-w-[240px]">
                                         "Defining verified inventory and soulful exploration."
                                     </p>
@@ -573,7 +573,7 @@ export default function LandingPage() {
 
                         <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[8px] font-bold text-white/20 uppercase tracking-[0.2em]">
                             <div className="flex gap-6">
-                                <span>Wayza Travels © 2026</span>
+                                <span>Wayzza Travels © 2026</span>
                                 <Link to="/privacy" className="hover:text-white/60">Privacy</Link>
                                 <Link to="/terms" className="hover:text-white/60">Terms</Link>
                             </div>
@@ -585,6 +585,6 @@ export default function LandingPage() {
                     </div>
                 </footer>
             </div>
-        </WayzaLayout>
+        </WayzzaLayout>
     );
 }

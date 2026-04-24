@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { WayzaLayout } from "../../WayzaUI.jsx";
+import { WayzzaLayout } from "../../WayzzaUI.jsx";
 import { useAuth } from "../../AuthContext.jsx";
 import {
     Search, Heart, MapPin, ChevronLeft, ChevronRight,
@@ -131,8 +131,8 @@ export default function Listings() {
     const catLabel = CATEGORIES.find(c => c.id === category)?.label || "Properties";
 
     return (
-        <WayzaLayout noPadding>
-            <SEO title={location ? `${catLabel} in ${location}` : `Explore ${catLabel}`} description={`Browse verified ${catLabel.toLowerCase()} directly from Wayza.`} />
+        <WayzzaLayout noPadding>
+            <SEO title={location ? `${catLabel} in ${location}` : `Explore ${catLabel}`} description={`Browse verified ${catLabel.toLowerCase()} directly from Wayzza.`} />
             <div className="bg-slate-50 min-h-screen font-sans selection:bg-emerald-100 selection:text-emerald-900">
 
                 {/* ─── PREMIUM SEARCH BAR ─── */}
@@ -297,7 +297,7 @@ export default function Listings() {
                         {!loading && total > 0 && (
                             <div className="hidden sm:flex items-center gap-2 text-sm text-slate-400">
                                 <CheckCircle size={16} className="text-emerald-500" />
-                                <span>All verified by Wayza</span>
+                                <span>All verified by Wayzza</span>
                             </div>
                         )}
                     </div>
@@ -533,6 +533,6 @@ export default function Listings() {
                     </div>
                 </div>
             </div>
-        </WayzaLayout>
+        </WayzzaLayout>
     );
 }

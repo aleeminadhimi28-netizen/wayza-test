@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { WayzaLayout } from "../../WayzaUI.jsx";
+import { WayzzaLayout } from "../../WayzzaUI.jsx";
 import { Sparkles, MapPin, Calendar, Heart, Search, Compass, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCurrency } from "../../CurrencyContext.jsx";
@@ -38,14 +38,14 @@ export default function AITripPlanner() {
     };
 
     return (
-        <WayzaLayout noPadding>
+        <WayzzaLayout noPadding>
             <div className="min-h-screen bg-slate-50 font-sans pb-32">
                 {/* Hero Header */}
                 <header className="bg-slate-900 pt-32 pb-24 px-6 text-center relative overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 blur-[100px] pointer-events-none" />
                     <div className="max-w-3xl mx-auto relative z-10 space-y-6">
                         <div className="inline-flex items-center justify-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 rounded-full text-emerald-400 font-bold text-[10px] uppercase tracking-widest mb-4">
-                            <Sparkles size={14} /> Wayza Intelligence
+                            <Sparkles size={14} /> Wayzza Intelligence
                         </div>
                         <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight uppercase leading-[0.9]">
                             AI Trip <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400 lowercase">Architect.</span>
@@ -176,6 +176,6 @@ export default function AITripPlanner() {
                     </AnimatePresence>
                 </main>
             </div>
-        </WayzaLayout>
+        </WayzzaLayout>
     );
 }

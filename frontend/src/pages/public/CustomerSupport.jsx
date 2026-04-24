@@ -6,7 +6,7 @@ import {
     Headphones, Tag, ChevronRight, Loader2, AlertCircle, Plus,
     MessageCircle, User, Shield, Inbox, Search, Filter
 } from "lucide-react";
-import { WayzaLayout } from "../../WayzaUI.jsx";
+import { WayzzaLayout } from "../../WayzzaUI.jsx";
 import { useAuth } from "../../AuthContext.jsx";
 import { useToast } from "../../ToastContext.jsx";
 
@@ -122,7 +122,7 @@ export default function CustomerSupport() {
     const closedCount = tickets.filter(t => t.status === "closed").length;
 
     return (
-        <WayzaLayout>
+        <WayzzaLayout>
             <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white font-sans">
 
                 {/* HERO */}
@@ -137,7 +137,7 @@ export default function CustomerSupport() {
                             </div>
                             <div>
                                 <h1 className="text-3xl font-bold">Customer Support</h1>
-                                <p className="text-slate-300 text-sm mt-0.5">We're here to help — get support from the Wayza team</p>
+                                <p className="text-slate-300 text-sm mt-0.5">We're here to help — get support from the Wayzza team</p>
                             </div>
                         </div>
                     </div>
@@ -460,7 +460,7 @@ export default function CustomerSupport() {
                                                     <div className="flex-1">
                                                         <div className="flex items-center gap-2 mb-1">
                                                             <span className={`text-xs font-bold ${isAdmin ? "text-emerald-700" : "text-slate-700"}`}>
-                                                                {isAdmin ? "Wayza Support" : "You"}
+                                                                {isAdmin ? "Wayzza Support" : "You"}
                                                             </span>
                                                             <span className="text-[10px] text-slate-400">
                                                                 {new Date(r.createdAt).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
@@ -516,6 +516,6 @@ export default function CustomerSupport() {
 
                 <div className="h-20" />
             </div>
-        </WayzaLayout>
+        </WayzzaLayout>
     );
 }

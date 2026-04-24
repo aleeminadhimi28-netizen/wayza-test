@@ -4,7 +4,7 @@ import { MongoClient } from "mongodb";
 
 dotenv.config();
 
-const url = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/wayza_db";
+const url = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/wayzza_db";
 
 async function setupAccounts() {
     const client = new MongoClient(url);
@@ -17,7 +17,7 @@ async function setupAccounts() {
 
         // Setup Admin
         await users.updateOne(
-            { email: "admin@wayza.com" },
+            { email: "admin@wayzza.com" },
             {
                 $set: {
                     password: passwordHash,
@@ -29,11 +29,11 @@ async function setupAccounts() {
             },
             { upsert: true }
         );
-        console.log("Admin account setup: admin@wayza.com");
+        console.log("Admin account setup: admin@wayzza.com");
 
         // Setup Partner
         await users.updateOne(
-            { email: "partner@wayza.com" },
+            { email: "partner@wayzza.com" },
             {
                 $set: {
                     password: passwordHash,
@@ -45,7 +45,7 @@ async function setupAccounts() {
             },
             { upsert: true }
         );
-        console.log("Partner account setup: partner@wayza.com");
+        console.log("Partner account setup: partner@wayzza.com");
 
         // Setup Guest
         await users.updateOne(

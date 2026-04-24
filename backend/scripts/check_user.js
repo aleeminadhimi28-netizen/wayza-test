@@ -12,7 +12,7 @@ async function checkUser() {
         const users = db.collection('users');
         const partners = db.collection('partners');
 
-        const email = "partner@wayza.com";
+        const email = "partner@wayzza.com";
         const userFound = await users.findOne({ email });
         const partnerFound = await partners.findOne({ email });
 

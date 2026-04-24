@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { WayzaLayout, WayzaHotelItem, WayzaSkeleton } from "../../WayzaUI.jsx";
+import { WayzzaLayout, WayzzaHotelItem, WayzzaSkeleton } from "../../WayzzaUI.jsx";
 import MapView from "../../components/MapView.jsx";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -25,7 +25,7 @@ export default function SearchMap() {
     const fixImg = (img) => api.fixImg(img);
 
     return (
-        <WayzaLayout noPadding>
+        <WayzzaLayout noPadding>
             <div className="h-screen flex flex-col md:flex-row bg-white overflow-hidden font-sans text-slate-900">
 
                 {/* LEFT SIDE — PROPERTY BROWSER */}
@@ -49,7 +49,7 @@ export default function SearchMap() {
                     <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-hide bg-slate-50/30">
                         {loading ? (
                             <div className="space-y-6">
-                                {[1, 2, 3].map(i => <WayzaSkeleton key={i} className="h-40 rounded-3xl" />)}
+                                {[1, 2, 3].map(i => <WayzzaSkeleton key={i} className="h-40 rounded-3xl" />)}
                             </div>
                         ) : listings.length === 0 ? (
                             <div className="h-64 flex flex-col items-center justify-center gap-6">
@@ -146,6 +146,6 @@ export default function SearchMap() {
                 </div>
 
             </div>
-        </WayzaLayout>
+        </WayzzaLayout>
     );
 }

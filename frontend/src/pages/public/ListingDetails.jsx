@@ -1,6 +1,6 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { WayzaLayout, WayzaSkeleton } from "../../WayzaUI.jsx";
+import { WayzzaLayout, WayzzaSkeleton } from "../../WayzzaUI.jsx";
 import { useAuth } from "../../AuthContext.jsx";
 import { useToast } from "../../ToastContext.jsx";
 import { motion, AnimatePresence } from "framer-motion";
@@ -139,19 +139,19 @@ export default function ListingDetails() {
 
   // Loading skeleton
   if (!listing) return (
-    <WayzaLayout noPadding>
+    <WayzzaLayout noPadding>
       <div className="max-w-[1200px] mx-auto py-8 px-4 sm:px-6 space-y-6">
-        <WayzaSkeleton className="h-8 w-2/3" />
-        <WayzaSkeleton className="h-[420px] w-full rounded-2xl" />
+        <WayzzaSkeleton className="h-8 w-2/3" />
+        <WayzzaSkeleton className="h-[420px] w-full rounded-2xl" />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-4">
-            <WayzaSkeleton className="h-32 rounded-2xl" />
-            <WayzaSkeleton className="h-48 rounded-2xl" />
+            <WayzzaSkeleton className="h-32 rounded-2xl" />
+            <WayzzaSkeleton className="h-48 rounded-2xl" />
           </div>
-          <WayzaSkeleton className="h-[400px] rounded-2xl" />
+          <WayzzaSkeleton className="h-[400px] rounded-2xl" />
         </div>
       </div>
-    </WayzaLayout>
+    </WayzzaLayout>
   );
 
   let images = (listing.images || []).map(fixImg);
@@ -183,7 +183,7 @@ export default function ListingDetails() {
   const today = new Date().toISOString().split("T")[0];
 
   return (
-    <WayzaLayout noPadding>
+    <WayzzaLayout noPadding>
       <SEO 
         title={listing.title} 
         description={listing.description} 
@@ -353,7 +353,7 @@ export default function ListingDetails() {
                 <div className="flex items-center justify-between pb-8 border-b border-slate-100">
                   <div>
                     <h2 className="text-4xl font-black text-slate-900 uppercase tracking-tighter leading-none mb-4">The Experience.</h2>
-                    <p className="text-slate-400 font-bold uppercase text-[9px] tracking-widest">Curated by Wayza Network Architecture</p>
+                    <p className="text-slate-400 font-bold uppercase text-[9px] tracking-widest">Curated by Wayzza Network Architecture</p>
                   </div>
                   <div className="w-16 h-16 bg-slate-950 rounded-3xl flex items-center justify-center text-white font-black text-2xl">
                     {listing.title?.charAt(0)}
@@ -538,7 +538,7 @@ export default function ListingDetails() {
                           </div>
                         )}
                         <div className="flex justify-between text-sm text-slate-600">
-                          <span>Wayza service fee</span>
+                          <span>Wayzza service fee</span>
                           <span>₹{serviceFee.toLocaleString()}</span>
                         </div>
                         <div className="flex justify-between font-black text-slate-900 pt-3 border-t border-slate-100 text-base">
@@ -655,6 +655,6 @@ export default function ListingDetails() {
         {/* Intelligence Overlay */}
         <ListingConcierge listingId={listing._id} listingTitle={listing.title} />
       </div>
-    </WayzaLayout>
+    </WayzzaLayout>
   );
 }

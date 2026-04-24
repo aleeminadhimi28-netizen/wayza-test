@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { WayzaLayout } from "../../WayzaUI.jsx";
+import { WayzzaLayout } from "../../WayzzaUI.jsx";
 import { Link } from "react-router-dom";
 import { Home, Navigation, MapPin, Loader2, Info, Star } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -67,7 +67,7 @@ export default function ExploreMap() {
     }, []);
 
     return (
-        <WayzaLayout noPadding>
+        <WayzzaLayout noPadding>
             <div className="h-screen flex flex-col pt-20 overflow-hidden font-sans">
 
                 {/* Header Toolbar */}
@@ -77,7 +77,7 @@ export default function ExploreMap() {
                             <Navigation size={20} />
                         </div>
                         <div>
-                            <h1 className="text-xl font-bold text-slate-900 tracking-tight">Explore Wayza Map</h1>
+                            <h1 className="text-xl font-bold text-slate-900 tracking-tight">Explore Wayzza Map</h1>
                             <p className="text-xs text-slate-500 font-medium">Discover stays and properties near you</p>
                         </div>
                     </div>
@@ -137,7 +137,7 @@ export default function ExploreMap() {
                                     click: () => setActiveItem(item)
                                 }}
                             >
-                                <Popup className="wayza-custom-popup">
+                                <Popup className="wayzza-custom-popup">
                                     <div className="w-64 overflow-hidden rounded-xl">
                                         <div className="relative h-32 bg-slate-100">
                                             {item.image ? (
@@ -238,18 +238,18 @@ export default function ExploreMap() {
             </div>
 
             <style>{`
-        .wayza-custom-popup .leaflet-popup-content-wrapper {
+        .wayzza-custom-popup .leaflet-popup-content-wrapper {
           border-radius: 20px;
           padding: 0;
           overflow: hidden;
           box-shadow: 0 20px 40px rgba(0,0,0,0.1);
           border: 1px solid rgba(0,0,0,0.05);
         }
-        .wayza-custom-popup .leaflet-popup-content {
+        .wayzza-custom-popup .leaflet-popup-content {
           margin: 0;
           width: auto !important;
         }
-        .wayza-custom-popup .leaflet-popup-tip {
+        .wayzza-custom-popup .leaflet-popup-tip {
           background: white;
         }
         .custom-price-marker {
@@ -257,7 +257,7 @@ export default function ExploreMap() {
           border: none !important;
         }
       `}</style>
-        </WayzaLayout>
+        </WayzzaLayout>
     );
 }
 

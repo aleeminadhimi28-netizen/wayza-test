@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { WayzaLayout, WayzaHotelItem, WayzaSkeleton } from "../../WayzaUI.jsx";
+import { WayzzaLayout, WayzzaHotelItem, WayzzaSkeleton } from "../../WayzzaUI.jsx";
 import { useAuth } from "../../AuthContext.jsx";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -49,7 +49,7 @@ export default function Wishlist() {
     }
 
     return (
-        <WayzaLayout noPadding>
+        <WayzzaLayout noPadding>
             <div className="bg-slate-50 min-h-screen font-sans">
 
                 {/* REFINED HEADER */}
@@ -77,7 +77,7 @@ export default function Wishlist() {
                     <AnimatePresence mode="wait">
                         {loading ? (
                             <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
-                                {[1, 2, 3, 4, 5, 6, 7, 8].map(i => <WayzaSkeleton key={i} className="h-[480px] rounded-[40px]" />)}
+                                {[1, 2, 3, 4, 5, 6, 7, 8].map(i => <WayzzaSkeleton key={i} className="h-[480px] rounded-[40px]" />)}
                             </motion.div>
                         ) : rows.length === 0 ? (
                             <motion.div key="empty" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="py-40 text-center space-y-10 group bg-white rounded-[60px] border border-slate-200 shadow-sm px-10">
@@ -108,7 +108,7 @@ export default function Wishlist() {
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: i * 0.05 }}
                                     >
-                                        <WayzaHotelItem
+                                        <WayzzaHotelItem
                                             hotel={{
                                                 id: l._id,
                                                 name: l.title,
@@ -144,9 +144,9 @@ export default function Wishlist() {
                 )}
 
                 <div className="py-20 text-center opacity-20 pointer-events-none select-none">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.5em]">Wayza Selection Console v4.2</p>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.5em]">Wayzza Selection Console v4.2</p>
                 </div>
             </div>
-        </WayzaLayout>
+        </WayzzaLayout>
     );
 }

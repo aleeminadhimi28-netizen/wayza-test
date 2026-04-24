@@ -4,7 +4,7 @@ dotenv.config();
 
 // CONFIGURATION
 const LOCAL_URL = "mongodb://localhost:27017";
-const LOCAL_DB_NAME = "wayza"; // Change this if your local DB name is different
+const LOCAL_DB_NAME = "wayzza"; // Change this if your local DB name is different
 const ATLAS_URL = process.env.MONGO_URL;
 
 if (!ATLAS_URL) {

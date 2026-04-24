@@ -9,7 +9,7 @@ async function runTest() {
     const loginRes = await fetch(`${BASE_URL}/partner/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: 'partner@wayza.com', password: 'password' })
+        body: JSON.stringify({ email: 'partner@wayzza.com', password: 'password' })
     });
     const loginData = await loginRes.json();
     console.log("Login Res:", loginData);
@@ -23,7 +23,7 @@ async function runTest() {
     console.log("Cookie string parsed:", cookieStr);
 
     console.log("\n2. Check Status...");
-    const statusRes = await fetch(`${BASE_URL}/partner/status/partner@wayza.com`);
+    const statusRes = await fetch(`${BASE_URL}/partner/status/partner@wayzza.com`);
     const statusData = await statusRes.json();
     console.log("Status Res:", statusData);
 

@@ -76,7 +76,7 @@ export default function PartnerListings() {
             Property <span className="text-emerald-500">Portfolio</span>
           </h1>
           <p className="text-slate-500 text-sm">
-            You are managing <span className="font-semibold text-slate-700">{listings.length} {listings.length === 1 ? "property" : "properties"}</span> on Wayza.
+            You are managing <span className="font-semibold text-slate-700">{listings.length} {listings.length === 1 ? "property" : "properties"}</span> on Wayzza.
           </p>
         </div>
         <button
@@ -96,7 +96,7 @@ export default function PartnerListings() {
           </div>
           <div className="space-y-2">
             <h2 className="text-xl font-bold text-slate-900">No properties yet</h2>
-            <p className="text-slate-500 text-sm max-w-sm mx-auto">Add your first property to start receiving bookings on Wayza.</p>
+            <p className="text-slate-500 text-sm max-w-sm mx-auto">Add your first property to start receiving bookings on Wayzza.</p>
           </div>
           <button
             onClick={() => navigate("/partner/create")}

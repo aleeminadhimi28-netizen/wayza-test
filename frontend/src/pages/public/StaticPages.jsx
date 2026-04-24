@@ -1,10 +1,10 @@
-import { WayzaLayout } from "../../WayzaUI.jsx";
+import { WayzzaLayout } from "../../WayzzaUI.jsx";
 import { motion } from "framer-motion";
 import { Shield, Lock, FileText, Globe, Zap, Compass, Activity, Server, Sparkles, CheckCircle, Heart, Star } from "lucide-react";
 
 export default function StaticPage({ title, children, icon }) {
     return (
-        <WayzaLayout noPadding>
+        <WayzzaLayout noPadding>
             <div className="min-h-screen bg-slate-50 font-sans overflow-hidden">
 
                 {/* REFINED HERO */}
@@ -69,7 +69,7 @@ export default function StaticPage({ title, children, icon }) {
                     </motion.div>
                 </main>
             </div>
-        </WayzaLayout>
+        </WayzzaLayout>
     );
 }
 
@@ -77,7 +77,7 @@ export function PrivacyPolicy() {
     return (
         <StaticPage title="Privacy Policy" icon={<Lock size={32} />}>
             <p className="text-xl text-slate-900 font-bold mb-10">Last Updated: {new Date().toLocaleDateString()}</p>
-            <p>At Wayza, we value your privacy and are committed to protecting your personal information. This policy outlines how we collect, use, and safeguard your data to provide a seamless travel experience.</p>
+            <p>At Wayzza, we value your privacy and are committed to protecting your personal information. This policy outlines how we collect, use, and safeguard your data to provide a seamless travel experience.</p>
 
             <h2 className="text-2xl mt-16 mb-8 flex items-center gap-4">
                 <div className="w-1.5 h-8 bg-emerald-500 rounded-full" />
@@ -109,13 +109,13 @@ export function TermsOfService() {
     return (
         <StaticPage title="Terms of Service" icon={<Shield size={32} />}>
             <p className="text-xl text-slate-900 font-bold mb-10">Effective Date: {new Date().toLocaleDateString()}</p>
-            <p>The following guidelines define the usage of the Wayza platform. By using our services, you agree to adhere to these terms and conditions.</p>
+            <p>The following guidelines define the usage of the Wayzza platform. By using our services, you agree to adhere to these terms and conditions.</p>
 
             <h2 className="text-2xl mt-16 mb-8 flex items-center gap-4">
                 <div className="w-1.5 h-8 bg-emerald-500 rounded-full" />
                 User Registration
             </h2>
-            <p>To use Wayza, you must provide accurate and current information. Maintaining the security of your account credentials is your responsibility.</p>
+            <p>To use Wayzza, you must provide accurate and current information. Maintaining the security of your account credentials is your responsibility.</p>
 
             <h2 className="text-2xl mt-16 mb-8 flex items-center gap-4">
                 <div className="w-1.5 h-8 bg-emerald-500 rounded-full" />
@@ -127,20 +127,20 @@ export function TermsOfService() {
                 <div className="w-1.5 h-8 bg-emerald-500 rounded-full" />
                 Service Termination
             </h2>
-            <p>Wayza reserves the right to suspend or terminate accounts that violate our terms or exhibit inappropriate conduct within our community.</p>
+            <p>Wayzza reserves the right to suspend or terminate accounts that violate our terms or exhibit inappropriate conduct within our community.</p>
         </StaticPage>
     );
 }
 
 export function AboutUs() {
     return (
-        <StaticPage title="The Wayza Story" icon={<Compass size={32} />}>
+        <StaticPage title="The Wayzza Story" icon={<Compass size={32} />}>
             <p className="text-3xl font-bold tracking-tight text-emerald-600 uppercase mb-10">Extraordinary Stays. Simplified.</p>
             <p className="text-xl text-slate-600 font-medium mb-10 leading-relaxed">
-                Wayza is a premier platform for luxury travel, designed to connect discerning travelers with unique stays and unforgettable experiences.
+                Wayzza is a premier platform for luxury travel, designed to connect discerning travelers with unique stays and unforgettable experiences.
             </p>
             <p className="mb-10">
-                Founded on the principles of quality and transparency, Wayza curates peaceful retreats, adventurous stays, and professional hosting services into one seamless platform. Whether you're looking for a coastal sanctuary or a city hideaway, our platform ensures a seamless and premium experience from start to finish.
+                Founded on the principles of quality and transparency, Wayzza curates peaceful retreats, adventurous stays, and professional hosting services into one seamless platform. Whether you're looking for a coastal sanctuary or a city hideaway, our platform ensures a seamless and premium experience from start to finish.
             </p>
 
             <h2 className="text-2xl mt-20 mb-10 uppercase tracking-tight font-bold border-b border-slate-100 pb-6">Our Core Values</h2>
@@ -148,7 +148,7 @@ export function AboutUs() {
                 <div className="bg-slate-50 p-10 rounded-[32px] border border-slate-100 hover:border-emerald-500 hover:bg-white transition-all duration-300 group">
                     <Star size={32} className="text-emerald-500 mb-6 group-hover:scale-110 transition-transform" />
                     <h4 className="font-bold text-lg uppercase tracking-tight text-slate-900 m-0">Curated Properties</h4>
-                    <p className="text-sm mt-4 mb-0 text-slate-400 font-medium leading-relaxed">Every property on Wayza undergoes a rigorous quality check to ensure a premium stay for our guests.</p>
+                    <p className="text-sm mt-4 mb-0 text-slate-400 font-medium leading-relaxed">Every property on Wayzza undergoes a rigorous quality check to ensure a premium stay for our guests.</p>
                 </div>
                 <div className="bg-slate-50 p-10 rounded-[32px] border border-slate-100 hover:border-emerald-500 hover:bg-white transition-all duration-300 group">
                     <Lock size={32} className="text-emerald-500 mb-6 group-hover:scale-110 transition-transform" />

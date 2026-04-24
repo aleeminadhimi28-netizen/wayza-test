@@ -16,7 +16,7 @@ async function run() {
         const db = client.db();
         const users = db.collection("users");
 
-        const email = "admin@wayza.com";
+        const email = "admin@wayzza.com";
         const password = "adminpassword";
 
         await users.deleteOne({ email });

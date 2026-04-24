@@ -53,7 +53,7 @@ export const guestBookingEmail = (data) => {
 
     const html = `<div style='font-family:system-ui;max-width:560px;margin:0 auto;background:#f8fafc;padding:32px;border-radius:20px;'>
     <div style='background:linear-gradient(135deg,#1e3a8a,#2563eb);border-radius:16px;padding:32px;text-align:center;margin-bottom:28px;'>
-    <h1 style='color:white;margin:0;font-size:28px;'>Wayza</h1>
+    <h1 style='color:white;margin:0;font-size:28px;'>Wayzza</h1>
     <p style='color:rgba(255,255,255,0.85);margin-top:8px;font-size:15px;'>Your booking is confirmed!</p>
     </div>
     <p style='color:#374151;font-size:16px;margin-bottom:24px;'>Hi <strong>${guestName}</strong>, your booking is confirmed!</p>
@@ -70,11 +70,11 @@ export const guestBookingEmail = (data) => {
     <div style='text-align:center;margin-bottom:28px;'>
     <a href='${frontendUrl}/my-bookings' style='display:inline-block;padding:14px 32px;background:#2563eb;color:white;text-decoration:none;border-radius:12px;font-weight:700;font-size:15px;'>View My Bookings</a>
     </div>
-    <p style='color:#9ca3af;font-size:12px;text-align:center;'>Need help? Contact support@wayza.com<br>© ${year} Wayza</p>
+    <p style='color:#9ca3af;font-size:12px;text-align:center;'>Need help? Contact support@wayzza.com<br>© ${year} Wayzza</p>
     </div>`;
 
     return {
-        from: `"Wayza" <${process.env.SMTP_FROM || process.env.EMAIL_USER}>`,
+        from: `"Wayzza" <${process.env.SMTP_FROM || process.env.EMAIL_USER}>`,
         to: guestEmail,
         subject: "Booking Confirmed — " + title,
         html
@@ -89,7 +89,7 @@ export const ownerBookingEmail = (data) => {
 
     const html = `<div style='font-family:system-ui;max-width:560px;margin:0 auto;background:#f8fafc;padding:32px;border-radius:20px;'>
     <div style='background:linear-gradient(135deg,#064e3b,#059669);border-radius:16px;padding:32px;text-align:center;margin-bottom:28px;'>
-    <h1 style='color:white;margin:0;font-size:28px;'>Wayza Partner</h1>
+    <h1 style='color:white;margin:0;font-size:28px;'>Wayzza Partner</h1>
     <p style='color:rgba(255,255,255,0.85);margin-top:8px;font-size:15px;'>You have a new booking!</p>
     </div>
     <p style='color:#374151;font-size:16px;margin-bottom:24px;'>A guest has booked <strong>${title}</strong>.</p>
@@ -107,11 +107,11 @@ export const ownerBookingEmail = (data) => {
     <div style='text-align:center;margin-bottom:28px;'>
     <a href='${frontendUrl}/partner' style='display:inline-block;padding:14px 32px;background:#059669;color:white;text-decoration:none;border-radius:12px;font-weight:700;font-size:15px;'>View Dashboard</a>
     </div>
-    <p style='color:#9ca3af;font-size:12px;text-align:center;'>© ${year} Wayza Partner Program</p>
+    <p style='color:#9ca3af;font-size:12px;text-align:center;'>© ${year} Wayzza Partner Program</p>
     </div>`;
 
     return {
-        from: `"Wayza" <${process.env.SMTP_FROM || process.env.EMAIL_USER}>`,
+        from: `"Wayzza" <${process.env.SMTP_FROM || process.env.EMAIL_USER}>`,
         to: ownerEmail,
         subject: "New Booking — " + title,
         html
@@ -122,7 +122,7 @@ export const payoutSettledEmail = ({ ownerEmail, amount, bookingTitle }) => {
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
     const html = `<div style='font-family:system-ui;max-width:560px;margin:0 auto;background:#f0fdf4;padding:32px;border-radius:20px;'>
     <div style='background:linear-gradient(135deg,#064e3b,#10b981);border-radius:16px;padding:32px;text-align:center;margin-bottom:28px;'>
-    <h1 style='color:white;margin:0;font-size:28px;'>Wayza Partner</h1>
+    <h1 style='color:white;margin:0;font-size:28px;'>Wayzza Partner</h1>
     <p style='color:rgba(255,255,255,0.85);margin-top:8px;font-size:15px;'>Your payout has been processed!</p>
     </div>
     <div style='background:white;border-radius:16px;padding:24px;margin-bottom:24px;border:1px solid #d1fae5;'>
@@ -134,9 +134,9 @@ export const payoutSettledEmail = ({ ownerEmail, amount, bookingTitle }) => {
     <div style='text-align:center;margin-bottom:28px;'>
     <a href='${frontendUrl}/partner/wallet' style='display:inline-block;padding:14px 32px;background:#059669;color:white;text-decoration:none;border-radius:12px;font-weight:700;font-size:15px;'>View Wallet</a>
     </div>
-    <p style='color:#9ca3af;font-size:12px;text-align:center;'>© ${year} Wayza Partner Program</p>
+    <p style='color:#9ca3af;font-size:12px;text-align:center;'>© ${year} Wayzza Partner Program</p>
     </div>`;
-    return { from: `"Wayza" <${process.env.SMTP_FROM || process.env.EMAIL_USER}>`, to: ownerEmail, subject: "Payout Processed — ₹" + Number(amount).toLocaleString(), html };
+    return { from: `"Wayzza" <${process.env.SMTP_FROM || process.env.EMAIL_USER}>`, to: ownerEmail, subject: "Payout Processed — ₹" + Number(amount).toLocaleString(), html };
 };
 
 export const withdrawalStatusEmail = ({ ownerEmail, amount, status, reason }) => {
@@ -147,7 +147,7 @@ export const withdrawalStatusEmail = ({ ownerEmail, amount, status, reason }) =>
     const bg = approved ? "linear-gradient(135deg,#064e3b,#10b981)" : "linear-gradient(135deg,#7f1d1d,#ef4444)";
     const html = `<div style='font-family:system-ui;max-width:560px;margin:0 auto;background:#f8fafc;padding:32px;border-radius:20px;'>
     <div style='background:${bg};border-radius:16px;padding:32px;text-align:center;margin-bottom:28px;'>
-    <h1 style='color:white;margin:0;font-size:28px;'>Wayza Partner</h1>
+    <h1 style='color:white;margin:0;font-size:28px;'>Wayzza Partner</h1>
     <p style='color:rgba(255,255,255,0.85);margin-top:8px;font-size:15px;'>Withdrawal ${approved ? "Approved" : "Update"}</p>
     </div>
     <div style='background:white;border-radius:16px;padding:24px;margin-bottom:24px;border:1px solid #e5e7eb;'>
@@ -159,7 +159,7 @@ export const withdrawalStatusEmail = ({ ownerEmail, amount, status, reason }) =>
     <div style='text-align:center;margin-bottom:28px;'>
     <a href='${frontendUrl}/partner/wallet' style='display:inline-block;padding:14px 32px;background:${color};color:white;text-decoration:none;border-radius:12px;font-weight:700;font-size:15px;'>View Wallet</a>
     </div>
-    <p style='color:#9ca3af;font-size:12px;text-align:center;'>© ${year} Wayza Partner Program</p>
+    <p style='color:#9ca3af;font-size:12px;text-align:center;'>© ${year} Wayzza Partner Program</p>
     </div>`;
-    return { from: `"Wayza" <${process.env.SMTP_FROM || process.env.EMAIL_USER}>`, to: ownerEmail, subject: `Withdrawal ${approved ? "Approved" : "Update"} — ₹${Number(amount).toLocaleString()}`, html };
+    return { from: `"Wayzza" <${process.env.SMTP_FROM || process.env.EMAIL_USER}>`, to: ownerEmail, subject: `Withdrawal ${approved ? "Approved" : "Update"} — ₹${Number(amount).toLocaleString()}`, html };
 };

@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
-import { WayzaLayout } from "../../WayzaUI.jsx";
+import { WayzzaLayout } from "../../WayzzaUI.jsx";
 import { Map, ArrowLeft, Home, Search, Compass } from "lucide-react";
 
 export default function NotFound() {
     const navigate = useNavigate();
 
     return (
-        <WayzaLayout>
+        <WayzzaLayout>
             <div className="min-h-[70vh] flex items-center justify-center p-6">
                 <div className="text-center max-w-lg mx-auto space-y-8">
                     <div className="w-24 h-24 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-6 relative">
@@ -41,6 +41,6 @@ export default function NotFound() {
                     </div>
                 </div>
             </div>
-        </WayzaLayout>
+        </WayzzaLayout>
     );
 }

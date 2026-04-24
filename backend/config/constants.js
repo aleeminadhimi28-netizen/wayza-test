@@ -1,5 +1,5 @@
 /**
- * WAYZA BUSINESS CONSTANTS
+ * WAYZZA BUSINESS CONSTANTS
  * Centralized configuration for all business logic values.
  * Change these here instead of hunting through individual route files.
  */

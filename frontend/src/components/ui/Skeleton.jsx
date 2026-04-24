@@ -6,4 +6,4 @@ export function Skeleton({ className = "" }) {
     );
 }
 
-export const WayzaSkeleton = Skeleton;
+export const WayzzaSkeleton = Skeleton;

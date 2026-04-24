@@ -198,7 +198,7 @@ export default function PartnerCalendar() {
                             </div>
                             <div>
                                 <h3 className="font-bold text-slate-900">Native Calendar Sync</h3>
-                                <p className="text-xs text-slate-500 font-medium">Add your Wayza schedule to Google or Apple Calendar.</p>
+                                <p className="text-xs text-slate-500 font-medium">Add your Wayzza schedule to Google or Apple Calendar.</p>
                             </div>
                         </div>
                         <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between gap-4">

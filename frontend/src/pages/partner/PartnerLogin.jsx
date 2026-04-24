@@ -43,7 +43,7 @@ export default function PartnerLogin() {
 
             setAuth({ email: data.email, role: "partner" });
 
-            showToast("Welcome back to Wayza Pro.", "success");
+            showToast("Welcome back to Wayzza Pro.", "success");
             navigate("/partner", { replace: true });
 
         } catch (err) {
@@ -79,7 +79,7 @@ export default function PartnerLogin() {
                             <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:scale-110 transition-transform">
                                 <Sparkles size={20} className="text-white" />
                             </div>
-                            <span className="text-3xl font-black tracking-tighter uppercase">Wayza<span className="text-emerald-500">Pro.</span></span>
+                            <span className="text-3xl font-black tracking-tighter uppercase">Wayzza<span className="text-emerald-500">Pro.</span></span>
                         </Link>
                     </motion.div>
                 </div>
@@ -145,7 +145,7 @@ export default function PartnerLogin() {
                                     </div>
                                     <input
                                         type="email" required value={email} onChange={e => setEmail(e.target.value)}
-                                        placeholder="partner@wayza.com"
+                                        placeholder="partner@wayzza.com"
                                         className="w-full h-22 bg-slate-50/50 border border-slate-100 rounded-[28px] pl-20 pr-10 font-bold text-xl tracking-tighter text-slate-900 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all placeholder:text-slate-200"
                                     />
                                 </div>

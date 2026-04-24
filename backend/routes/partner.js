@@ -319,7 +319,7 @@ router.get("/calendar-feed/:token", async (req, res, next) => {
         let ics = [
             "BEGIN:VCALENDAR",
             "VERSION:2.0",
-            "PRODID:-//Wayza//Partner Calendar//EN",
+            "PRODID:-//Wayzza//Partner Calendar//EN",
             "CALSCALE:GREGORIAN",
             "METHOD:PUBLISH"
         ];
@@ -330,11 +330,11 @@ router.get("/calendar-feed/:token", async (req, res, next) => {
             const created = new Date(b.createdAt || new Date()).toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
 
             ics.push("BEGIN:VEVENT");
-            ics.push(`UID:${b._id}@wayza.com`);
+            ics.push(`UID:${b._id}@wayzza.com`);
             ics.push(`DTSTAMP:${created}`);
             ics.push(`DTSTART;VALUE=DATE:${start.substring(0, 8)}`);
             ics.push(`DTEND;VALUE=DATE:${end.substring(0, 8)}`);
-            ics.push(`SUMMARY:Wayza Booking - ${b.title || "Stay"}`);
+            ics.push(`SUMMARY:Wayzza Booking - ${b.title || "Stay"}`);
             ics.push(`DESCRIPTION:Guest: ${b.guestEmail}\\nTotal: ₹${b.totalPrice}\\nNights: ${b.nights}`);
             ics.push("END:VEVENT");
         });
@@ -342,7 +342,7 @@ router.get("/calendar-feed/:token", async (req, res, next) => {
         ics.push("END:VCALENDAR");
 
         res.setHeader("Content-Type", "text/calendar");
-        res.setHeader("Content-Disposition", `attachment; filename="wayza_${partner.email}.ics"`);
+        res.setHeader("Content-Disposition", `attachment; filename="wayzza_${partner.email}.ics"`);
         res.send(ics.join("\r\n"));
     } catch (err) { next(err); }
 });

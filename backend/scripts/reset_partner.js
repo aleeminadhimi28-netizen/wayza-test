@@ -12,7 +12,7 @@ async function resetPassword() {
         const db = client.db();
         const users = db.collection('users');
 
-        const email = "partner@wayza.com";
+        const email = "partner@wayzza.com";
         const newPassword = "password"; // Setting it to exactly what they are typing
         const hash = await bcrypt.hash(newPassword, 10);
 

@@ -16,4 +16,4 @@ export function Button({ children, onClick, variant = "primary", className = "",
     );
 }
 
-export const WayzaButton = Button;
+export const WayzzaButton = Button;

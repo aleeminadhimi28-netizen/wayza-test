@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { WayzaLayout } from "../../WayzaUI.jsx";
+import { WayzzaLayout } from "../../WayzzaUI.jsx";
 import { useAuth } from "../../AuthContext.jsx";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, MessageSquare, Info, ShieldCheck, User, Clock, ArrowRight, Home, Sparkles } from "lucide-react";
@@ -81,16 +81,16 @@ export default function GuestChat() {
     }
 
     if (loading) return (
-        <WayzaLayout noPadding>
+        <WayzzaLayout noPadding>
             <div className="min-h-screen flex flex-col items-center justify-center bg-white gap-4 font-sans text-slate-400">
                 <div className="w-10 h-10 border-4 border-slate-100 border-t-emerald-500 rounded-full animate-spin" />
                 <p className="text-xs font-bold uppercase tracking-widest">Connecting to messages...</p>
             </div>
-        </WayzaLayout>
+        </WayzzaLayout>
     );
 
     return (
-        <WayzaLayout noPadding>
+        <WayzzaLayout noPadding>
             <div className="bg-white min-h-screen font-sans selection:bg-emerald-50 selection:text-emerald-900">
                 <div className="max-w-7xl mx-auto px-6 lg:px-12 py-12 md:py-16">
 
@@ -210,6 +210,6 @@ export default function GuestChat() {
                     )}
                 </div>
             </div>
-        </WayzaLayout>
+        </WayzzaLayout>
     );
 }

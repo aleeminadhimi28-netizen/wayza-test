@@ -4,7 +4,7 @@ import { useAuth } from "../../AuthContext.jsx";
 import { useToast } from "../../ToastContext.jsx";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, CheckCircle, Zap, Info, ArrowRight, Home, CreditCard, Sparkles, MapPin, Clock, Shield, Globe, Star, Navigation, Target, Tag } from "lucide-react";
-import { WayzaLayout, WayzaSkeleton } from "../../WayzaUI.jsx";
+import { WayzzaLayout, WayzzaSkeleton } from "../../WayzzaUI.jsx";
 
 import { api } from "../../utils/api.js";
 
@@ -154,20 +154,20 @@ export default function Booking() {
     }
 
     if (loading) return (
-        <WayzaLayout noPadding>
+        <WayzzaLayout noPadding>
             <div className="max-w-7xl mx-auto py-32 px-6 space-y-16 bg-white rounded-[48px] shadow-sm border border-slate-50">
-                <WayzaSkeleton className="h-12 w-1/3 rounded-full" />
+                <WayzzaSkeleton className="h-12 w-1/3 rounded-full" />
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                     <div className="lg:col-span-8 space-y-10">
-                        <WayzaSkeleton className="h-48 rounded-[32px]" />
-                        <WayzaSkeleton className="h-[400px] rounded-[32px]" />
+                        <WayzzaSkeleton className="h-48 rounded-[32px]" />
+                        <WayzzaSkeleton className="h-[400px] rounded-[32px]" />
                     </div>
                     <div className="lg:col-span-4">
-                        <WayzaSkeleton className="h-[600px] rounded-[32px]" />
+                        <WayzzaSkeleton className="h-[600px] rounded-[32px]" />
                     </div>
                 </div>
             </div>
-        </WayzaLayout>
+        </WayzzaLayout>
     );
 
     function fixImg(img) {
@@ -178,7 +178,7 @@ export default function Booking() {
     }
 
     return (
-        <WayzaLayout noPadding>
+        <WayzzaLayout noPadding>
             <div className="bg-white min-h-screen font-sans selection:bg-emerald-50 selection:text-emerald-900">
                 <div className="max-w-7xl mx-auto px-6 lg:px-12 py-12 md:py-20">
                     <header className="mb-12 space-y-2">
@@ -344,6 +344,6 @@ export default function Booking() {
                     </div>
                 </div>
             </div>
-        </WayzaLayout>
+        </WayzzaLayout>
     );
 }

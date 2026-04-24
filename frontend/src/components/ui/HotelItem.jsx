@@ -73,4 +73,4 @@ export function HotelItem({ hotel, isSaved, onToggleWishlist }) {
     );
 }
 
-export const WayzaHotelItem = HotelItem;
+export const WayzzaHotelItem = HotelItem;

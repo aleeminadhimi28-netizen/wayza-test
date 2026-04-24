@@ -13,7 +13,7 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
-        folder: 'wayza_uploads',
+        folder: 'wayzza_uploads',
         allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
         transformation: [{ width: 1000, crop: "limit" }]
     }

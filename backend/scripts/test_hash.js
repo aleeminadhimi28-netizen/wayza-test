@@ -12,7 +12,7 @@ async function run() {
         const db = client.db();
         const users = db.collection("users");
 
-        const email = "partner@wayza.com";
+        const email = "partner@wayzza.com";
         const password = "password123";
 
         const user = await users.findOne({ email });

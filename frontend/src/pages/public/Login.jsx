@@ -93,7 +93,7 @@ export default function Login() {
                     return;
                 }
                 login({ email: data.data.email, role: data.data.role, token: data.data.token });
-                showToast("Welcome to Wayza!", "success");
+                showToast("Welcome to Wayzza!", "success");
                 navigate("/");
             } catch (error) {
                 showToast("Server error.", "error");
@@ -127,7 +127,7 @@ export default function Login() {
             }
 
             login({ email: data.data.email, role: data.data.role, token: data.data.token });
-            showToast("Welcome back to Wayza!", "success");
+            showToast("Welcome back to Wayzza!", "success");
             navigate("/");
         } catch (error) {
             showToast("Could not connect to server.", "error");
@@ -187,7 +187,7 @@ export default function Login() {
                     <div className="w-12 h-1 bg-emerald-500 rounded-full" />
                     <div className="w-2 h-1 bg-white/20 rounded-full" />
                     <div className="w-2 h-1 bg-white/20 rounded-full" />
-                    <span className="text-[9px] font-bold text-white/30 uppercase tracking-[0.4em] ml-4">Wayza Guest Network</span>
+                    <span className="text-[9px] font-bold text-white/30 uppercase tracking-[0.4em] ml-4">Wayzza Guest Network</span>
                 </div>
             </div>
 
@@ -196,7 +196,7 @@ export default function Login() {
                 <div className="max-w-md w-full mx-auto space-y-12">
 
                     <Link to="/" className="inline-block text-3xl font-bold tracking-tight mb-8 group uppercase">
-                        Wayza<span className="text-emerald-600">.</span>
+                        Wayzza<span className="text-emerald-600">.</span>
                         <div className="h-1 text-emerald-500 scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
                     </Link>
 
@@ -335,7 +335,7 @@ export default function Login() {
 
                     <div className="text-center space-y-6 pt-6">
                         <p className="font-bold text-slate-400 text-[10px] uppercase tracking-widest">
-                            New to Wayza? <Link to="/signup" className="text-emerald-600 hover:text-emerald-700 font-bold border-b border-emerald-500/30">Create Account</Link>
+                            New to Wayzza? <Link to="/signup" className="text-emerald-600 hover:text-emerald-700 font-bold border-b border-emerald-500/30">Create Account</Link>
                         </p>
                     </div>
 

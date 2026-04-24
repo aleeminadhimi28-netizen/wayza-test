@@ -8,4 +8,4 @@ export function Card({ children, className = "" }) {
     );
 }
 
-export const WayzaCard = Card;
+export const WayzzaCard = Card;

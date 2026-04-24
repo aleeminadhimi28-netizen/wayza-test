@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { WayzaLayout } from "../../WayzaUI.jsx";
+import { WayzzaLayout } from "../../WayzzaUI.jsx";
 import { useAuth } from "../../AuthContext.jsx";
 import { CheckCircle, History, Sparkles, Home, Calendar, ShieldCheck } from "lucide-react";
 
@@ -33,7 +33,7 @@ export default function PaymentSuccess() {
     }, [token]);
 
     return (
-        <WayzaLayout noPadding>
+        <WayzzaLayout noPadding>
             <div className="min-h-screen bg-white font-sans flex flex-col items-center justify-center py-20 px-6">
 
                 <div className="max-w-xl w-full flex flex-col items-center text-center space-y-8">
@@ -86,6 +86,6 @@ export default function PaymentSuccess() {
                     </p>
                 </div>
             </div>
-        </WayzaLayout>
+        </WayzzaLayout>
     );
 }

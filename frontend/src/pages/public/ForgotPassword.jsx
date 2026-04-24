@@ -48,7 +48,7 @@ export default function ForgotPassword() {
         <div className="relative z-10">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
             <Link to="/" className="text-3xl font-bold tracking-tight text-slate-900 uppercase">
-              Wayza<span className="text-emerald-500">.</span>
+              Wayzza<span className="text-emerald-500">.</span>
             </Link>
           </motion.div>
         </div>
@@ -77,7 +77,7 @@ export default function ForgotPassword() {
         </div>
 
         <div className="relative z-10 text-[9px] font-bold text-slate-300 uppercase tracking-[0.4em]">
-          Wayza Guest Security Network v4.2
+          Wayzza Guest Security Network v4.2
         </div>
       </div>
 

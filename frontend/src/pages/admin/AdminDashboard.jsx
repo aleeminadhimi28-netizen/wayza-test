@@ -199,7 +199,7 @@ export default function AdminDashboard() {
                     <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveTab("overview")}>
                         <div className="w-9 h-9 bg-emerald-500 rounded-xl flex items-center justify-center text-white font-bold text-sm shadow-lg">W</div>
                         <div>
-                            <span className="font-bold text-white text-lg">Wayza <span className="text-emerald-400">Admin</span></span>
+                            <span className="font-bold text-white text-lg">Wayzza <span className="text-emerald-400">Admin</span></span>
                         </div>
                     </div>
                 </div>
@@ -250,7 +250,7 @@ export default function AdminDashboard() {
                             <h2 className="text-xl font-bold text-slate-900 capitalize">
                                 {activeTab === "overview" ? "Dashboard Overview" : activeTab === "support" ? "Customer Support" : `${activeTab} Management`}
                             </h2>
-                            <p className="text-xs text-slate-500 mt-0.5">Wayza Admin Panel</p>
+                            <p className="text-xs text-slate-500 mt-0.5">Wayzza Admin Panel</p>
                         </div>
                         <div className="flex items-center gap-3">
                             {(activeTab !== "overview" && activeTab !== "support" && activeTab !== "withdrawals" && activeTab !== "settings") && (

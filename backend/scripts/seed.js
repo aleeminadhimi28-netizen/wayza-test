@@ -11,7 +11,7 @@ dotenv.config();
     const db = getDB();
     const users = db.collection('users');
     const listings = db.collection('listings');
-    const adminEmail = process.env.ADMIN_EMAIL || 'admin@wayza.com';
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@wayzza.com';
     const guestEmail = 'testguest@test.com';
     
     const adminExists = await users.findOne({ email: adminEmail });

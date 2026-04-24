@@ -92,7 +92,7 @@ export default function PartnerOnboarding() {
             >
                 {/* PRO BRANDING */}
                 <div className="absolute top-12 right-12 flex items-center gap-3">
-                    <span className="text-[10px] font-black uppercase tracking-[0.6em] text-slate-300">Wayza</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.6em] text-slate-300">Wayzza</span>
                     <div className="px-3 py-1 bg-slate-950 text-white text-[9px] font-black uppercase tracking-[0.4em] rounded-md">Pro</div>
                 </div>
 
@@ -117,7 +117,7 @@ export default function PartnerOnboarding() {
                                     <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-600">Phase 01: Onboarding</span>
                                 </div>
                                 <h2 className="text-6xl md:text-8xl font-black tracking-tighter text-slate-900 uppercase leading-[0.8]">Partner <br /><span className="lowercase">Identity.</span></h2>
-                                <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest leading-relaxed max-w-sm">"Define your presence within the Wayza luxury network architecture."</p>
+                                <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest leading-relaxed max-w-sm">"Define your presence within the Wayzza luxury network architecture."</p>
                             </div>
 
                             <div className="space-y-12">

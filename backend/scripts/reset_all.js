@@ -13,9 +13,9 @@ async function resetAll() {
         const users = db.collection('users');
 
         const accounts = [
-            "partner@wayza.com",
-            "admin@wayza.com",
-            "test@wayza.com"
+            "partner@wayzza.com",
+            "admin@wayzza.com",
+            "test@wayzza.com"
         ];
 
         const password = "password";

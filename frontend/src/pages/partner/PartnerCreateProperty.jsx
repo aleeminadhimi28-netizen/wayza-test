@@ -154,7 +154,7 @@ export default function PartnerCreateProperty() {
                     Create a <span className="text-emerald-500">New Listing</span>
                 </h1>
                 <p className="text-slate-500 text-sm mt-1">
-                    Add your property to the Wayza platform. You can add room types and variants after creation.
+                    Add your property to the Wayzza platform. You can add room types and variants after creation.
                 </p>
             </div>
 

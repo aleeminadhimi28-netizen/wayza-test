@@ -6,7 +6,7 @@ import {
   CheckCircle, Mail, Phone, ArrowRight, Shield,
   ExternalLink, Camera, Settings, Compass, Star, Clock, XCircle
 } from "lucide-react";
-import { WayzaLayout } from "../../WayzaUI.jsx";
+import { WayzzaLayout } from "../../WayzzaUI.jsx";
 import { useAuth } from "../../AuthContext.jsx";
 import { useToast } from "../../ToastContext.jsx";
 import TwoFactorSetup from "../../components/TwoFactorSetup.jsx";
@@ -128,11 +128,11 @@ export default function Profile() {
   }
 
   if (loading) return (
-    <WayzaLayout>
+    <WayzzaLayout>
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="w-10 h-10 border-4 border-slate-100 border-t-emerald-500 rounded-full animate-spin" />
       </div>
-    </WayzaLayout>
+    </WayzzaLayout>
   );
 
   const TABS = [
@@ -146,7 +146,7 @@ export default function Profile() {
   const initials = displayName.charAt(0).toUpperCase();
 
   return (
-    <WayzaLayout noPadding>
+    <WayzzaLayout noPadding>
       <div className="bg-slate-50 min-h-screen font-sans">
 
         {/* ─── PROFILE HEADER ─── */}
@@ -504,6 +504,6 @@ export default function Profile() {
           </main>
         </div>
       </div>
-    </WayzaLayout>
+    </WayzzaLayout>
   );
 }

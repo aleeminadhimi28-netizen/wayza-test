@@ -410,7 +410,7 @@ if (process.env.ALLOW_SEED === 'true') {
             
             // Insert admin user
             const users = db.collection('users');
-            const adminEmail = process.env.ADMIN_EMAIL || 'admin@wayza.com';
+            const adminEmail = process.env.ADMIN_EMAIL || 'admin@wayzza.com';
             const adminExists = await users.findOne({ email: adminEmail });
             if (!adminExists) {
                 await users.insertOne({

@@ -15,4 +15,4 @@ export function Input({ value, onChange, placeholder, type = "text", label }) {
     );
 }
 
-export const WayzaInput = Input;
+export const WayzzaInput = Input;

@@ -61,7 +61,7 @@ export default function AdminLogin() {
                 <div className="relative z-10">
                     <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
                         <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg">W</div>
-                        <span className="text-2xl font-bold">Wayza <span className="text-emerald-400">Admin</span></span>
+                        <span className="text-2xl font-bold">Wayzza <span className="text-emerald-400">Admin</span></span>
                     </Link>
                 </div>
 
@@ -79,7 +79,7 @@ export default function AdminLogin() {
                 </div>
 
                 <div className="relative z-10 text-xs text-white/20 font-medium">
-                    © 2026 Wayza Inc. Internal Use Only.
+                    © 2026 Wayzza Inc. Internal Use Only.
                 </div>
             </div>
 
@@ -94,7 +94,7 @@ export default function AdminLogin() {
                         {/* Mobile branding */}
                         <div className="md:hidden flex items-center gap-3 mb-4">
                             <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg">W</div>
-                            <span className="text-xl font-bold text-slate-900">Wayza <span className="text-emerald-600">Admin</span></span>
+                            <span className="text-xl font-bold text-slate-900">Wayzza <span className="text-emerald-600">Admin</span></span>
                         </div>
 
                         <div>
@@ -112,7 +112,7 @@ export default function AdminLogin() {
                                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                                     <input
                                         type="email" required value={email} onChange={e => setEmail(e.target.value)}
-                                        placeholder="admin@wayza.com"
+                                        placeholder="admin@wayzza.com"
                                         autoComplete="email"
                                         className="w-full h-12 bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition-all"
                                     />

@@ -77,8 +77,8 @@ export default function PartnerBookings() {
         { facingMode: "environment" },
         config,
         (decodedText) => {
-          if (decodedText.startsWith("wayza-verify://")) {
-            const id = decodedText.replace("wayza-verify://", "");
+          if (decodedText.startsWith("wayzza-verify://")) {
+            const id = decodedText.replace("wayzza-verify://", "");
             html5QrCode.stop().then(() => {
               setScanning(false);
               processScannedId(id);

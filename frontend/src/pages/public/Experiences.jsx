@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { WayzaLayout, WayzaSkeleton } from "../../WayzaUI.jsx";
+import { WayzzaLayout, WayzzaSkeleton } from "../../WayzzaUI.jsx";
 import { 
     Anchor, Compass, Navigation, ArrowRight, PlayCircle, Star, Target, MapPin, 
     Sparkles, Zap, Shield, Heart, Info, ChevronRight, Globe, Layers, Award,
@@ -51,7 +51,7 @@ export default function Experiences() {
     const filtered = listings; // For now keeping it simple as specific subtypes aren't in model yet
 
     return (
-        <WayzaLayout noPadding hideFooter>
+        <WayzzaLayout noPadding hideFooter>
             <div className="bg-white font-sans text-slate-900 selection:bg-amber-100 selection:text-amber-900 overflow-hidden">
                 
                 {/* ════ CINEMATIC HERO ════ */}
@@ -143,7 +143,7 @@ export default function Experiences() {
 
                     {loading ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-                            {[1,2,3,4,5,6].map(i => <WayzaSkeleton key={i} className="aspect-[3/4] rounded-[48px]" />)}
+                            {[1,2,3,4,5,6].map(i => <WayzzaSkeleton key={i} className="aspect-[3/4] rounded-[48px]" />)}
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
@@ -276,7 +276,7 @@ export default function Experiences() {
                     <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-32">
                         <div className="md:col-span-6 space-y-16">
                             <div className="space-y-8">
-                                <h1 className="text-6xl font-bold tracking-tighter text-slate-950 uppercase m-0 leading-none">Wayza<span className="text-amber-500">.</span></h1>
+                                <h1 className="text-6xl font-bold tracking-tighter text-slate-950 uppercase m-0 leading-none">Wayzza<span className="text-amber-500">.</span></h1>
                                 <p className="text-slate-400 font-medium text-2xl leading-relaxed max-w-lg">
                                     "Curating the extraordinary for those who seek the unindexed."
                                 </p>
@@ -318,6 +318,6 @@ export default function Experiences() {
                     </div>
                 </footer>
             </div>
-        </WayzaLayout>
+        </WayzzaLayout>
     );
 }

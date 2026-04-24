@@ -19,7 +19,7 @@ async function run() {
         const users = db.collection("users");
         const partners = db.collection("partners");
 
-        const email = "partner@wayza.com";
+        const email = "partner@wayzza.com";
         const password = "password123";
 
         const exists = await users.findOne({ email });
@@ -32,12 +32,12 @@ async function run() {
             await users.insertOne({ email, password: hash, role: "partner", createdAt: new Date() });
             await partners.insertOne({
                 email,
-                businessName: "Wayza Main Partner",
+                businessName: "Wayzza Main Partner",
                 type: "mixed",
                 onboarded: true,
                 createdAt: new Date()
             });
-            console.log("Partner created: partner@wayza.com / password123");
+            console.log("Partner created: partner@wayzza.com / password123");
         }
     } catch (err) {
         console.error(err);

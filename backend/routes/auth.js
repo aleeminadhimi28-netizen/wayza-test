@@ -210,13 +210,13 @@ router.post("/forgot-password", async (req, res, next) => {
 
         if (transporter) {
             const info = await transporter.sendMail({
-                from: process.env.SMTP_FROM || process.env.EMAIL_USER || "noreply@wayza.com",
+                from: process.env.SMTP_FROM || process.env.EMAIL_USER || "noreply@wayzza.com",
                 to: email,
-                subject: "Wayza — Reset Your Password",
+                subject: "Wayzza — Reset Your Password",
                 html: `
                     <div style="font-family:system-ui;max-width:500px;margin:0 auto;padding:40px;background:#fff;">
                         <h2 style="color:#0f172a;">Reset Your Password</h2>
-                        <p style="color:#64748b;">Click the button below to reset your Wayza password. This link expires in 1 hour.</p>
+                        <p style="color:#64748b;">Click the button below to reset your Wayzza password. This link expires in 1 hour.</p>
                         <a href="${resetUrl}" style="display:inline-block;padding:14px 32px;background:#059669;color:#fff;text-decoration:none;border-radius:12px;font-weight:bold;margin:24px 0;">Reset Password</a>
                         <p style="color:#94a3b8;font-size:12px;">If you didn't request this, please ignore this email.</p>
                     </div>
@@ -279,9 +279,9 @@ router.post("/send-otp", async (req, res, next) => {
         
         const transporter = await getTransporter();
         const info = await transporter.sendMail({
-            from: process.env.SMTP_FROM || process.env.EMAIL_USER || "noreply@wayza.com",
+            from: process.env.SMTP_FROM || process.env.EMAIL_USER || "noreply@wayzza.com",
             to: email,
-            subject: "Your Wayza Authentication Code",
+            subject: "Your Wayzza Authentication Code",
             html: `
                 <div style="font-family:system-ui;max-width:500px;margin:0 auto;padding:40px;background:#fff;text-align:center;">
                     <h2 style="color:#0f172a;">Authentication Code</h2>

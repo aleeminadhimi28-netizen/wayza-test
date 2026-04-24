@@ -15,4 +15,4 @@ export function PageTransition({ children }) {
 }
 
 // Keeping legacy name for easy migration
-export const WayzaPageTransition = PageTransition;
+export const WayzzaPageTransition = PageTransition;

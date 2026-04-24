@@ -32,7 +32,7 @@ export default function PartnerRegister() {
             const data = await api.partnerRegister({ businessName, email, password, type });
 
             if (data.ok) {
-                showToast("Account established. Welcome to Wayza Pro.", "success");
+                showToast("Account established. Welcome to Wayzza Pro.", "success");
                 navigate("/partner-login");
             } else {
                 showToast(data.msg || data.message || "Registration failed. Please try again.", "error");
@@ -63,7 +63,7 @@ export default function PartnerRegister() {
                             <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:scale-110 transition-transform">
                                 <Sparkles size={20} className="text-white" />
                             </div>
-                            <span className="text-3xl font-black tracking-tighter uppercase">Wayza<span className="text-emerald-500">Pro.</span></span>
+                            <span className="text-3xl font-black tracking-tighter uppercase">Wayzza<span className="text-emerald-500">Pro.</span></span>
                         </Link>
                     </motion.div>
                 </div>
@@ -78,7 +78,7 @@ export default function PartnerRegister() {
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-600 lowercase pr-4">network.</span>
                         </h1>
                         <p className="text-white/40 text-2xl font-medium leading-relaxed max-w-lg border-l-2 border-emerald-500/30 pl-8">
-                            "Integrate your world-class stays into the Wayza ecosystem. Share your hospitality with a global collective of explorers."
+                            "Integrate your world-class stays into the Wayzza ecosystem. Share your hospitality with a global collective of explorers."
                         </p>
                     </motion.div>
 
@@ -99,7 +99,7 @@ export default function PartnerRegister() {
                 </div>
 
                 <div className="relative z-10 text-[10px] font-black text-white/10 uppercase tracking-[1em] select-none hover:text-emerald-500/20 transition-colors">
-                    Wayza Professional Growth Architecture
+                    Wayzza Professional Growth Architecture
                 </div>
             </div>
 
@@ -172,7 +172,7 @@ export default function PartnerRegister() {
                                     </div>
                                     <input
                                         type="email" required value={email} onChange={e => setEmail(e.target.value)}
-                                        placeholder="partner@wayza.com"
+                                        placeholder="partner@wayzza.com"
                                         className="w-full h-22 bg-slate-50/50 border border-slate-100 rounded-[28px] pl-20 pr-10 font-bold text-xl tracking-tighter text-slate-900 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all placeholder:text-slate-200"
                                     />
                                 </div>
@@ -212,7 +212,7 @@ export default function PartnerRegister() {
 
                         <div className="pt-16 flex flex-col items-center gap-10 text-center border-t border-slate-100">
                             <p className="text-slate-300 font-bold text-[10px] uppercase tracking-widest leading-relaxed max-w-sm">
-                                "By establishing an account, you adhere to the Wayza Pro Merchant Guidelines and Operational Standards."
+                                "By establishing an account, you adhere to the Wayzza Pro Merchant Guidelines and Operational Standards."
                             </p>
                             <Link to="/partner-login" className="inline-flex items-center gap-4 text-emerald-600 font-black text-[10px] uppercase tracking-[0.5em] hover:text-emerald-700 transition-all group">
                                 <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Already Resident? Sign in

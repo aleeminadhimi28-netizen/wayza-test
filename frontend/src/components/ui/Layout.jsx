@@ -27,16 +27,16 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
     const [isDarkMode, setIsDarkMode] = useState(false);
 
     useEffect(() => {
-        setIsDarkMode(document.documentElement.classList.contains('wayza-dark'));
+        setIsDarkMode(document.documentElement.classList.contains('wayzza-dark'));
     }, []);
 
     const toggleTheme = () => {
         const root = document.documentElement;
-        if (root.classList.contains('wayza-dark')) {
-            root.classList.remove('wayza-dark');
+        if (root.classList.contains('wayzza-dark')) {
+            root.classList.remove('wayzza-dark');
             setIsDarkMode(false);
         } else {
-            root.classList.add('wayza-dark');
+            root.classList.add('wayzza-dark');
             setIsDarkMode(true);
         }
     };
@@ -94,7 +94,7 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
         <div className="bg-white min-h-screen font-sans selection:bg-emerald-100 selection:text-emerald-900">
             <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 py-4 ${headerBg}`}>
                 <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between">
-                    <Link to="/" className={`text-2xl md:text-3xl font-bold transition-all duration-500 tracking-tight uppercase ${textColor}`}>Wayza<span className="text-emerald-500">.</span></Link>
+                    <Link to="/" className={`text-2xl md:text-3xl font-bold transition-all duration-500 tracking-tight uppercase ${textColor}`}>Wayzza<span className="text-emerald-500">.</span></Link>
                     <div className={`hidden lg:flex gap-10 font-bold uppercase tracking-widest text-[10px] ${subTextColor}`}>
                         {navLinks.map(link => (
                             <Link key={link.name} to={link.to} className={`hover:text-emerald-500 transition-colors relative group flex items-center gap-1.5 ${link.icon ? 'text-emerald-500 font-extrabold' : ''}`}>
@@ -272,7 +272,7 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
                 <footer className="bg-slate-950 text-white/40">
                     <div className="max-w-7xl mx-auto px-8 py-32 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-20">
                         <div className="space-y-10">
-                            <Link to="/" className="text-4xl font-bold tracking-tight uppercase text-white">Wayza<span className="text-emerald-500">.</span></Link>
+                            <Link to="/" className="text-4xl font-bold tracking-tight uppercase text-white">Wayzza<span className="text-emerald-500">.</span></Link>
                             <p className="text-lg font-medium leading-relaxed text-white/30 truncate max-w-xs">"Connecting travelers with extraordinary stays."</p>
                         </div>
                         <div>
@@ -297,7 +297,7 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
                             <ul className="space-y-5 text-[15px] font-bold text-center md:text-left text-white/60">
                                 <li><a href="#" className="hover:text-white transition-colors">Instagram</a></li>
                                 <li><a href="#" className="hover:text-white transition-colors">Twitter</a></li>
-                                <li><a href="mailto:contact@wayza.com" className="hover:text-white transition-colors">Contact Support</a></li>
+                                <li><a href="mailto:contact@wayzza.com" className="hover:text-white transition-colors">Contact Support</a></li>
                             </ul>
                         </div>
                     </div>
@@ -307,4 +307,4 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
     );
 }
 
-export const WayzaLayout = Layout;
+export const WayzzaLayout = Layout;

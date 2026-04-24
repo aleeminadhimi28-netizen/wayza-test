@@ -33,16 +33,16 @@ export default function PartnerLayout() {
   const [showNotifs, setShowNotifs] = useState(false);
 
   useEffect(() => {
-    setIsDarkMode(document.documentElement.classList.contains('wayza-dark'));
+    setIsDarkMode(document.documentElement.classList.contains('wayzza-dark'));
   }, []);
 
   const toggleTheme = () => {
     const root = document.documentElement;
-    if (root.classList.contains('wayza-dark')) {
-      root.classList.remove('wayza-dark');
+    if (root.classList.contains('wayzza-dark')) {
+      root.classList.remove('wayzza-dark');
       setIsDarkMode(false);
     } else {
-      root.classList.add('wayza-dark');
+      root.classList.add('wayzza-dark');
       setIsDarkMode(true);
     }
   };
@@ -87,7 +87,7 @@ export default function PartnerLayout() {
               <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center text-white font-bold text-lg">
                 W
               </div>
-              <span className="font-bold text-lg text-white">Wayza<span className="text-emerald-500">Pro</span></span>
+              <span className="font-bold text-lg text-white">Wayzza<span className="text-emerald-500">Pro</span></span>
             </div>
           )}
           {collapsed && (
@@ -253,10 +253,10 @@ export default function PartnerLayout() {
           {/* Footer inside main content area */}
           <div className="mt-12 py-6 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-400 font-medium">
             <div className="flex items-center gap-2">
-              <Navigation size={14} /> Wayza Partner Suite
+              <Navigation size={14} /> Wayzza Partner Suite
             </div>
             <div>
-              &copy; {new Date().getFullYear()} Wayza Inc.
+              &copy; {new Date().getFullYear()} Wayzza Inc.
             </div>
           </div>
         </main>

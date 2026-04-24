@@ -1,6 +1,6 @@
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { WayzaLayout } from "../../WayzaUI.jsx";
+import { WayzzaLayout } from "../../WayzzaUI.jsx";
 import { CheckCircle, ArrowRight, Home, Calendar, CreditCard, MapPin, Zap, MessageSquare, Sparkles } from "lucide-react";
 
 export default function BookingSuccess() {
@@ -9,7 +9,7 @@ export default function BookingSuccess() {
 
     if (!state) {
         return (
-            <WayzaLayout>
+            <WayzzaLayout>
                 <div className="min-h-[70vh] flex flex-col items-center justify-center p-10 text-center space-y-10">
                     <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto shadow-inner border border-slate-100">
                         <Zap size={32} className="text-slate-200" />
@@ -22,14 +22,14 @@ export default function BookingSuccess() {
                         View My Bookings <Calendar size={18} />
                     </Link>
                 </div>
-            </WayzaLayout>
+            </WayzzaLayout>
         );
     }
 
     const { bookingId, title, price, startDate, endDate } = state;
 
     return (
-        <WayzaLayout noPadding>
+        <WayzzaLayout noPadding>
             <div className="min-h-screen bg-slate-50 font-sans overflow-hidden">
 
                 {/* CELEBRATION HERO */}
@@ -138,6 +138,6 @@ export default function BookingSuccess() {
                     </motion.div>
                 </div>
             </div>
-        </WayzaLayout>
+        </WayzzaLayout>
     );
 }
