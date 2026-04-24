@@ -108,13 +108,31 @@ router.post("/google", async (req, res, next) => {
         const { credential } = req.body;
         if (!credential) return res.status(400).json({ ok: false, message: "No Google credential provided" });
 
-        const ticket = await googleClient.verifyIdToken({
-            idToken: credential,
-            audience: process.env.GOOGLE_CLIENT_ID
-        });
+        let email, name, picture;
 
-        const payload = ticket.getPayload();
-        const email = payload.email.toLowerCase().trim();
+        // Try to decode as JWT first (id_token)
+        if (credential.split('.').length === 3) {
+            const ticket = await googleClient.verifyIdToken({
+                idToken: credential,
+                audience: process.env.GOOGLE_CLIENT_ID
+            });
+            const payload = ticket.getPayload();
+            email = payload.email.toLowerCase().trim();
+            name = payload.name;
+            picture = payload.picture;
+        } else {
+            // Otherwise, treat it as an access_token and fetch user info
+            const response = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo`, {
+                headers: { Authorization: `Bearer ${credential}` }
+            });
+            if (!response.ok) {
+                throw new Error("Failed to fetch user info from Google");
+            }
+            const payload = await response.json();
+            email = payload.email.toLowerCase().trim();
+            name = payload.name;
+            picture = payload.picture;
+        }
 
         const db = getDB();
         let user = await db.collection("users").findOne({ email });
