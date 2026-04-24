@@ -301,9 +301,9 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
                             </ul>
                         </div>
                     </div>
-                    <div className="max-w-7xl mx-auto px-8 py-12 border-t border-white/5 text-center">
-                        <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/20">
-                            Made with <span className="text-rose-500/80 mx-1">❤️</span> in Varkala
+                    <div className="max-w-7xl mx-auto px-8 py-16 border-t border-white/5 text-center">
+                        <p className="text-[12px] font-bold uppercase tracking-[0.4em] text-white/40 flex items-center justify-center gap-2">
+                            Made with <span className="text-rose-500 animate-pulse text-lg">❤️</span> in Varkala
                         </p>
                     </div>
                 </footer>
