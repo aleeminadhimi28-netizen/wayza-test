@@ -491,97 +491,118 @@ export default function LandingPage() {
                                     </div>
                                 ))}
                             </div>
-                            <button
-                                onClick={() => navigate('/ai-trip-planner')}
-                                className="group h-12 px-8 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-xl font-black text-xs uppercase tracking-widest transition-all flex items-center gap-3 shadow-lg shadow-emerald-500/20 shrink-0"
-                            >
-                                Open AI Planner
-                                <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
-                            </button>
-                        </motion.div>
+                                    <button
+                                        onClick={() => navigate('/ai-trip-planner')}
+                                        className="group h-12 px-8 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-xl font-black text-xs uppercase tracking-widest transition-all flex items-center gap-3 shadow-lg shadow-emerald-500/20 shrink-0"
+                                    >
+                                        Open AI Planner
+                                        <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
+                                    </button>
+                                </motion.div>
 
+                            </div>
+                        </section>
+
+                <footer className="bg-slate-950 pt-32 pb-12 px-6 overflow-hidden relative border-t border-white/5">
+                    {/* Atmospheric Glows */}
+                    <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-emerald-500/5 blur-[120px] rounded-full pointer-events-none" />
+                    <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-emerald-900/5 blur-[100px] rounded-full pointer-events-none" />
+
+                    {/* Massive Background Watermark */}
+                    <div className="absolute -bottom-10 -right-20 text-[18vw] font-black text-white/[0.02] select-none pointer-events-none uppercase tracking-tighter leading-none">
+                        Varkala
                     </div>
-                </section>
 
-
-
-                <footer className="bg-slate-950 pt-16 pb-8 px-6 overflow-hidden relative border-t border-white/5">
-                    {/* Subtle Watermark */}
-                    <div className="absolute -bottom-6 -right-6 text-[10vw] font-black text-white/[0.02] select-none pointer-events-none uppercase tracking-tighter">
-                        Wayzza
-                    </div>
-
-                    <div className="max-w-7xl mx-auto">
-                        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 mb-16 relative z-10">
-                            {/* Brand DNA */}
-                            <div className="md:col-span-4 space-y-6">
-                                <div className="space-y-3">
-                                    <h2 className="text-xl font-bold tracking-tighter text-white uppercase">Wayzza<span className="text-emerald-500">.</span></h2>
-                                    <p className="text-white/30 text-xs leading-relaxed font-light max-w-[240px]">
-                                        "Defining verified inventory and soulful exploration."
+                    <div className="max-w-7xl mx-auto relative z-10">
+                        <div className="grid grid-cols-1 md:grid-cols-12 gap-16 mb-32">
+                            
+                            {/* Brand Column */}
+                            <div className="md:col-span-5 space-y-10">
+                                <div className="space-y-6">
+                                    <h2 className="text-4xl font-black tracking-tighter text-white uppercase">Wayzza<span className="text-emerald-500">.</span></h2>
+                                    <p className="text-white/40 text-lg font-medium leading-relaxed max-w-sm">
+                                        Curating verified sanctuaries and high-performance mobility for the modern explorer.
                                     </p>
                                 </div>
-                                <div className="space-y-3">
-                                    <form onSubmit={handleNewsletterSubmit} className={`flex bg-white/5 rounded-full p-1 border border-white/10 max-w-xs transition-all focus-within:border-emerald-500 ${newsletterLoading ? 'opacity-50 pointer-events-none' : ''}`}>
+
+                                {/* Premium Newsletter invitation */}
+                                <div className="p-8 bg-white/5 backdrop-blur-xl border border-white/10 rounded-[32px] space-y-6 max-w-md group hover:border-emerald-500/30 transition-all duration-500">
+                                    <div className="space-y-2">
+                                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400">The Insider List</p>
+                                        <h4 className="text-xl font-bold text-white">Join the Wayzza circle.</h4>
+                                    </div>
+                                    <form onSubmit={handleNewsletterSubmit} className="flex gap-2">
                                         <input 
                                             type="email" 
-                                            placeholder="Newsletter" 
+                                            placeholder="Your email" 
                                             value={newsletterEmail}
                                             onChange={e => setNewsletterEmail(e.target.value)}
-                                            className="bg-transparent border-none outline-none flex-1 px-4 text-[10px] py-1 text-white/70 placeholder:text-white/20" 
+                                            className="flex-1 bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-sm text-white focus:outline-none focus:border-emerald-500 transition-all"
                                         />
-                                        <button type="submit" disabled={newsletterLoading} className="bg-emerald-500 text-white w-6 h-6 rounded-full flex items-center justify-center hover:bg-emerald-400 transition-colors">
-                                            <ArrowRight size={10} />
+                                        <button className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 p-4 rounded-2xl transition-all active:scale-95 shadow-lg shadow-emerald-500/20">
+                                            <Send size={18} strokeWidth={3} />
                                         </button>
                                     </form>
+                                    <p className="text-[10px] text-white/20 font-medium">Monthly sanctuaries. Zero spam. Private access.</p>
                                 </div>
                             </div>
 
                             {/* Links Grid */}
-                            <div className="md:col-span-8 grid grid-cols-2 lg:grid-cols-4 gap-8">
-                                <div className="space-y-4">
-                                    <p className="text-[8px] font-bold uppercase tracking-[0.3em] text-emerald-500/50">Protocol</p>
-                                    <ul className="space-y-2">
-                                        <li><Link to="/about" className="text-[11px] font-medium text-white/50 hover:text-white transition-colors uppercase tracking-tight">The Method</Link></li>
-                                        <li><Link to="/about" className="text-[11px] font-medium text-white/50 hover:text-white transition-colors uppercase tracking-tight">Verification</Link></li>
-                                        <li><Link to="/partner-register" className="text-[11px] font-medium text-white/50 hover:text-white transition-colors uppercase tracking-tight">Partners</Link></li>
-                                    </ul>
-                                </div>
-                                <div className="space-y-4">
-                                    <p className="text-[8px] font-bold uppercase tracking-[0.3em] text-emerald-500/50">Inventory</p>
-                                    <ul className="space-y-2">
-                                        {['Villas', 'Mobility', 'Secrets'].map(l => (
-                                            <li key={l}><Link to="/listings" className="text-[11px] font-medium text-white/50 hover:text-white transition-colors uppercase tracking-tight">{l}</Link></li>
+                            <div className="md:col-span-7 grid grid-cols-2 md:grid-cols-3 gap-12">
+                                <div className="space-y-8">
+                                    <h5 className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20">Platform</h5>
+                                    <ul className="space-y-4">
+                                        {['Stays', 'Mobility', 'Secrets', 'AI Planner'].map(l => (
+                                            <li key={l}><Link to="/listings" className="text-sm font-bold text-white/40 hover:text-emerald-400 transition-all hover:translate-x-1 inline-block uppercase tracking-widest">{l}</Link></li>
                                         ))}
                                     </ul>
                                 </div>
-                                <div className="space-y-4">
-                                    <p className="text-[8px] font-bold uppercase tracking-[0.3em] text-emerald-500/50">Connect</p>
-                                    <ul className="space-y-2">
-                                        <li><a href="#" className="flex items-center gap-2 text-[11px] font-medium text-white/50 hover:text-white transition-colors uppercase tracking-tight"><Instagram size={11} /> Instagram</a></li>
-                                        <li><a href="#" className="flex items-center gap-2 text-[11px] font-medium text-white/50 hover:text-white transition-colors uppercase tracking-tight"><Mail size={11} /> Contact</a></li>
+                                <div className="space-y-8">
+                                    <h5 className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20">Company</h5>
+                                    <ul className="space-y-4">
+                                        {['Our Story', 'Partners', 'Careers', 'Support'].map(l => (
+                                            <li key={l}><Link to="/about" className="text-sm font-bold text-white/40 hover:text-emerald-400 transition-all hover:translate-x-1 inline-block uppercase tracking-widest">{l}</Link></li>
+                                        ))}
                                     </ul>
                                 </div>
-                                <div className="space-y-2 bg-white/[0.03] backdrop-blur-md rounded-2xl p-4 border border-white/10 self-start">
-                                    <div className="flex items-center gap-1.5 text-emerald-500 font-bold text-[9px] uppercase tracking-widest">
-                                        <Shield size={14} /> Secured
+                                <div className="space-y-8">
+                                    <h5 className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20">Connect</h5>
+                                    <div className="flex gap-4">
+                                        {[Instagram, Twitter, Facebook].map((Icon, i) => (
+                                            <a key={i} href="#" className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white/40 hover:text-emerald-400 hover:border-emerald-500/50 hover:-translate-y-1 transition-all">
+                                                <Icon size={20} />
+                                            </a>
+                                        ))}
                                     </div>
-                                    <p className="text-[9px] text-white/30 leading-relaxed mt-2">Verified encryption enabled.</p>
+                                    <div className="space-y-2">
+                                        <p className="text-[10px] text-white/20 font-black uppercase tracking-widest">General Enquiries</p>
+                                        <a href="mailto:hello@wayzza.live" className="text-sm font-bold text-white hover:text-emerald-400 transition-colors">hello@wayzza.live</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[8px] font-bold text-white/20 uppercase tracking-[0.2em]">
-                            <div className="flex gap-6">
-                                <span>Wayzza Travels © 2026</span>
-                                <Link to="/privacy" className="hover:text-white/60">Privacy</Link>
-                                <Link to="/terms" className="hover:text-white/60">Terms</Link>
+                        {/* Bottom Bar */}
+                        <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-10">
+                            <div className="flex flex-wrap justify-center gap-8 text-[10px] font-black uppercase tracking-[0.3em] text-white/20">
+                                <span>Wayzza © 2026</span>
+                                <Link to="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+                                <Link to="/terms" className="hover:text-white transition-colors">Terms</Link>
                             </div>
-                            <div className="flex items-center gap-8">
-                                <span className="flex items-center gap-2">
-                                    Made with <span className="text-rose-500 animate-pulse text-sm">❤️</span> in Varkala
-                                </span>
-                                <span className="flex items-center gap-1.5 ml-4 text-white/30"><Globe size={10} /> Gateway</span>
+                            
+                            <div className="flex items-center gap-12">
+                                <motion.div 
+                                    whileHover={{ scale: 1.05 }}
+                                    className="px-6 py-3 bg-white/[0.03] border border-white/5 rounded-full flex items-center gap-3"
+                                >
+                                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40">
+                                        Made with <span className="text-rose-500 animate-pulse">❤️</span> in Varkala
+                                    </span>
+                                </motion.div>
+                                <div className="hidden md:flex items-center gap-4 text-white/20 text-[10px] font-black uppercase tracking-widest">
+                                    <Globe size={14} className="text-emerald-500/50" />
+                                    <span>Global Gateway</span>
+                                </div>
                             </div>
                         </div>
                     </div>
