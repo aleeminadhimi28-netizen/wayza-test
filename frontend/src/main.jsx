@@ -138,6 +138,8 @@ function AppContent() {
     );
 }
 
+import { GoogleOAuthProvider } from "@react-oauth/google";
+
 function Root() {
     return (
         <PostHogProvider client={posthog}>
@@ -147,7 +149,9 @@ function Root() {
                         <AuthProvider>
                             <CurrencyProvider>
                                 <ToastProvider>
-                                    <AppContent />
+                                    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+                                        <AppContent />
+                                    </GoogleOAuthProvider>
                                 </ToastProvider>
                             </CurrencyProvider>
                         </AuthProvider>
@@ -157,6 +161,5 @@ function Root() {
         </PostHogProvider>
     );
 }
-
 
 ReactDOM.createRoot(document.getElementById("root")).render(<Root />);

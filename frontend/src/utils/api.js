@@ -24,6 +24,12 @@ export const api = {
         body: JSON.stringify(data)
     }).then(r => r.json()),
 
+    googleAuth: (credential) => customFetch(`${API_URL}/auth/google`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ credential })
+    }).then(r => r.json()),
+
     logout: () => customFetch(`${API_URL}/auth/logout`, {
         method: "POST"
     }).then(r => r.json()),

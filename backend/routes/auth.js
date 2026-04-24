@@ -9,6 +9,7 @@ import { z } from "zod";
 import { BCRYPT_ROUNDS, JWT_EXPIRY } from "../config/constants.js";
 import { captureEvent } from "../utils/posthog.js";
 import { generateSecret, generateQRCode, verifyToken } from "../utils/twoFactor.js";
+import { OAuth2Client } from "google-auth-library";
 
 
 const signupSchema = z.object({
@@ -23,6 +24,7 @@ const loginSchema = z.object({
 
 const router = express.Router();
 const SECRET = process.env.JWT_SECRET;
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 router.post("/signup", async (req, res, next) => {
     try {
@@ -98,6 +100,57 @@ router.post("/login", async (req, res, next) => {
         });
     } catch (err) {
         next(err);
+    }
+});
+
+router.post("/google", async (req, res, next) => {
+    try {
+        const { credential } = req.body;
+        if (!credential) return res.status(400).json({ ok: false, message: "No Google credential provided" });
+
+        const ticket = await googleClient.verifyIdToken({
+            idToken: credential,
+            audience: process.env.GOOGLE_CLIENT_ID
+        });
+
+        const payload = ticket.getPayload();
+        const email = payload.email.toLowerCase().trim();
+
+        const db = getDB();
+        let user = await db.collection("users").findOne({ email });
+
+        if (!user) {
+            // Register if new
+            await db.collection("users").insertOne({
+                email,
+                role: "guest",
+                name: payload.name,
+                picture: payload.picture,
+                createdAt: new Date()
+            });
+            user = await db.collection("users").findOne({ email });
+            captureEvent(user.email, "User Signed Up via Google", { role: "guest" });
+        } else {
+            captureEvent(user.email, "User Logged In via Google", { role: user.role });
+        }
+
+        if (!SECRET) throw new Error("JWT_SECRET is not configured");
+        const token = jwt.sign({ email: user.email, role: user.role }, SECRET, { expiresIn: JWT_EXPIRY });
+
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        });
+
+        res.json({
+            ok: true,
+            data: { email: user.email, role: user.role, token }
+        });
+    } catch (err) {
+        console.error("Google Auth Error:", err);
+        res.status(401).json({ ok: false, message: "Google authentication failed" });
     }
 });
 
