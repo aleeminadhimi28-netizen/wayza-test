@@ -577,9 +577,9 @@ export default function LandingPage() {
                                 <Link to="/privacy" className="hover:text-white/60">Privacy</Link>
                                 <Link to="/terms" className="hover:text-white/60">Terms</Link>
                             </div>
-                            <div className="flex items-center gap-4">
-                                <span className="flex items-center gap-1.5"><Globe size={10} /> Gateway</span>
-                                <span className="flex items-center gap-1.5"><Landmark size={10} /> Varkala</span>
+                            <div className="flex items-center gap-6">
+                                <span>Made with <span className="text-rose-500/80 mx-1">❤️</span> in Varkala</span>
+                                <span className="flex items-center gap-1.5 ml-4"><Globe size={10} /> Gateway</span>
                             </div>
                         </div>
                     </div>

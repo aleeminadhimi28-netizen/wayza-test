@@ -297,9 +297,14 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
                             <ul className="space-y-5 text-[15px] font-bold text-center md:text-left text-white/60">
                                 <li><a href="#" className="hover:text-white transition-colors">Instagram</a></li>
                                 <li><a href="#" className="hover:text-white transition-colors">Twitter</a></li>
-                                <li><a href="mailto:contact@wayzza.com" className="hover:text-white transition-colors">Contact Support</a></li>
+                                <li><a href="mailto:contact@wayzza.live" className="hover:text-white transition-colors">Contact Support</a></li>
                             </ul>
                         </div>
+                    </div>
+                    <div className="max-w-7xl mx-auto px-8 py-12 border-t border-white/5 text-center">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/20">
+                            Made with <span className="text-rose-500/80 mx-1">❤️</span> in Varkala
+                        </p>
                     </div>
                 </footer>
             )}
