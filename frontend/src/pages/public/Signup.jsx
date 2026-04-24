@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShieldCheck, Mail, Lock, Eye, EyeOff, ArrowRight, UserPlus, Zap, Sparkles, User } from "lucide-react";
 import { useToast } from "../../ToastContext.jsx";
+import { useAuth } from "../../AuthContext.jsx";
 import VerificationSpinner from "../../components/VerificationSpinner.jsx";
 import { useGoogleLogin } from '@react-oauth/google';
 
@@ -11,6 +12,7 @@ import { api } from "../../utils/api.js";
 export default function Signup() {
     const navigate = useNavigate();
     const { showToast } = useToast();
+    const { login } = useAuth();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -33,11 +35,7 @@ export default function Signup() {
             try {
                 const res = await api.googleAuth(tokenResponse.credential || tokenResponse.access_token);
                 if (res.ok) {
-                    localStorage.setItem("token", res.data.token);
-                    localStorage.setItem("email", res.data.email);
-                    localStorage.setItem("role", res.data.role);
-                    localStorage.setItem("loggedIn", "true");
-                    
+                    login({ email: res.data.email, role: res.data.role, token: res.data.token });
                     showToast("Google Authentication successful!", "success");
                     navigate("/");
                 } else {
