@@ -347,24 +347,27 @@ export default function LandingPage() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory">
               {loading ? (
                 [1, 2, 3].map((index) => (
-                  <WayzzaSkeleton key={index} className="h-[320px] rounded-[32px]" />
+                  <div key={index} className="min-w-[280px] snap-start">
+                    <WayzzaSkeleton className="h-[360px] rounded-[32px]" />
+                  </div>
                 ))
               ) : (
                 trendingList.slice(0, 6).map((listing) => (
-                  <WayzzaHotelItem
-                    key={listing._id}
-                    hotel={{
-                      id: listing._id,
-                      name: listing.title,
-                      location: listing.location || 'Premium stay',
-                      price: listing.price,
-                      image: fixImg(listing.image),
-                      wifiSpeed: listing.wifiSpeed || 0,
-                    }}
-                  />
+                  <div key={listing._id} className="min-w-[280px] snap-start">
+                    <WayzzaHotelItem
+                      hotel={{
+                        id: listing._id,
+                        name: listing.title,
+                        location: listing.location || 'Premium stay',
+                        price: listing.price,
+                        image: fixImg(listing.image),
+                        wifiSpeed: listing.wifiSpeed || 0,
+                      }}
+                    />
+                  </div>
                 ))
               )}
             </div>
