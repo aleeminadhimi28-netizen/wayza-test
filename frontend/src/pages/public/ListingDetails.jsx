@@ -60,9 +60,8 @@ function StarRow({ rating, size = 16, interactive = false, onSet, onHover }) {
           onClick={() => interactive && onSet?.(i)}
           onMouseEnter={() => interactive && setHov(i)}
           onMouseLeave={() => interactive && setHov(0)}
-          className={`transition-all ${
-            i <= (hov || rating) ? 'fill-amber-400 text-amber-400' : 'fill-slate-200 text-slate-200'
-          } ${interactive ? 'cursor-pointer hover:scale-110' : ''}`}
+          className={`transition-all ${i <= (hov || rating) ? 'fill-amber-400 text-amber-400' : 'fill-slate-200 text-slate-200'
+            } ${interactive ? 'cursor-pointer hover:scale-110' : ''}`}
         />
       ))}
     </div>
@@ -125,7 +124,7 @@ export default function ListingDetails() {
       setReviews(rows);
       const token = localStorage.getItem('token');
       if (token && user?.email) setAlreadyReviewed(rows.some((r) => r.guestEmail === user.email));
-    } catch {}
+    } catch { }
   }
 
   async function submitReview() {
@@ -179,7 +178,7 @@ export default function ListingDetails() {
       .then((res) => {
         if (res.ok) setPlatformConfig(res.data);
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   // Loading skeleton
@@ -380,7 +379,7 @@ export default function ListingDetails() {
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              
+
               {/* Mobile photo count badge */}
               <div className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-md text-white text-[10px] font-black px-3 py-1.5 rounded-full lg:hidden">
                 1 / {images.length}

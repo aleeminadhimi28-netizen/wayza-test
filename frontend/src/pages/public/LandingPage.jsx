@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { WayzzaLayout, WayzzaHotelItem, WayzzaSkeleton } from '../../WayzzaUI.jsx';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -74,6 +74,11 @@ export default function LandingPage() {
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
   const [guests, setGuests] = useState(1);
+  const moreListingsRef = useRef(null);
+
+  const scrollToListings = () => {
+    moreListingsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   // Newsletter State
   const [newsletterEmail, setNewsletterEmail] = useState('');
@@ -247,6 +252,16 @@ export default function LandingPage() {
                 </button>
               </div>
             </motion.div>
+
+            <div className="mt-8 flex justify-center">
+              <button
+                type="button"
+                onClick={scrollToListings}
+                className="inline-flex items-center justify-center rounded-full bg-white/90 text-slate-950 px-8 py-3 text-sm font-black uppercase tracking-[0.3em] shadow-2xl shadow-slate-900/10 transition hover:bg-emerald-600 hover:text-white"
+              >
+                Move to listings
+              </button>
+            </div>
           </div>
 
           {/* Scroll Indicator */}
@@ -259,8 +274,9 @@ export default function LandingPage() {
           </motion.div>
         </header>
 
+
         {/* ════ MOBILE-LIKE PROMO + DESTINATIONS ════ */}
-        <section className="px-6 max-w-7xl mx-auto space-y-8 pb-10">
+        <section ref={moreListingsRef} className="px-6 max-w-7xl mx-auto space-y-8 pb-10">
           <div className="bg-white rounded-[32px] border border-slate-200 shadow-sm overflow-hidden">
             <div className="flex flex-col sm:flex-row items-stretch gap-4 p-5">
               <div className="flex-1 min-w-0">
@@ -373,26 +389,6 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
-
-        {/* ════ TAB STRIP ════ */}
-        <div className="max-w-7xl mx-auto px-6 -mt-10 md:-mt-16 relative z-20 mb-16 md:mb-24 flex flex-wrap items-center justify-center gap-3 md:gap-6">
-          {CATEGORIES.map((c) => (
-            <button
-              key={c.key}
-              onClick={() => {
-                if (c.key === 'experience') navigate('/experiences');
-                else setTab(c.key);
-              }}
-              className={`group flex items-center gap-2 md:gap-4 px-5 md:px-10 py-3.5 md:py-5 rounded-[24px] md:rounded-[32px] transition-all duration-500 border ${tab === c.key ? 'bg-slate-900 border-slate-900 text-white shadow-[0_20px_40px_rgba(0,0,0,0.2)] -translate-y-2' : 'bg-white/80 backdrop-blur-md border-slate-100 text-slate-400 hover:border-emerald-200 hover:text-slate-900 hover:-translate-y-1'}`}
-            >
-              <c.icon
-                size={16}
-                className={`${tab === c.key ? 'text-emerald-400' : 'group-hover:text-emerald-500'} transition-colors`}
-              />
-              <span className="text-[12px] md:text-[14px] font-bold uppercase tracking-[0.2em]">{c.label}</span>
-            </button>
-          ))}
-        </div>
 
         {/* ════ DESTINATIONS MASONRY ════ */}
         <section className="py-32 bg-slate-50 px-6 relative overflow-hidden">
