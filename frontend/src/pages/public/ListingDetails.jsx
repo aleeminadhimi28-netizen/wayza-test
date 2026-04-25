@@ -742,8 +742,6 @@ export default function ListingDetails() {
                   </div>
                 </div>
 
-                </div>
-
                 {/* Direct Inquiries */}
                 <div className="hidden lg:flex bg-slate-50 border border-slate-100 rounded-[32px] p-8 items-center gap-6 group hover:bg-white hover:shadow-xl transition-all duration-500">
                   <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
