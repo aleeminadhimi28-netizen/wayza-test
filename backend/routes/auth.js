@@ -186,8 +186,16 @@ router.post("/logout", (req, res) => {
     res.json({ ok: true });
 });
 
-router.get("/me", requireAuth, (req, res) => {
-    res.json({ ok: true, data: { email: req.user.email, role: req.user.role } });
+router.get("/me", requireAuth, async (req, res, next) => {
+    try {
+        const db = getDB();
+        const user = await db.collection("users").findOne({ email: req.user.email }, { projection: { _id: 0, email: 1, role: 1, name: 1, phone: 1 } });
+        if (!user) return res.status(404).json({ ok: false, message: "User not found" });
+
+        res.json({ ok: true, data: user });
+    } catch (err) {
+        next(err);
+    }
 });
 
 /* ================= PASSWORD RESET ================= */
