@@ -9,12 +9,8 @@ import {
   Lock,
   Eye,
   EyeOff,
-  ArrowRight,
-  Zap,
   Sparkles,
-  User,
   LogIn,
-  Heart,
   Shield,
   Loader2,
 } from 'lucide-react';
@@ -64,7 +60,11 @@ export default function Login() {
       setLoading(false);
     },
     onError: (errorResponse) => {
-      showToast('Google Authentication failed.', 'error');
+      console.error('Google login error:', errorResponse);
+      showToast(
+        errorResponse?.error_description || errorResponse?.error || 'Google Authentication failed.',
+        'error'
+      );
     },
   });
 
@@ -213,7 +213,7 @@ export default function Login() {
             transition={{ delay: 0.4 }}
             className="text-xl text-white/60 font-medium leading-relaxed"
           >
-            "Log in to access your curated collection of unique stays and personalized itineraries."
+            Log in to access your curated collection of unique stays and personalized itineraries.
           </motion.p>
         </div>
 
@@ -431,7 +431,7 @@ export default function Login() {
                     <span className="text-emerald-500 lowercase">Protocol.</span>
                   </h2>
                   <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.4em] border-l-2 border-emerald-500/20 pl-4">
-                    "Enter the 6-digit code from your authenticator app."
+                    Enter the 6-digit code from your authenticator app.
                   </p>
                 </div>
 

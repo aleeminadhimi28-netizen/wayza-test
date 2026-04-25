@@ -9,8 +9,6 @@ import {
   EyeOff,
   ArrowRight,
   UserPlus,
-  Zap,
-  Sparkles,
   User,
   Phone,
 } from 'lucide-react';
@@ -61,7 +59,11 @@ export default function Signup() {
       setLoading(false);
     },
     onError: (errorResponse) => {
-      showToast('Google Authentication failed.', 'error');
+      console.error('Google login error:', errorResponse);
+      showToast(
+        errorResponse?.error_description || errorResponse?.error || 'Google Authentication failed.',
+        'error'
+      );
     },
   });
 
@@ -158,7 +160,7 @@ export default function Signup() {
               Begin Your <span className="text-emerald-500 lowercase">Journey.</span>
             </h2>
             <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.4em] border-l-2 border-emerald-500/20 pl-4">
-              "Join the network to experience the ultimate luxury."
+              Join the network to experience the ultimate luxury.
             </p>
           </div>
 
