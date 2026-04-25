@@ -1,23 +1,51 @@
-import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { WayzzaLayout, WayzzaSkeleton } from "../../WayzzaUI.jsx";
-import { useAuth } from "../../AuthContext.jsx";
-import { useToast } from "../../ToastContext.jsx";
-import { motion, AnimatePresence } from "framer-motion";
-import { useCurrency } from "../../CurrencyContext.jsx";
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { WayzzaLayout, WayzzaSkeleton } from '../../WayzzaUI.jsx';
+import { useAuth } from '../../AuthContext.jsx';
+import { useToast } from '../../ToastContext.jsx';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useCurrency } from '../../CurrencyContext.jsx';
 import {
-  ChevronLeft, ChevronRight, X, Star, Share2, Heart, MapPin,
-  CheckCircle, Shield, Info, Wifi, Coffee, Wind, Tv,
-  Utensils, Zap, Phone, Send, MessageSquare, ArrowRight,
-  Grid3x3, Users, Calendar, Car, Bike, Anchor, Hotel,
-  Clock, CreditCard, ChevronDown, ChevronUp, Sparkles, ShieldCheck
-} from "lucide-react";
-import MapView from "../../components/MapView.jsx";
-import SEO from "../../components/SEO.jsx";
-import ListingConcierge from "../../components/ListingConcierge.jsx";
-import NeighborhoodVibes from "../../components/NeighborhoodVibes.jsx";
-import { api } from "../../utils/api.js";
-import { AMENITY_CATEGORIES, getAmenityByLabel } from "../../utils/amenities.js";
+  ChevronLeft,
+  ChevronRight,
+  X,
+  Star,
+  Share2,
+  Heart,
+  MapPin,
+  CheckCircle,
+  Shield,
+  Info,
+  Wifi,
+  Coffee,
+  Wind,
+  Tv,
+  Utensils,
+  Zap,
+  Phone,
+  Send,
+  MessageSquare,
+  ArrowRight,
+  Grid3x3,
+  Users,
+  Calendar,
+  Car,
+  Bike,
+  Anchor,
+  Hotel,
+  Clock,
+  CreditCard,
+  ChevronDown,
+  ChevronUp,
+  Sparkles,
+  ShieldCheck,
+} from 'lucide-react';
+import MapView from '../../components/MapView.jsx';
+import SEO from '../../components/SEO.jsx';
+import ListingConcierge from '../../components/ListingConcierge.jsx';
+import NeighborhoodVibes from '../../components/NeighborhoodVibes.jsx';
+import { api } from '../../utils/api.js';
+import { AMENITY_CATEGORIES, getAmenityByLabel } from '../../utils/amenities.js';
 
 const AMENITIES = []; // Legacy
 
@@ -25,17 +53,16 @@ function StarRow({ rating, size = 16, interactive = false, onSet, onHover }) {
   const [hov, setHov] = useState(0);
   return (
     <div className="flex gap-1">
-      {[1, 2, 3, 4, 5].map(i => (
+      {[1, 2, 3, 4, 5].map((i) => (
         <Star
           key={i}
           size={size}
           onClick={() => interactive && onSet?.(i)}
           onMouseEnter={() => interactive && setHov(i)}
           onMouseLeave={() => interactive && setHov(0)}
-          className={`transition-all ${i <= (hov || rating)
-            ? "fill-amber-400 text-amber-400"
-            : "fill-slate-200 text-slate-200"
-            } ${interactive ? "cursor-pointer hover:scale-110" : ""}`}
+          className={`transition-all ${
+            i <= (hov || rating) ? 'fill-amber-400 text-amber-400' : 'fill-slate-200 text-slate-200'
+          } ${interactive ? 'cursor-pointer hover:scale-110' : ''}`}
         />
       ))}
     </div>
@@ -58,38 +85,36 @@ export default function ListingDetails() {
   const [canReview, setCanReview] = useState(false);
   const [alreadyReviewed, setAlreadyReviewed] = useState(false);
   const [rating, setRating] = useState(5);
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [selectedVariant, setSelectedVariant] = useState(0);
   const [showAllAmenities, setShowAllAmenities] = useState(false);
-  const [checkIn, setCheckIn] = useState("");
-  const [checkOut, setCheckOut] = useState("");
+  const [checkIn, setCheckIn] = useState('');
+  const [checkOut, setCheckOut] = useState('');
 
   const fixImg = (img) => {
-    if (!img) return "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80";
-    if (img.startsWith("http")) return img;
-    const BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
-    if (img.startsWith("uploads/")) return `${BASE}/${img}`;
+    if (!img)
+      return 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80';
+    if (img.startsWith('http')) return img;
+    const BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    if (img.startsWith('uploads/')) return `${BASE}/${img}`;
     return `${BASE}/uploads/${img}`;
   };
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    api.getListing(id)
-      .then(json => setListing(json.data || json));
+    api.getListing(id).then((json) => setListing(json.data || json));
     loadReviews();
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     if (token) {
-      api.getWishlist()
-        .then(json => {
-          const list = Array.isArray(json.data) ? json.data : [];
-          setSaved(list.some(x => x.listingId === id));
-        });
-      api.getMyBookings()
-        .then(json => {
-          const bookings = Array.isArray(json.data) ? json.data : [];
-          setCanReview(bookings.some(b => b.listingId === id && b.status === "paid"));
-        });
+      api.getWishlist().then((json) => {
+        const list = Array.isArray(json.data) ? json.data : [];
+        setSaved(list.some((x) => x.listingId === id));
+      });
+      api.getMyBookings().then((json) => {
+        const bookings = Array.isArray(json.data) ? json.data : [];
+        setCanReview(bookings.some((b) => b.listingId === id && b.status === 'paid'));
+      });
     }
   }, [id]);
 
@@ -98,9 +123,9 @@ export default function ListingDetails() {
       const data = await api.getReviews(id);
       const rows = Array.isArray(data.data) ? data.data : [];
       setReviews(rows);
-      const token = localStorage.getItem("token");
-      if (token && user?.email) setAlreadyReviewed(rows.some(r => r.guestEmail === user.email));
-    } catch { }
+      const token = localStorage.getItem('token');
+      if (token && user?.email) setAlreadyReviewed(rows.some((r) => r.guestEmail === user.email));
+    } catch {}
   }
 
   async function submitReview() {
@@ -109,70 +134,94 @@ export default function ListingDetails() {
     try {
       const data = await api.postReview({ listingId: id, rating, comment });
       if (data.ok) {
-        showToast("Review submitted. Thank you!", "success");
-        setComment(""); setRating(5); setAlreadyReviewed(true); loadReviews();
-      } else { showToast(data.message || "Failed to submit review.", "error"); }
-    } catch { showToast("Connection error. Please try again.", "error"); }
+        showToast('Review submitted. Thank you!', 'success');
+        setComment('');
+        setRating(5);
+        setAlreadyReviewed(true);
+        loadReviews();
+      } else {
+        showToast(data.message || 'Failed to submit review.', 'error');
+      }
+    } catch {
+      showToast('Connection error. Please try again.', 'error');
+    }
     setSubmitting(false);
   }
 
   const toggleWishlist = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) { navigate("/login", { state: { from: location } }); return; }
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login', { state: { from: location } });
+      return;
+    }
     try {
       const data = await api.toggleWishlist({ listingId: id });
       setSaved(data.saved);
-      showToast(data.saved ? "Saved to favorites!" : "Removed from favorites", "info");
-    } catch { showToast("Failed to update saved list.", "error"); }
+      showToast(data.saved ? 'Saved to favorites!' : 'Removed from favorites', 'info');
+    } catch {
+      showToast('Failed to update saved list.', 'error');
+    }
   };
 
   const handleReserve = () => {
-    if (!user) { navigate("/login", { state: { from: location } }); return; }
+    if (!user) {
+      navigate('/login', { state: { from: location } });
+      return;
+    }
     navigate(`/booking/${id}`, { state: { variantIndex: selectedVariant } });
   };
 
   const [platformConfig, setPlatformConfig] = useState(null);
 
   useEffect(() => {
-     api.getPlatformConfig().then(res => { if (res.ok) setPlatformConfig(res.data); }).catch(() => {});
+    api
+      .getPlatformConfig()
+      .then((res) => {
+        if (res.ok) setPlatformConfig(res.data);
+      })
+      .catch(() => {});
   }, []);
 
   // Loading skeleton
-  if (!listing) return (
-    <WayzzaLayout noPadding>
-      <div className="max-w-[1200px] mx-auto py-8 px-4 sm:px-6 space-y-6">
-        <WayzzaSkeleton className="h-8 w-2/3" />
-        <WayzzaSkeleton className="h-[420px] w-full rounded-2xl" />
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-4">
-            <WayzzaSkeleton className="h-32 rounded-2xl" />
-            <WayzzaSkeleton className="h-48 rounded-2xl" />
+  if (!listing)
+    return (
+      <WayzzaLayout noPadding>
+        <div className="max-w-[1200px] mx-auto py-8 px-4 sm:px-6 space-y-6">
+          <WayzzaSkeleton className="h-8 w-2/3" />
+          <WayzzaSkeleton className="h-[420px] w-full rounded-2xl" />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-4">
+              <WayzzaSkeleton className="h-32 rounded-2xl" />
+              <WayzzaSkeleton className="h-48 rounded-2xl" />
+            </div>
+            <WayzzaSkeleton className="h-[400px] rounded-2xl" />
           </div>
-          <WayzzaSkeleton className="h-[400px] rounded-2xl" />
         </div>
-      </div>
-    </WayzzaLayout>
-  );
+      </WayzzaLayout>
+    );
 
   let images = (listing.images || []).map(fixImg);
   if (images.length === 0) images.push(fixImg(listing.image));
-  while (images.length < 5) images.push("https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80");
+  while (images.length < 5)
+    images.push(
+      'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80'
+    );
 
   const next = () => setGalleryIndex((galleryIndex + 1) % images.length);
   const prev = () => setGalleryIndex((galleryIndex - 1 + images.length) % images.length);
 
   const avgRating = reviews.length
     ? (reviews.reduce((s, r) => s + (r.rating || 0), 0) / reviews.length).toFixed(1)
-    : "4.9";
+    : '4.9';
 
   const activeVariant = listing.variants?.[selectedVariant];
   const basePrice = activeVariant?.price || listing.price || 0;
-  const nights = checkIn && checkOut
-    ? Math.max(0, Math.ceil((new Date(checkOut) - new Date(checkIn)) / 86400000))
-    : 0;
-  
+  const nights =
+    checkIn && checkOut
+      ? Math.max(0, Math.ceil((new Date(checkOut) - new Date(checkIn)) / 86400000))
+      : 0;
 
-  const isVehicle = listing.category === "bike" || listing.category === "car";
+  const isVehicle = listing.category === 'bike' || listing.category === 'car';
   const gstRate = platformConfig?.gstRate ?? 0.12;
   const serviceFeeRate = platformConfig?.serviceFee ?? 99;
 
@@ -180,24 +229,33 @@ export default function ListingDetails() {
   const serviceFee = nights > 0 ? serviceFeeRate : 0;
   const total = basePrice * nights + gst + serviceFee;
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split('T')[0];
 
   return (
     <WayzzaLayout noPadding>
-      <SEO 
-        title={listing.title} 
-        description={listing.description} 
+      <SEO
+        title={listing.title}
+        description={listing.description}
         image={images[0]}
-        type="product" 
+        type="product"
       />
       <div className="bg-white min-h-screen font-sans selection:bg-emerald-100 selection:text-emerald-900">
         <div className="max-w-[1400px] mx-auto px-6 md:px-12 py-10 md:py-16">
-
           {/* ─── BREADCRUMB ─── */}
           <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-slate-300 mb-10 overflow-x-auto no-scrollbar whitespace-nowrap">
-            <button onClick={() => navigate("/")} className="hover:text-emerald-600 transition-colors">Protocol</button>
+            <button
+              onClick={() => navigate('/')}
+              className="hover:text-emerald-600 transition-colors"
+            >
+              Protocol
+            </button>
             <ChevronRight size={10} />
-            <button onClick={() => navigate("/listings")} className="hover:text-emerald-600 transition-colors">Stays</button>
+            <button
+              onClick={() => navigate('/listings')}
+              className="hover:text-emerald-600 transition-colors"
+            >
+              Stays
+            </button>
             <ChevronRight size={10} />
             <span className="text-slate-900 truncate max-w-[200px]">{listing.title}</span>
           </div>
@@ -207,7 +265,7 @@ export default function ListingDetails() {
             <div className="space-y-6 max-w-4xl">
               <div className="flex flex-wrap gap-4 items-center">
                 <div className="px-3 py-1 bg-slate-950 text-white text-[10px] font-black uppercase tracking-[0.4em] rounded-md">
-                  {listing.category || "Estate"}
+                  {listing.category || 'Estate'}
                 </div>
                 {listing.price > 8000 && (
                   <div className="flex items-center gap-2 text-amber-600 text-[10px] font-black uppercase tracking-[0.4em]">
@@ -224,15 +282,19 @@ export default function ListingDetails() {
                     {avgRating}
                   </div>
                   <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-900">Exceptional</p>
-                    <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">{reviews.length} Audited Reviews</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-900">
+                      Exceptional
+                    </p>
+                    <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">
+                      {reviews.length} Audited Reviews
+                    </p>
                   </div>
                 </div>
                 <div className="h-10 w-px bg-slate-100 hidden md:block" />
                 {listing.latitude && listing.longitude ? (
-                  <a 
+                  <a
                     href={`https://www.google.com/maps?q=${listing.latitude},${listing.longitude}`}
-                    target="_blank" 
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-3 hover:bg-slate-50 p-2 -m-2 rounded-xl transition-colors"
                   >
@@ -240,8 +302,12 @@ export default function ListingDetails() {
                       <MapPin size={20} />
                     </div>
                     <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-900">{listing.location || "Kerala, India"}</p>
-                      <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest leading-none mt-1 hover:underline">Open in Maps ↗</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-900">
+                        {listing.location || 'Kerala, India'}
+                      </p>
+                      <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest leading-none mt-1 hover:underline">
+                        Open in Maps ↗
+                      </p>
                     </div>
                   </a>
                 ) : (
@@ -250,8 +316,12 @@ export default function ListingDetails() {
                       <MapPin size={20} />
                     </div>
                     <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-900">{listing.location || "Kerala, India"}</p>
-                      <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest leading-none mt-1">Prime Location</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-900">
+                        {listing.location || 'Kerala, India'}
+                      </p>
+                      <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest leading-none mt-1">
+                        Prime Location
+                      </p>
                     </div>
                   </div>
                 )}
@@ -261,8 +331,12 @@ export default function ListingDetails() {
                     <div className="flex items-center gap-3 bg-emerald-50 px-4 py-2 rounded-xl border border-emerald-100">
                       <Wifi size={14} className="text-emerald-600" />
                       <div>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-900">Verified Wi-Fi</p>
-                        <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">{listing.wifiSpeed} MBPS</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-900">
+                          Verified Wi-Fi
+                        </p>
+                        <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">
+                          {listing.wifiSpeed} MBPS
+                        </p>
                       </div>
                     </div>
                   </>
@@ -273,13 +347,16 @@ export default function ListingDetails() {
             <div className="flex items-center gap-4 shrink-0 w-full xl:w-auto">
               <button
                 onClick={toggleWishlist}
-                className={`flex-1 xl:flex-none h-16 px-10 rounded-2xl font-black uppercase text-[10px] tracking-[0.4em] transition-all border flex items-center justify-center gap-4 ${saved ? "bg-rose-50 border-rose-100 text-rose-600" : "bg-white border-slate-100 text-slate-900 hover:border-rose-200"}`}
+                className={`flex-1 xl:flex-none h-16 px-10 rounded-2xl font-black uppercase text-[10px] tracking-[0.4em] transition-all border flex items-center justify-center gap-4 ${saved ? 'bg-rose-50 border-rose-100 text-rose-600' : 'bg-white border-slate-100 text-slate-900 hover:border-rose-200'}`}
               >
-                <Heart size={18} className={saved ? "fill-rose-600" : ""} />
-                {saved ? "Retained" : "Archive"}
+                <Heart size={18} className={saved ? 'fill-rose-600' : ''} />
+                {saved ? 'Retained' : 'Archive'}
               </button>
               <button
-                onClick={() => { navigator.clipboard.writeText(window.location.href); showToast("Listing encrypted & shared.", "success"); }}
+                onClick={() => {
+                  navigator.clipboard.writeText(window.location.href);
+                  showToast('Listing encrypted & shared.', 'success');
+                }}
                 className="w-16 h-16 bg-white border border-slate-100 rounded-2xl flex items-center justify-center text-slate-900 hover:border-emerald-200 transition-all shadow-sm"
               >
                 <Share2 size={20} />
@@ -289,11 +366,13 @@ export default function ListingDetails() {
 
           {/* ─── GALLERY GRID ─── */}
           <div className="grid grid-cols-[3fr_2fr] grid-rows-2 gap-2 h-[480px] md:h-[560px] rounded-3xl overflow-hidden relative mb-20">
-
             {/* Main large image – spans both rows */}
             <div
               className="row-span-2 relative overflow-hidden group cursor-pointer"
-              onClick={() => { setGalleryIndex(0); setGalleryOpen(true); }}
+              onClick={() => {
+                setGalleryIndex(0);
+                setGalleryOpen(true);
+              }}
             >
               <img
                 src={images[0]}
@@ -306,7 +385,10 @@ export default function ListingDetails() {
             {/* Top thumbnail */}
             <div
               className="relative overflow-hidden group cursor-pointer"
-              onClick={() => { setGalleryIndex(1); setGalleryOpen(true); }}
+              onClick={() => {
+                setGalleryIndex(1);
+                setGalleryOpen(true);
+              }}
             >
               <img
                 src={images[1]}
@@ -319,7 +401,10 @@ export default function ListingDetails() {
             {/* Bottom thumbnail + Show all button */}
             <div
               className="relative overflow-hidden group cursor-pointer"
-              onClick={() => { setGalleryIndex(2); setGalleryOpen(true); }}
+              onClick={() => {
+                setGalleryIndex(2);
+                setGalleryOpen(true);
+              }}
             >
               <img
                 src={images[2]}
@@ -328,43 +413,51 @@ export default function ListingDetails() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <button
-                onClick={e => { e.stopPropagation(); setGalleryIndex(0); setGalleryOpen(true); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setGalleryIndex(0);
+                  setGalleryOpen(true);
+                }}
                 className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm border border-slate-200 text-slate-900 px-4 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-slate-950 hover:text-white transition-all shadow-md"
               >
                 <Grid3x3 size={12} />
                 Show all photos ({images.length})
               </button>
             </div>
-
           </div>
 
           {/* ─── MAIN CONTENT ─── */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 items-start">
-
             {/* LEFT: INFORMATION */}
             <div className="lg:col-span-7 space-y-20">
-
               {/* Narrative */}
               <section className="space-y-8">
                 <div className="flex items-center gap-4">
                   <span className="h-px w-12 bg-emerald-500" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-600">Project Narrative</span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-600">
+                    Project Narrative
+                  </span>
                 </div>
                 <div className="flex items-center justify-between pb-8 border-b border-slate-100">
                   <div>
-                    <h2 className="text-4xl font-black text-slate-900 uppercase tracking-tighter leading-none mb-4">The Experience.</h2>
-                    <p className="text-slate-400 font-bold uppercase text-[9px] tracking-widest">Curated by Wayzza Network Architecture</p>
+                    <h2 className="text-4xl font-black text-slate-900 uppercase tracking-tighter leading-none mb-4">
+                      The Experience.
+                    </h2>
+                    <p className="text-slate-400 font-bold uppercase text-[9px] tracking-widest">
+                      Curated by Wayzza Network Architecture
+                    </p>
                   </div>
                   <div className="w-16 h-16 bg-slate-950 rounded-3xl flex items-center justify-center text-white font-black text-2xl">
                     {listing.title?.charAt(0)}
                   </div>
                 </div>
                 <p className="text-2xl text-slate-600 leading-relaxed font-medium">
-                  "{listing.description || "An extraordinary sanctuary where serene architecture meets the rhythm of the coast, designed for those who seek more than just a place to rest. Every corner is thoughtfully crafted to offer comfort, beauty, and a true sense of place."}"
+                  "
+                  {listing.description ||
+                    'An extraordinary sanctuary where serene architecture meets the rhythm of the coast, designed for those who seek more than just a place to rest. Every corner is thoughtfully crafted to offer comfort, beauty, and a true sense of place.'}
+                  "
                 </p>
               </section>
-
-
 
               {/* Neighborhood Discovery */}
               <NeighborhoodVibes location={listing.location} category={listing.category} />
@@ -375,20 +468,28 @@ export default function ListingDetails() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <span className="h-px w-12 bg-slate-200" />
-                      <span className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-300">Available Utilities</span>
+                      <span className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-300">
+                        Available Utilities
+                      </span>
                     </div>
                   </div>
 
                   <div className="space-y-16">
-                    {AMENITY_CATEGORIES.map(category => {
-                      const presentInListing = category.amenities.filter(a => listing.amenities.includes(a.label));
+                    {AMENITY_CATEGORIES.map((category) => {
+                      const presentInListing = category.amenities.filter((a) =>
+                        listing.amenities.includes(a.label)
+                      );
                       if (presentInListing.length === 0) return null;
 
                       return (
                         <div key={category.id} className="space-y-8">
                           <div className="space-y-1">
-                            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-900">{category.label}</h3>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{category.description}</p>
+                            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-900">
+                              {category.label}
+                            </h3>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                              {category.description}
+                            </p>
                           </div>
                           <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
                             {presentInListing.map((a, i) => (
@@ -397,9 +498,13 @@ export default function ListingDetails() {
                                   <a.icon size={20} />
                                 </div>
                                 <div className="space-y-0.5">
-                                  <span className="text-xs font-black uppercase tracking-widest text-slate-900 block">{a.label}</span>
+                                  <span className="text-xs font-black uppercase tracking-widest text-slate-900 block">
+                                    {a.label}
+                                  </span>
                                   {a.id === 'wifi' && listing.wifiSpeed > 0 && (
-                                    <span className="text-[9px] font-bold text-emerald-600 uppercase tracking-widest">Verified {listing.wifiSpeed} Mbps</span>
+                                    <span className="text-[9px] font-bold text-emerald-600 uppercase tracking-widest">
+                                      Verified {listing.wifiSpeed} Mbps
+                                    </span>
                                   )}
                                 </div>
                               </div>
@@ -415,21 +520,31 @@ export default function ListingDetails() {
               {/* Variants Detail */}
               {listing.variants?.length > 0 && (
                 <section className="space-y-10">
-                  <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-300">Accomodation Options</h2>
+                  <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-300">
+                    Accomodation Options
+                  </h2>
                   <div className="grid gap-6">
                     {listing.variants.map((v, i) => (
                       <div
                         key={i}
                         onClick={() => setSelectedVariant(i)}
-                        className={`p-10 rounded-[40px] border-2 transition-all cursor-pointer flex flex-col md:flex-row justify-between items-center gap-8 ${selectedVariant === i ? "border-emerald-500 bg-emerald-50/30" : "border-slate-100 hover:border-emerald-200"}`}
+                        className={`p-10 rounded-[40px] border-2 transition-all cursor-pointer flex flex-col md:flex-row justify-between items-center gap-8 ${selectedVariant === i ? 'border-emerald-500 bg-emerald-50/30' : 'border-slate-100 hover:border-emerald-200'}`}
                       >
                         <div className="space-y-3">
-                          <h3 className="text-3xl font-black tracking-tighter text-slate-900 uppercase">{v.name}</h3>
-                          <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">{v.desc || "Executive level residency"}</p>
+                          <h3 className="text-3xl font-black tracking-tighter text-slate-900 uppercase">
+                            {v.name}
+                          </h3>
+                          <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">
+                            {v.desc || 'Executive level residency'}
+                          </p>
                         </div>
                         <div className="text-center md:text-right">
-                          <p className="text-4xl font-black text-slate-900 tracking-tighter">₹{v.price.toLocaleString()}</p>
-                          <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">per cycle</p>
+                          <p className="text-4xl font-black text-slate-900 tracking-tighter">
+                            ₹{v.price.toLocaleString()}
+                          </p>
+                          <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">
+                            per cycle
+                          </p>
                         </div>
                       </div>
                     ))}
@@ -440,30 +555,60 @@ export default function ListingDetails() {
               {/* Audit (Reviews) */}
               <section className="space-y-12">
                 <header className="flex items-center justify-between">
-                  <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-300">Guest Audit</h2>
+                  <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-300">
+                    Guest Audit
+                  </h2>
                   <div className="flex items-center gap-4">
-                    <span className="text-5xl font-black text-slate-900 tabular-nums">{avgRating}</span>
+                    <span className="text-5xl font-black text-slate-900 tabular-nums">
+                      {avgRating}
+                    </span>
                     <div className="h-10 w-px bg-slate-200" />
-                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">{reviews.length} Audits</span>
+                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">
+                      {reviews.length} Audits
+                    </span>
                   </div>
                 </header>
 
                 <div className="grid gap-8">
                   {reviews.slice(0, 3).map((r, i) => (
-                    <div key={i} className="bg-white p-10 rounded-[40px] border border-slate-100 shadow-sm space-y-6">
+                    <div
+                      key={i}
+                      className="bg-white p-10 rounded-[40px] border border-slate-100 shadow-sm space-y-6"
+                    >
                       <div className="flex justify-between items-start">
                         <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 bg-slate-950 text-white rounded-2xl flex items-center justify-center font-black">{(r.guestEmail || "G").charAt(0).toUpperCase()}</div>
+                          <div className="w-12 h-12 bg-slate-950 text-white rounded-2xl flex items-center justify-center font-black">
+                            {(r.guestEmail || 'G').charAt(0).toUpperCase()}
+                          </div>
                           <div>
-                            <p className="text-sm font-black uppercase tracking-widest text-slate-900">{r.guestEmail?.split("@")[0]}</p>
-                            <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-widest leading-none mt-1">Verified Stay</p>
+                            <p className="text-sm font-black uppercase tracking-widest text-slate-900">
+                              {r.guestEmail?.split('@')[0]}
+                            </p>
+                            <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-widest leading-none mt-1">
+                              Verified Stay
+                            </p>
                           </div>
                         </div>
                         <div className="flex gap-1">
-                          {[1, 2, 3, 4, 5].map(s => <Star key={s} size={10} className={s <= r.rating ? "fill-amber-400 text-amber-400" : "fill-slate-100 text-slate-100"} />)}
+                          {[1, 2, 3, 4, 5].map((s) => (
+                            <Star
+                              key={s}
+                              size={10}
+                              className={
+                                s <= r.rating
+                                  ? 'fill-amber-400 text-amber-400'
+                                  : 'fill-slate-100 text-slate-100'
+                              }
+                            />
+                          ))}
                         </div>
                       </div>
-                      <p className="text-lg text-slate-600 leading-relaxed font-medium">"{r.comment || "An absolutely wonderful stay. Everything was exactly as described."}"</p>
+                      <p className="text-lg text-slate-600 leading-relaxed font-medium">
+                        "
+                        {r.comment ||
+                          'An absolutely wonderful stay. Everything was exactly as described.'}
+                        "
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -473,37 +618,47 @@ export default function ListingDetails() {
             {/* RIGHT: RESERVATION CONSOLE */}
             <div className="lg:col-span-5 relative">
               <div className="sticky top-32 space-y-6">
-
                 {/* ── White Airbnb-style Booking Card ── */}
                 <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-xl shadow-slate-900/8">
-
                   {/* Price */}
                   <div className="flex items-baseline gap-2 mb-1">
-                    <span className="text-4xl font-black text-slate-900 tracking-tight">₹{basePrice.toLocaleString()}</span>
+                    <span className="text-4xl font-black text-slate-900 tracking-tight">
+                      ₹{basePrice.toLocaleString()}
+                    </span>
                     <span className="text-sm text-slate-400 font-medium">/ night</span>
                   </div>
 
                   {/* Rating */}
                   <div className="flex items-center gap-1.5 text-sm text-slate-500 mb-6">
                     <Star size={13} className="fill-amber-400 text-amber-400" />
-                    <span>{avgRating} · {reviews.length} reviews · Exceptional</span>
+                    <span>
+                      {avgRating} · {reviews.length} reviews · Exceptional
+                    </span>
                   </div>
 
                   {/* Dates */}
                   <div className="grid grid-cols-2 border border-slate-200 rounded-xl overflow-hidden mb-3">
                     <div className="p-3 border-r border-slate-200 hover:bg-slate-50 transition-colors cursor-pointer">
-                      <label className="block text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Check-in</label>
+                      <label className="block text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">
+                        Check-in
+                      </label>
                       <input
-                        type="date" value={checkIn} min={today}
-                        onChange={e => setCheckIn(e.target.value)}
+                        type="date"
+                        value={checkIn}
+                        min={today}
+                        onChange={(e) => setCheckIn(e.target.value)}
                         className="w-full text-sm font-semibold text-slate-900 bg-transparent outline-none cursor-pointer"
                       />
                     </div>
                     <div className="p-3 hover:bg-slate-50 transition-colors cursor-pointer">
-                      <label className="block text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Check-out</label>
+                      <label className="block text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">
+                        Check-out
+                      </label>
                       <input
-                        type="date" value={checkOut} min={checkIn || today}
-                        onChange={e => setCheckOut(e.target.value)}
+                        type="date"
+                        value={checkOut}
+                        min={checkIn || today}
+                        onChange={(e) => setCheckOut(e.target.value)}
                         className="w-full text-sm font-semibold text-slate-900 bg-transparent outline-none cursor-pointer"
                       />
                     </div>
@@ -511,7 +666,9 @@ export default function ListingDetails() {
 
                   {/* Guests */}
                   <div className="border border-slate-200 rounded-xl p-3 mb-5 hover:bg-slate-50 transition-colors cursor-pointer">
-                    <label className="block text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Guests</label>
+                    <label className="block text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">
+                      Guests
+                    </label>
                     <span className="text-sm font-semibold text-slate-900">1 guest</span>
                   </div>
 
@@ -528,7 +685,9 @@ export default function ListingDetails() {
                     {nights > 0 ? (
                       <>
                         <div className="flex justify-between text-sm text-slate-600">
-                          <span>₹{basePrice.toLocaleString()} × {nights} night{nights > 1 ? "s" : ""}</span>
+                          <span>
+                            ₹{basePrice.toLocaleString()} × {nights} night{nights > 1 ? 's' : ''}
+                          </span>
                           <span>₹{(basePrice * nights).toLocaleString()}</span>
                         </div>
                         {!isVehicle && gst > 0 && (
@@ -547,11 +706,15 @@ export default function ListingDetails() {
                         </div>
                       </>
                     ) : (
-                      <p className="text-center text-xs text-slate-400 py-2">Select dates to see pricing</p>
+                      <p className="text-center text-xs text-slate-400 py-2">
+                        Select dates to see pricing
+                      </p>
                     )}
                   </div>
 
-                  <p className="text-center text-xs text-slate-400 mt-3">You won't be charged yet</p>
+                  <p className="text-center text-xs text-slate-400 mt-3">
+                    You won't be charged yet
+                  </p>
 
                   {/* Trust Badges */}
                   <div className="flex justify-center gap-8 mt-5 pt-5 border-t border-slate-100">
@@ -582,15 +745,17 @@ export default function ListingDetails() {
                     <MessageSquare size={20} className="text-emerald-600" />
                   </div>
                   <div className="space-y-1">
-                    <p className="text-sm font-black uppercase tracking-widest text-slate-900">Direct Inquiries</p>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Connect with our Concierge</p>
+                    <p className="text-sm font-black uppercase tracking-widest text-slate-900">
+                      Direct Inquiries
+                    </p>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                      Connect with our Concierge
+                    </p>
                   </div>
                   <ChevronRight size={16} className="ml-auto text-slate-300" />
                 </div>
-
               </div>
             </div>
-
           </div>
         </div>
 
@@ -607,7 +772,9 @@ export default function ListingDetails() {
               <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
                 <div>
                   <p className="text-white font-bold">{listing.title}</p>
-                  <p className="text-white/40 text-xs">{galleryIndex + 1} / {images.length}</p>
+                  <p className="text-white/40 text-xs">
+                    {galleryIndex + 1} / {images.length}
+                  </p>
                 </div>
                 <button
                   onClick={() => setGalleryOpen(false)}
@@ -619,7 +786,10 @@ export default function ListingDetails() {
 
               {/* Main image */}
               <div className="flex-1 flex items-center justify-center relative px-16 py-4">
-                <button onClick={prev} className="absolute left-4 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all z-10">
+                <button
+                  onClick={prev}
+                  className="absolute left-4 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all z-10"
+                >
                   <ChevronLeft size={28} />
                 </button>
                 <motion.img
@@ -631,7 +801,10 @@ export default function ListingDetails() {
                   className="max-h-full max-w-full object-contain rounded-xl"
                   alt={`Photo ${galleryIndex + 1}`}
                 />
-                <button onClick={next} className="absolute right-4 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all z-10">
+                <button
+                  onClick={next}
+                  className="absolute right-4 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all z-10"
+                >
                   <ChevronRight size={28} />
                 </button>
               </div>
@@ -642,7 +815,7 @@ export default function ListingDetails() {
                   <div
                     key={i}
                     onClick={() => setGalleryIndex(i)}
-                    className={`w-20 h-14 rounded-lg overflow-hidden shrink-0 cursor-pointer border-2 transition-all ${i === galleryIndex ? "border-emerald-500 opacity-100" : "border-transparent opacity-50 hover:opacity-75"}`}
+                    className={`w-20 h-14 rounded-lg overflow-hidden shrink-0 cursor-pointer border-2 transition-all ${i === galleryIndex ? 'border-emerald-500 opacity-100' : 'border-transparent opacity-50 hover:opacity-75'}`}
                   >
                     <img src={img} className="w-full h-full object-cover" alt="" />
                   </div>
@@ -651,7 +824,7 @@ export default function ListingDetails() {
             </motion.div>
           )}
         </AnimatePresence>
-        
+
         {/* Intelligence Overlay */}
         <ListingConcierge listingId={listing._id} listingTitle={listing.title} />
       </div>

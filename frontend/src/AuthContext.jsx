@@ -1,84 +1,70 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { api } from "./utils/api.js";
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { api } from './utils/api.js';
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
-
-    /* -------- RESTORE SESSION -------- */
-    useEffect(() => {
-        const loadSession = async () => {
-            // Skip API call if no token exists — prevents 401 spam in logs
-            const storedToken = localStorage.getItem("token");
-            if (!storedToken) {
-                setUser(null);
-                setLoading(false);
-                return;
-            }
-
-            try {
-                const res = await api.getProfile();
-                if (res.ok && res.data?.email) {
-                    setUser({
-                        email: res.data.email,
-                        role: res.data.role
-                    });
-                } else {
-                    setUser(null);
-                    localStorage.removeItem("token");
-                }
-            } catch (err) {
-                console.error("Auth session fetch error", err);
-                setUser(null);
-            }
-            setLoading(false);
-        };
-        loadSession();
-    }, []);
-
-    /* -------- LOGIN -------- */
-    function login(data) {
-        if (!data?.email) return;
-
-        // If backend returns a token, save it as fallback
-        if (data.token) {
-            localStorage.setItem("token", data.token);
+  /* -------- RESTORE SESSION -------- */
+  useEffect(() => {
+    const loadSession = async () => {
+      try {
+        const res = await api.getProfile();
+        if (res.ok && res.data?.email) {
+          setUser({
+            email: res.data.email,
+            role: res.data.role,
+          });
+        } else {
+          setUser(null);
         }
-
-        const role = data.role || "guest";
-        setUser({
-            email: data.email,
-            role
-        });
-    }
-
-    /* -------- LOGOUT -------- */
-    async function logout() {
-        try {
-            await api.logout();
-        } catch (e) { }
-
-        localStorage.clear();
+      } catch (err) {
+        console.error('Auth session fetch error', err);
         setUser(null);
+      }
+      setLoading(false);
+    };
+    loadSession();
+  }, []);
+
+  /* -------- LOGIN -------- */
+  function login(data) {
+    if (!data?.email) return;
+
+    const role = data.role || 'guest';
+    setUser({
+      email: data.email,
+      role,
+    });
+  }
+
+  /* -------- LOGOUT -------- */
+  async function logout() {
+    try {
+      await api.logout();
+    } catch (e) {
+      // Ignore logout errors
     }
 
-    return (
-        <AuthContext.Provider value={{ user, login, logout, loading }}>
-            {!loading && children}
-        </AuthContext.Provider>
-    );
+    setUser(null);
+  }
+
+  return (
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
 }
 
 /* -------- HOOK -------- */
 export function useAuth() {
-    const context = useContext(AuthContext);
+  const context = useContext(AuthContext);
 
-    if (!context) {
-        throw new Error("useAuth must be used inside AuthProvider");
-    }
+  if (!context) {
+    throw new Error('useAuth must be used inside AuthProvider');
+  }
 
-    return context;
+  return context;
 }

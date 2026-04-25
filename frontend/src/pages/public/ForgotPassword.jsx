@@ -1,15 +1,25 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { ShieldCheck, Mail, ArrowLeft, ArrowRight, Zap, CheckCircle, Lock, Server, Sparkles } from "lucide-react";
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  ShieldCheck,
+  Mail,
+  ArrowLeft,
+  ArrowRight,
+  Zap,
+  CheckCircle,
+  Lock,
+  Server,
+  Sparkles,
+} from 'lucide-react';
 
-import { api } from "../../utils/api.js";
+import { api } from '../../utils/api.js';
 
 export default function ForgotPassword() {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
@@ -17,11 +27,11 @@ export default function ForgotPassword() {
     if (!email) return;
 
     setLoading(true);
-    setError("");
+    setError('');
 
     try {
       // Manual delay for refined feel
-      await new Promise(r => setTimeout(r, 1200));
+      await new Promise((r) => setTimeout(r, 1200));
 
       const data = await api.forgotPassword(email);
 
@@ -31,7 +41,7 @@ export default function ForgotPassword() {
         setError(data.message || "We couldn't process your request. Please try again later.");
       }
     } catch {
-      setError("Connection lost. Please check your network and try again.");
+      setError('Connection lost. Please check your network and try again.');
     }
 
     setLoading(false);
@@ -39,7 +49,6 @@ export default function ForgotPassword() {
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans flex flex-col md:flex-row overflow-hidden">
-
       {/* LEFT: REFINED BRANDING SIDEBAR */}
       <div className="hidden md:flex md:w-[45%] bg-white p-20 flex-col justify-between relative overflow-hidden border-r border-slate-200">
         <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.05),transparent)]" />
@@ -54,24 +63,36 @@ export default function ForgotPassword() {
         </div>
 
         <div className="relative z-10 space-y-12">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
             <div className="w-20 h-20 bg-slate-900 rounded-[32px] flex items-center justify-center shadow-2xl mb-10">
               <Lock size={32} className="text-emerald-400" />
             </div>
-            <h1 className="text-5xl md:text-6xl font-bold text-slate-900 tracking-tight leading-none uppercase mb-8">Account <br /><span className="text-emerald-500">Recovery.</span></h1>
+            <h1 className="text-5xl md:text-6xl font-bold text-slate-900 tracking-tight leading-none uppercase mb-8">
+              Account <br />
+              <span className="text-emerald-500">Recovery.</span>
+            </h1>
             <p className="text-slate-400 text-lg font-medium leading-relaxed">
-              "Forgot your password? No worries. We'll send you a secure link to reset your credentials and get you back to your journey."
+              "Forgot your password? No worries. We'll send you a secure link to reset your
+              credentials and get you back to your journey."
             </p>
           </motion.div>
 
           <div className="flex gap-8 opacity-40">
             <div className="flex flex-col items-center gap-2">
               <ShieldCheck size={20} className="text-emerald-600" />
-              <span className="text-[8px] font-bold uppercase tracking-widest text-slate-400">Secure</span>
+              <span className="text-[8px] font-bold uppercase tracking-widest text-slate-400">
+                Secure
+              </span>
             </div>
             <div className="flex flex-col items-center gap-2">
               <Sparkles size={20} className="text-emerald-600" />
-              <span className="text-[8px] font-bold uppercase tracking-widest text-slate-400">Instant</span>
+              <span className="text-[8px] font-bold uppercase tracking-widest text-slate-400">
+                Instant
+              </span>
             </div>
           </div>
         </div>
@@ -84,7 +105,6 @@ export default function ForgotPassword() {
       {/* RIGHT: THE FORM MODULE */}
       <div className="flex-1 flex items-center justify-center p-8 md:p-24 relative bg-white">
         <div className="max-w-md w-full">
-
           <AnimatePresence mode="wait">
             {sent ? (
               <motion.div
@@ -98,13 +118,19 @@ export default function ForgotPassword() {
                   <CheckCircle size={56} strokeWidth={1.5} />
                 </div>
                 <div className="space-y-4">
-                  <h2 className="text-3xl font-bold text-slate-900 uppercase tracking-tight">Email Sent.</h2>
+                  <h2 className="text-3xl font-bold text-slate-900 uppercase tracking-tight">
+                    Email Sent.
+                  </h2>
                   <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest leading-relaxed">
-                    A reset link has been sent to <span className="text-slate-900 underline decoration-emerald-500 underline-offset-4">{email}</span>. Please check your inbox.
+                    A reset link has been sent to{' '}
+                    <span className="text-slate-900 underline decoration-emerald-500 underline-offset-4">
+                      {email}
+                    </span>
+                    . Please check your inbox.
                   </p>
                 </div>
                 <button
-                  onClick={() => navigate("/login")}
+                  onClick={() => navigate('/login')}
                   className="w-full h-18 py-5 bg-slate-900 text-white rounded-3xl font-bold uppercase text-[10px] tracking-widest hover:bg-emerald-600 transition-all shadow-xl shadow-slate-900/10 flex items-center justify-center gap-3 active:scale-95"
                 >
                   Back to Login <ArrowRight size={18} />
@@ -122,17 +148,29 @@ export default function ForgotPassword() {
                   <div className="flex items-center gap-2 text-emerald-600 font-bold text-[10px] uppercase tracking-widest">
                     <Sparkles size={14} /> Security Support
                   </div>
-                  <h2 className="text-4xl md:text-5xl font-bold text-slate-900 uppercase tracking-tight leading-none">Find Your <span className="text-emerald-500">Account.</span></h2>
-                  <p className="text-slate-400 font-bold uppercase text-[9px] tracking-widest">Enter your email address to receive a reset link</p>
+                  <h2 className="text-4xl md:text-5xl font-bold text-slate-900 uppercase tracking-tight leading-none">
+                    Find Your <span className="text-emerald-500">Account.</span>
+                  </h2>
+                  <p className="text-slate-400 font-bold uppercase text-[9px] tracking-widest">
+                    Enter your email address to receive a reset link
+                  </p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-8">
                   <div className="space-y-3 group">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within:text-emerald-600 transition-colors">Email Address</label>
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within:text-emerald-600 transition-colors">
+                      Email Address
+                    </label>
                     <div className="relative">
-                      <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-emerald-500 transition-colors" size={20} />
+                      <Mail
+                        className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-emerald-500 transition-colors"
+                        size={20}
+                      />
                       <input
-                        type="email" required value={email} onChange={e => setEmail(e.target.value)}
+                        type="email"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         placeholder="email@example.com"
                         className="w-full h-16 bg-slate-50 border border-slate-100 rounded-2xl pl-16 pr-6 font-bold text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200 shadow-inner"
                       />
@@ -140,13 +178,18 @@ export default function ForgotPassword() {
                   </div>
 
                   {error && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 bg-rose-50 text-rose-600 rounded-2xl border border-rose-100 font-bold text-[10px] uppercase tracking-widest flex items-center gap-3">
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="p-5 bg-rose-50 text-rose-600 rounded-2xl border border-rose-100 font-bold text-[10px] uppercase tracking-widest flex items-center gap-3"
+                    >
                       <Zap size={14} className="shrink-0" /> {error}
                     </motion.div>
                   )}
 
                   <button
-                    type="submit" disabled={loading}
+                    type="submit"
+                    disabled={loading}
                     className="w-full h-18 py-5 bg-slate-900 text-white rounded-3xl font-bold uppercase text-[10px] tracking-widest transition-all hover:bg-emerald-600 shadow-xl shadow-slate-900/10 active:scale-95 flex items-center justify-center gap-3 disabled:opacity-50"
                   >
                     {loading ? (
@@ -161,17 +204,18 @@ export default function ForgotPassword() {
                 </form>
 
                 <div className="pt-8 text-center">
-                  <Link to="/login" className="inline-flex items-center gap-2 text-slate-300 font-bold text-[10px] uppercase tracking-widest hover:text-emerald-600 transition-colors">
+                  <Link
+                    to="/login"
+                    className="inline-flex items-center gap-2 text-slate-300 font-bold text-[10px] uppercase tracking-widest hover:text-emerald-600 transition-colors"
+                  >
                     <ArrowLeft size={14} /> Back to Login
                   </Link>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
-
         </div>
       </div>
-
     </div>
   );
 }

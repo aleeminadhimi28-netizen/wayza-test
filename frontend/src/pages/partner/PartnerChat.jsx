@@ -1,19 +1,23 @@
-import { useEffect, useRef, useState } from "react";
-import { useAuth } from "../../AuthContext.jsx";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  Send, MessageSquare, CheckCircle, User, Search, Info
-} from "lucide-react";
+import { useEffect, useRef, useState } from 'react';
+import { useAuth } from '../../AuthContext.jsx';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Send, MessageSquare, CheckCircle, User, Search, Info } from 'lucide-react';
 
-import { api } from "../../utils/api.js";
-import { initiateSocketConnection, disconnectSocket, subscribeToMessages, joinBookingRoom, leaveBookingRoom } from "../../utils/socket.js";
+import { api } from '../../utils/api.js';
+import {
+  initiateSocketConnection,
+  disconnectSocket,
+  subscribeToMessages,
+  joinBookingRoom,
+  leaveBookingRoom,
+} from '../../utils/socket.js';
 
 export default function PartnerChat() {
   const { user } = useAuth();
   const [bookings, setBookings] = useState([]);
   const [selected, setSelected] = useState(null);
   const [messages, setMessages] = useState([]);
-  const [text, setText] = useState("");
+  const [text, setText] = useState('');
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const bottomRef = useRef(null);
@@ -22,8 +26,8 @@ export default function PartnerChat() {
     initiateSocketConnection();
     subscribeToMessages((err, msg) => {
       if (err) return;
-      setMessages(prev => {
-        const exists = prev.find(m => m._id === msg._id);
+      setMessages((prev) => {
+        const exists = prev.find((m) => m._id === msg._id);
         if (exists) return prev;
         return [...prev, msg];
       });
@@ -35,9 +39,10 @@ export default function PartnerChat() {
   useEffect(() => {
     if (!user?.email) return;
 
-    api.getPartnerBookings()
-      .then(rows => {
-        const paid = Array.isArray(rows) ? rows.filter(b => b.status === "paid") : [];
+    api
+      .getPartnerBookings()
+      .then((rows) => {
+        const paid = Array.isArray(rows) ? rows.filter((b) => b.status === 'paid') : [];
         setBookings(paid);
         if (paid.length > 0) setSelected(paid[0]);
         setLoading(false);
@@ -60,39 +65,52 @@ export default function PartnerChat() {
     try {
       const data = await api.getChat(selected._id);
       if (data.ok) setMessages(data.data || []);
-    } catch (_) { }
+    } catch (_) {}
   }
 
-  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   async function send() {
     if (!text.trim() || !selected) return;
     setSending(true);
     try {
       await api.sendChat(selected._id, text.trim());
-      setText("");
-    } catch (_) { }
+      setText('');
+    } catch (_) {}
     setSending(false);
   }
 
-  function onKey(e) { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }
+  function onKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      send();
+    }
+  }
 
-  if (loading) return (
-    <div className="flex items-center justify-center min-h-[400px]">
-      <div className="w-10 h-10 border-4 border-slate-100 border-t-emerald-500 rounded-full animate-spin" />
-    </div>
-  );
+  if (loading)
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="w-10 h-10 border-4 border-slate-100 border-t-emerald-500 rounded-full animate-spin" />
+      </div>
+    );
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col h-[calc(100vh-140px)] min-h-[600px] font-sans pb-4">
-
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="flex flex-col h-[calc(100vh-140px)] min-h-[600px] font-sans pb-4"
+    >
       {/* HEADER */}
       <div className="mb-6">
         <div className="flex items-center gap-2 text-emerald-600 font-bold text-xs uppercase tracking-wide mb-1">
           <MessageSquare size={14} /> Guest Chat
         </div>
         <h1 className="text-2xl font-bold text-slate-900">Messages</h1>
-        <p className="text-sm text-slate-500 mt-1">Chat directly with your guests who have confirmed bookings.</p>
+        <p className="text-sm text-slate-500 mt-1">
+          Chat directly with your guests who have confirmed bookings.
+        </p>
       </div>
 
       {bookings.length === 0 ? (
@@ -101,16 +119,20 @@ export default function PartnerChat() {
             <MessageSquare size={28} />
           </div>
           <h3 className="text-lg font-bold text-slate-900 mb-1">No active chats</h3>
-          <p className="text-sm text-slate-500 max-w-xs">Messaging is available for guests with confirmed bookings.</p>
+          <p className="text-sm text-slate-500 max-w-xs">
+            Messaging is available for guests with confirmed bookings.
+          </p>
         </div>
       ) : (
         <div className="flex-1 flex bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm min-h-0">
-
           {/* CONTACT LIST */}
           <aside className="w-80 border-r border-slate-100 flex flex-col shrink-0 hidden lg:flex">
             <div className="p-4 border-b border-slate-100">
               <div className="relative">
-                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <Search
+                  size={14}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                />
                 <input
                   placeholder="Search guests..."
                   className="w-full h-9 bg-slate-50 rounded-lg pl-8 pr-3 text-sm outline-none border border-transparent focus:border-emerald-500 focus:bg-white transition-all"
@@ -123,18 +145,24 @@ export default function PartnerChat() {
                 <button
                   key={b._id}
                   onClick={() => setSelected(b)}
-                  className={`w-full text-left px-4 py-3 flex items-center gap-3 transition-all ${selected?._id === b._id ? "bg-emerald-50 border-r-2 border-emerald-500" : "hover:bg-slate-50"}`}
+                  className={`w-full text-left px-4 py-3 flex items-center gap-3 transition-all ${selected?._id === b._id ? 'bg-emerald-50 border-r-2 border-emerald-500' : 'hover:bg-slate-50'}`}
                 >
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 ${selected?._id === b._id ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-500'}`}>
-                    {(b.guestEmail || "G").charAt(0).toUpperCase()}
+                  <div
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 ${selected?._id === b._id ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-500'}`}
+                  >
+                    {(b.guestEmail || 'G').charAt(0).toUpperCase()}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h4 className={`font-semibold text-sm truncate ${selected?._id === b._id ? 'text-slate-900' : 'text-slate-600'}`}>
+                    <h4
+                      className={`font-semibold text-sm truncate ${selected?._id === b._id ? 'text-slate-900' : 'text-slate-600'}`}
+                    >
                       {b.guestEmail?.split('@')[0]}
                     </h4>
                     <p className="text-xs text-slate-400 truncate">{b.title}</p>
                   </div>
-                  {selected?._id === b._id && <div className="w-2 h-2 bg-emerald-500 rounded-full shrink-0" />}
+                  {selected?._id === b._id && (
+                    <div className="w-2 h-2 bg-emerald-500 rounded-full shrink-0" />
+                  )}
                 </button>
               ))}
             </div>
@@ -142,7 +170,6 @@ export default function PartnerChat() {
 
           {/* CHAT AREA */}
           <main className="flex-1 flex flex-col min-h-0">
-
             {/* Chat header */}
             <header className="px-6 py-4 border-b border-slate-100 flex items-center gap-4 shrink-0 bg-white">
               <div className="relative">
@@ -152,7 +179,9 @@ export default function PartnerChat() {
                 <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full" />
               </div>
               <div>
-                <h3 className="font-bold text-sm text-slate-900">{selected?.guestEmail?.split('@')[0]}</h3>
+                <h3 className="font-bold text-sm text-slate-900">
+                  {selected?.guestEmail?.split('@')[0]}
+                </h3>
                 <p className="text-xs text-slate-500">{selected?.title} · Online</p>
               </div>
             </header>
@@ -170,13 +199,30 @@ export default function PartnerChat() {
                 messages.map((m, i) => {
                   const isMe = m.senderEmail === user?.email;
                   return (
-                    <motion.div key={m._id || i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
-                      <div className={`px-4 py-3 rounded-2xl text-sm max-w-[75%] ${isMe
-                        ? "bg-slate-900 text-white rounded-br-md"
-                        : "bg-white border border-slate-200 text-slate-700 rounded-bl-md shadow-sm"}`}>
+                    <motion.div
+                      key={m._id || i}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div
+                        className={`px-4 py-3 rounded-2xl text-sm max-w-[75%] ${
+                          isMe
+                            ? 'bg-slate-900 text-white rounded-br-md'
+                            : 'bg-white border border-slate-200 text-slate-700 rounded-bl-md shadow-sm'
+                        }`}
+                      >
                         <p>{m.message}</p>
-                        <div className={`flex items-center gap-2 mt-2 text-xs ${isMe ? "text-white/40" : "text-slate-400"}`}>
-                          <span>{new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}</span>
+                        <div
+                          className={`flex items-center gap-2 mt-2 text-xs ${isMe ? 'text-white/40' : 'text-slate-400'}`}
+                        >
+                          <span>
+                            {new Date(m.createdAt).toLocaleTimeString([], {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              hour12: true,
+                            })}
+                          </span>
                           {isMe && <CheckCircle size={11} className="text-emerald-400" />}
                         </div>
                       </div>
@@ -191,17 +237,23 @@ export default function PartnerChat() {
             <footer className="p-4 bg-white border-t border-slate-100 shrink-0">
               <div className="flex gap-3 items-center bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-xl focus-within:bg-white focus-within:border-emerald-500 transition-all">
                 <textarea
-                  value={text} onChange={e => setText(e.target.value)}
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
                   onKeyDown={onKey}
                   placeholder="Type a message..."
                   rows={1}
                   className="flex-1 bg-transparent border-none outline-none resize-none text-sm text-slate-900 placeholder:text-slate-400"
                 />
                 <button
-                  onClick={send} disabled={!text.trim() || sending}
+                  onClick={send}
+                  disabled={!text.trim() || sending}
                   className={`w-9 h-9 flex items-center justify-center rounded-lg transition-all ${sending || !text.trim() ? 'bg-slate-100 text-slate-300' : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm'}`}
                 >
-                  {sending ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Send size={16} />}
+                  {sending ? (
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <Send size={16} />
+                  )}
                 </button>
               </div>
             </footer>
