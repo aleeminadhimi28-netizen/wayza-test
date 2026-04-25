@@ -64,6 +64,7 @@ export default function Listings() {
   const [saved, setSaved] = useState(new Set());
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
@@ -163,6 +164,12 @@ export default function Listings() {
     setPage(1);
   }, [location, minPrice, maxPrice, sort, category]);
 
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const catLabel = CATEGORIES.find((c) => c.id === category)?.label || 'Properties';
 
   return (
@@ -173,26 +180,26 @@ export default function Listings() {
       />
       <div className="bg-slate-50 min-h-screen font-sans selection:bg-emerald-100 selection:text-emerald-900">
         {/* ─── PREMIUM SEARCH BAR ─── */}
-        <div className="bg-white/80 backdrop-blur-xl border-b border-slate-200 sticky top-20 z-40">
-          <div className="max-w-[1240px] mx-auto px-4 py-4">
-            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-2 shadow-sm flex flex-col lg:flex-row items-stretch lg:items-center gap-2">
+        <div className={`bg-white/95 backdrop-blur-xl border-b border-slate-200 sticky top-[64px] z-40 transition-all duration-300 ${scrolled ? 'py-2 shadow-md' : 'py-4'}`}>
+          <div className="max-w-[1240px] mx-auto px-4">
+            <div className={`bg-slate-50 border border-slate-200 rounded-2xl p-1.5 shadow-sm flex flex-col lg:flex-row items-stretch lg:items-center gap-1.5 transition-all ${scrolled ? 'lg:p-1' : 'p-2'}`}>
               {/* Location */}
               <div className="flex-1 relative group">
                 <MapPin
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors"
+                  className={`absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors ${scrolled ? 'scale-90' : ''}`}
                   size={18}
                 />
                 <input
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
-                  placeholder="Explore your next destination..."
-                  className="w-full h-12 pl-12 pr-4 bg-transparent text-sm font-semibold text-slate-900 focus:outline-none placeholder:text-slate-400 placeholder:font-normal"
+                  placeholder={scrolled ? "Search..." : "Explore your next destination..."}
+                  className={`w-full bg-transparent text-sm font-semibold text-slate-900 focus:outline-none placeholder:text-slate-400 placeholder:font-normal transition-all ${scrolled ? 'h-10 pl-11' : 'h-12 pl-12'}`}
                 />
                 <div className="absolute right-0 top-1/4 bottom-1/4 w-px bg-slate-200 hidden lg:block" />
               </div>
 
-              {/* Dates */}
-              <div className="flex items-center gap-1 flex-1 lg:max-w-[400px]">
+              {/* Dates - Hidden on mobile scrolled for compactness */}
+              <div className={`flex items-center gap-1 flex-1 lg:max-w-[400px] ${scrolled ? 'hidden lg:flex' : 'flex'}`}>
                 <div className="flex-1 relative group">
                   <Calendar
                     className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
@@ -202,7 +209,7 @@ export default function Listings() {
                     type="date"
                     value={checkInInput}
                     onChange={(e) => setCheckInInput(e.target.value)}
-                    className="w-full h-12 pl-12 pr-2 bg-transparent text-xs font-bold text-slate-900 focus:outline-none appearance-none cursor-pointer"
+                    className="w-full h-10 lg:h-12 pl-12 pr-2 bg-transparent text-xs font-bold text-slate-900 focus:outline-none appearance-none cursor-pointer"
                   />
                   <div className="absolute right-0 top-1/4 bottom-1/4 w-px bg-slate-200 hidden lg:block" />
                 </div>
@@ -215,53 +222,49 @@ export default function Listings() {
                     type="date"
                     value={checkOutInput}
                     onChange={(e) => setCheckOutInput(e.target.value)}
-                    className="w-full h-12 pl-12 pr-2 bg-transparent text-xs font-bold text-slate-900 focus:outline-none appearance-none cursor-pointer"
+                    className="w-full h-10 lg:h-12 pl-12 pr-2 bg-transparent text-xs font-bold text-slate-900 focus:outline-none appearance-none cursor-pointer"
                   />
                 </div>
               </div>
 
               {/* Actions */}
-              <div className="flex items-center gap-2 pl-2 border-t lg:border-t-0 border-slate-200 pt-2 lg:pt-0">
+              <div className={`flex items-center gap-2 pl-2 ${scrolled ? 'border-t-0 pt-0' : 'border-t lg:border-t-0 border-slate-200 pt-2 lg:pt-0'}`}>
                 <button
                   onClick={handleSearch}
-                  className="px-8 h-12 bg-slate-900 hover:bg-emerald-600 text-white text-sm font-bold rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-slate-900/10 active:scale-95"
+                  className={`bg-slate-900 hover:bg-emerald-600 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-slate-900/10 active:scale-95 ${scrolled ? 'h-10 px-4' : 'h-12 px-8'}`}
                 >
                   <Search size={18} />
-                  Search
+                  <span className={scrolled ? 'hidden lg:inline' : 'inline'}>Search</span>
                 </button>
-                <Link
-                  to="/explore-map"
-                  className="w-12 h-12 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-slate-600 hover:text-emerald-500 hover:border-emerald-200 hover:bg-emerald-50 transition-all shadow-sm group"
-                >
-                  <Navigation size={20} className="transition-transform group-hover:scale-110" />
-                </Link>
+                {!scrolled && (
+                  <Link
+                    to="/explore-map"
+                    className="w-12 h-12 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-slate-600 hover:text-emerald-500 hover:border-emerald-200 hover:bg-emerald-50 transition-all shadow-sm group"
+                  >
+                    <Navigation size={20} className="transition-transform group-hover:scale-110" />
+                  </Link>
+                )}
               </div>
             </div>
 
             {/* Category Pills & Sort */}
-            <div className="flex items-center justify-between mt-4 overflow-x-auto no-scrollbar scroll-smooth gap-4">
+            <div className={`flex items-center justify-between overflow-x-auto no-scrollbar scroll-smooth gap-4 transition-all ${scrolled ? 'mt-2' : 'mt-4'}`}>
               <div className="flex items-center gap-2">
                 {CATEGORIES.map((cat) => (
                   <button
                     key={cat.id}
                     onClick={() => setCategory(cat.id)}
-                    className={`group relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap ${
+                    className={`group relative flex items-center gap-2 rounded-full font-bold transition-all whitespace-nowrap ${
                       category === cat.id
-                        ? 'bg-slate-900 text-white shadow-xl translate-y-[-2px]'
+                        ? 'bg-slate-900 text-white shadow-xl translate-y-[-1px]'
                         : 'bg-slate-100 text-slate-500 hover:bg-white hover:text-slate-900 hover:shadow-md'
-                    }`}
+                    } ${scrolled ? 'px-4 py-1.5 text-xs' : 'px-5 py-2.5 text-sm'}`}
                   >
                     <cat.icon
-                      size={16}
+                      size={scrolled ? 14 : 16}
                       className={`transition-transform group-hover:scale-110 ${category === cat.id ? 'text-emerald-400' : ''}`}
                     />
                     {cat.label}
-                    {category === cat.id && (
-                      <motion.div
-                        layoutId="activeCat"
-                        className="absolute inset-0 border-2 border-emerald-400/30 rounded-full"
-                      />
-                    )}
                   </button>
                 ))}
               </div>

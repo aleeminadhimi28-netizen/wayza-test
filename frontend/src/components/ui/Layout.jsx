@@ -388,7 +388,7 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
 
       <PageTransition>
         <main
-          className={`${(scrolled || !isHomePage) && !noPadding ? 'pt-24' : 'pt-0'} transition-all duration-500`}
+          className={`${!isHomePage && !noPadding ? 'pt-24' : 'pt-0'} transition-all duration-500`}
         >
           {children}
         </main>
