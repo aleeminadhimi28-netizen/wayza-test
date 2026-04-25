@@ -359,7 +359,8 @@ router.put("/profile", requireAuth, async (req, res, next) => {
     try {
         const parsed = z.object({
             name: z.string().min(1).optional(),
-            phone: z.string().min(1).optional()
+            phone: z.string().min(1).optional(),
+            picture: z.string().min(1).optional()
         }).safeParse(req.body);
         if (!parsed.success) return res.status(400).json({ ok: false, message: "Invalid input" });
 
@@ -367,6 +368,7 @@ router.put("/profile", requireAuth, async (req, res, next) => {
         const updates = {};
         if (parsed.data.name !== undefined) updates.name = parsed.data.name;
         if (parsed.data.phone !== undefined) updates.phone = parsed.data.phone;
+        if (parsed.data.picture !== undefined) updates.picture = parsed.data.picture;
         updates.updatedAt = new Date();
 
         await db.collection("users").updateOne({ email: req.user.email }, { $set: updates });

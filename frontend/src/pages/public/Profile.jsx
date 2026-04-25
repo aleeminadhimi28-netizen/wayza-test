@@ -54,7 +54,9 @@ export default function Profile() {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
+  const [picture, setPicture] = useState('');
   const [saving, setSaving] = useState(false);
+  const [uploadingPicture, setUploadingPicture] = useState(false);
   const [bookings, setBookings] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [is2FASetupOpen, setIs2FASetupOpen] = useState(false);
@@ -79,6 +81,7 @@ export default function Profile() {
           setName(d.data.name || '');
           setPhone(d.data.phone || '');
           setEmail(d.data.email || '');
+          setPicture(d.data.picture || '');
           setTwoFactorEnabled(!!d.data.twoFactorEnabled);
         }
       } finally {
@@ -116,7 +119,7 @@ export default function Profile() {
   async function saveProfile() {
     setSaving(true);
     try {
-      const data = await api.updateProfile({ name, phone });
+      const data = await api.updateProfile({ name, phone, picture });
       if (data.ok) showToast('Profile updated successfully.', 'success');
       else showToast('Failed to update profile.', 'error');
     } finally {
@@ -166,6 +169,33 @@ export default function Profile() {
     }
   }
 
+  function fixProfileImage(img) {
+    if (!img) return null;
+    if (img.startsWith('http')) return img;
+    const base = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    return img.startsWith('/') ? `${base}${img}` : `${base}/${img}`;
+  }
+
+  async function handleAvatarUpload(file) {
+    if (!file) return;
+    setUploadingPicture(true);
+    try {
+      const form = new FormData();
+      form.append('image', file);
+      const result = await api.uploadImage(form);
+      if (result.ok && result.filename) {
+        setPicture(result.filename);
+        showToast('Profile photo uploaded. Save changes to keep it.', 'success');
+      } else {
+        showToast(result.message || 'Photo upload failed.', 'error');
+      }
+    } catch (err) {
+      showToast('Could not upload profile photo.', 'error');
+    } finally {
+      setUploadingPicture(false);
+    }
+  }
+
   if (loading)
     return (
       <WayzzaLayout>
@@ -193,15 +223,35 @@ export default function Profile() {
           <div className="max-w-6xl mx-auto px-6 py-8 md:py-12 flex flex-col sm:flex-row items-center sm:items-end gap-6">
             {/* Avatar */}
             <div className="relative group shrink-0">
-              <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-2xl md:text-3xl font-bold shadow-lg overflow-hidden relative">
-                {initials}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center cursor-pointer">
-                  <Camera
-                    size={18}
-                    className="text-white opacity-0 group-hover:opacity-100 transition-all"
-                  />
+              <label className="cursor-pointer">
+                <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-2xl md:text-3xl font-bold shadow-lg overflow-hidden relative">
+                  {picture ? (
+                    <img
+                      src={fixProfileImage(picture)}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    initials
+                  )}
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center">
+                    {uploadingPicture ? (
+                      <div className="w-8 h-8 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                    ) : (
+                      <Camera
+                        size={18}
+                        className="text-white opacity-0 group-hover:opacity-100 transition-all"
+                      />
+                    )}
+                  </div>
                 </div>
-              </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={(e) => handleAvatarUpload(e.target.files?.[0])}
+                />
+              </label>
               <div className="absolute -bottom-1 -right-1 bg-emerald-500 text-white p-1 rounded-lg shadow-md border-2 border-white">
                 <CheckCircle size={10} />
               </div>
