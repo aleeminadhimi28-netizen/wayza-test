@@ -42,6 +42,7 @@ export default function Signup() {
   }, [navigate]);
 
   const googleLogin = useGoogleLogin({
+    scope: 'openid email profile',
     onSuccess: async (tokenResponse) => {
       setLoading(true);
       try {

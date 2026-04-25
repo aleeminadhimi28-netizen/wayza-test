@@ -13,6 +13,8 @@ import { OAuth2Client } from "google-auth-library";
 
 
 const signupSchema = z.object({
+    name: z.string().min(1, "Name is required"),
+    phone: z.string().min(1, "Phone is required"),
     email: z.string().email(),
     password: z.string().min(6)
 });
@@ -24,7 +26,8 @@ const loginSchema = z.object({
 
 const router = express.Router();
 const SECRET = process.env.JWT_SECRET;
-const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID || "");
 
 router.post("/signup", async (req, res, next) => {
     try {
@@ -34,13 +37,13 @@ router.post("/signup", async (req, res, next) => {
         const db = getDB();
         const users = db.collection("users");
         const email = parsed.data.email.toLowerCase().trim();
-        const { password } = parsed.data;
+        const { password, name, phone } = parsed.data;
 
         const exists = await users.findOne({ email });
         if (exists) return res.status(400).json({ ok: false, message: "Email already exists" });
 
         const hash = await bcrypt.hash(password, BCRYPT_ROUNDS);
-        await users.insertOne({ email, password: hash, role: "guest", createdAt: new Date() });
+        await users.insertOne({ email, password: hash, name, phone, role: "guest", createdAt: new Date() });
 
         // Track signup in PostHog
         captureEvent(email, "User Signed Up", { role: "guest" });
@@ -107,6 +110,7 @@ router.post("/google", async (req, res, next) => {
     try {
         const { credential } = req.body;
         if (!credential) return res.status(400).json({ ok: false, message: "No Google credential provided" });
+        if (!GOOGLE_CLIENT_ID) return res.status(500).json({ ok: false, message: "Google client ID is not configured on the server" });
 
         let email, name, picture;
 
@@ -114,12 +118,12 @@ router.post("/google", async (req, res, next) => {
         if (credential.split('.').length === 3) {
             const ticket = await googleClient.verifyIdToken({
                 idToken: credential,
-                audience: process.env.GOOGLE_CLIENT_ID
+                audience: GOOGLE_CLIENT_ID
             });
             const payload = ticket.getPayload();
-            email = payload.email.toLowerCase().trim();
-            name = payload.name;
-            picture = payload.picture;
+            email = payload?.email?.toLowerCase()?.trim();
+            name = payload?.name;
+            picture = payload?.picture;
         } else {
             // Otherwise, treat it as an access_token and fetch user info
             const response = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo`, {
@@ -129,9 +133,13 @@ router.post("/google", async (req, res, next) => {
                 throw new Error("Failed to fetch user info from Google");
             }
             const payload = await response.json();
-            email = payload.email.toLowerCase().trim();
-            name = payload.name;
-            picture = payload.picture;
+            email = payload?.email?.toLowerCase()?.trim();
+            name = payload?.name;
+            picture = payload?.picture;
+        }
+
+        if (!email) {
+            throw new Error("Google account email was not returned by Google");
         }
 
         const db = getDB();
@@ -142,8 +150,9 @@ router.post("/google", async (req, res, next) => {
             await db.collection("users").insertOne({
                 email,
                 role: "guest",
-                name: payload.name,
-                picture: payload.picture,
+                name,
+                picture,
+                phone: "", // Google auth doesn't provide phone, so leave empty for now
                 createdAt: new Date()
             });
             user = await db.collection("users").findOne({ email });
@@ -168,7 +177,7 @@ router.post("/google", async (req, res, next) => {
         });
     } catch (err) {
         console.error("Google Auth Error:", err);
-        res.status(401).json({ ok: false, message: "Google authentication failed" });
+        res.status(401).json({ ok: false, message: err.message || "Google authentication failed" });
     }
 });
 
@@ -269,14 +278,14 @@ router.post("/send-otp", async (req, res, next) => {
     try {
         const { email } = req.body;
         if (!email) return res.status(400).json({ ok: false, message: "Email required" });
-        
+
         const db = getDB();
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         const expiry = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
-        
+
         await db.collection("otps").deleteMany({ email: email.toLowerCase().trim() });
         await db.collection("otps").insertOne({ email: email.toLowerCase().trim(), otp, expiry });
-        
+
         const transporter = await getTransporter();
         const info = await transporter.sendMail({
             from: process.env.SMTP_FROM || process.env.EMAIL_USER || "noreply@wayzza.com",
@@ -290,11 +299,11 @@ router.post("/send-otp", async (req, res, next) => {
                 </div>
             `
         });
-        
+
         const nodemailer = await import('nodemailer');
         const previewUrl = nodemailer.getTestMessageUrl(info);
         if (previewUrl) console.log("OTP Email URL: ", previewUrl);
-        
+
         res.json({ ok: true });
     } catch (err) { next(err); }
 });
@@ -303,20 +312,20 @@ router.post("/verify-otp", async (req, res, next) => {
     try {
         const { email, otp } = req.body;
         if (!email || !otp) return res.status(400).json({ ok: false, message: "Email and OTP required" });
-        
+
         const db = getDB();
         const record = await db.collection("otps").findOne({ email: email.toLowerCase().trim(), otp: otp.trim() });
-        
+
         if (!record || new Date(record.expiry) < new Date()) {
             return res.status(400).json({ ok: false, message: "Invalid or expired OTP" });
         }
-        
+
         await db.collection("otps").deleteMany({ email: email.toLowerCase().trim() });
-        
+
         let user = await db.collection("users").findOne({ email: email.toLowerCase().trim() });
         if (!user) {
             // Register if new
-            await db.collection("users").insertOne({ email: email.toLowerCase().trim(), role: "guest", createdAt: new Date() });
+            await db.collection("users").insertOne({ email: email.toLowerCase().trim(), role: "guest", name: "", phone: "", createdAt: new Date() });
             user = await db.collection("users").findOne({ email: email.toLowerCase().trim() });
             captureEvent(user.email, "User Signed Up via OTP", { role: "guest" });
         } else {
@@ -327,11 +336,11 @@ router.post("/verify-otp", async (req, res, next) => {
             const tempToken = jwt.sign({ email: user.email, temp: true }, SECRET, { expiresIn: "10m" });
             return res.json({ ok: true, twoFactorRequired: true, tempToken });
         }
-        
+
         if (!SECRET) throw new Error("JWT_SECRET is not configured");
         const token = jwt.sign({ email: user.email, role: user.role }, SECRET, { expiresIn: JWT_EXPIRY });
-        
-        res.cookie("token", token, { httpOnly: true, secure: true, sameSite: "none", maxAge: 7*24*60*60*1000 });
+
+        res.cookie("token", token, { httpOnly: true, secure: true, sameSite: "none", maxAge: 7 * 24 * 60 * 60 * 1000 });
         res.json({ ok: true, data: { email: user.email, role: user.role, token } });
     } catch (err) { next(err); }
 });
@@ -342,14 +351,14 @@ router.put("/profile", requireAuth, async (req, res, next) => {
     try {
         const parsed = z.object({
             name: z.string().min(1).optional(),
-            phone: z.string().optional()
+            phone: z.string().min(1).optional()
         }).safeParse(req.body);
         if (!parsed.success) return res.status(400).json({ ok: false, message: "Invalid input" });
 
         const db = getDB();
         const updates = {};
-        if (parsed.data.name) updates.name = parsed.data.name;
-        if (parsed.data.phone) updates.phone = parsed.data.phone;
+        if (parsed.data.name !== undefined) updates.name = parsed.data.name;
+        if (parsed.data.phone !== undefined) updates.phone = parsed.data.phone;
         updates.updatedAt = new Date();
 
         await db.collection("users").updateOne({ email: req.user.email }, { $set: updates });
@@ -363,10 +372,10 @@ router.get("/2fa/setup", requireAuth, async (req, res, next) => {
     try {
         const secret = generateSecret();
         const qrCode = await generateQRCode(req.user.email, secret);
-        
+
         const db = getDB();
         await db.collection("users").updateOne({ email: req.user.email }, { $set: { tempTwoFactorSecret: secret } });
-        
+
         res.json({ ok: true, data: { qrCode, secret } });
     } catch (err) { next(err); }
 });
@@ -376,17 +385,17 @@ router.post("/2fa/enable", requireAuth, async (req, res, next) => {
         const { token } = req.body;
         const db = getDB();
         const user = await db.collection("users").findOne({ email: req.user.email });
-        
+
         if (!user.tempTwoFactorSecret) return res.status(400).json({ ok: false, message: "Setup not initiated" });
-        
+
         const valid = verifyToken(token, user.tempTwoFactorSecret);
         if (!valid) return res.status(400).json({ ok: false, message: "Invalid code" });
-        
+
         await db.collection("users").updateOne(
-            { email: req.user.email }, 
+            { email: req.user.email },
             { $set: { twoFactorEnabled: true, twoFactorSecret: user.tempTwoFactorSecret }, $unset: { tempTwoFactorSecret: "" } }
         );
-        
+
         res.json({ ok: true });
     } catch (err) { next(err); }
 });
@@ -396,14 +405,14 @@ router.post("/2fa/disable", requireAuth, async (req, res, next) => {
         const { token } = req.body;
         const db = getDB();
         const user = await db.collection("users").findOne({ email: req.user.email });
-        
+
         if (!user.twoFactorEnabled) return res.status(400).json({ ok: false, message: "2FA not enabled" });
-        
+
         const valid = verifyToken(token, user.twoFactorSecret);
         if (!valid) return res.status(400).json({ ok: false, message: "Invalid code" });
-        
+
         await db.collection("users").updateOne({ email: req.user.email }, { $set: { twoFactorEnabled: false }, $unset: { twoFactorSecret: "" } });
-        
+
         res.json({ ok: true });
     } catch (err) { next(err); }
 });
@@ -412,19 +421,19 @@ router.post("/2fa/verify", async (req, res, next) => {
     try {
         const { tempToken, token: totpToken } = req.body;
         if (!tempToken || !totpToken) return res.status(400).json({ ok: false, message: "Input missing" });
-        
+
         const decoded = jwt.verify(tempToken, SECRET);
         if (!decoded.temp) return res.status(401).json({ ok: false, message: "Invalid token" });
-        
+
         const db = getDB();
         const user = await db.collection("users").findOne({ email: decoded.email });
-        
+
         const valid = verifyToken(totpToken, user.twoFactorSecret);
         if (!valid) return res.status(400).json({ ok: false, message: "Invalid code" });
-        
+
         const token = jwt.sign({ email: user.email, role: user.role }, SECRET, { expiresIn: JWT_EXPIRY });
-        res.cookie("token", token, { httpOnly: true, secure: true, sameSite: "none", maxAge: 7*24*60*60*1000 });
-        
+        res.cookie("token", token, { httpOnly: true, secure: true, sameSite: "none", maxAge: 7 * 24 * 60 * 60 * 1000 });
+
         res.json({ ok: true, data: { email: user.email, role: user.role, token } });
     } catch (err) { next(err); }
 });
