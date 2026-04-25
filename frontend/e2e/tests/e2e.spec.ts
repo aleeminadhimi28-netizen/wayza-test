@@ -17,12 +17,12 @@ test.describe('Wayza E2E Flow', () => {
         try {
           const body = await response.json();
           console.log('<<', response.status(), response.url(), body);
-        } catch(e) {}
+        } catch (e) { }
       }
     });
 
     await page.goto('/');
-    await expect(page).toHaveTitle(/Wayza/);
+    await expect(page).toHaveTitle(/Wayzza/);
 
     // Bypass signup UI flakiness by using the seeded user
     const testEmail = `testguest@test.com`;
@@ -33,21 +33,21 @@ test.describe('Wayza E2E Flow', () => {
     // 4. Log in
     await page.locator('input[type="email"]').fill(testEmail);
     await page.locator('input[type="password"]').fill('Password123');
-    
+
     await page.keyboard.press('Enter');
     await page.waitForSelector('text=View inventory', { timeout: 15000 });
 
     // 5. Navigate to Listings
     await page.click('text=View inventory');
-    
+
     // Wait for the listings page
     await page.waitForSelector('input[placeholder="Explore your next destination..."]');
-    
+
     // Search for Sample City
     await page.locator('input[placeholder="Explore your next destination..."]').fill('Sample City');
     await page.click('button:has-text("Search")');
     await page.waitForTimeout(1000); // Wait for results to update
-    
+
     // 6. Find Sample Property and view details
     await page.waitForSelector('text=Sample Property');
     await page.click('text=Sample Property', { force: true });
@@ -60,17 +60,17 @@ test.describe('Wayza E2E Flow', () => {
 
     // Wait for the booking page
     await page.waitForURL('**/booking/*', { timeout: 10000 });
-                         
+
     // Click final Reserve
     await page.click('button:has-text("Reserve Now")', { force: true });
 
     // 8. Confirm Booking (Payment)
     try {
-        await page.waitForURL('**/payment/*', { timeout: 10000 });
+      await page.waitForURL('**/payment/*', { timeout: 10000 });
     } catch (e) {
-        const bd = await page.locator('body').innerText();
-        console.log("Failed to navigate to payment. Body:", bd);
-        throw e;
+      const bd = await page.locator('body').innerText();
+      console.log("Failed to navigate to payment. Body:", bd);
+      throw e;
     }
     await page.waitForSelector('text=Authorize Entry');
     await page.click('button:has-text("Authorize Entry")');

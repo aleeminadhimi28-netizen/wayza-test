@@ -12,6 +12,7 @@ import {
   Zap,
   Sparkles,
   User,
+  Phone,
 } from 'lucide-react';
 import { useToast } from '../../ToastContext.jsx';
 import { useAuth } from '../../AuthContext.jsx';
@@ -25,6 +26,8 @@ export default function Signup() {
   const { showToast } = useToast();
   const { login } = useAuth();
 
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [show, setShow] = useState(false);
@@ -64,13 +67,16 @@ export default function Signup() {
 
   async function handleSignup(e) {
     if (e) e.preventDefault();
-    if (!email || !password) return;
+    if (!name || !phone || !email || !password) {
+      showToast('Please complete your profile with name and phone before signing up.', 'error');
+      return;
+    }
 
     setLoading(true);
     try {
       await new Promise((r) => setTimeout(r, 1200)); // Cinematic delay for identity creation
 
-      const data = await api.signup({ email, password });
+      const data = await api.signup({ name, phone, email, password });
 
       if (data.ok) {
         showToast('Account created successfully!', 'success');
@@ -158,6 +164,46 @@ export default function Signup() {
 
           <form onSubmit={handleSignup} className="space-y-8 group">
             <div className="space-y-6">
+              <div className="space-y-3 group/field">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within/field:text-emerald-600 transition-colors">
+                  Full Name
+                </label>
+                <div className="relative">
+                  <User
+                    className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within/field:text-emerald-600 transition-colors"
+                    size={18}
+                  />
+                  <input
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full h-16 bg-slate-50 border border-slate-100 rounded-2xl pl-16 pr-6 font-bold text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200 shadow-inner"
+                    placeholder="Your full name"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-3 group/field">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within/field:text-emerald-600 transition-colors">
+                  Phone Number
+                </label>
+                <div className="relative">
+                  <Phone
+                    className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within/field:text-emerald-600 transition-colors"
+                    size={18}
+                  />
+                  <input
+                    type="tel"
+                    required
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full h-16 bg-slate-50 border border-slate-100 rounded-2xl pl-16 pr-6 font-bold text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200 shadow-inner"
+                    placeholder="+1 555 555 5555"
+                  />
+                </div>
+              </div>
+
               <div className="space-y-3 group/field">
                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within/field:text-emerald-600 transition-colors">
                   Email Address
