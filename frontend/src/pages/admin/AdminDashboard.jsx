@@ -285,10 +285,11 @@ export default function AdminDashboard() {
                 setActiveTab(tab.id);
                 setSearchQuery('');
               }}
-              className={`w-full flex items-center gap-3 py-2.5 px-3 rounded-xl font-semibold text-sm transition-all ${activeTab === tab.id
+              className={`w-full flex items-center gap-3 py-2.5 px-3 rounded-xl font-semibold text-sm transition-all ${
+                activeTab === tab.id
                   ? 'bg-white/10 text-white'
                   : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'
-                }`}
+              }`}
             >
               <tab.icon size={17} className={activeTab === tab.id ? 'text-emerald-400' : ''} />
               {tab.label}
