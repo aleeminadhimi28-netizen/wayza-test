@@ -149,7 +149,7 @@ export default function LandingPage() {
                             <div className="bg-white/90 backdrop-blur-2xl rounded-[40px] p-3 shadow-[0_40px_100px_rgba(0,0,0,0.15)] border border-white/50 flex flex-col md:flex-row items-center gap-2">
 
                                 {/* Location */}
-                                <div className="flex-[1.5] w-full px-10 py-5 rounded-[32px] hover:bg-slate-50/50 transition-all text-left cursor-pointer group">
+                                <div className="flex-[1.5] w-full px-6 md:px-10 py-4 md:py-5 rounded-[32px] hover:bg-slate-50/50 transition-all text-left cursor-pointer group">
                                     <p className="text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mb-1.5 group-hover:text-emerald-600 transition-colors">Destinations</p>
                                     <input
                                         placeholder="Where to go?"
@@ -162,7 +162,7 @@ export default function LandingPage() {
                                 <div className="hidden md:block w-px h-12 bg-slate-200/50" />
 
                                 {/* Check In/Out */}
-                                <div className="flex-1 w-full px-10 py-5 rounded-[32px] hover:bg-slate-50/50 transition-all text-left cursor-pointer group">
+                                <div className="flex-1 w-full px-6 md:px-10 py-4 md:py-5 rounded-[32px] hover:bg-slate-50/50 transition-all text-left cursor-pointer group">
                                     <p className="text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mb-1.5 group-hover:text-emerald-600 transition-colors">Timeframe</p>
                                     <div className="flex items-center gap-3">
                                         <input type="date" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} className="bg-transparent border-none outline-none font-bold text-slate-900 text-sm p-0 w-28 cursor-pointer" />
@@ -174,7 +174,7 @@ export default function LandingPage() {
                                 <div className="hidden md:block w-px h-12 bg-slate-200/50" />
 
                                 {/* Guests */}
-                                <div className="flex-1 w-full px-10 py-5 rounded-[32px] hover:bg-slate-50/50 transition-all text-left cursor-pointer group">
+                                <div className="flex-1 w-full px-6 md:px-10 py-4 md:py-5 rounded-[32px] hover:bg-slate-50/50 transition-all text-left cursor-pointer group">
                                     <p className="text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mb-1.5 group-hover:text-emerald-600 transition-colors">Guests</p>
                                     <div className="flex items-center gap-3">
                                         <Users size={16} className="text-slate-400" />
@@ -189,7 +189,7 @@ export default function LandingPage() {
                                 </div>
 
                                 {/* Search Button */}
-                                <button onClick={handleSearch} className="w-full md:w-auto bg-slate-900 text-white px-10 py-6 rounded-[32px] shadow-2xl shadow-slate-900/20 transition-all hover:bg-emerald-600 hover:scale-[1.02] active:scale-95 group flex items-center justify-center gap-4">
+                                <button onClick={handleSearch} className="w-full md:w-auto bg-slate-900 text-white px-8 md:px-10 py-5 md:py-6 rounded-[32px] shadow-2xl shadow-slate-900/20 transition-all hover:bg-emerald-600 hover:scale-[1.02] active:scale-95 group flex items-center justify-center gap-4">
                                     <Search size={22} strokeWidth={3} className="transition-transform group-hover:rotate-12" />
                                     <span className="font-black uppercase tracking-[0.3em] text-[11px]">Explore</span>
                                 </button>
@@ -208,7 +208,7 @@ export default function LandingPage() {
                 </header>
 
                 {/* ════ TAB STRIP ════ */}
-                <div className="max-w-7xl mx-auto px-6 -mt-20 relative z-20 mb-32 flex flex-wrap items-center justify-center gap-6">
+                <div className="max-w-7xl mx-auto px-6 -mt-10 md:-mt-20 relative z-20 mb-32 flex flex-wrap items-center justify-center gap-4 md:gap-6">
                     {CATEGORIES.map(c => (
                         <button
                             key={c.key}
@@ -216,7 +216,7 @@ export default function LandingPage() {
                                 if (c.key === 'experience') navigate('/experiences');
                                 else setTab(c.key);
                             }}
-                            className={`group flex items-center gap-4 px-10 py-5 rounded-[32px] transition-all duration-500 border ${tab === c.key ? 'bg-slate-900 border-slate-900 text-white shadow-[0_20px_40px_rgba(0,0,0,0.2)] -translate-y-2' : 'bg-white/80 backdrop-blur-md border-slate-100 text-slate-400 hover:border-emerald-200 hover:text-slate-900 hover:-translate-y-1'}`}
+                            className={`group flex items-center gap-3 md:gap-4 px-6 md:px-10 py-4 md:py-5 rounded-[32px] transition-all duration-500 border ${tab === c.key ? 'bg-slate-900 border-slate-900 text-white shadow-[0_20px_40px_rgba(0,0,0,0.2)] -translate-y-2' : 'bg-white/80 backdrop-blur-md border-slate-100 text-slate-400 hover:border-emerald-200 hover:text-slate-900 hover:-translate-y-1'}`}
                         >
                             <c.icon size={18} className={`${tab === c.key ? 'text-emerald-400' : 'group-hover:text-emerald-500'} transition-colors`} />
                             <span className="text-[14px] font-bold uppercase tracking-[0.2em]">{c.label}</span>
