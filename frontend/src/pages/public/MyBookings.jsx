@@ -223,23 +223,23 @@ export default function MyBookings() {
   return (
     <WayzzaLayout noPadding>
       <div className="bg-white min-h-screen font-sans pb-32 selection:bg-emerald-50 selection:text-emerald-900">
-        <header className="max-w-7xl mx-auto px-6 lg:px-12 py-12 md:py-20">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
-            <div className="space-y-2">
-              <h1 className="text-3xl md:text-5xl font-bold text-slate-900 tracking-tight">
+        <header className="max-w-7xl mx-auto px-6 lg:px-12 py-8 md:py-16">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-8">
+            <div className="space-y-1 md:space-y-2">
+              <h1 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight uppercase">
                 My Bookings
               </h1>
-              <p className="text-slate-500 font-medium">
+              <p className="text-slate-400 font-bold uppercase text-[10px] md:text-xs tracking-widest">
                 Manage your stays and travel history with Wayzza.
               </p>
             </div>
 
-            <div className="flex flex-wrap gap-2 p-1.5 bg-slate-50 rounded-2xl border border-slate-100">
+            <div className="flex w-full md:w-auto overflow-x-auto no-scrollbar gap-2 p-1.5 bg-slate-50 rounded-2xl border border-slate-100">
               {tabs.map((tab) => (
                 <button
                   key={tab.key}
                   onClick={() => setFilterStatus(tab.key)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all ${
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all whitespace-nowrap ${
                     filterStatus === tab.key
                       ? 'bg-white text-slate-900 shadow-sm border border-slate-100'
                       : 'text-slate-400 hover:text-slate-600'
@@ -306,7 +306,7 @@ export default function MyBookings() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.05 }}
-                      className="bg-white border border-slate-100 rounded-[32px] p-6 md:p-8 hover:border-emerald-100 transition-all shadow-sm flex flex-col lg:flex-row gap-8 justify-between"
+                      className="bg-white border border-slate-100 rounded-[28px] md:rounded-[32px] p-5 md:p-8 hover:border-emerald-100 transition-all shadow-sm flex flex-col lg:flex-row gap-6 md:gap-8 justify-between"
                     >
                       <div className="flex-1 space-y-6">
                         <div className="flex flex-wrap items-center gap-3">
@@ -320,13 +320,13 @@ export default function MyBookings() {
                           </span>
                         </div>
 
-                        <div className="space-y-4">
-                          <h3 className="text-2xl font-bold text-slate-900 leading-tight uppercase tracking-tight">
+                        <div className="space-y-3 md:space-y-4">
+                          <h3 className="text-xl md:text-2xl font-black text-slate-900 leading-tight uppercase tracking-tight">
                             {b.title}
                           </h3>
-                          <div className="flex flex-wrap gap-4">
-                            <div className="bg-slate-50 px-4 py-2 rounded-xl flex items-center gap-3 text-slate-600 text-xs font-semibold">
-                              <CalendarCheck size={16} className="text-emerald-500" />
+                          <div className="flex flex-wrap gap-2 md:gap-4">
+                            <div className="bg-slate-50 px-3 md:px-4 py-1.5 md:py-2 rounded-xl flex items-center gap-2 md:gap-3 text-slate-600 text-[10px] md:text-xs font-bold uppercase">
+                              <CalendarCheck size={14} className="text-emerald-500" />
                               {start} — {end}
                             </div>
                             {b.variantName && (

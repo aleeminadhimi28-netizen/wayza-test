@@ -156,7 +156,7 @@ export default function CustomerSupport() {
     <WayzzaLayout>
       <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white font-sans">
         {/* HERO */}
-        <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900 text-white py-16 overflow-hidden">
+        <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900 text-white py-10 md:py-16 overflow-hidden">
           <div
             className="absolute inset-0 opacity-10"
             style={{
@@ -166,12 +166,12 @@ export default function CustomerSupport() {
           />
           <div className="max-w-5xl mx-auto px-6 relative">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-emerald-500/20 rounded-2xl flex items-center justify-center">
-                <Headphones size={22} className="text-emerald-400" />
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-emerald-500/20 rounded-xl md:rounded-2xl flex items-center justify-center">
+                <Headphones size={20} className="text-emerald-400" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">Customer Support</h1>
-                <p className="text-slate-300 text-sm mt-0.5">
+                <h1 className="text-2xl md:text-3xl font-black uppercase tracking-tight">Customer Support</h1>
+                <p className="text-slate-400 font-bold uppercase text-[9px] md:text-xs tracking-widest mt-0.5">
                   We're here to help — get support from the Wayzza team
                 </p>
               </div>
@@ -181,7 +181,7 @@ export default function CustomerSupport() {
 
         <div className="max-w-5xl mx-auto px-6 -mt-6">
           {/* KPI CARDS */}
-          <div className="grid grid-cols-3 gap-4 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mb-8">
             {[
               {
                 label: 'Open Tickets',
@@ -193,15 +193,15 @@ export default function CustomerSupport() {
               {
                 label: 'Resolved',
                 value: closedCount,
-                color: 'text-slate-500',
-                bgColor: 'bg-slate-50 border-slate-100',
+                color: 'text-slate-400',
+                bgColor: 'bg-white border-slate-100',
                 icon: CheckCircle,
               },
               {
                 label: 'Total',
                 value: tickets.length,
-                color: 'text-blue-600',
-                bgColor: 'bg-blue-50 border-blue-100',
+                color: 'text-slate-900',
+                bgColor: 'bg-white border-slate-100',
                 icon: Inbox,
               },
             ].map((kpi, i) => (
@@ -210,16 +210,16 @@ export default function CustomerSupport() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className={`${kpi.bgColor} border rounded-2xl p-5 flex items-center gap-4`}
+                className={`${kpi.bgColor} border rounded-2xl p-4 md:p-5 flex items-center gap-4 shadow-sm`}
               >
                 <div
-                  className={`w-10 h-10 ${kpi.bgColor} rounded-xl flex items-center justify-center`}
+                  className={`w-10 h-10 ${kpi.bgColor} rounded-xl flex items-center justify-center border border-inherit`}
                 >
                   <kpi.icon size={18} className={kpi.color} />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-slate-900">{kpi.value}</p>
-                  <p className="text-xs font-medium text-slate-500">{kpi.label}</p>
+                  <p className="text-2xl font-black text-slate-900 tracking-tight">{kpi.value}</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{kpi.label}</p>
                 </div>
               </motion.div>
             ))}
@@ -307,7 +307,7 @@ export default function CustomerSupport() {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: i * 0.03 }}
                           onClick={() => openTicket(ticket)}
-                          className="w-full bg-white border border-slate-200 rounded-2xl p-5 text-left hover:border-emerald-300 hover:shadow-md transition-all group"
+                          className="w-full bg-white border border-slate-200 rounded-2xl p-4 md:p-5 text-left hover:border-emerald-300 hover:shadow-md transition-all group"
                         >
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex-1 min-w-0">
@@ -396,20 +396,20 @@ export default function CustomerSupport() {
                     {/* Category */}
                     <div className="space-y-2">
                       <label className="text-xs font-semibold text-slate-700">Category</label>
-                      <div className="grid grid-cols-3 gap-2">
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                         {CATEGORIES.map((cat) => (
                           <button
                             key={cat.value}
                             type="button"
                             onClick={() => setCategory(cat.value)}
-                            className={`p-3 rounded-xl border text-sm font-medium text-left transition-all ${
+                            className={`p-3 md:p-4 rounded-xl border text-sm font-medium text-left transition-all ${
                               category === cat.value
                                 ? 'bg-emerald-50 border-emerald-300 text-emerald-700'
                                 : 'bg-slate-50 border-slate-200 text-slate-600 hover:border-slate-300'
                             }`}
                           >
-                            <span className="text-lg block mb-1">{cat.icon}</span>
-                            <span className="text-xs font-semibold">{cat.label}</span>
+                            <span className="text-xl block mb-1">{cat.icon}</span>
+                            <span className="text-[10px] md:text-xs font-bold uppercase tracking-tight">{cat.label}</span>
                           </button>
                         ))}
                       </div>

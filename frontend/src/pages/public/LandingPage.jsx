@@ -139,20 +139,20 @@ export default function LandingPage() {
             <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-white" />
           </div>
 
-          <div className="relative z-10 w-full max-w-7xl mx-auto px-10 text-center space-y-16">
+          <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-10 text-center space-y-8 md:space-y-16">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              className="space-y-6"
+              className="space-y-4 md:space-y-6"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white text-[10px] font-bold uppercase tracking-[0.3em] mb-4">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white text-[9px] md:text-[10px] font-bold uppercase tracking-[0.3em] mb-2 md:mb-4">
                 <Sparkles size={12} className="text-emerald-400" /> Curated Luxury
               </div>
-              <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-white leading-[0.9] drop-shadow-2xl">
+              <h1 className="text-4xl md:text-8xl font-bold tracking-tighter text-white leading-[0.95] md:leading-[0.9] drop-shadow-2xl">
                 Escape the ordinary <br />
                 <span className="text-emerald-400 italic">gracefully.</span>
               </h1>
-              <p className="text-lg md:text-xl font-medium text-white/90 max-w-2xl mx-auto drop-shadow-lg leading-relaxed">
+              <p className="text-sm md:text-xl font-medium text-white/90 max-w-2xl mx-auto drop-shadow-lg leading-relaxed px-4 md:px-0">
                 Handpicked sanctuaries and high-performance mobility curated{' '}
                 <br className="hidden md:block" /> for the modern explorer.
               </p>
@@ -163,27 +163,27 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="max-w-5xl mx-auto w-full px-4"
+              className="max-w-5xl mx-auto w-full px-2 md:px-4"
             >
-              <div className="bg-white/90 backdrop-blur-2xl rounded-[40px] p-3 shadow-[0_40px_100px_rgba(0,0,0,0.15)] border border-white/50 flex flex-col md:flex-row items-center gap-2">
+              <div className="bg-white/90 backdrop-blur-2xl rounded-[32px] md:rounded-[40px] p-2 md:p-3 shadow-[0_40px_100px_rgba(0,0,0,0.15)] border border-white/50 flex flex-col md:flex-row items-center gap-1 md:gap-2">
                 {/* Location */}
-                <div className="flex-[1.5] w-full px-6 md:px-10 py-4 md:py-5 rounded-[32px] hover:bg-slate-50/50 transition-all text-left cursor-pointer group">
-                  <p className="text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mb-1.5 group-hover:text-emerald-600 transition-colors">
+                <div className="flex-[1.5] w-full px-5 md:px-10 py-3 md:py-5 rounded-[24px] md:rounded-[32px] hover:bg-slate-50/50 transition-all text-left cursor-pointer group">
+                  <p className="text-[9px] md:text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mb-1 group-hover:text-emerald-600 transition-colors">
                     Destinations
                   </p>
                   <input
                     placeholder="Where to go?"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="w-full bg-transparent border-none outline-none font-bold text-slate-900 text-lg p-0 placeholder:text-slate-300"
+                    className="w-full bg-transparent border-none outline-none font-bold text-slate-900 text-base md:text-lg p-0 placeholder:text-slate-300"
                   />
                 </div>
 
                 <div className="hidden md:block w-px h-12 bg-slate-200/50" />
 
                 {/* Check In/Out */}
-                <div className="flex-1 w-full px-6 md:px-10 py-4 md:py-5 rounded-[32px] hover:bg-slate-50/50 transition-all text-left cursor-pointer group">
-                  <p className="text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mb-1.5 group-hover:text-emerald-600 transition-colors">
+                <div className="flex-1 w-full px-5 md:px-10 py-3 md:py-5 rounded-[24px] md:rounded-[32px] hover:bg-slate-50/50 transition-all text-left cursor-pointer group">
+                  <p className="text-[9px] md:text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mb-1 group-hover:text-emerald-600 transition-colors">
                     Timeframe
                   </p>
                   <div className="flex items-center gap-3">
@@ -191,14 +191,14 @@ export default function LandingPage() {
                       type="date"
                       value={checkIn}
                       onChange={(e) => setCheckIn(e.target.value)}
-                      className="bg-transparent border-none outline-none font-bold text-slate-900 text-sm p-0 w-28 cursor-pointer"
+                      className="bg-transparent border-none outline-none font-bold text-slate-900 text-xs md:text-sm p-0 w-24 md:w-28 cursor-pointer"
                     />
                     <span className="text-slate-300">-</span>
                     <input
                       type="date"
                       value={checkOut}
                       onChange={(e) => setCheckOut(e.target.value)}
-                      className="bg-transparent border-none outline-none font-bold text-slate-900 text-sm p-0 w-28 cursor-pointer"
+                      className="bg-transparent border-none outline-none font-bold text-slate-900 text-xs md:text-sm p-0 w-24 md:w-28 cursor-pointer"
                     />
                   </div>
                 </div>
@@ -206,18 +206,18 @@ export default function LandingPage() {
                 <div className="hidden md:block w-px h-12 bg-slate-200/50" />
 
                 {/* Guests */}
-                <div className="flex-1 w-full px-6 md:px-10 py-4 md:py-5 rounded-[32px] hover:bg-slate-50/50 transition-all text-left cursor-pointer group">
-                  <p className="text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mb-1.5 group-hover:text-emerald-600 transition-colors">
+                <div className="flex-1 w-full px-5 md:px-10 py-3 md:py-5 rounded-[24px] md:rounded-[32px] hover:bg-slate-50/50 transition-all text-left cursor-pointer group">
+                  <p className="text-[9px] md:text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mb-1 group-hover:text-emerald-600 transition-colors">
                     Guests
                   </p>
-                  <div className="flex items-center gap-3">
-                    <Users size={16} className="text-slate-400" />
+                  <div className="flex items-center gap-2">
+                    <Users size={14} className="text-slate-400" />
                     <input
                       type="number"
                       min="1"
                       value={guests}
                       onChange={(e) => setGuests(e.target.value)}
-                      className="w-full bg-transparent border-none outline-none font-bold text-slate-900 text-lg p-0 cursor-pointer"
+                      className="w-full bg-transparent border-none outline-none font-bold text-slate-900 text-base md:text-lg p-0 cursor-pointer"
                     />
                   </div>
                 </div>
@@ -225,14 +225,14 @@ export default function LandingPage() {
                 {/* Search Button */}
                 <button
                   onClick={handleSearch}
-                  className="w-full md:w-auto bg-slate-900 text-white px-8 md:px-10 py-5 md:py-6 rounded-[32px] shadow-2xl shadow-slate-900/20 transition-all hover:bg-emerald-600 hover:scale-[1.02] active:scale-95 group flex items-center justify-center gap-4"
+                  className="w-full md:w-auto bg-slate-900 text-white px-8 md:px-10 py-4 md:py-6 rounded-[24px] md:rounded-[32px] shadow-2xl shadow-slate-900/20 transition-all hover:bg-emerald-600 hover:scale-[1.01] active:scale-95 group flex items-center justify-center gap-3 md:gap-4 mt-2 md:mt-0"
                 >
                   <Search
-                    size={22}
+                    size={20}
                     strokeWidth={3}
                     className="transition-transform group-hover:rotate-12"
                   />
-                  <span className="font-black uppercase tracking-[0.3em] text-[11px]">Explore</span>
+                  <span className="font-black uppercase tracking-[0.3em] text-[10px] md:text-[11px]">Explore</span>
                 </button>
               </div>
             </motion.div>
@@ -249,7 +249,7 @@ export default function LandingPage() {
         </header>
 
         {/* ════ TAB STRIP ════ */}
-        <div className="max-w-7xl mx-auto px-6 -mt-6 md:-mt-16 relative z-20 mb-24 flex flex-wrap items-center justify-center gap-4 md:gap-6">
+        <div className="max-w-7xl mx-auto px-6 -mt-10 md:-mt-16 relative z-20 mb-16 md:mb-24 flex flex-wrap items-center justify-center gap-3 md:gap-6">
           {CATEGORIES.map((c) => (
             <button
               key={c.key}
@@ -257,13 +257,13 @@ export default function LandingPage() {
                 if (c.key === 'experience') navigate('/experiences');
                 else setTab(c.key);
               }}
-              className={`group flex items-center gap-3 md:gap-4 px-6 md:px-10 py-4 md:py-5 rounded-[32px] transition-all duration-500 border ${tab === c.key ? 'bg-slate-900 border-slate-900 text-white shadow-[0_20px_40px_rgba(0,0,0,0.2)] -translate-y-2' : 'bg-white/80 backdrop-blur-md border-slate-100 text-slate-400 hover:border-emerald-200 hover:text-slate-900 hover:-translate-y-1'}`}
+              className={`group flex items-center gap-2 md:gap-4 px-5 md:px-10 py-3.5 md:py-5 rounded-[24px] md:rounded-[32px] transition-all duration-500 border ${tab === c.key ? 'bg-slate-900 border-slate-900 text-white shadow-[0_20px_40px_rgba(0,0,0,0.2)] -translate-y-2' : 'bg-white/80 backdrop-blur-md border-slate-100 text-slate-400 hover:border-emerald-200 hover:text-slate-900 hover:-translate-y-1'}`}
             >
               <c.icon
-                size={18}
+                size={16}
                 className={`${tab === c.key ? 'text-emerald-400' : 'group-hover:text-emerald-500'} transition-colors`}
               />
-              <span className="text-[14px] font-bold uppercase tracking-[0.2em]">{c.label}</span>
+              <span className="text-[12px] md:text-[14px] font-bold uppercase tracking-[0.2em]">{c.label}</span>
             </button>
           ))}
         </div>

@@ -239,10 +239,10 @@ export default function ListingDetails() {
         image={images[0]}
         type="product"
       />
-      <div className="bg-white min-h-screen font-sans selection:bg-emerald-100 selection:text-emerald-900">
-        <div className="max-w-[1400px] mx-auto px-6 md:px-12 py-10 md:py-16">
+      <div className="bg-white min-h-screen font-sans selection:bg-emerald-100 selection:text-emerald-900 pb-24 lg:pb-0">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-12 py-8 lg:py-16">
           {/* ─── BREADCRUMB ─── */}
-          <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-slate-300 mb-10 overflow-x-auto no-scrollbar whitespace-nowrap">
+          <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-slate-300 mb-8 lg:mb-10 overflow-x-auto no-scrollbar whitespace-nowrap">
             <button
               onClick={() => navigate('/')}
               className="hover:text-emerald-600 transition-colors"
@@ -257,69 +257,69 @@ export default function ListingDetails() {
               Stays
             </button>
             <ChevronRight size={10} />
-            <span className="text-slate-900 truncate max-w-[200px]">{listing.title}</span>
+            <span className="text-slate-900 truncate max-w-[150px] md:max-w-[200px]">{listing.title}</span>
           </div>
 
           {/* ─── TITLE & ACTIONS ─── */}
-          <div className="flex flex-col xl:flex-row justify-between items-start gap-12 mb-16">
-            <div className="space-y-6 max-w-4xl">
-              <div className="flex flex-wrap gap-4 items-center">
-                <div className="px-3 py-1 bg-slate-950 text-white text-[10px] font-black uppercase tracking-[0.4em] rounded-md">
+          <div className="flex flex-col lg:flex-row justify-between items-start gap-8 lg:gap-12 mb-12 lg:mb-16">
+            <div className="space-y-4 lg:space-y-6 max-w-4xl">
+              <div className="flex flex-wrap gap-2 lg:gap-4 items-center">
+                <div className="px-2 lg:px-3 py-1 bg-slate-950 text-white text-[9px] lg:text-[10px] font-black uppercase tracking-[0.4em] rounded-md">
                   {listing.category || 'Estate'}
                 </div>
                 {listing.price > 8000 && (
-                  <div className="flex items-center gap-2 text-amber-600 text-[10px] font-black uppercase tracking-[0.4em]">
+                  <div className="flex items-center gap-2 text-amber-600 text-[9px] lg:text-[10px] font-black uppercase tracking-[0.4em]">
                     <Sparkles size={12} /> Priority Asset
                   </div>
                 )}
               </div>
-              <h1 className="text-6xl md:text-8xl font-black text-slate-900 tracking-tighter uppercase leading-[0.8]">
+              <h1 className="text-4xl md:text-6xl lg:text-8xl font-black text-slate-900 tracking-tighter uppercase leading-[0.9] lg:leading-[0.8]">
                 {listing.title}
               </h1>
-              <div className="flex flex-wrap items-center gap-x-10 gap-y-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-emerald-50 flex items-center justify-center rounded-2xl border border-emerald-100 font-black text-xl text-emerald-600">
+              <div className="flex flex-wrap items-center gap-x-6 lg:gap-x-10 gap-y-4">
+                <div className="flex items-center gap-3 lg:gap-4">
+                  <div className="w-10 h-10 lg:w-12 lg:h-12 bg-emerald-50 flex items-center justify-center rounded-xl lg:rounded-2xl border border-emerald-100 font-black text-lg lg:text-xl text-emerald-600">
                     {avgRating}
                   </div>
                   <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-900">
+                    <p className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-slate-900">
                       Exceptional
                     </p>
-                    <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">
-                      {reviews.length} Audited Reviews
+                    <p className="text-[9px] lg:text-[10px] font-bold text-slate-300 uppercase tracking-widest">
+                      {reviews.length} Audits
                     </p>
                   </div>
                 </div>
-                <div className="h-10 w-px bg-slate-100 hidden md:block" />
+                <div className="h-8 lg:h-10 w-px bg-slate-100 hidden md:block" />
                 {listing.latitude && listing.longitude ? (
                   <a
                     href={`https://www.google.com/maps?q=${listing.latitude},${listing.longitude}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 hover:bg-slate-50 p-2 -m-2 rounded-xl transition-colors"
+                    className="flex items-center gap-3 hover:bg-slate-50 p-1.5 -m-1.5 rounded-xl transition-colors"
                   >
-                    <div className="w-10 h-10 bg-emerald-50 border border-emerald-100 flex items-center justify-center rounded-xl text-emerald-600 shadow-sm">
-                      <MapPin size={20} />
+                    <div className="w-9 h-9 lg:w-10 lg:h-10 bg-emerald-50 border border-emerald-100 flex items-center justify-center rounded-xl text-emerald-600 shadow-sm">
+                      <MapPin size={18} />
                     </div>
                     <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-900">
-                        {listing.location || 'Kerala, India'}
+                      <p className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-slate-900">
+                        {listing.location || 'Kerala'}
                       </p>
-                      <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest leading-none mt-1 hover:underline">
-                        Open in Maps ↗
+                      <p className="text-[9px] lg:text-[10px] font-bold text-emerald-600 uppercase tracking-widest leading-none mt-0.5 lg:mt-1 hover:underline">
+                        Open Maps ↗
                       </p>
                     </div>
                   </a>
                 ) : (
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-slate-50 flex items-center justify-center rounded-xl text-slate-400">
-                      <MapPin size={20} />
+                    <div className="w-9 h-9 lg:w-10 lg:h-10 bg-slate-50 flex items-center justify-center rounded-xl text-slate-400">
+                      <MapPin size={18} />
                     </div>
                     <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-900">
-                        {listing.location || 'Kerala, India'}
+                      <p className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-slate-900">
+                        {listing.location || 'Kerala'}
                       </p>
-                      <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest leading-none mt-1">
+                      <p className="text-[9px] lg:text-[10px] font-bold text-emerald-600 uppercase tracking-widest leading-none mt-0.5 lg:mt-1">
                         Prime Location
                       </p>
                     </div>
@@ -327,14 +327,14 @@ export default function ListingDetails() {
                 )}
                 {listing.wifiSpeed > 0 && (
                   <>
-                    <div className="h-10 w-px bg-slate-100 hidden md:block" />
-                    <div className="flex items-center gap-3 bg-emerald-50 px-4 py-2 rounded-xl border border-emerald-100">
+                    <div className="h-8 lg:h-10 w-px bg-slate-100 hidden md:block" />
+                    <div className="flex items-center gap-3 bg-emerald-50 px-3 lg:px-4 py-1.5 lg:py-2 rounded-xl border border-emerald-100">
                       <Wifi size={14} className="text-emerald-600" />
                       <div>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-900">
+                        <p className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-slate-900">
                           Verified Wi-Fi
                         </p>
-                        <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">
+                        <p className="text-[9px] lg:text-[10px] font-black text-emerald-600 uppercase tracking-widest">
                           {listing.wifiSpeed} MBPS
                         </p>
                       </div>
@@ -344,10 +344,10 @@ export default function ListingDetails() {
               </div>
             </div>
 
-            <div className="flex items-center gap-4 shrink-0 w-full xl:w-auto">
+            <div className="flex items-center gap-3 lg:gap-4 shrink-0 w-full lg:w-auto">
               <button
                 onClick={toggleWishlist}
-                className={`flex-1 xl:flex-none h-16 px-10 rounded-2xl font-black uppercase text-[10px] tracking-[0.4em] transition-all border flex items-center justify-center gap-4 ${saved ? 'bg-rose-50 border-rose-100 text-rose-600' : 'bg-white border-slate-100 text-slate-900 hover:border-rose-200'}`}
+                className={`flex-1 lg:flex-none h-14 lg:h-16 px-6 lg:px-10 rounded-xl lg:rounded-2xl font-black uppercase text-[9px] lg:text-[10px] tracking-[0.4em] transition-all border flex items-center justify-center gap-3 lg:gap-4 ${saved ? 'bg-rose-50 border-rose-100 text-rose-600' : 'bg-white border-slate-100 text-slate-900 hover:border-rose-200'}`}
               >
                 <Heart size={18} className={saved ? 'fill-rose-600' : ''} />
                 {saved ? 'Retained' : 'Archive'}
@@ -357,7 +357,7 @@ export default function ListingDetails() {
                   navigator.clipboard.writeText(window.location.href);
                   showToast('Listing encrypted & shared.', 'success');
                 }}
-                className="w-16 h-16 bg-white border border-slate-100 rounded-2xl flex items-center justify-center text-slate-900 hover:border-emerald-200 transition-all shadow-sm"
+                className="w-14 h-14 lg:w-16 lg:h-16 bg-white border border-slate-100 rounded-xl lg:rounded-2xl flex items-center justify-center text-slate-900 hover:border-emerald-200 transition-all shadow-sm"
               >
                 <Share2 size={20} />
               </button>
@@ -365,10 +365,10 @@ export default function ListingDetails() {
           </div>
 
           {/* ─── GALLERY GRID ─── */}
-          <div className="grid grid-cols-[3fr_2fr] grid-rows-2 gap-2 h-[480px] md:h-[560px] rounded-3xl overflow-hidden relative mb-20">
-            {/* Main large image – spans both rows */}
+          <div className="lg:grid lg:grid-cols-[3fr_2fr] lg:grid-rows-2 gap-2 h-[350px] md:h-[480px] lg:h-[560px] rounded-2xl lg:rounded-3xl overflow-hidden relative mb-12 lg:mb-20">
+            {/* Mobile View: Single image carousel simulation */}
             <div
-              className="row-span-2 relative overflow-hidden group cursor-pointer"
+              className="lg:row-span-2 relative h-full w-full overflow-hidden group cursor-pointer"
               onClick={() => {
                 setGalleryIndex(0);
                 setGalleryOpen(true);
@@ -380,11 +380,16 @@ export default function ListingDetails() {
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              
+              {/* Mobile photo count badge */}
+              <div className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-md text-white text-[10px] font-black px-3 py-1.5 rounded-full lg:hidden">
+                1 / {images.length}
+              </div>
             </div>
 
-            {/* Top thumbnail */}
+            {/* Top thumbnail (desktop only) */}
             <div
-              className="relative overflow-hidden group cursor-pointer"
+              className="hidden lg:block relative overflow-hidden group cursor-pointer"
               onClick={() => {
                 setGalleryIndex(1);
                 setGalleryOpen(true);
@@ -395,12 +400,11 @@ export default function ListingDetails() {
                 alt="Photo 2"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             </div>
 
-            {/* Bottom thumbnail + Show all button */}
+            {/* Bottom thumbnail + Show all button (desktop only) */}
             <div
-              className="relative overflow-hidden group cursor-pointer"
+              className="hidden lg:block relative overflow-hidden group cursor-pointer"
               onClick={() => {
                 setGalleryIndex(2);
                 setGalleryOpen(true);
@@ -411,7 +415,6 @@ export default function ListingDetails() {
                 alt="Photo 3"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -431,30 +434,30 @@ export default function ListingDetails() {
             {/* LEFT: INFORMATION */}
             <div className="lg:col-span-7 space-y-20">
               {/* Narrative */}
-              <section className="space-y-8">
+              <section className="space-y-6 lg:space-y-8">
                 <div className="flex items-center gap-4">
-                  <span className="h-px w-12 bg-emerald-500" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-600">
+                  <span className="h-px w-8 lg:w-12 bg-emerald-500" />
+                  <span className="text-[9px] lg:text-[10px] font-black uppercase tracking-[0.5em] text-emerald-600">
                     Project Narrative
                   </span>
                 </div>
-                <div className="flex items-center justify-between pb-8 border-b border-slate-100">
+                <div className="flex items-center justify-between pb-6 lg:pb-8 border-b border-slate-100">
                   <div>
-                    <h2 className="text-4xl font-black text-slate-900 uppercase tracking-tighter leading-none mb-4">
+                    <h2 className="text-3xl lg:text-4xl font-black text-slate-900 uppercase tracking-tighter leading-none mb-3 lg:mb-4">
                       The Experience.
                     </h2>
-                    <p className="text-slate-400 font-bold uppercase text-[9px] tracking-widest">
+                    <p className="text-slate-400 font-bold uppercase text-[8px] lg:text-[9px] tracking-widest">
                       Curated by Wayzza Network Architecture
                     </p>
                   </div>
-                  <div className="w-16 h-16 bg-slate-950 rounded-3xl flex items-center justify-center text-white font-black text-2xl">
+                  <div className="w-12 h-12 lg:w-16 lg:h-16 bg-slate-950 rounded-2xl lg:rounded-3xl flex items-center justify-center text-white font-black text-xl lg:text-2xl">
                     {listing.title?.charAt(0)}
                   </div>
                 </div>
-                <p className="text-2xl text-slate-600 leading-relaxed font-medium">
+                <p className="text-xl lg:text-2xl text-slate-600 leading-relaxed font-medium">
                   "
                   {listing.description ||
-                    'An extraordinary sanctuary where serene architecture meets the rhythm of the coast, designed for those who seek more than just a place to rest. Every corner is thoughtfully crafted to offer comfort, beauty, and a true sense of place.'}
+                    'An extraordinary sanctuary where serene architecture meets the rhythm of the coast, designed for those who seek more than just a place to rest.'}
                   "
                 </p>
               </section>
@@ -739,8 +742,10 @@ export default function ListingDetails() {
                   </div>
                 </div>
 
+                </div>
+
                 {/* Direct Inquiries */}
-                <div className="bg-slate-50 border border-slate-100 rounded-[32px] p-8 flex items-center gap-6 group hover:bg-white hover:shadow-xl transition-all duration-500">
+                <div className="hidden lg:flex bg-slate-50 border border-slate-100 rounded-[32px] p-8 items-center gap-6 group hover:bg-white hover:shadow-xl transition-all duration-500">
                   <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
                     <MessageSquare size={20} className="text-emerald-600" />
                   </div>
@@ -757,6 +762,30 @@ export default function ListingDetails() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* ─── MOBILE STICKY BOTTOM BAR ─── */}
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 p-4 z-[100] flex items-center justify-between shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+          <div>
+            <p className="text-sm font-black text-slate-900">
+              ₹{basePrice.toLocaleString()} <span className="text-slate-400 font-medium">/ night</span>
+            </p>
+            <button
+              onClick={() => {
+                const el = document.getElementById('reservation-console');
+                el?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest"
+            >
+              {checkIn && checkOut ? `${nights} nights selected` : 'Select dates'}
+            </button>
+          </div>
+          <button
+            onClick={handleReserve}
+            className="px-8 py-4 bg-slate-950 text-white font-black uppercase text-[10px] tracking-[0.2em] rounded-xl shadow-lg active:scale-95"
+          >
+            Reserve
+          </button>
         </div>
 
         {/* ─── FULLSCREEN GALLERY ─── */}

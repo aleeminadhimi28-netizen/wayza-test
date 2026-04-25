@@ -190,34 +190,34 @@ export default function Profile() {
       <div className="bg-slate-50 min-h-screen font-sans">
         {/* ─── PROFILE HEADER ─── */}
         <div className="bg-white border-b border-slate-200">
-          <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col sm:flex-row items-center sm:items-end gap-6">
+          <div className="max-w-6xl mx-auto px-6 py-8 md:py-12 flex flex-col sm:flex-row items-center sm:items-end gap-6">
             {/* Avatar */}
             <div className="relative group shrink-0">
-              <div className="w-24 h-24 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-3xl font-bold shadow-lg overflow-hidden relative">
+              <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-2xl md:text-3xl font-bold shadow-lg overflow-hidden relative">
                 {initials}
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center cursor-pointer">
                   <Camera
-                    size={20}
+                    size={18}
                     className="text-white opacity-0 group-hover:opacity-100 transition-all"
                   />
                 </div>
               </div>
-              <div className="absolute -bottom-1.5 -right-1.5 bg-emerald-500 text-white p-1.5 rounded-lg shadow-md border-2 border-white">
-                <CheckCircle size={12} />
+              <div className="absolute -bottom-1 -right-1 bg-emerald-500 text-white p-1 rounded-lg shadow-md border-2 border-white">
+                <CheckCircle size={10} />
               </div>
             </div>
 
             {/* Info */}
             <div className="text-center sm:text-left flex-1">
               <div className="flex items-center justify-center sm:justify-start gap-2 mb-2">
-                <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100 flex items-center gap-1.5">
-                  <CheckCircle size={11} /> Verified Guest
+                <span className="text-[10px] md:text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100 flex items-center gap-1.5">
+                  <CheckCircle size={10} /> Verified Guest
                 </span>
               </div>
-              <h1 className="text-3xl font-bold text-slate-900">
+              <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
                 Welcome back, <span className="text-emerald-600">{displayName}</span>
               </h1>
-              <p className="text-slate-500 text-sm mt-1">{email}</p>
+              <p className="text-slate-400 text-xs md:text-sm mt-1">{email}</p>
             </div>
 
             {/* Sign out */}
@@ -226,7 +226,7 @@ export default function Profile() {
                 logout();
                 navigate('/');
               }}
-              className="h-10 px-5 border border-slate-200 text-slate-500 rounded-xl font-semibold text-sm flex items-center gap-2 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all shrink-0"
+              className="w-full sm:w-auto h-10 px-5 border border-slate-200 text-slate-500 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all shrink-0"
             >
               <LogOut size={15} /> Sign Out
             </button>
@@ -234,7 +234,7 @@ export default function Profile() {
         </div>
 
         {/* ─── MAIN LAYOUT ─── */}
-        <div className="max-w-6xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="max-w-6xl mx-auto px-6 py-6 md:py-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
           {/* SIDEBAR NAV */}
           <aside className="lg:col-span-3 space-y-4">
             <div className="bg-white border border-slate-200 rounded-2xl p-2 shadow-sm">
@@ -276,14 +276,14 @@ export default function Profile() {
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
-                    className="p-8 space-y-8"
+                    className="p-5 md:p-8 space-y-6 md:space-y-8"
                   >
-                    <div className="border-b border-slate-100 pb-6">
-                      <div className="flex items-center gap-2 text-emerald-600 font-bold text-xs uppercase tracking-wide mb-1">
+                    <div className="border-b border-slate-100 pb-5 md:pb-6">
+                      <div className="flex items-center gap-2 text-emerald-600 font-bold text-[10px] md:text-xs uppercase tracking-wide mb-1">
                         <Settings size={13} /> Account Settings
                       </div>
-                      <h2 className="text-2xl font-bold text-slate-900">Personal Information</h2>
-                      <p className="text-sm text-slate-500 mt-1">
+                      <h2 className="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight">Personal Information</h2>
+                      <p className="text-xs md:text-sm text-slate-400 mt-1">
                         Update your name and contact details.
                       </p>
                     </div>
@@ -363,14 +363,14 @@ export default function Profile() {
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
-                    className="p-8 space-y-6"
+                    className="p-5 md:p-8 space-y-6"
                   >
-                    <div className="border-b border-slate-100 pb-6">
-                      <div className="flex items-center gap-2 text-emerald-600 font-bold text-xs uppercase tracking-wide mb-1">
+                    <div className="border-b border-slate-100 pb-5 md:pb-6">
+                      <div className="flex items-center gap-2 text-emerald-600 font-bold text-[10px] md:text-xs uppercase tracking-wide mb-1">
                         <CalendarCheck size={13} /> Booking History
                       </div>
-                      <h2 className="text-2xl font-bold text-slate-900">My Stays</h2>
-                      <p className="text-sm text-slate-500 mt-1">
+                      <h2 className="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight">My Stays</h2>
+                      <p className="text-xs md:text-sm text-slate-400 mt-1">
                         Your past, present, and upcoming reservations.
                       </p>
                     </div>
@@ -449,14 +449,14 @@ export default function Profile() {
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
-                    className="p-8 space-y-6"
+                    className="p-5 md:p-8 space-y-6"
                   >
-                    <div className="border-b border-slate-100 pb-6">
-                      <div className="flex items-center gap-2 text-emerald-600 font-bold text-xs uppercase tracking-wide mb-1">
+                    <div className="border-b border-slate-100 pb-5 md:pb-6">
+                      <div className="flex items-center gap-2 text-emerald-600 font-bold text-[10px] md:text-xs uppercase tracking-wide mb-1">
                         <Heart size={13} /> Saved Stays
                       </div>
-                      <h2 className="text-2xl font-bold text-slate-900">My Favourites</h2>
-                      <p className="text-sm text-slate-500 mt-1">
+                      <h2 className="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight">My Favourites</h2>
+                      <p className="text-xs md:text-sm text-slate-400 mt-1">
                         Properties you've saved to revisit later.
                       </p>
                     </div>
@@ -562,14 +562,14 @@ export default function Profile() {
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
-                    className="p-8 space-y-8"
+                    className="p-5 md:p-8 space-y-6 md:space-y-8"
                   >
-                    <div className="border-b border-slate-100 pb-6">
-                      <div className="flex items-center gap-2 text-emerald-600 font-bold text-xs uppercase tracking-wide mb-1">
+                    <div className="border-b border-slate-100 pb-5 md:pb-6">
+                      <div className="flex items-center gap-2 text-emerald-600 font-bold text-[10px] md:text-xs uppercase tracking-wide mb-1">
                         <Shield size={13} /> Security Protocols
                       </div>
-                      <h2 className="text-2xl font-bold text-slate-900">Account Protection</h2>
-                      <p className="text-sm text-slate-500 mt-1">
+                      <h2 className="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight">Account Protection</h2>
+                      <p className="text-xs md:text-sm text-slate-400 mt-1">
                         Manage secondary authentication layers for your identity.
                       </p>
                     </div>
