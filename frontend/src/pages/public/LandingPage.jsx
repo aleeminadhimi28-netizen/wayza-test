@@ -53,6 +53,17 @@ const DESTINATIONS = [
   },
 ];
 
+const PROMO_OFFER = {
+  title: 'Offers',
+  subtitle: 'Promotions, deals and special offers for you',
+  label: 'No catch. Just getaways.',
+  heading: 'Book a Getaway Deal',
+  text: 'At least 15% off select stays.',
+  button: 'Save on your next trip',
+  image: '/images/varkala_cliff.png',
+};
+
+
 export default function LandingPage() {
   const navigate = useNavigate();
   const { showToast } = useToast();
@@ -247,6 +258,118 @@ export default function LandingPage() {
             <div className="w-1 h-3 bg-slate-300 rounded-full" />
           </motion.div>
         </header>
+
+        {/* ════ MOBILE-LIKE PROMO + DESTINATIONS ════ */}
+        <section className="px-6 max-w-7xl mx-auto space-y-8 pb-10">
+          <div className="bg-white rounded-[32px] border border-slate-200 shadow-sm overflow-hidden">
+            <div className="flex flex-col sm:flex-row items-stretch gap-4 p-5">
+              <div className="flex-1 min-w-0">
+                <p className="text-emerald-500 uppercase tracking-[0.35em] text-[10px] font-black mb-3">
+                  {PROMO_OFFER.title}
+                </p>
+                <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-950 mb-3">
+                  {PROMO_OFFER.heading}
+                </h2>
+                <p className="text-sm text-slate-500 font-medium leading-relaxed mb-6">
+                  {PROMO_OFFER.text}
+                </p>
+                <p className="text-xs uppercase tracking-[0.3em] font-black text-slate-400 mb-4">
+                  {PROMO_OFFER.label}
+                </p>
+                <button
+                  className="inline-flex items-center justify-center rounded-2xl bg-slate-950 text-white px-5 py-3 text-sm font-black uppercase tracking-[0.22em] shadow-lg shadow-slate-950/10 transition hover:bg-emerald-600"
+                  onClick={() => navigate('/listings')}
+                >
+                  {PROMO_OFFER.button}
+                </button>
+              </div>
+              <div className="w-full sm:w-56 rounded-[28px] overflow-hidden shadow-inner">
+                <img
+                  src={PROMO_OFFER.image}
+                  alt="Getaway deal"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-10">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h3 className="text-2xl font-black tracking-tight text-slate-950">Featured listings</h3>
+                <p className="text-sm text-slate-500 font-medium">Explore select stays curated for mobile discovery.</p>
+              </div>
+              <Link
+                to="/listings"
+                className="text-xs uppercase font-black tracking-[0.3em] text-slate-400 hover:text-slate-900"
+              >
+                View all
+              </Link>
+            </div>
+
+            <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory">
+              {loading ? (
+                [1, 2, 3].map((index) => (
+                  <div key={index} className="min-w-[280px] snap-start">
+                    <WayzzaSkeleton className="h-[360px] rounded-[32px]" />
+                  </div>
+                ))
+              ) : (
+                trendingList.map((listing) => (
+                  <div key={listing._id} className="min-w-[280px] snap-start">
+                    <WayzzaHotelItem
+                      hotel={{
+                        id: listing._id,
+                        name: listing.title,
+                        location: listing.location || 'Premium stay',
+                        price: listing.price,
+                        image: fixImg(listing.image),
+                        wifiSpeed: listing.wifiSpeed || 0,
+                      }}
+                    />
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+          <div className="space-y-10">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h3 className="text-2xl font-black tracking-tight text-slate-950">More listings</h3>
+                <p className="text-sm text-slate-500 font-medium">Browse more curated stays designed for your next trip.</p>
+              </div>
+              <Link
+                to="/listings"
+                className="text-xs uppercase font-black tracking-[0.3em] text-slate-400 hover:text-slate-900"
+              >
+                Browse all
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {loading ? (
+                [1, 2, 3].map((index) => (
+                  <WayzzaSkeleton key={index} className="h-[320px] rounded-[32px]" />
+                ))
+              ) : (
+                trendingList.slice(0, 6).map((listing) => (
+                  <WayzzaHotelItem
+                    key={listing._id}
+                    hotel={{
+                      id: listing._id,
+                      name: listing.title,
+                      location: listing.location || 'Premium stay',
+                      price: listing.price,
+                      image: fixImg(listing.image),
+                      wifiSpeed: listing.wifiSpeed || 0,
+                    }}
+                  />
+                ))
+              )}
+            </div>
+          </div>
+        </section>
 
         {/* ════ TAB STRIP ════ */}
         <div className="max-w-7xl mx-auto px-6 -mt-10 md:-mt-16 relative z-20 mb-16 md:mb-24 flex flex-wrap items-center justify-center gap-3 md:gap-6">
