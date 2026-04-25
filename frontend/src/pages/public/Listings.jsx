@@ -98,7 +98,7 @@ export default function Listings() {
       if (data.ok) {
         setSaved(new Set(data.data?.map((x) => x.listingId) || []));
       }
-    } catch {}
+    } catch { }
   }
 
   async function loadListings() {
@@ -118,7 +118,7 @@ export default function Listings() {
       setRows(data.rows || []);
       setPages(data.pages || 1);
       setTotal(data.total || data.rows?.length || 0);
-    } catch {}
+    } catch { }
     setLoading(false);
   }
 
@@ -245,11 +245,10 @@ export default function Listings() {
                   <button
                     key={cat.id}
                     onClick={() => setCategory(cat.id)}
-                    className={`group relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap ${
-                      category === cat.id
+                    className={`group relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap ${category === cat.id
                         ? 'bg-slate-900 text-white shadow-xl translate-y-[-2px]'
                         : 'bg-slate-100 text-slate-500 hover:bg-white hover:text-slate-900 hover:shadow-md'
-                    }`}
+                      }`}
                   >
                     <cat.icon
                       size={16}
@@ -303,12 +302,12 @@ export default function Listings() {
                   exit={{ height: 0, opacity: 0 }}
                   className="overflow-hidden"
                 >
-                  <div className="py-6 mt-2 border-t border-slate-100 grid grid-cols-1 md:grid-cols-3 gap-8">
+                  <div className="py-6 mt-2 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div className="space-y-3">
                       <p className="text-xs font-black uppercase tracking-widest text-slate-400">
                         Price Range
                       </p>
-                      <div className="flex items-center gap-3">
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                         <div className="relative flex-1">
                           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-sm font-bold">
                             ₹
@@ -321,7 +320,7 @@ export default function Listings() {
                             className="w-full h-11 pl-7 pr-3 text-sm font-bold bg-slate-50 border border-slate-100 rounded-xl focus:bg-white focus:border-emerald-500 transition-all"
                           />
                         </div>
-                        <span className="text-slate-200">/</span>
+                        <span className="hidden sm:block text-slate-200 self-center">/</span>
                         <div className="relative flex-1">
                           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-sm font-bold">
                             ₹
@@ -337,14 +336,14 @@ export default function Listings() {
                       </div>
                     </div>
 
-                    <div className="flex items-end justify-end md:col-span-2">
+                    <div className="flex items-end justify-start sm:justify-end sm:col-span-2">
                       {(minPrice || maxPrice) && (
                         <button
                           onClick={() => {
                             setMinPrice('');
                             setMaxPrice('');
                           }}
-                          className="h-11 px-6 text-sm font-bold text-rose-500 hover:text-rose-600 flex items-center gap-2 hover:bg-rose-50 rounded-xl transition-all"
+                          className="h-11 px-4 sm:px-6 text-sm font-bold text-rose-500 hover:text-rose-600 flex items-center gap-2 hover:bg-rose-50 rounded-xl transition-all"
                         >
                           <X size={16} /> Reset Filters
                         </button>

@@ -17,7 +17,6 @@ import {
   ChevronRight,
   Activity,
   ShieldCheck,
-  Sparkles,
   Navigation,
   Banknote,
   Bell,
@@ -44,6 +43,7 @@ export default function PartnerLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // THEME
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -71,7 +71,9 @@ export default function PartnerLayout() {
       try {
         const res = await api.getNotifications();
         if (res.ok) setNotifs(res.data || []);
-      } catch (_) { }
+      } catch (_) {
+        // Silently handle notification fetch errors
+      }
     }
     fetchNotifs();
     const int = setInterval(fetchNotifs, 10000);
@@ -95,7 +97,7 @@ export default function PartnerLayout() {
     <div className="flex h-screen bg-slate-50 font-sans selection:bg-emerald-100 selection:text-emerald-900 overflow-hidden">
       {/* ===== SIDEBAR - PARTNER SUITE ===== */}
       <aside
-        className={`bg-slate-900 flex flex-col transition-all duration-300 ease-in-out shrink-0 sticky top-0 h-screen z-50 shadow-xl ${collapsed ? 'w-20' : 'w-64'}`}
+        className={`bg-slate-900 flex flex-col transition-all duration-300 ease-in-out shrink-0 sticky top-0 h-screen z-50 shadow-xl ${collapsed ? 'w-20' : 'w-64'} ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} fixed md:relative`}
       >
         {/* Branding */}
         <div
@@ -206,15 +208,29 @@ export default function PartnerLayout() {
         </div>
       </aside>
 
+      {/* Mobile Overlay */}
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
       {/* ===== MAIN EXPANSE ===== */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden relative">
         {/* Global Header */}
-        <header className="bg-white border-b border-slate-200 h-20 px-8 flex items-center justify-between shrink-0 shadow-sm z-40">
+        <header className="bg-white border-b border-slate-200 h-20 px-4 md:px-8 flex items-center justify-between shrink-0 shadow-sm z-40">
           <div className="flex items-center gap-4">
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className="md:hidden w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-200 transition-colors"
+            >
+              <Navigation size={20} />
+            </button>
             {collapsed && (
               <button
                 onClick={() => setCollapsed(false)}
-                className="md:hidden w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-200 transition-colors"
+                className="hidden md:block w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-200 transition-colors"
               >
                 <ChevronRight size={20} />
               </button>
