@@ -76,10 +76,6 @@ export default function LandingPage() {
   const [guests, setGuests] = useState(1);
   const moreListingsRef = useRef(null);
 
-  const scrollToListings = () => {
-    moreListingsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
   // Newsletter State
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterLoading, setNewsletterLoading] = useState(false);
@@ -161,9 +157,6 @@ export default function LandingPage() {
               animate={{ opacity: 1, y: 0 }}
               className="space-y-4 md:space-y-6"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white text-[9px] md:text-[10px] font-bold uppercase tracking-[0.3em] mb-2 md:mb-4">
-                <Sparkles size={12} className="text-emerald-400" /> Curated Luxury
-              </div>
               <h1 className="text-4xl md:text-8xl font-bold tracking-tighter text-white leading-[0.95] md:leading-[0.9] drop-shadow-2xl">
                 Escape the ordinary <br />
                 <span className="text-emerald-400 italic">gracefully.</span>
@@ -253,15 +246,6 @@ export default function LandingPage() {
               </div>
             </motion.div>
 
-            <div className="mt-8 flex justify-center">
-              <button
-                type="button"
-                onClick={scrollToListings}
-                className="inline-flex items-center justify-center rounded-full bg-white/90 text-slate-950 px-8 py-3 text-sm font-black uppercase tracking-[0.3em] shadow-2xl shadow-slate-900/10 transition hover:bg-emerald-600 hover:text-white"
-              >
-                Move to listings
-              </button>
-            </div>
           </div>
 
           {/* Scroll Indicator */}
