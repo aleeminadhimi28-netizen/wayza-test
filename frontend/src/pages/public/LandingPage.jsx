@@ -1,45 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { WayzzaLayout, WayzzaHotelItem, WayzzaSkeleton } from '../../WayzzaUI.jsx';
 import { useNavigate, Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   Search,
-  MapPin,
-  Calendar,
   Users,
-  ChevronRight,
-  Shield,
   Sparkles,
   Globe,
   Compass,
   ArrowRight,
-  Star,
-  Heart,
   Award,
-  Tent,
   Bike,
   Car,
-  Music,
-  Zap,
-  Play,
   Home,
   Instagram,
   Twitter,
   Facebook,
-  Mail,
-  Phone,
   CheckCircle2,
-  Cpu,
   MessageSquare,
-  Terminal,
   Send,
-  BrainCircuit,
-  Waves,
-  Landmark,
 } from 'lucide-react';
 
 import { api } from '../../utils/api.js';
-import { useCurrency } from '../../CurrencyContext.jsx';
 import { useToast } from '../../ToastContext.jsx';
 import SEO from '../../components/SEO.jsx';
 
@@ -73,7 +55,6 @@ const DESTINATIONS = [
 
 export default function LandingPage() {
   const navigate = useNavigate();
-  const { formatPrice } = useCurrency();
   const { showToast } = useToast();
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -104,10 +85,6 @@ export default function LandingPage() {
     }
     setNewsletterLoading(false);
   };
-
-  // AI Section Interactive State
-  const [aiPrompt, setAiPrompt] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -145,7 +122,7 @@ export default function LandingPage() {
       <SEO title="Curated Sanctuaries & Elite Mobility" />
       <div className="bg-white font-sans text-slate-900 selection:bg-emerald-50 selection:text-emerald-900 leading-relaxed antialiased">
         {/* ════ SECTION: PREMIUM HERO ════ */}
-        <header className="relative h-[85vh] min-h-[700px] flex flex-col items-center justify-center overflow-hidden">
+        <header className="relative h-[85vh] min-h-[620px] md:min-h-[700px] flex flex-col items-center justify-center overflow-hidden">
           <div className="absolute inset-0 z-0">
             <motion.div
               initial={{ scale: 1.2 }}
@@ -272,7 +249,7 @@ export default function LandingPage() {
         </header>
 
         {/* ════ TAB STRIP ════ */}
-        <div className="max-w-7xl mx-auto px-6 -mt-10 md:-mt-20 relative z-20 mb-32 flex flex-wrap items-center justify-center gap-4 md:gap-6">
+        <div className="max-w-7xl mx-auto px-6 -mt-6 md:-mt-16 relative z-20 mb-24 flex flex-wrap items-center justify-center gap-4 md:gap-6">
           {CATEGORIES.map((c) => (
             <button
               key={c.key}
@@ -537,7 +514,9 @@ export default function LandingPage() {
                     <Sparkles size={15} className="text-slate-950" />
                   </div>
                   <div className="flex-1 space-y-4">
-                    <p className="text-sm text-white/70">Here's your curated Varkala plan 🌿</p>
+                    <p className="text-sm text-white/70">
+                      Here&apos;s your curated Varkala plan 🌿
+                    </p>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       {[
                         {
@@ -694,7 +673,11 @@ export default function LandingPage() {
                       onChange={(e) => setNewsletterEmail(e.target.value)}
                       className="flex-1 bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-sm text-white focus:outline-none focus:border-emerald-500 transition-all"
                     />
-                    <button className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 p-4 rounded-2xl transition-all active:scale-95 shadow-lg shadow-emerald-500/20">
+                    <button
+                      type="submit"
+                      disabled={newsletterLoading}
+                      className={`bg-emerald-500 text-slate-950 p-4 rounded-2xl transition-all active:scale-95 shadow-lg shadow-emerald-500/20 ${newsletterLoading ? 'opacity-70 cursor-not-allowed hover:bg-emerald-500' : 'hover:bg-emerald-400'}`}
+                    >
                       <Send size={18} strokeWidth={3} />
                     </button>
                   </form>

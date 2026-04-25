@@ -105,7 +105,9 @@ export default function AdminDashboard() {
     try {
       const d = await api.getSupportTickets();
       if (d.ok) setTickets(d.data || []);
-    } catch (_) {}
+    } catch (_) {
+      // Silently handle ticket fetch errors
+    }
     setLoadingData(false);
   }
 
@@ -114,7 +116,9 @@ export default function AdminDashboard() {
     try {
       const d = await api.adminGetWithdrawals();
       if (d.ok) setWithdrawals(d.data || []);
-    } catch (_) {}
+    } catch (_) {
+      // Silently handle withdrawal fetch errors
+    }
     setLoadingData(false);
   }
 
@@ -281,11 +285,10 @@ export default function AdminDashboard() {
                 setActiveTab(tab.id);
                 setSearchQuery('');
               }}
-              className={`w-full flex items-center gap-3 py-2.5 px-3 rounded-xl font-semibold text-sm transition-all ${
-                activeTab === tab.id
+              className={`w-full flex items-center gap-3 py-2.5 px-3 rounded-xl font-semibold text-sm transition-all ${activeTab === tab.id
                   ? 'bg-white/10 text-white'
                   : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'
-              }`}
+                }`}
             >
               <tab.icon size={17} className={activeTab === tab.id ? 'text-emerald-400' : ''} />
               {tab.label}
@@ -599,11 +602,10 @@ export default function AdminDashboard() {
                                 {activeTab === 'users' && (
                                   <button
                                     onClick={() => handleMuteUser(item.email, !item.muted)}
-                                    className={`h-8 px-3 rounded-lg font-semibold text-xs flex items-center gap-1.5 transition-all border ${
-                                      item.muted
+                                    className={`h-8 px-3 rounded-lg font-semibold text-xs flex items-center gap-1.5 transition-all border ${item.muted
                                         ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-600 hover:text-white'
                                         : 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-500 hover:text-white'
-                                    }`}
+                                      }`}
                                   >
                                     {item.muted ? (
                                       <>

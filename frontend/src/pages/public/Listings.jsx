@@ -98,7 +98,7 @@ export default function Listings() {
       if (data.ok) {
         setSaved(new Set(data.data?.map((x) => x.listingId) || []));
       }
-    } catch { }
+    } catch {}
   }
 
   async function loadListings() {
@@ -118,7 +118,7 @@ export default function Listings() {
       setRows(data.rows || []);
       setPages(data.pages || 1);
       setTotal(data.total || data.rows?.length || 0);
-    } catch { }
+    } catch {}
     setLoading(false);
   }
 
@@ -245,10 +245,11 @@ export default function Listings() {
                   <button
                     key={cat.id}
                     onClick={() => setCategory(cat.id)}
-                    className={`group relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap ${category === cat.id
+                    className={`group relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap ${
+                      category === cat.id
                         ? 'bg-slate-900 text-white shadow-xl translate-y-[-2px]'
                         : 'bg-slate-100 text-slate-500 hover:bg-white hover:text-slate-900 hover:shadow-md'
-                      }`}
+                    }`}
                   >
                     <cat.icon
                       size={16}

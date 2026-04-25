@@ -200,7 +200,7 @@ export default function ListingDetails() {
       </WayzzaLayout>
     );
 
-  let images = (listing.images || []).map(fixImg);
+  const images = (listing.images || []).map(fixImg);
   if (images.length === 0) images.push(fixImg(listing.image));
   while (images.length < 5)
     images.push(

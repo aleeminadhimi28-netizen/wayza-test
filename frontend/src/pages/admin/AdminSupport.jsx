@@ -24,7 +24,9 @@ export default function AdminSupport({ tickets, setTickets, loadTickets, loading
             { message: replyText.trim(), from: 'admin', createdAt: new Date() },
           ],
         });
-    } catch (_) {}
+    } catch (_) {
+      // Silently handle reply sending errors
+    }
     setSendingReply(false);
   }
 
@@ -33,7 +35,9 @@ export default function AdminSupport({ tickets, setTickets, loadTickets, loading
       await api.replyToTicket(id, { status: 'closed' });
       await loadTickets();
       if (selectedTicket?._id === id) setSelectedTicket((prev) => ({ ...prev, status: 'closed' }));
-    } catch (_) {}
+    } catch (_) {
+      // Silently handle ticket close errors
+    }
   }
 
   async function handleDeleteTicket(id) {
@@ -42,7 +46,9 @@ export default function AdminSupport({ tickets, setTickets, loadTickets, loading
       await api.deleteTicket(id);
       setTickets((prev) => prev.filter((t) => t._id !== id));
       if (selectedTicket?._id === id) setSelectedTicket(null);
-    } catch (_) {}
+    } catch (_) {
+      // Silently handle ticket delete errors
+    }
   }
 
   return (
@@ -199,11 +205,10 @@ export default function AdminSupport({ tickets, setTickets, loadTickets, loading
                       </div>
                     )}
                     <div
-                      className={`rounded-2xl p-4 max-w-[80%] shadow-sm ${
-                        r.from === 'admin'
+                      className={`rounded-2xl p-4 max-w-[80%] shadow-sm ${r.from === 'admin'
                           ? 'bg-slate-900 text-white rounded-br-md'
                           : 'bg-white border border-slate-200 rounded-tl-md text-slate-700'
-                      }`}
+                        }`}
                     >
                       <p className="text-sm leading-relaxed">{r.message}</p>
                       <p
