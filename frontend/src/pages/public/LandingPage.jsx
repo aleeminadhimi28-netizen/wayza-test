@@ -394,65 +394,6 @@ export default function LandingPage() {
           ))}
         </div>
 
-        {/* ════ TRENDING COLLECTION ════ */}
-        <section className="px-6 max-w-7xl mx-auto mb-32">
-          <div className="flex flex-col md:flex-row items-end justify-between gap-8 mb-16 border-b border-slate-100 pb-12">
-            <div className="space-y-4">
-              <div className="flex items-center gap-3 text-emerald-500 font-black uppercase tracking-[0.4em] text-[10px]">
-                <Award size={14} /> Curated Selection
-              </div>
-              <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900">
-                Featured collection.
-              </h2>
-              <p className="text-slate-400 text-lg font-medium">
-                Directly from our verified local hosts.
-              </p>
-            </div>
-            <Link
-              to="/listings"
-              className="group h-14 px-8 bg-slate-50 text-slate-950 hover:bg-slate-900 hover:text-white rounded-2xl font-bold text-xs flex items-center gap-3 transition-all"
-            >
-              View all inventory{' '}
-              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </div>
-
-          {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {[1, 2, 3, 4].map((i) => (
-                <WayzzaSkeleton key={i} className="h-80 rounded-3xl" />
-              ))}
-            </div>
-          ) : trendingList.length === 0 ? (
-            <div className="col-span-full py-20 text-center text-slate-400 font-bold uppercase tracking-widest text-sm bg-slate-50 rounded-[32px] border border-slate-100 flex items-center justify-center min-h-[300px]">
-              No {CATEGORIES.find((c) => c.key === tab)?.label.toLowerCase() || 'items'} available
-              at the moment.
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {trendingList.map((l) => (
-                <motion.div
-                  key={l._id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                >
-                  <WayzzaHotelItem
-                    hotel={{
-                      id: l._id,
-                      name: l.title,
-                      location: l.location || 'Varkala Coast',
-                      price: l.price,
-                      image: fixImg(l.image),
-                      wifiSpeed: l.wifiSpeed || 0,
-                    }}
-                  />
-                </motion.div>
-              ))}
-            </div>
-          )}
-        </section>
-
         {/* ════ DESTINATIONS MASONRY ════ */}
         <section className="py-32 bg-slate-50 px-6 relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-white to-transparent" />
