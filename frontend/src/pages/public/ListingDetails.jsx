@@ -229,6 +229,7 @@ export default function ListingDetails() {
   const total = basePrice * nights + gst + serviceFee;
 
   const today = new Date().toISOString().split('T')[0];
+  const currentUrl = typeof window !== 'undefined' ? window.location.href : 'https://wayza-app.vercel.app';
 
   return (
     <WayzzaLayout noPadding>
@@ -248,7 +249,7 @@ export default function ListingDetails() {
             priceCurrency: 'INR',
             price: basePrice,
             availability: 'https://schema.org/InStock',
-            url: window.location.href,
+            url: currentUrl,
           },
           aggregateRating: {
             '@type': 'AggregateRating',
@@ -259,7 +260,7 @@ export default function ListingDetails() {
         breadcrumb={[
           { name: 'Home', url: 'https://wayza-app.vercel.app' },
           { name: listing.category === 'villa' ? 'Stays' : 'Vehicles', url: `https://wayza-app.vercel.app/listings?type=${listing.category}` },
-          { name: listing.title, url: window.location.href },
+          { name: listing.title, url: currentUrl },
         ]}
       />
       <div className="bg-white min-h-screen font-sans selection:bg-emerald-100 selection:text-emerald-900 pb-24 lg:pb-0">

@@ -172,6 +172,8 @@ export default function Listings() {
 
   const catLabel = CATEGORIES.find((c) => c.id === category)?.label || 'Properties';
 
+  const currentUrl = typeof window !== 'undefined' ? window.location.href : 'https://wayza-app.vercel.app/listings';
+
   return (
     <WayzzaLayout noPadding>
       <SEO
@@ -179,14 +181,14 @@ export default function Listings() {
         description={`Browse verified ${catLabel.toLowerCase()} directly from Wayzza.`}
         breadcrumb={[
           { name: 'Home', url: 'https://wayza-app.vercel.app' },
-          { name: catLabel, url: window.location.href },
+          { name: catLabel, url: currentUrl },
         ]}
         schema={{
           '@context': 'https://schema.org',
           '@type': 'CollectionPage',
           name: location ? `${catLabel} in ${location}` : `Browse ${catLabel}`,
           description: `Browse verified ${catLabel.toLowerCase()} directly from Wayzza.`,
-          url: window.location.href,
+          url: currentUrl,
           mainEntity: {
             '@type': 'ItemList',
             itemListElement: listings.slice(0, 10).map((item, index) => ({
