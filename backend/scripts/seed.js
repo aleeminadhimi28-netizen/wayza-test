@@ -13,7 +13,7 @@ dotenv.config();
     const listings = db.collection('listings');
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@wayzza.com';
     const guestEmail = 'testguest@test.com';
-    
+
     const adminExists = await users.findOne({ email: adminEmail });
     if (!adminExists) {
       const salt = await bcrypt.genSalt(10);
@@ -37,6 +37,8 @@ dotenv.config();
         email: guestEmail,
         password: hashedPassword,
         role: 'guest',
+        name: 'Test Guest',
+        phone: '1234567890',
         createdAt: new Date()
       });
       console.log('✅ Guest test user created');
