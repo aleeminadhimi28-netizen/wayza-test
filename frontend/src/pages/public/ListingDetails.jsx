@@ -237,6 +237,30 @@ export default function ListingDetails() {
         description={listing.description}
         image={images[0]}
         type="product"
+        schema={{
+          '@context': 'https://schema.org',
+          '@type': 'Product',
+          name: listing.title,
+          description: listing.description,
+          image: images.slice(0, 3),
+          offers: {
+            '@type': 'Offer',
+            priceCurrency: 'INR',
+            price: basePrice,
+            availability: 'https://schema.org/InStock',
+            url: window.location.href,
+          },
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: avgRating,
+            reviewCount: reviews.length,
+          },
+        }}
+        breadcrumb={[
+          { name: 'Home', url: 'https://wayza-app.vercel.app' },
+          { name: listing.category === 'villa' ? 'Stays' : 'Vehicles', url: `https://wayza-app.vercel.app/listings?type=${listing.category}` },
+          { name: listing.title, url: window.location.href },
+        ]}
       />
       <div className="bg-white min-h-screen font-sans selection:bg-emerald-100 selection:text-emerald-900 pb-24 lg:pb-0">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12 py-8 lg:py-16">

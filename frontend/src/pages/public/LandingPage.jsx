@@ -131,7 +131,32 @@ export default function LandingPage() {
 
   return (
     <WayzzaLayout noPadding hideFooter>
-      <SEO title="Curated Sanctuaries & Elite Mobility" />
+      <SEO
+        title="Curated Sanctuaries & Elite Mobility"
+        breadcrumb={[
+          { name: 'Home', url: 'https://wayza-app.vercel.app' },
+        ]}
+        schema={{
+          '@context': 'https://schema.org',
+          '@type': 'LocalBusiness',
+          name: 'Wayzza',
+          description: 'Curated sanctuaries and elite mobility for digital nomads in Varkala',
+          url: 'https://wayza-app.vercel.app',
+          address: {
+            '@type': 'PostalAddress',
+            streetAddress: 'Varkala',
+            addressLocality: 'Varkala',
+            addressRegion: 'Kerala',
+            postalCode: '695141',
+            addressCountry: 'IN',
+          },
+          geo: {
+            '@type': 'GeoCoordinates',
+            latitude: '8.7379',
+            longitude: '76.7269',
+          },
+        }}
+      />
       <div className="bg-white font-sans text-slate-900 selection:bg-emerald-50 selection:text-emerald-900 leading-relaxed antialiased">
         {/* ════ SECTION: PREMIUM HERO ════ */}
         <header className="relative h-[85vh] min-h-[620px] md:min-h-[700px] flex flex-col items-center justify-center overflow-hidden">
