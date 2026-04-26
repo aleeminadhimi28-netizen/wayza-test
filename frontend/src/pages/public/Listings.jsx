@@ -191,7 +191,7 @@ export default function Listings() {
           url: currentUrl,
           mainEntity: {
             '@type': 'ItemList',
-            itemListElement: listings.slice(0, 10).map((item, index) => ({
+            itemListElement: rows.slice(0, 10).map((item, index) => ({
               '@type': 'ListItem',
               position: index + 1,
               url: `https://wayza-app.vercel.app/listing/${item._id}`,
@@ -277,8 +277,8 @@ export default function Listings() {
                     key={cat.id}
                     onClick={() => setCategory(cat.id)}
                     className={`group relative flex items-center gap-2 rounded-full font-bold transition-all whitespace-nowrap ${category === cat.id
-                        ? 'bg-slate-900 text-white shadow-xl translate-y-[-1px]'
-                        : 'bg-slate-100 text-slate-500 hover:bg-white hover:text-slate-900 hover:shadow-md'
+                      ? 'bg-slate-900 text-white shadow-xl translate-y-[-1px]'
+                      : 'bg-slate-100 text-slate-500 hover:bg-white hover:text-slate-900 hover:shadow-md'
                       } ${scrolled ? 'px-4 py-1.5 text-xs' : 'px-5 py-2.5 text-sm'}`}
                   >
                     <cat.icon
