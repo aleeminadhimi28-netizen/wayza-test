@@ -74,6 +74,18 @@ const createIndexes = async (db) => {
     await messages.createIndex({ timestamp: -1 });
     await resetTokens.createIndex({ expiry: 1 }, { expireAfterSeconds: 0 });
 
+    const otps = db.collection("otps");
+    await otps.createIndex({ expiry: 1 }, { expireAfterSeconds: 0 });
+
+    const coupons = db.collection("coupons");
+    await coupons.createIndex({ code: 1 }, { unique: true });
+
+    const webhooks = db.collection("webhooks");
+    await webhooks.createIndex({ eventId: 1 }, { unique: true });
+
+    const bookingLocks = db.collection("booking_locks");
+    await bookingLocks.createIndex({ lockedAt: 1 }, { expireAfterSeconds: 60 });
+
     // TTL: Auto-expire pending bookings after 15 minutes (900 seconds)
     // Only affects documents where status === "pending" (partial filter)
     const pendingBookings = db.collection("bookings");

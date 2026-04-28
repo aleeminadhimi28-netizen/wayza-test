@@ -100,47 +100,61 @@ router.post("/book", requireAuth, async (req, res, next) => {
         // The old code in /confirm used: Math.round(totalPrice * config.commissionRate)
         const platformCommissionAmount = Math.round(unadjustedTotalPrice * config.commissionRate);
 
-        // RACE CONDITION FIX: Atomic insert with overlap guard
-        // First, attempt to insert. If a concurrent request created an overlap
-        // between our check and insert, the compound index will catch it.
-        const conflictingBooking = await bookings.findOne({
-            listingId,
-            variantIndex: variantIndex || 0,
-            status: { $in: ["pending", "paid"] },
-            checkIn: { $lt: checkOut },
-            checkOut: { $gt: checkIn }
-        });
-
-        if (conflictingBooking) {
-            return res.status(409).json({ ok: false, message: "These dates are already booked. Please select different dates." });
+        // RACE CONDITION FIX: Pessimistic lock on the specific variant
+        const lockId = `${listingId}_${variantIndex || 0}`;
+        try {
+            // This relies on the _id being unique. If it already exists, insertOne throws 11000.
+            await db.collection("booking_locks").insertOne({
+                _id: lockId,
+                lockedAt: new Date()
+            });
+        } catch (lockErr) {
+            if (lockErr.code === 11000) {
+                return res.status(409).json({ ok: false, message: "Another booking is currently being processed for this property. Please try again in a moment." });
+            }
+            throw lockErr;
         }
-
-        const bookingDoc = {
-            listingId,
-            variantIndex: variantIndex || 0,
-            variantName: variant?.name,
-            title,
-            category: listing.category || "hotel",
-            ownerEmail: ownerEmail || listing.ownerEmail,
-            guestEmail: req.user.email,
-            checkIn, checkOut, nights, pricePerNight,
-            baseAmount, discountAmount, couponCode: appliedCouponCode,
-            gst, serviceFee,
-            totalPrice, 
-            platformCommissionAmount, // Fixed commission
-            status: "pending",
-            createdAt: new Date()
-        };
 
         let booking;
         try {
-            booking = await bookings.insertOne(bookingDoc);
-        } catch (insertErr) {
-            // Double-check: if the insert raced with another, verify by re-checking overlaps
-            if (insertErr.code === 11000) {
+            const conflictingBooking = await bookings.findOne({
+                listingId,
+                variantIndex: variantIndex || 0,
+                status: { $in: ["pending", "paid"] },
+                checkIn: { $lt: checkOut },
+                checkOut: { $gt: checkIn }
+            });
+
+            if (conflictingBooking) {
+                await db.collection("booking_locks").deleteOne({ _id: lockId });
                 return res.status(409).json({ ok: false, message: "These dates are already booked. Please select different dates." });
             }
-            throw insertErr;
+
+            const bookingDoc = {
+                listingId,
+                variantIndex: variantIndex || 0,
+                variantName: variant?.name,
+                title,
+                category: listing.category || "hotel",
+                ownerEmail: ownerEmail || listing.ownerEmail,
+                guestEmail: req.user.email,
+                checkIn, checkOut, nights, pricePerNight,
+                baseAmount, discountAmount, couponCode: appliedCouponCode,
+                gst, serviceFee,
+                totalPrice, 
+                platformCommissionAmount, // Fixed commission
+                status: "pending",
+                createdAt: new Date()
+            };
+
+            booking = await bookings.insertOne(bookingDoc);
+            
+            // Release lock after successful insert
+            await db.collection("booking_locks").deleteOne({ _id: lockId });
+        } catch (err) {
+            // Always release lock on error
+            await db.collection("booking_locks").deleteOne({ _id: lockId });
+            throw err;
         }
 
         res.json({ ok: true, bookingId: booking.insertedId });
@@ -180,16 +194,13 @@ router.post("/confirm", requireAuth, async (req, res, next) => {
         const totalPrice = booking.totalPrice || 0;
         const config = await db.collection("settings").findOne({ type: "financials" }) || { commissionRate: 0.10 };
         
-        // Use the frozen platformCommissionAmount if available, to protect Wayzza's revenue despite discounts.
-        const commissionAmount = booking.platformCommissionAmount !== undefined 
+        let commissionAmount = booking.platformCommissionAmount !== undefined 
             ? booking.platformCommissionAmount 
-            : Math.round(totalPrice * config.commissionRate);
+            : Math.round((totalPrice + (booking.discountAmount || 0)) * config.commissionRate);
             
-        // Because of discount, netEarnings can be smaller. The discount is fully absorbed by the partner.
-        // Wait, discount on booking reduces totalPrice.
-        // Therefore netEarnings = totalPrice - commissionAmount; 
-        // This implicitly means the partner takes the full hit because totalPrice is smaller by discountAmount, 
-        // but commissionAmount didn't decrease.
+        // Platform absorbs the discount
+        commissionAmount = commissionAmount - (booking.discountAmount || 0);
+
         const netEarnings = totalPrice - commissionAmount;
 
         const passcode = Math.floor(100000 + Math.random() * 900000).toString();

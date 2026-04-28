@@ -16,15 +16,15 @@ export const activityLogger = (req, res, next) => {
             // Extract identity if available
             const userEmail = req?.user?.email || req?.body?.email || "anonymous";
             
-            // Clone & Mask sensitive data
-            const safeBody = { ...req.body };
-            if (safeBody.password) safeBody.password = "[REDACTED]";
-            if (safeBody.newPassword) safeBody.newPassword = "[REDACTED]";
-            if (safeBody.oldPassword) safeBody.oldPassword = "[REDACTED]";
-            if (safeBody.otp) safeBody.otp = "[REDACTED]";
-            if (safeBody.razorpay_signature) safeBody.razorpay_signature = "[REDACTED]";
-            if (safeBody.razorpay_payment_id) safeBody.razorpay_payment_id = "[REDACTED]";
-            if (safeBody.twoFactorSecret) safeBody.twoFactorSecret = "[REDACTED]";
+            const safeBody = {};
+            const allowedKeys = ['listingId', 'variantIndex', 'checkIn', 'checkOut', 'status', 'role', 'title', 'category', 'location', 'price', 'nights', 'bookingId'];
+            for (const key of Object.keys(req.body || {})) {
+                if (allowedKeys.includes(key)) {
+                    safeBody[key] = req.body[key];
+                } else {
+                    safeBody[key] = "[FILTERED]";
+                }
+            }
             
             const logEntry = {
                 method: req.method,

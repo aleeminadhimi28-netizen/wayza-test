@@ -45,9 +45,10 @@ router.get("/", async (req, res, next) => {
             filter.category = category;
         }
         if (location) {
+            const escapedLocation = String(location).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             filter.$or = [
-                { title: { $regex: location, $options: "i" } },
-                { location: { $regex: location, $options: "i" } }
+                { title: { $regex: escapedLocation, $options: "i" } },
+                { location: { $regex: escapedLocation, $options: "i" } }
             ];
         }
         if (minPrice || maxPrice) {
@@ -149,7 +150,7 @@ router.post("/", requireAuth, async (req, res, next) => {
         });
 
         // Notify Admin of new listing for approval
-        const adminPhone = process.env.ADMIN_PHONE || "918608827725";
+        const adminPhone = process.env.ADMIN_PHONE;
         const msg = formatWhatsAppApprovalNeeded({
             ownerEmail: req.user.email,
             title,
@@ -241,11 +242,14 @@ router.put("/:id/variant/:index", requireAuth, async (req, res, next) => {
         const db = getDB();
         const listings = db.collection("listings");
         const { id, index } = req.params;
+        const idx = parseInt(index, 10);
+        if (isNaN(idx) || idx < 0) return res.status(400).json({ ok: false });
         const listing = await listings.findOne({ _id: new ObjectId(id) });
         if (!listing || (listing.ownerEmail !== req.user.email && req.user.role !== "admin")) return res.status(403).json({ ok: false });
+        if (idx >= (listing.variants || []).length) return res.status(400).json({ ok: false, message: "Index out of bounds" });
         const updates = {};
         ["name", "type", "price", "qty", "desc", "available", "image"].forEach(f => {
-            if (req.body[f] !== undefined) updates["variants." + index + "." + f] = req.body[f];
+            if (req.body[f] !== undefined) updates["variants." + idx + "." + f] = req.body[f];
         });
         await listings.updateOne({ _id: new ObjectId(id) }, { $set: updates });
         res.json({ ok: true });
@@ -257,9 +261,12 @@ router.delete("/:id/variant/:index", requireAuth, async (req, res, next) => {
         const db = getDB();
         const listings = db.collection("listings");
         const { id, index } = req.params;
+        const idx = parseInt(index, 10);
+        if (isNaN(idx) || idx < 0) return res.status(400).json({ ok: false });
         const listing = await listings.findOne({ _id: new ObjectId(id) });
         if (!listing || (listing.ownerEmail !== req.user.email && req.user.role !== "admin")) return res.status(403).json({ ok: false });
-        await listings.updateOne({ _id: new ObjectId(id) }, { $unset: { ["variants." + index]: 1 } });
+        if (idx >= (listing.variants || []).length) return res.status(400).json({ ok: false, message: "Index out of bounds" });
+        await listings.updateOne({ _id: new ObjectId(id) }, { $unset: { ["variants." + idx]: 1 } });
         await listings.updateOne({ _id: new ObjectId(id) }, { $pull: { variants: null } });
         res.json({ ok: true });
     } catch (err) { next(err); }

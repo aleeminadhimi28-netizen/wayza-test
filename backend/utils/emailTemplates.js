@@ -33,7 +33,7 @@ export const getTransporter = async () => {
         console.log("------------------------------------------");
     }
     
-    return nodemailer.createTransport({
+    transporter = nodemailer.createTransport({
         host: "smtp.ethereal.email",
         port: 587,
         secure: false, // true for 465, false for other ports
@@ -42,6 +42,7 @@ export const getTransporter = async () => {
             pass: testAccount.pass
         }
     });
+    return transporter;
 };
 
 export const guestBookingEmail = (data) => {

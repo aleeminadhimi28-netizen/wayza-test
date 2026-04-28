@@ -107,7 +107,7 @@ app.use(activityLogger);
 
 // 10. CSRF PROTECTION (after cookieParser, before routes)
 // Skips GET/HEAD/OPTIONS and webhook routes automatically
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV !== "test") {
   app.use("/api/v1", validateCSRF);
 }
 

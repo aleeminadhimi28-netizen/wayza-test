@@ -140,11 +140,12 @@ router.post("/trip-planner", async (req, res, next) => {
         const listingsColl = db.collection("listings");
 
         // Broad search: match destination against both title and location fields
+        const escapedDestination = String(destination).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         const baseFilter = {
             approved: true,
             $or: [
-                { location: { $regex: destination, $options: "i" } },
-                { title: { $regex: destination, $options: "i" } }
+                { location: { $regex: escapedDestination, $options: "i" } },
+                { title: { $regex: escapedDestination, $options: "i" } }
             ]
         };
 
@@ -401,45 +402,5 @@ router.get("/neighborhood-vibe", async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
-// ---------------- SEED DATA ----------------
-if (process.env.ALLOW_SEED === 'true') {
-    router.post('/seed', async (req, res, next) => {
-        try {
-            const db = getDB();
-            await db.collection('bookings').deleteMany({});
-            
-            // Insert admin user
-            const users = db.collection('users');
-            const adminEmail = process.env.ADMIN_EMAIL || 'admin@wayzza.com';
-            const adminExists = await users.findOne({ email: adminEmail });
-            if (!adminExists) {
-                await users.insertOne({
-                    email: adminEmail,
-                    password: '$2a$10$placeholderhash', // placeholder bcrypt hash
-                    role: 'admin',
-                    createdAt: new Date()
-                });
-            }
-            // Insert sample property
-            const listings = db.collection('listings');
-            const sampleExists = await listings.findOne({ title: 'Sample Property' });
-            if (!sampleExists) {
-                await listings.insertOne({
-                    title: 'Sample Property',
-                    location: 'Sample City',
-                    price: 100,
-                    category: 'hotel',
-                    description: 'A sample property for testing.',
-                    ownerEmail: adminEmail,
-                    approved: true,
-                    createdAt: new Date(),
-                    variants: []
-                });
-            }
-            res.json({ ok: true, message: 'Seed data inserted' });
-        } catch (err) {
-            next(err);
-        }
-    });
-}
+
 export default router;
