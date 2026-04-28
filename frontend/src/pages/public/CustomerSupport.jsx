@@ -169,7 +169,9 @@ export default function CustomerSupport() {
                 <Headphones size={20} className="text-emerald-400" />
               </div>
               <div>
-                <h1 className="text-2xl md:text-3xl font-black uppercase tracking-tight">Customer Support</h1>
+                <h1 className="text-2xl md:text-3xl font-black uppercase tracking-tight">
+                  Customer Support
+                </h1>
                 <p className="text-slate-400 font-bold uppercase text-[11px] md:text-xs tracking-widest mt-0.5">
                   We're here to help — get support from the Wayzza team
                 </p>
@@ -218,7 +220,9 @@ export default function CustomerSupport() {
                 </div>
                 <div>
                   <p className="text-2xl font-black text-slate-900 tracking-tight">{kpi.value}</p>
-                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{kpi.label}</p>
+                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                    {kpi.label}
+                  </p>
                 </div>
               </motion.div>
             ))}
@@ -408,7 +412,9 @@ export default function CustomerSupport() {
                             }`}
                           >
                             <span className="text-xl block mb-1">{cat.icon}</span>
-                            <span className="text-[11px] md:text-xs font-bold uppercase tracking-tight">{cat.label}</span>
+                            <span className="text-[11px] md:text-xs font-bold uppercase tracking-tight">
+                              {cat.label}
+                            </span>
                           </button>
                         ))}
                       </div>

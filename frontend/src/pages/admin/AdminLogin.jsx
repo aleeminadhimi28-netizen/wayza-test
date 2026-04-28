@@ -38,7 +38,6 @@ export default function AdminLogin() {
         return;
       }
 
-
       setAuth({ email: data.email, role: 'admin' });
 
       showToast('Welcome back, Administrator.', 'success');

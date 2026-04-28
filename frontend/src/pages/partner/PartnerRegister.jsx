@@ -45,7 +45,6 @@ export default function PartnerRegister() {
     try {
       setLoading(true);
 
-
       const data = await api.partnerRegister({ businessName, email, password, type });
 
       if (data.ok) {

@@ -51,8 +51,6 @@ export default function Experiences() {
   const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
   const heroScale = useTransform(scrollY, [0, 400], [1, 1.1]);
 
-
-
   useEffect(() => {
     setLoading(true);
     api

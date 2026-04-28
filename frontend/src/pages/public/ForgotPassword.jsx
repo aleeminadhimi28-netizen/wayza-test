@@ -32,7 +32,6 @@ export default function ForgotPassword() {
     try {
       // Manual delay for refined feel
 
-
       const data = await api.forgotPassword(email);
 
       if (data.ok) {

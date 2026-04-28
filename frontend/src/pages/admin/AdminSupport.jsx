@@ -205,10 +205,11 @@ export default function AdminSupport({ tickets, setTickets, loadTickets, loading
                       </div>
                     )}
                     <div
-                      className={`rounded-2xl p-4 max-w-[80%] shadow-sm ${r.from === 'admin'
+                      className={`rounded-2xl p-4 max-w-[80%] shadow-sm ${
+                        r.from === 'admin'
                           ? 'bg-slate-900 text-white rounded-br-md'
                           : 'bg-white border border-slate-200 rounded-tl-md text-slate-700'
-                        }`}
+                      }`}
                     >
                       <p className="text-sm leading-relaxed">{r.message}</p>
                       <p

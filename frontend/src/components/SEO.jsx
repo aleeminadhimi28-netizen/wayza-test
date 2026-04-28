@@ -39,15 +39,15 @@ export default function SEO({
   // Breadcrumb schema
   const breadcrumbSchema = breadcrumb
     ? {
-      '@context': 'https://schema.org',
-      '@type': 'BreadcrumbList',
-      itemListElement: breadcrumb.map((item, index) => ({
-        '@type': 'ListItem',
-        position: index + 1,
-        name: item.name,
-        item: item.url,
-      })),
-    }
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: breadcrumb.map((item, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          name: item.name,
+          item: item.url,
+        })),
+      }
     : null;
 
   const allSchemas = [defaultOrgSchema];
@@ -67,11 +67,17 @@ export default function SEO({
           'Experience the ultimate digital nomad lifestyle. Verified luxury villas, Royal Enfield rentals, and hidden Varkala secrets. Curated for the modern explorer.'
         }
       />
-      <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+      <meta
+        name="robots"
+        content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+      />
       <link rel="canonical" href={canonicalUrl} />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta charSet="utf-8" />
-      <meta name="keywords" content="luxury villas, Varkala, digital nomad, vacation rentals, Royal Enfield, experiences" />
+      <meta
+        name="keywords"
+        content="luxury villas, Varkala, digital nomad, vacation rentals, Royal Enfield, experiences"
+      />
       <meta name="author" content="Wayzza" />
       <meta name="theme-color" content="#059669" />
 

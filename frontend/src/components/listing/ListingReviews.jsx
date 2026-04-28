@@ -57,10 +57,7 @@ export default function ListingReviews({ reviews, avgRating }) {
               </div>
             </div>
             <p className="text-lg text-slate-600 leading-relaxed font-medium">
-              "
-              {r.comment ||
-                'An absolutely wonderful stay. Everything was exactly as described.'}
-              "
+              "{r.comment || 'An absolutely wonderful stay. Everything was exactly as described.'}"
             </p>
           </div>
         ))}

@@ -200,8 +200,6 @@ export default function Booking() {
       </WayzzaLayout>
     );
 
-
-
   return (
     <WayzzaLayout noPadding>
       <div className="bg-white min-h-screen font-sans selection:bg-emerald-50 selection:text-emerald-900">

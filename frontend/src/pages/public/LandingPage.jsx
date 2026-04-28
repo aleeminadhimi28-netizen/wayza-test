@@ -66,7 +66,6 @@ const PROMO_OFFER = {
   image: '/images/varkala_cliff.png',
 };
 
-
 export default function LandingPage() {
   const navigate = useNavigate();
   const { showToast } = useToast();
@@ -113,8 +112,6 @@ export default function LandingPage() {
       .catch(() => setLoading(false));
   }, [tab]);
 
-
-
   const handleSearch = () => {
     const params = new URLSearchParams();
     params.set('category', tab);
@@ -131,9 +128,7 @@ export default function LandingPage() {
     <WayzzaLayout noPadding hideFooter>
       <SEO
         title="Curated Sanctuaries & Elite Mobility"
-        breadcrumb={[
-          { name: 'Home', url: 'https://wayza-app.vercel.app' },
-        ]}
+        breadcrumb={[{ name: 'Home', url: 'https://wayza-app.vercel.app' }]}
         schema={{
           '@context': 'https://schema.org',
           '@type': 'LocalBusiness',
@@ -269,11 +264,12 @@ export default function LandingPage() {
                     strokeWidth={3}
                     className="transition-transform group-hover:rotate-12 lg:hidden"
                   />
-                  <span className="font-black uppercase tracking-[0.3em] text-[11px] md:text-[11px] lg:text-[11px]">Explore</span>
+                  <span className="font-black uppercase tracking-[0.3em] text-[11px] md:text-[11px] lg:text-[11px]">
+                    Explore
+                  </span>
                 </button>
               </div>
             </motion.div>
-
           </div>
 
           {/* Scroll Indicator */}
@@ -285,7 +281,6 @@ export default function LandingPage() {
             <div className="w-1 h-3 bg-slate-300 rounded-full" />
           </motion.div>
         </header>
-
 
         {/* â•â•â•â• MOBILE-LIKE PROMO + DESTINATIONS â•â•â•â• */}
         <section ref={moreListingsRef} className="px-6 max-w-7xl mx-auto space-y-8 pb-10">
@@ -324,19 +319,29 @@ export default function LandingPage() {
           <div className="space-y-10">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <h3 className="text-2xl font-black tracking-tight text-slate-950">Featured listings</h3>
-                <p className="text-sm text-slate-500 font-medium">Explore select stays curated for mobile discovery.</p>
+                <h3 className="text-2xl font-black tracking-tight text-slate-950">
+                  Featured listings
+                </h3>
+                <p className="text-sm text-slate-500 font-medium">
+                  Explore select stays curated for mobile discovery.
+                </p>
               </div>
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => { const el = document.getElementById('featured-scroll'); if (el) el.scrollBy({ left: -300, behavior: 'smooth' }); }}
+                  onClick={() => {
+                    const el = document.getElementById('featured-scroll');
+                    if (el) el.scrollBy({ left: -300, behavior: 'smooth' });
+                  }}
                   className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
                   aria-label="Scroll left"
                 >
                   <ChevronLeft size={18} />
                 </button>
                 <button
-                  onClick={() => { const el = document.getElementById('featured-scroll'); if (el) el.scrollBy({ left: 300, behavior: 'smooth' }); }}
+                  onClick={() => {
+                    const el = document.getElementById('featured-scroll');
+                    if (el) el.scrollBy({ left: 300, behavior: 'smooth' });
+                  }}
                   className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
                   aria-label="Scroll right"
                 >
@@ -351,29 +356,30 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div id="featured-scroll" className="flex gap-4 overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory scroll-smooth">
-              {loading ? (
-                [1, 2, 3].map((index) => (
-                  <div key={index} className="min-w-[280px] snap-start">
-                    <WayzzaSkeleton className="h-[360px] rounded-[32px]" />
-                  </div>
-                ))
-              ) : (
-                trendingList.map((listing) => (
-                  <div key={listing._id} className="min-w-[280px] snap-start">
-                    <WayzzaHotelItem
-                      hotel={{
-                        id: listing._id,
-                        name: listing.title,
-                        location: listing.location || 'Premium stay',
-                        price: listing.price,
-                        image: fixImg(listing.image),
-                        wifiSpeed: listing.wifiSpeed || 0,
-                      }}
-                    />
-                  </div>
-                ))
-              )}
+            <div
+              id="featured-scroll"
+              className="flex gap-4 overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory scroll-smooth"
+            >
+              {loading
+                ? [1, 2, 3].map((index) => (
+                    <div key={index} className="min-w-[280px] snap-start">
+                      <WayzzaSkeleton className="h-[360px] rounded-[32px]" />
+                    </div>
+                  ))
+                : trendingList.map((listing) => (
+                    <div key={listing._id} className="min-w-[280px] snap-start">
+                      <WayzzaHotelItem
+                        hotel={{
+                          id: listing._id,
+                          name: listing.title,
+                          location: listing.location || 'Premium stay',
+                          price: listing.price,
+                          image: fixImg(listing.image),
+                          wifiSpeed: listing.wifiSpeed || 0,
+                        }}
+                      />
+                    </div>
+                  ))}
             </div>
           </div>
 
@@ -381,18 +387,26 @@ export default function LandingPage() {
             <div className="flex items-center justify-between gap-3">
               <div>
                 <h3 className="text-2xl font-black tracking-tight text-slate-950">More listings</h3>
-                <p className="text-sm text-slate-500 font-medium">Browse more curated stays designed for your next trip.</p>
+                <p className="text-sm text-slate-500 font-medium">
+                  Browse more curated stays designed for your next trip.
+                </p>
               </div>
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => { const el = document.getElementById('more-scroll'); if (el) el.scrollBy({ left: -300, behavior: 'smooth' }); }}
+                  onClick={() => {
+                    const el = document.getElementById('more-scroll');
+                    if (el) el.scrollBy({ left: -300, behavior: 'smooth' });
+                  }}
                   className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
                   aria-label="Scroll left"
                 >
                   <ChevronLeft size={18} />
                 </button>
                 <button
-                  onClick={() => { const el = document.getElementById('more-scroll'); if (el) el.scrollBy({ left: 300, behavior: 'smooth' }); }}
+                  onClick={() => {
+                    const el = document.getElementById('more-scroll');
+                    if (el) el.scrollBy({ left: 300, behavior: 'smooth' });
+                  }}
                   className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
                   aria-label="Scroll right"
                 >
@@ -407,29 +421,30 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div id="more-scroll" className="flex gap-4 overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory scroll-smooth">
-              {loading ? (
-                [1, 2, 3].map((index) => (
-                  <div key={index} className="min-w-[280px] snap-start">
-                    <WayzzaSkeleton className="h-[360px] rounded-[32px]" />
-                  </div>
-                ))
-              ) : (
-                trendingList.slice(0, 6).map((listing) => (
-                  <div key={listing._id} className="min-w-[280px] snap-start">
-                    <WayzzaHotelItem
-                      hotel={{
-                        id: listing._id,
-                        name: listing.title,
-                        location: listing.location || 'Premium stay',
-                        price: listing.price,
-                        image: fixImg(listing.image),
-                        wifiSpeed: listing.wifiSpeed || 0,
-                      }}
-                    />
-                  </div>
-                ))
-              )}
+            <div
+              id="more-scroll"
+              className="flex gap-4 overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory scroll-smooth"
+            >
+              {loading
+                ? [1, 2, 3].map((index) => (
+                    <div key={index} className="min-w-[280px] snap-start">
+                      <WayzzaSkeleton className="h-[360px] rounded-[32px]" />
+                    </div>
+                  ))
+                : trendingList.slice(0, 6).map((listing) => (
+                    <div key={listing._id} className="min-w-[280px] snap-start">
+                      <WayzzaHotelItem
+                        hotel={{
+                          id: listing._id,
+                          name: listing.title,
+                          location: listing.location || 'Premium stay',
+                          price: listing.price,
+                          image: fixImg(listing.image),
+                          wifiSpeed: listing.wifiSpeed || 0,
+                        }}
+                      />
+                    </div>
+                  ))}
             </div>
           </div>
         </section>
@@ -561,8 +576,8 @@ export default function LandingPage() {
                   Plan your perfect getaway in seconds.
                 </h2>
                 <p className="max-w-2xl text-slate-300 text-base sm:text-lg leading-8">
-                  Type your travel mood, budget, and destination. The planner returns a curated stay,
-                  vehicle, and local experience package instantly.
+                  Type your travel mood, budget, and destination. The planner returns a curated
+                  stay, vehicle, and local experience package instantly.
                 </p>
 
                 <div className="grid gap-4 sm:grid-cols-3">
@@ -571,7 +586,10 @@ export default function LandingPage() {
                     { title: 'Verified results', value: '98%' },
                     { title: 'Trips planned', value: '500+' },
                   ].map((stat) => (
-                    <div key={stat.title} className="rounded-3xl border border-white/10 bg-white/5 p-5">
+                    <div
+                      key={stat.title}
+                      className="rounded-3xl border border-white/10 bg-white/5 p-5"
+                    >
                       <p className="text-sm uppercase tracking-[0.35em] text-slate-400 font-semibold">
                         {stat.title}
                       </p>
@@ -614,7 +632,8 @@ export default function LandingPage() {
                         Example prompt
                       </p>
                       <p className="leading-7 text-slate-200">
-                        I want a quiet clifftop villa in Varkala for 3 nights, with a motorbike and tips for hidden cafes. Budget around ₹15,000/night.
+                        I want a quiet clifftop villa in Varkala for 3 nights, with a motorbike and
+                        tips for hidden cafes. Budget around ₹15,000/night.
                       </p>
                     </div>
 
@@ -624,7 +643,10 @@ export default function LandingPage() {
                         { emoji: 'ðŸï¸', title: 'Royal Enfield 350', detail: '₹850 / day' },
                         { emoji: 'â˜•', title: 'Secret CafÃ© Trail', detail: '6 stops' },
                       ].map((item) => (
-                        <div key={item.title} className="rounded-3xl border border-white/10 bg-white/5 p-4">
+                        <div
+                          key={item.title}
+                          className="rounded-3xl border border-white/10 bg-white/5 p-4"
+                        >
                           <div className="flex items-center justify-between gap-3 text-sm text-slate-300">
                             <span>{item.emoji}</span>
                             <span className="rounded-full bg-emerald-500/15 px-2 py-1 text-[11px] uppercase tracking-[0.35em] text-emerald-300">
@@ -642,7 +664,8 @@ export default function LandingPage() {
                         <CheckCircle2 size={16} /> Fast planning
                       </div>
                       <p className="text-sm text-slate-400 leading-6">
-                        One click opens the planner with real AI-powered recommendations for stays, cars, and experiences.
+                        One click opens the planner with real AI-powered recommendations for stays,
+                        cars, and experiences.
                       </p>
                     </div>
                   </div>
@@ -650,8 +673,16 @@ export default function LandingPage() {
 
                 <div className="mt-6 rounded-[32px] border border-white/10 bg-white/5 p-5">
                   <div className="flex flex-wrap gap-2">
-                    {['Beachfront villa', 'Budget under ₹5k', 'Couples getaway', 'Solo adventure'].map((label) => (
-                      <span key={label} className="rounded-full border border-white/10 bg-slate-950/50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-slate-200">
+                    {[
+                      'Beachfront villa',
+                      'Budget under ₹5k',
+                      'Couples getaway',
+                      'Solo adventure',
+                    ].map((label) => (
+                      <span
+                        key={label}
+                        className="rounded-full border border-white/10 bg-slate-950/50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-slate-200"
+                      >
                         {label}
                       </span>
                     ))}

@@ -57,8 +57,8 @@ export default function AITripPlanner() {
                 </span>
               </h1>
               <p className="mx-auto max-w-2xl text-base sm:text-lg text-slate-300 leading-8">
-                Tell us where you want to go and how you want to feel. Wayzza instantly
-                orchestrates the perfect stay, mobility, and local experiences.
+                Tell us where you want to go and how you want to feel. Wayzza instantly orchestrates
+                the perfect stay, mobility, and local experiences.
               </p>
             </div>
           </div>
@@ -73,8 +73,8 @@ export default function AITripPlanner() {
                     Build your travel prompt
                   </div>
                   <p className="text-slate-600 leading-relaxed">
-                    Enter a destination and choose your vibe. Our AI will assemble a bespoke
-                    travel plan with verified stays, local vehicles, and curated experiences.
+                    Enter a destination and choose your vibe. Our AI will assemble a bespoke travel
+                    plan with verified stays, local vehicles, and curated experiences.
                   </p>
                 </div>
 
@@ -103,7 +103,10 @@ export default function AITripPlanner() {
                       Where to?
                     </label>
                     <div className="relative">
-                      <MapPin size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                      <MapPin
+                        size={18}
+                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                      />
                       <input
                         value={destination}
                         onChange={(e) => setDestination(e.target.value)}
@@ -118,7 +121,10 @@ export default function AITripPlanner() {
                       The vibe
                     </label>
                     <div className="relative">
-                      <Compass size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                      <Compass
+                        size={18}
+                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                      />
                       <select
                         value={vibe}
                         onChange={(e) => setVibe(e.target.value)}
@@ -137,21 +143,27 @@ export default function AITripPlanner() {
                   onClick={generateTrip}
                   disabled={isGenerating || !destination}
                   title={!destination ? 'Enter a destination first' : ''}
-                  className={`rounded-3xl px-6 py-4 text-sm font-black uppercase tracking-[0.35em] transition-all ${!destination || isGenerating
+                  className={`rounded-3xl px-6 py-4 text-sm font-black uppercase tracking-[0.35em] transition-all ${
+                    !destination || isGenerating
                       ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
                       : 'bg-emerald-500 text-slate-950 hover:bg-emerald-400 shadow-lg shadow-emerald-500/20'
-                    }`}
+                  }`}
                 >
                   {isGenerating ? 'Manifesting...' : 'Generate magic'}
                 </button>
               </div>
 
               <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                {['Beachfront villa', 'Budget under ₹5k', 'Couples getaway', 'Solo adventure'].map((label) => (
-                  <div key={label} className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700">
-                    {label}
-                  </div>
-                ))}
+                {['Beachfront villa', 'Budget under ₹5k', 'Couples getaway', 'Solo adventure'].map(
+                  (label) => (
+                    <div
+                      key={label}
+                      className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700"
+                    >
+                      {label}
+                    </div>
+                  )
+                )}
               </div>
             </section>
 
@@ -203,13 +215,17 @@ export default function AITripPlanner() {
                             <p className="text-xs uppercase tracking-[0.35em] text-slate-500 font-semibold">
                               Days
                             </p>
-                            <p className="mt-3 text-3xl font-black text-slate-900">{itinerary.days.length}</p>
+                            <p className="mt-3 text-3xl font-black text-slate-900">
+                              {itinerary.days.length}
+                            </p>
                           </div>
                           <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
                             <p className="text-xs uppercase tracking-[0.35em] text-slate-500 font-semibold">
                               Vibe
                             </p>
-                            <p className="mt-3 text-3xl font-black text-slate-900 capitalize">{vibe}</p>
+                            <p className="mt-3 text-3xl font-black text-slate-900 capitalize">
+                              {vibe}
+                            </p>
                           </div>
                           <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
                             <p className="text-xs uppercase tracking-[0.35em] text-slate-500 font-semibold">
@@ -239,7 +255,10 @@ export default function AITripPlanner() {
 
                     <div className="space-y-6">
                       {itinerary.days.map((day, idx) => (
-                        <div key={idx} className="rounded-[32px] border border-slate-200 bg-white p-8 shadow-sm">
+                        <div
+                          key={idx}
+                          className="rounded-[32px] border border-slate-200 bg-white p-8 shadow-sm"
+                        >
                           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
                             <div className="flex items-center gap-4">
                               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500 text-lg font-black">
@@ -247,7 +266,9 @@ export default function AITripPlanner() {
                               </div>
                               <div>
                                 <h3 className="text-2xl font-bold text-slate-900">{day.title}</h3>
-                                <p className="text-sm text-slate-500">Daily highlights and timing.</p>
+                                <p className="text-sm text-slate-500">
+                                  Daily highlights and timing.
+                                </p>
                               </div>
                             </div>
                             <div className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700">
@@ -257,10 +278,17 @@ export default function AITripPlanner() {
 
                           <div className="space-y-6">
                             {day.items.map((item, itemIdx) => (
-                              <div key={itemIdx} className="grid gap-4 sm:grid-cols-[auto_1fr] items-start">
+                              <div
+                                key={itemIdx}
+                                className="grid gap-4 sm:grid-cols-[auto_1fr] items-start"
+                              >
                                 <div className="relative">
                                   <div className="flex h-11 w-11 items-center justify-center rounded-3xl bg-slate-100 text-emerald-500 text-lg font-bold shadow-sm">
-                                    {item.type === 'hotel' ? 'ðŸ¨' : item.type === 'car' ? 'ðŸï¸' : 'â˜•'}
+                                    {item.type === 'hotel'
+                                      ? 'ðŸ¨'
+                                      : item.type === 'car'
+                                        ? 'ðŸï¸'
+                                        : 'â˜•'}
                                   </div>
                                   <div className="absolute left-5 top-full h-[calc(100%+0.5rem)] w-px bg-slate-200"></div>
                                 </div>
@@ -270,7 +298,9 @@ export default function AITripPlanner() {
                                       <div className="text-xs uppercase tracking-[0.35em] text-slate-400 font-bold">
                                         {item.time}
                                       </div>
-                                      <div className="text-lg font-bold text-slate-900">{item.title}</div>
+                                      <div className="text-lg font-bold text-slate-900">
+                                        {item.title}
+                                      </div>
                                     </div>
                                     <span className="text-sm font-semibold text-slate-500">
                                       {item.type === 'hotel'

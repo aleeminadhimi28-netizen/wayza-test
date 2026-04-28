@@ -45,7 +45,6 @@ export default function PartnerLogin() {
     try {
       setLoading(true);
 
-
       const data = await api.partnerLogin({ email, password });
 
       if (!data.ok) {

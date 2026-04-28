@@ -54,8 +54,6 @@ export default function PartnerOnboarding() {
 
     setLoading(true);
     try {
-
-
       const data = await api.partnerOnboard({
         email,
         businessName,

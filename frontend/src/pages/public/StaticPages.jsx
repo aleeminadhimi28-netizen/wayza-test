@@ -366,7 +366,9 @@ export function AboutUs() {
                   <h3 className="text-lg md:text-xl font-black text-slate-900 mb-3 md:mb-4 tracking-tight uppercase">
                     {v.title}
                   </h3>
-                  <p className="text-slate-400 font-bold uppercase text-[11px] md:text-xs leading-relaxed">{v.desc}</p>
+                  <p className="text-slate-400 font-bold uppercase text-[11px] md:text-xs leading-relaxed">
+                    {v.desc}
+                  </p>
                 </motion.div>
               ))}
             </div>

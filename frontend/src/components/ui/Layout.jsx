@@ -1,11 +1,16 @@
-﻿import React, { useState, useRef, useEffect } from 'react'; // eslint-disable-line no-unused-vars
+import React, { useState, useRef, useEffect } from 'react'; // eslint-disable-line no-unused-vars
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../AuthContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PageTransition } from './PageTransition.jsx';
-import { Bell, X, Moon, Sun, Sparkles, Globe } from 'lucide-react';
+import { Bell, X, Moon, Sun, Sparkles, Globe, ArrowRight } from 'lucide-react';
 import { api } from '../../utils/api.js';
-import { initiateSocketConnection, joinUserRoom, subscribeToNotifications, disconnectSocket } from '../../utils/socket.js';
+import {
+  initiateSocketConnection,
+  joinUserRoom,
+  subscribeToNotifications,
+  disconnectSocket,
+} from '../../utils/socket.js';
 import { useCurrency, CURRENCIES } from '../../CurrencyContext.jsx';
 
 export function Layout({ children, noPadding = false, hideFooter = false }) {
@@ -496,7 +501,10 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
         <footer className="bg-slate-950 text-white/40">
           <div className="max-w-7xl mx-auto px-8 py-16 md:py-32 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-20">
             <div className="space-y-6 md:space-y-10 text-center md:text-left">
-              <Link to="/" className="text-3xl md:text-4xl font-black tracking-tight uppercase text-white">
+              <Link
+                to="/"
+                className="text-3xl md:text-4xl font-black tracking-tight uppercase text-white"
+              >
                 Wayzza<span className="text-emerald-500">.</span>
               </Link>
               <p className="text-base md:text-lg font-medium leading-relaxed text-white/30 max-w-xs mx-auto md:mx-0">

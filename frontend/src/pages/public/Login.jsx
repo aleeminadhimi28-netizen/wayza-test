@@ -131,7 +131,6 @@ export default function Login() {
     try {
       setLoading(true);
 
-
       const data = await api.login({ email, password });
 
       if (!data.ok) {

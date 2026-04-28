@@ -25,7 +25,12 @@ import {
   Sun,
 } from 'lucide-react';
 import { api } from '../utils/api.js';
-import { initiateSocketConnection, joinUserRoom, subscribeToNotifications, disconnectSocket } from '../utils/socket.js';
+import {
+  initiateSocketConnection,
+  joinUserRoom,
+  subscribeToNotifications,
+  disconnectSocket,
+} from '../utils/socket.js';
 
 const NAV = [
   { to: '/partner', label: 'Dashboard', icon: LayoutDashboard, end: true, detail: 'Overview' },

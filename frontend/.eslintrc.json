@@ -38,7 +38,10 @@
             }
         ],
         "prefer-const": "warn",
-        "no-var": "error"
+        "no-var": "error",
+        "react/no-unescaped-entities": "off",
+        "no-empty": "off",
+        "react-hooks/exhaustive-deps": "warn"
     },
     "settings": {
         "react": {

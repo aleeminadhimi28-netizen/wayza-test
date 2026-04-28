@@ -74,8 +74,6 @@ export default function Signup() {
 
     setLoading(true);
     try {
-
-
       const data = await api.signup({ name, phone, email, password });
 
       if (data.ok) {

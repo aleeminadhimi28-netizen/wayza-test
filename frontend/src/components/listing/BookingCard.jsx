@@ -31,7 +31,8 @@ export default function BookingCard({
       <div className="flex items-center gap-1.5 text-sm text-slate-500 mb-6">
         <Star size={13} className="fill-amber-400 text-amber-400" />
         <span>
-          {avgRating || 'New'} · {reviewsCount} review{reviewsCount !== 1 ? 's' : ''}{avgRating && avgRating >= 9 ? ' · Exceptional' : ''}
+          {avgRating || 'New'} · {reviewsCount} review{reviewsCount !== 1 ? 's' : ''}
+          {avgRating && avgRating >= 9 ? ' · Exceptional' : ''}
         </span>
       </div>
 
@@ -105,15 +106,11 @@ export default function BookingCard({
             </div>
           </>
         ) : (
-          <p className="text-center text-xs text-slate-400 py-2">
-            Select dates to see pricing
-          </p>
+          <p className="text-center text-xs text-slate-400 py-2">Select dates to see pricing</p>
         )}
       </div>
 
-      <p className="text-center text-xs text-slate-400 mt-3">
-        You won't be charged yet
-      </p>
+      <p className="text-center text-xs text-slate-400 mt-3">You won't be charged yet</p>
 
       {/* Trust Badges */}
       <div className="flex justify-center gap-8 mt-5 pt-5 border-t border-slate-100">

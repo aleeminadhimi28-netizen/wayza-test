@@ -221,7 +221,9 @@ export default function Payment() {
                     Price Summary
                   </p>
                   <div className="flex justify-between text-sm text-slate-600">
-                    <span>{nights} night{nights > 1 ? 's' : ''} (incl. taxes & fees)</span>
+                    <span>
+                      {nights} night{nights > 1 ? 's' : ''} (incl. taxes & fees)
+                    </span>
                     <span>₹{price.toLocaleString()}</span>
                   </div>
                   {couponCode && (

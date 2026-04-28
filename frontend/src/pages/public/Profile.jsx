@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -20,14 +20,14 @@ import {
   Star,
   Clock,
   XCircle,
+  Smartphone,
+  AlertCircle,
 } from 'lucide-react';
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
 import { useAuth } from '../../AuthContext.jsx';
 import { api, BASE_URL } from '../../utils/api.js';
 import { useToast } from '../../ToastContext.jsx';
 import TwoFactorSetup from '../../components/TwoFactorSetup.jsx';
-
-
 
 const STATUS_CONFIG = {
   paid: {
@@ -291,10 +291,11 @@ export default function Profile() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold text-sm ${activeTab === tab.id
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold text-sm ${
+                    activeTab === tab.id
                       ? 'bg-slate-900 text-white shadow-md'
                       : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
-                    }`}
+                  }`}
                 >
                   <tab.icon size={16} />
                   {tab.label}
@@ -330,7 +331,9 @@ export default function Profile() {
                       <div className="flex items-center gap-2 text-emerald-600 font-bold text-[11px] md:text-xs uppercase tracking-wide mb-1">
                         <Settings size={13} /> Account Settings
                       </div>
-                      <h2 className="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight">Personal Information</h2>
+                      <h2 className="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight">
+                        Personal Information
+                      </h2>
                       <p className="text-xs md:text-sm text-slate-400 mt-1">
                         Update your name and contact details.
                       </p>
@@ -417,7 +420,9 @@ export default function Profile() {
                       <div className="flex items-center gap-2 text-emerald-600 font-bold text-[11px] md:text-xs uppercase tracking-wide mb-1">
                         <CalendarCheck size={13} /> Booking History
                       </div>
-                      <h2 className="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight">My Stays</h2>
+                      <h2 className="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight">
+                        My Stays
+                      </h2>
                       <p className="text-xs md:text-sm text-slate-400 mt-1">
                         Your past, present, and upcoming reservations.
                       </p>
@@ -503,7 +508,9 @@ export default function Profile() {
                       <div className="flex items-center gap-2 text-emerald-600 font-bold text-[11px] md:text-xs uppercase tracking-wide mb-1">
                         <Heart size={13} /> Saved Stays
                       </div>
-                      <h2 className="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight">My Favourites</h2>
+                      <h2 className="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight">
+                        My Favourites
+                      </h2>
                       <p className="text-xs md:text-sm text-slate-400 mt-1">
                         Properties you've saved to revisit later.
                       </p>
@@ -616,7 +623,9 @@ export default function Profile() {
                       <div className="flex items-center gap-2 text-emerald-600 font-bold text-[11px] md:text-xs uppercase tracking-wide mb-1">
                         <Shield size={13} /> Security Protocols
                       </div>
-                      <h2 className="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight">Account Protection</h2>
+                      <h2 className="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight">
+                        Account Protection
+                      </h2>
                       <p className="text-xs md:text-sm text-slate-400 mt-1">
                         Manage secondary authentication layers for your identity.
                       </p>

@@ -83,8 +83,6 @@ export default function Listings() {
   const start = params.get('start') || '';
   const end = params.get('end') || '';
 
-
-
   async function loadWishlist() {
     if (!user) return;
     try {
@@ -92,7 +90,7 @@ export default function Listings() {
       if (data.ok) {
         setSaved(new Set(data.data?.map((x) => x.listingId) || []));
       }
-    } catch { }
+    } catch {}
   }
 
   async function loadListings() {
@@ -112,7 +110,7 @@ export default function Listings() {
       setRows(data.rows || []);
       setPages(data.pages || 1);
       setTotal(data.total || data.rows?.length || 0);
-    } catch { }
+    } catch {}
     setLoading(false);
   }
 
@@ -165,7 +163,8 @@ export default function Listings() {
 
   const catLabel = CATEGORIES.find((c) => c.id === category)?.label || 'Properties';
 
-  const currentUrl = typeof window !== 'undefined' ? window.location.href : 'https://wayza-app.vercel.app/listings';
+  const currentUrl =
+    typeof window !== 'undefined' ? window.location.href : 'https://wayza-app.vercel.app/listings';
 
   return (
     <WayzzaLayout noPadding>
@@ -195,9 +194,13 @@ export default function Listings() {
       />
       <div className="bg-slate-50 min-h-screen font-sans selection:bg-emerald-100 selection:text-emerald-900">
         {/* â”€â”€â”€ PREMIUM SEARCH BAR â”€â”€â”€ */}
-        <div className={`bg-white/95 backdrop-blur-xl border-b border-slate-200 sticky top-[64px] z-40 transition-all duration-300 ${scrolled ? 'py-2 shadow-md' : 'py-4'}`}>
+        <div
+          className={`bg-white/95 backdrop-blur-xl border-b border-slate-200 sticky top-[64px] z-40 transition-all duration-300 ${scrolled ? 'py-2 shadow-md' : 'py-4'}`}
+        >
           <div className="max-w-[1240px] mx-auto px-4">
-            <div className={`bg-slate-50 border border-slate-200 rounded-2xl p-1.5 shadow-sm flex flex-col lg:flex-row items-stretch lg:items-center gap-1.5 transition-all ${scrolled ? 'lg:p-1' : 'p-2'}`}>
+            <div
+              className={`bg-slate-50 border border-slate-200 rounded-2xl p-1.5 shadow-sm flex flex-col lg:flex-row items-stretch lg:items-center gap-1.5 transition-all ${scrolled ? 'lg:p-1' : 'p-2'}`}
+            >
               {/* Location */}
               <div className="flex-1 relative group">
                 <MapPin
@@ -207,14 +210,16 @@ export default function Listings() {
                 <input
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
-                  placeholder={scrolled ? "Search..." : "Explore your next destination..."}
+                  placeholder={scrolled ? 'Search...' : 'Explore your next destination...'}
                   className={`w-full bg-transparent text-sm font-semibold text-slate-900 focus:outline-none placeholder:text-slate-400 placeholder:font-normal transition-all ${scrolled ? 'h-10 pl-11' : 'h-12 pl-12'}`}
                 />
                 <div className="absolute right-0 top-1/4 bottom-1/4 w-px bg-slate-200 hidden lg:block" />
               </div>
 
               {/* Dates - Hidden on mobile scrolled for compactness */}
-              <div className={`flex items-center gap-1 flex-1 lg:max-w-[400px] ${scrolled ? 'hidden lg:flex' : 'flex'}`}>
+              <div
+                className={`flex items-center gap-1 flex-1 lg:max-w-[400px] ${scrolled ? 'hidden lg:flex' : 'flex'}`}
+              >
                 <div className="flex-1 relative group">
                   <Calendar
                     className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
@@ -243,7 +248,9 @@ export default function Listings() {
               </div>
 
               {/* Actions */}
-              <div className={`flex items-center gap-2 pl-2 ${scrolled ? 'border-t-0 pt-0' : 'border-t lg:border-t-0 border-slate-200 pt-2 lg:pt-0'}`}>
+              <div
+                className={`flex items-center gap-2 pl-2 ${scrolled ? 'border-t-0 pt-0' : 'border-t lg:border-t-0 border-slate-200 pt-2 lg:pt-0'}`}
+              >
                 <button
                   onClick={handleSearch}
                   className={`bg-slate-900 hover:bg-emerald-600 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-slate-900/10 active:scale-95 ${scrolled ? 'h-10 px-4' : 'h-12 px-8'}`}
@@ -263,16 +270,19 @@ export default function Listings() {
             </div>
 
             {/* Category Pills & Sort */}
-            <div className={`flex items-center justify-between overflow-x-auto no-scrollbar scroll-smooth gap-4 transition-all ${scrolled ? 'mt-2' : 'mt-4'}`}>
+            <div
+              className={`flex items-center justify-between overflow-x-auto no-scrollbar scroll-smooth gap-4 transition-all ${scrolled ? 'mt-2' : 'mt-4'}`}
+            >
               <div className="flex items-center gap-2">
                 {CATEGORIES.map((cat) => (
                   <button
                     key={cat.id}
                     onClick={() => setCategory(cat.id)}
-                    className={`group relative flex items-center gap-2 rounded-full font-bold transition-all whitespace-nowrap ${category === cat.id
-                      ? 'bg-slate-900 text-white shadow-xl translate-y-[-1px]'
-                      : 'bg-slate-100 text-slate-500 hover:bg-white hover:text-slate-900 hover:shadow-md'
-                      } ${scrolled ? 'px-4 py-1.5 text-xs' : 'px-5 py-2.5 text-sm'}`}
+                    className={`group relative flex items-center gap-2 rounded-full font-bold transition-all whitespace-nowrap ${
+                      category === cat.id
+                        ? 'bg-slate-900 text-white shadow-xl translate-y-[-1px]'
+                        : 'bg-slate-100 text-slate-500 hover:bg-white hover:text-slate-900 hover:shadow-md'
+                    } ${scrolled ? 'px-4 py-1.5 text-xs' : 'px-5 py-2.5 text-sm'}`}
                   >
                     <cat.icon
                       size={scrolled ? 14 : 16}

@@ -70,8 +70,6 @@ export default function ResetPassword() {
     setLoading(true);
 
     try {
-
-
       const data = await api.resetPassword({ token, password });
 
       if (data.ok) {

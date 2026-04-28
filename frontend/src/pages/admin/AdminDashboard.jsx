@@ -605,10 +605,11 @@ export default function AdminDashboard() {
                                 {activeTab === 'users' && (
                                   <button
                                     onClick={() => handleMuteUser(item.email, !item.muted)}
-                                    className={`h-8 px-3 rounded-lg font-semibold text-xs flex items-center gap-1.5 transition-all border ${item.muted
+                                    className={`h-8 px-3 rounded-lg font-semibold text-xs flex items-center gap-1.5 transition-all border ${
+                                      item.muted
                                         ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-600 hover:text-white'
                                         : 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-500 hover:text-white'
-                                      }`}
+                                    }`}
                                   >
                                     {item.muted ? (
                                       <>

@@ -64,8 +64,9 @@ function StarRow({ rating, size = 16, interactive = false, onSet, onHover }) {
           onClick={() => interactive && onSet?.(i)}
           onMouseEnter={() => interactive && setHov(i)}
           onMouseLeave={() => interactive && setHov(0)}
-          className={`transition-all ${i <= (hov || rating) ? 'fill-amber-400 text-amber-400' : 'fill-slate-200 text-slate-200'
-            } ${interactive ? 'cursor-pointer hover:scale-110' : ''}`}
+          className={`transition-all ${
+            i <= (hov || rating) ? 'fill-amber-400 text-amber-400' : 'fill-slate-200 text-slate-200'
+          } ${interactive ? 'cursor-pointer hover:scale-110' : ''}`}
         />
       ))}
     </div>
@@ -93,8 +94,6 @@ export default function ListingDetails() {
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
 
-
-
   useEffect(() => {
     window.scrollTo(0, 0);
     api.getListing(id).then((json) => setListing(json.data || json));
@@ -117,7 +116,7 @@ export default function ListingDetails() {
       const rows = Array.isArray(data.data) ? data.data : [];
       setReviews(rows);
       if (user?.email) setAlreadyReviewed(rows.some((r) => r.guestEmail === user.email));
-    } catch { }
+    } catch {}
   }
 
   async function submitReview() {
@@ -170,7 +169,7 @@ export default function ListingDetails() {
       .then((res) => {
         if (res.ok) setPlatformConfig(res.data);
       })
-      .catch(() => { });
+      .catch(() => {});
   }, []);
 
   // Loading skeleton
@@ -218,7 +217,8 @@ export default function ListingDetails() {
   const total = basePrice * nights + gst + serviceFee;
 
   const today = new Date().toISOString().split('T')[0];
-  const currentUrl = typeof window !== 'undefined' ? window.location.href : 'https://wayza-app.vercel.app';
+  const currentUrl =
+    typeof window !== 'undefined' ? window.location.href : 'https://wayza-app.vercel.app';
 
   return (
     <WayzzaLayout noPadding>
@@ -240,15 +240,21 @@ export default function ListingDetails() {
             availability: 'https://schema.org/InStock',
             url: currentUrl,
           },
-          aggregateRating: reviews.length > 0 ? {
-            '@type': 'AggregateRating',
-            ratingValue: avgRating,
-            reviewCount: reviews.length,
-          } : undefined,
+          aggregateRating:
+            reviews.length > 0
+              ? {
+                  '@type': 'AggregateRating',
+                  ratingValue: avgRating,
+                  reviewCount: reviews.length,
+                }
+              : undefined,
         }}
         breadcrumb={[
           { name: 'Home', url: 'https://wayza-app.vercel.app' },
-          { name: listing.category === 'villa' ? 'Stays' : 'Vehicles', url: `https://wayza-app.vercel.app/listings?type=${listing.category}` },
+          {
+            name: listing.category === 'villa' ? 'Stays' : 'Vehicles',
+            url: `https://wayza-app.vercel.app/listings?type=${listing.category}`,
+          },
           { name: listing.title, url: currentUrl },
         ]}
       />
@@ -270,7 +276,9 @@ export default function ListingDetails() {
               Stays
             </button>
             <ChevronRight size={10} />
-            <span className="text-slate-900 truncate max-w-[150px] md:max-w-[200px]">{listing.title}</span>
+            <span className="text-slate-900 truncate max-w-[150px] md:max-w-[200px]">
+              {listing.title}
+            </span>
           </div>
 
           {/* â”€â”€â”€ TITLE & ACTIONS â”€â”€â”€ */}
@@ -296,7 +304,13 @@ export default function ListingDetails() {
                   </div>
                   <div>
                     <p className="text-[11px] lg:text-[11px] font-black uppercase tracking-widest text-slate-900">
-                      {avgRating ? (avgRating >= 9 ? 'Exceptional' : avgRating >= 8 ? 'Excellent' : 'Great') : 'New'}
+                      {avgRating
+                        ? avgRating >= 9
+                          ? 'Exceptional'
+                          : avgRating >= 8
+                            ? 'Excellent'
+                            : 'Great'
+                        : 'New'}
                     </p>
                     <p className="text-[11px] lg:text-[11px] font-bold text-slate-300 uppercase tracking-widest">
                       {reviews.length} Audits
@@ -556,7 +570,8 @@ export default function ListingDetails() {
         <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 p-4 z-[100] flex items-center justify-between shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
           <div>
             <p className="text-sm font-black text-slate-900">
-              ₹{basePrice.toLocaleString()} <span className="text-slate-400 font-medium">/ night</span>
+              ₹{basePrice.toLocaleString()}{' '}
+              <span className="text-slate-400 font-medium">/ night</span>
             </p>
             <button
               onClick={() => {
@@ -575,8 +590,6 @@ export default function ListingDetails() {
             Reserve
           </button>
         </div>
-
-
 
         {/* Intelligence Overlay */}
         <ListingConcierge listingId={listing._id} listingTitle={listing.title} />

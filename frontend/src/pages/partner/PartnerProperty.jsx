@@ -225,8 +225,6 @@ export default function PartnerProperty() {
       </div>
     );
 
-
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
