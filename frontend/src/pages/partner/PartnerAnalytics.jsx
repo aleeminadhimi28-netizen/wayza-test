@@ -113,28 +113,28 @@ export default function PartnerAnalytics() {
   const kpis = [
     {
       label: 'Total Revenue',
-      value: `â‚¹${(earnings?.totalRevenue || 0).toLocaleString()}`,
+      value: `₹${(earnings?.totalRevenue || 0).toLocaleString()}`,
       icon: TrendingUp,
       bg: 'bg-blue-50',
       color: 'text-blue-600',
     },
     {
       label: 'Available to Withdraw',
-      value: `â‚¹${(earnings?.availableBalance || 0).toLocaleString()}`,
+      value: `₹${(earnings?.availableBalance || 0).toLocaleString()}`,
       icon: CheckCircle,
       bg: 'bg-emerald-50',
       color: 'text-emerald-600',
     },
     {
       label: 'Pending Settlement',
-      value: `â‚¹${(earnings?.pendingBalance || 0).toLocaleString()}`,
+      value: `₹${(earnings?.pendingBalance || 0).toLocaleString()}`,
       icon: Clock,
       bg: 'bg-amber-50',
       color: 'text-amber-600',
     },
     {
       label: 'Already Paid',
-      value: `â‚¹${(earnings?.alreadyPaid || 0).toLocaleString()}`,
+      value: `₹${(earnings?.alreadyPaid || 0).toLocaleString()}`,
       icon: Shield,
       bg: 'bg-slate-50',
       color: 'text-slate-600',
@@ -154,7 +154,7 @@ export default function PartnerAnalytics() {
     },
     {
       label: 'Avg. Booking Value',
-      value: `â‚¹${avgBookingValue.toLocaleString()}`,
+      value: `₹${avgBookingValue.toLocaleString()}`,
       desc: 'Average revenue per booking',
       icon: Award,
       bg: 'bg-rose-50',
@@ -164,8 +164,8 @@ export default function PartnerAnalytics() {
     },
     {
       label: 'Best Month',
-      value: bestMonth?.month || 'â€”',
-      desc: `â‚¹${(bestMonth?.revenue || 0).toLocaleString()} peak`,
+      value: bestMonth?.month || '—',
+      desc: `₹${(bestMonth?.revenue || 0).toLocaleString()} peak`,
       icon: Star,
       bg: 'bg-amber-50',
       color: 'text-amber-600',
@@ -174,7 +174,7 @@ export default function PartnerAnalytics() {
     },
     {
       label: 'MoM Growth',
-      value: momGrowth !== null ? `${momGrowth > 0 ? '+' : ''}${momGrowth}%` : 'â€”',
+      value: momGrowth !== null ? `${momGrowth > 0 ? '+' : ''}${momGrowth}%` : '—',
       desc: 'Month over month revenue change',
       icon: momGrowth !== null && momGrowth >= 0 ? TrendingUp : TrendingDown,
       bg: momGrowth !== null && momGrowth >= 0 ? 'bg-emerald-50' : 'bg-rose-50',
@@ -306,7 +306,7 @@ export default function PartnerAnalytics() {
                     }}
                     itemStyle={{ color: '#10b981' }}
                     formatter={(value, name, props) => [
-                      `â‚¹${value.toLocaleString()}`,
+                      `₹${value.toLocaleString()}`,
                       props.payload.forecast ? 'Forecast' : 'Revenue',
                     ]}
                   />
@@ -511,7 +511,7 @@ export default function PartnerAnalytics() {
                   {b.status === 'paid' ? 'Confirmed' : b.status}
                 </span>
                 <span className="text-sm font-bold text-slate-900">
-                  â‚¹{(b.totalPrice || 0).toLocaleString()}
+                  ₹{(b.totalPrice || 0).toLocaleString()}
                 </span>
               </div>
             ))}

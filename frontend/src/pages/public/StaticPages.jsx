@@ -274,7 +274,7 @@ export function AboutUs() {
               </div>
               <p className="text-slate-500 text-base md:text-lg leading-relaxed font-medium">
                 We realized that the biggest problem for digital nomads and luxury travelers wasn't
-                finding a place to stayâ€”it was finding a place they could trust.
+                finding a place to stay—it was finding a place they could trust.
               </p>
               <p className="text-slate-500 text-base md:text-lg leading-relaxed font-medium">
                 Wayzza was founded to bridge that gap. We personally verify every clifftop villa,

@@ -140,7 +140,7 @@ export default function BookingSuccess() {
                     </span>
                   </div>
                   <p className="text-2xl font-bold text-slate-900 tracking-tighter">
-                    â‚¹{price.toLocaleString()}
+                    ₹{price.toLocaleString()}
                   </p>
                 </div>
 

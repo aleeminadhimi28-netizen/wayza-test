@@ -39,7 +39,7 @@ export default function SearchMap() {
   return (
     <WayzzaLayout noPadding>
       <div className="h-screen flex flex-col md:flex-row bg-white overflow-hidden font-sans text-slate-900">
-        {/* LEFT SIDE â€” PROPERTY BROWSER */}
+        {/* LEFT SIDE — PROPERTY BROWSER */}
         <div className="w-full md:w-[450px] lg:w-[500px] flex flex-col h-full border-r border-slate-200 bg-white relative z-20 shadow-xl">
           {/* SEARCH HEADER */}
           <header className="p-8 border-b border-slate-100 space-y-4 bg-white sticky top-0">
@@ -112,7 +112,7 @@ export default function SearchMap() {
                             Per Night
                           </span>
                           <span className="text-xl font-bold text-slate-900 tracking-tight">
-                            â‚¹{l.price.toLocaleString()}
+                            ₹{l.price.toLocaleString()}
                           </span>
                         </div>
                         <div className="px-4 py-2 bg-slate-900 text-white rounded-xl text-[11px] font-bold uppercase tracking-widest opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all">
@@ -127,7 +127,7 @@ export default function SearchMap() {
           </div>
         </div>
 
-        {/* RIGHT SIDE â€” INTERACTIVE MAP */}
+        {/* RIGHT SIDE — INTERACTIVE MAP */}
         <div className="flex-1 relative h-[50vh] md:h-full bg-slate-100">
           {/* MAP CONTROLS */}
           <div className="absolute top-8 right-8 z-30 space-y-3">

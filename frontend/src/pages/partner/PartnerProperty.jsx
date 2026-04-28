@@ -489,7 +489,7 @@ export default function PartnerProperty() {
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-700 block">Price (â‚¹)</label>
+                <label className="text-xs font-semibold text-slate-700 block">Price (₹)</label>
                 <div className="relative">
                   <Target
                     className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
@@ -667,7 +667,7 @@ export default function PartnerProperty() {
                           <h4 className="text-xl font-bold text-slate-900">{v.name}</h4>
                           <div className="text-right">
                             <div className="text-xl font-bold text-emerald-600">
-                              â‚¹{v.price.toLocaleString()}
+                              ₹{v.price.toLocaleString()}
                             </div>
                             <div className="text-xs font-semibold text-slate-500">
                               {listing.category === 'bike' || listing.category === 'car'

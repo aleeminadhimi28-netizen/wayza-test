@@ -294,7 +294,7 @@ export default function ListingDetails() {
               <div className="flex flex-wrap items-center gap-x-6 lg:gap-x-10 gap-y-4">
                 <div className="flex items-center gap-3 lg:gap-4">
                   <div className="w-10 h-10 lg:w-12 lg:h-12 bg-emerald-50 flex items-center justify-center rounded-xl lg:rounded-2xl border border-emerald-100 font-black text-lg lg:text-xl text-emerald-600">
-                    {avgRating || 'â€”'}
+                    {avgRating || '—'}
                   </div>
                   <div>
                     <p className="text-[11px] lg:text-[11px] font-black uppercase tracking-widest text-slate-900">
@@ -558,7 +558,7 @@ export default function ListingDetails() {
                         </div>
                         <div className="text-center md:text-right">
                           <p className="text-4xl font-black text-slate-900 tracking-tighter">
-                            â‚¹{v.price.toLocaleString()}
+                            ₹{v.price.toLocaleString()}
                           </p>
                           <p className="text-[11px] font-black text-slate-300 uppercase tracking-widest">
                             per cycle
@@ -578,7 +578,7 @@ export default function ListingDetails() {
                   </h2>
                   <div className="flex items-center gap-4">
                     <span className="text-5xl font-black text-slate-900 tabular-nums">
-                      {avgRating || 'â€”'}
+                      {avgRating || '—'}
                     </span>
                     <div className="h-10 w-px bg-slate-200" />
                     <span className="text-[11px] font-black uppercase tracking-widest text-slate-400">
@@ -641,7 +641,7 @@ export default function ListingDetails() {
                   {/* Price */}
                   <div className="flex items-baseline gap-2 mb-1">
                     <span className="text-4xl font-black text-slate-900 tracking-tight">
-                      â‚¹{basePrice.toLocaleString()}
+                      ₹{basePrice.toLocaleString()}
                     </span>
                     <span className="text-sm text-slate-400 font-medium">/ night</span>
                   </div>
@@ -704,23 +704,23 @@ export default function ListingDetails() {
                       <>
                         <div className="flex justify-between text-sm text-slate-600">
                           <span>
-                            â‚¹{basePrice.toLocaleString()} Ã— {nights} night{nights > 1 ? 's' : ''}
+                            ₹{basePrice.toLocaleString()} × {nights} night{nights > 1 ? 's' : ''}
                           </span>
-                          <span>â‚¹{(basePrice * nights).toLocaleString()}</span>
+                          <span>₹{(basePrice * nights).toLocaleString()}</span>
                         </div>
                         {!isVehicle && gst > 0 && (
                           <div className="flex justify-between text-sm text-slate-600">
                             <span>GST ({Math.round(gstRate * 100)}%)</span>
-                            <span>â‚¹{gst.toLocaleString()}</span>
+                            <span>₹{gst.toLocaleString()}</span>
                           </div>
                         )}
                         <div className="flex justify-between text-sm text-slate-600">
                           <span>Wayzza service fee</span>
-                          <span>â‚¹{serviceFee.toLocaleString()}</span>
+                          <span>₹{serviceFee.toLocaleString()}</span>
                         </div>
                         <div className="flex justify-between font-black text-slate-900 pt-3 border-t border-slate-100 text-base">
                           <span>Total</span>
-                          <span>â‚¹{total.toLocaleString()}</span>
+                          <span>₹{total.toLocaleString()}</span>
                         </div>
                       </>
                     ) : (
@@ -781,7 +781,7 @@ export default function ListingDetails() {
         <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 p-4 z-[100] flex items-center justify-between shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
           <div>
             <p className="text-sm font-black text-slate-900">
-              â‚¹{basePrice.toLocaleString()} <span className="text-slate-400 font-medium">/ night</span>
+              ₹{basePrice.toLocaleString()} <span className="text-slate-400 font-medium">/ night</span>
             </p>
             <button
               onClick={() => {

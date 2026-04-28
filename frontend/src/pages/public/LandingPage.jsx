@@ -614,14 +614,14 @@ export default function LandingPage() {
                         Example prompt
                       </p>
                       <p className="leading-7 text-slate-200">
-                        I want a quiet clifftop villa in Varkala for 3 nights, with a motorbike and tips for hidden cafes. Budget around â‚¹15,000/night.
+                        I want a quiet clifftop villa in Varkala for 3 nights, with a motorbike and tips for hidden cafes. Budget around ₹15,000/night.
                       </p>
                     </div>
 
                     <div className="grid gap-4 sm:grid-cols-3">
                       {[
-                        { emoji: 'ðŸ¡', title: 'Sea Cliff Retreat', detail: 'â‚¹12,500 / night' },
-                        { emoji: 'ðŸï¸', title: 'Royal Enfield 350', detail: 'â‚¹850 / day' },
+                        { emoji: 'ðŸ¡', title: 'Sea Cliff Retreat', detail: '₹12,500 / night' },
+                        { emoji: 'ðŸï¸', title: 'Royal Enfield 350', detail: '₹850 / day' },
                         { emoji: 'â˜•', title: 'Secret CafÃ© Trail', detail: '6 stops' },
                       ].map((item) => (
                         <div key={item.title} className="rounded-3xl border border-white/10 bg-white/5 p-4">
@@ -650,7 +650,7 @@ export default function LandingPage() {
 
                 <div className="mt-6 rounded-[32px] border border-white/10 bg-white/5 p-5">
                   <div className="flex flex-wrap gap-2">
-                    {['Beachfront villa', 'Budget under â‚¹5k', 'Couples getaway', 'Solo adventure'].map((label) => (
+                    {['Beachfront villa', 'Budget under ₹5k', 'Couples getaway', 'Solo adventure'].map((label) => (
                       <span key={label} className="rounded-full border border-white/10 bg-slate-950/50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-slate-200">
                         {label}
                       </span>

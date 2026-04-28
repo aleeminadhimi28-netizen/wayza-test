@@ -473,7 +473,7 @@ export default function Profile() {
                                   {cfg.label}
                                 </span>
                                 <span className="text-sm font-bold text-slate-900">
-                                  â‚¹{(b.totalPrice || 0).toLocaleString()}
+                                  ₹{(b.totalPrice || 0).toLocaleString()}
                                 </span>
                                 <button
                                   onClick={() => navigate(`/listing/${b.listingId}`)}
@@ -580,7 +580,7 @@ export default function Profile() {
                                   <div>
                                     <span className="text-base font-bold text-slate-900">
                                       {price > 0
-                                        ? `â‚¹${price.toLocaleString()}`
+                                        ? `₹${price.toLocaleString()}`
                                         : 'Price on request'}
                                     </span>
                                     {price > 0 && (

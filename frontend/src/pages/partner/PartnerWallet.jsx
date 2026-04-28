@@ -97,7 +97,7 @@ export default function PartnerWallet() {
       if (d.ok) {
         setWithdrawMsg({
           type: 'success',
-          text: `â‚¹${Number(withdrawAmount).toLocaleString()} withdrawal request submitted!`,
+          text: `₹${Number(withdrawAmount).toLocaleString()} withdrawal request submitted!`,
         });
         setWithdrawAmount('');
         // Refresh requests
@@ -189,7 +189,7 @@ export default function PartnerWallet() {
                 <c.icon size={20} />
               </div>
               <p className="text-white/70 text-xs font-semibold mb-1">{c.label}</p>
-              <p className="text-2xl font-bold">â‚¹{Math.round(c.value).toLocaleString()}</p>
+              <p className="text-2xl font-bold">₹{Math.round(c.value).toLocaleString()}</p>
               <p className="text-white/50 text-[11px] font-medium uppercase tracking-widest mt-1">
                 {c.desc}
               </p>
@@ -219,7 +219,7 @@ export default function PartnerWallet() {
                 Available Balance
               </p>
               <p className="text-2xl font-bold text-emerald-700 mt-0.5">
-                â‚¹{Math.round(available).toLocaleString()}
+                ₹{Math.round(available).toLocaleString()}
               </p>
             </div>
             <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
@@ -237,11 +237,11 @@ export default function PartnerWallet() {
           <form onSubmit={handleWithdraw} className="space-y-4">
             <div>
               <label className="text-xs font-bold text-slate-500 uppercase tracking-wide block mb-1.5">
-                Withdrawal Amount (â‚¹)
+                Withdrawal Amount (₹)
               </label>
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">
-                  â‚¹
+                  ₹
                 </span>
                 <input
                   type="number"
@@ -249,7 +249,7 @@ export default function PartnerWallet() {
                   max={Math.round(available)}
                   value={withdrawAmount}
                   onChange={(e) => setWithdrawAmount(e.target.value)}
-                  placeholder={`Max â‚¹${Math.round(available).toLocaleString()}`}
+                  placeholder={`Max ₹${Math.round(available).toLocaleString()}`}
                   className="w-full h-12 bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 text-sm font-semibold focus:bg-white focus:border-emerald-500 transition-all outline-none text-slate-900"
                 />
               </div>
@@ -448,7 +448,7 @@ export default function PartnerWallet() {
                     })}
                   </td>
                   <td className="px-6 py-4 font-bold text-sm text-slate-900">
-                    â‚¹{Number(r.amount).toLocaleString()}
+                    ₹{Number(r.amount).toLocaleString()}
                   </td>
                   <td className="px-6 py-4">
                     <span

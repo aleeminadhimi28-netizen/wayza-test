@@ -40,7 +40,7 @@ export default function AdminWithdrawals({ withdrawals, setWithdrawals, stats, l
                 Platform Earned (10%)
               </p>
               <p className="text-xl font-bold text-emerald-600">
-                â‚¹{(stats.platformCommission || 0).toLocaleString()}
+                ₹{(stats.platformCommission || 0).toLocaleString()}
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -84,7 +84,7 @@ export default function AdminWithdrawals({ withdrawals, setWithdrawals, stats, l
                   </td>
                   <td className="px-6 py-4">
                     <p className="font-bold text-lg text-slate-900">
-                      â‚¹{Number(w.amount).toLocaleString()}
+                      ₹{Number(w.amount).toLocaleString()}
                     </p>
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-600">

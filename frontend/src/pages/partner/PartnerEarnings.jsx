@@ -58,28 +58,28 @@ export default function PartnerEarnings() {
   const kpis = [
     {
       label: 'Available to Withdraw',
-      value: 'â‚¹' + (earnings?.availableBalance || 0).toLocaleString(),
+      value: '₹' + (earnings?.availableBalance || 0).toLocaleString(),
       icon: CheckCircle,
       bg: 'bg-emerald-50',
       color: 'text-emerald-600',
     },
     {
       label: 'Pending Settlement',
-      value: 'â‚¹' + (earnings?.pendingBalance || 0).toLocaleString(),
+      value: '₹' + (earnings?.pendingBalance || 0).toLocaleString(),
       icon: Clock,
       bg: 'bg-amber-50',
       color: 'text-amber-600',
     },
     {
       label: 'Already Paid',
-      value: 'â‚¹' + (earnings?.alreadyPaid || 0).toLocaleString(),
+      value: '₹' + (earnings?.alreadyPaid || 0).toLocaleString(),
       icon: Shield,
       bg: 'bg-blue-50',
       color: 'text-blue-600',
     },
     {
       label: 'Total Revenue',
-      value: 'â‚¹' + (earnings?.totalRevenue || 0).toLocaleString(),
+      value: '₹' + (earnings?.totalRevenue || 0).toLocaleString(),
       icon: TrendingUp,
       bg: 'bg-slate-50',
       color: 'text-slate-600',
@@ -215,10 +215,10 @@ export default function PartnerEarnings() {
                 <tr key={i} className="hover:bg-slate-50/50 transition-colors">
                   <td className="px-6 py-4 font-semibold text-sm text-slate-900">{m.month}</td>
                   <td className="px-6 py-4 text-sm text-slate-700">
-                    â‚¹{(m.revenue || 0).toLocaleString()}
+                    ₹{(m.revenue || 0).toLocaleString()}
                   </td>
                   <td className="px-6 py-4 text-right font-bold text-sm text-emerald-600">
-                    â‚¹{Math.round((m.revenue || 0) * 0.9).toLocaleString()}
+                    ₹{Math.round((m.revenue || 0) * 0.9).toLocaleString()}
                   </td>
                 </tr>
               ))}
@@ -293,7 +293,7 @@ export default function PartnerEarnings() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <p className="font-bold text-sm text-slate-900">
-                        â‚¹{Math.round(b.netEarnings || b.totalPrice * 0.9).toLocaleString()}
+                        ₹{Math.round(b.netEarnings || b.totalPrice * 0.9).toLocaleString()}
                       </p>
                     </td>
                   </tr>

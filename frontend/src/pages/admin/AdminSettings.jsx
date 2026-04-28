@@ -114,7 +114,7 @@ export default function AdminSettings() {
 
           <div className="space-y-4 relative z-10">
             <div className="flex items-baseline gap-2">
-              <span className="text-indigo-400 font-bold">â‚¹</span>
+              <span className="text-indigo-400 font-bold">₹</span>
               <span className="text-4xl font-black text-white">{config.serviceFee}</span>
             </div>
             <input

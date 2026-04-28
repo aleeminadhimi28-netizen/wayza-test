@@ -328,7 +328,7 @@ export default function Listings() {
                       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                         <div className="relative flex-1">
                           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-sm font-bold">
-                            â‚¹
+                            ₹
                           </span>
                           <input
                             type="number"
@@ -341,7 +341,7 @@ export default function Listings() {
                         <span className="hidden sm:block text-slate-200 self-center">/</span>
                         <div className="relative flex-1">
                           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-sm font-bold">
-                            â‚¹
+                            ₹
                           </span>
                           <input
                             type="number"
@@ -606,7 +606,7 @@ export default function Listings() {
                                   Nightly rate from
                                 </p>
                                 <p className="text-3xl font-black text-slate-900 tracking-tighter">
-                                  â‚¹{minVariantPrice.toLocaleString()}
+                                  ₹{minVariantPrice.toLocaleString()}
                                 </p>
                                 <p className="text-[11px] font-bold text-emerald-600 uppercase tracking-widest mt-1">
                                   Inclusive of Access

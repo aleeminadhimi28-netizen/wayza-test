@@ -21,7 +21,7 @@ L.Icon.Default.mergeOptions({
 const createPriceIcon = (price) => {
   return L.divIcon({
     className: 'custom-price-marker',
-    html: `<div style="background: #10b981; color: white; padding: 4px 8px; border-radius: 12px; font-weight: 800; font-size: 11px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.2); white-space: nowrap;">â‚¹${price > 0 ? price.toLocaleString() : 'â€”'}</div>`,
+    html: `<div style="background: #10b981; color: white; padding: 4px 8px; border-radius: 12px; font-weight: 800; font-size: 11px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.2); white-space: nowrap;">₹${price > 0 ? price.toLocaleString() : '—'}</div>`,
     iconSize: [60, 24],
     iconAnchor: [30, 12],
   });
@@ -168,7 +168,7 @@ export default function ExploreMap() {
                       )}
                       <div className="absolute top-3 left-3 bg-white/95 backdrop-blur px-2.5 py-1 rounded-lg shadow-sm border border-black/5">
                         <span className="text-[11px] font-black tracking-tight text-slate-900 uppercase">
-                          â‚¹{item.price.toLocaleString()}
+                          ₹{item.price.toLocaleString()}
                         </span>
                       </div>
                     </div>
@@ -229,7 +229,7 @@ export default function ExploreMap() {
                     className="absolute -top-3 -right-3 w-8 h-8 bg-slate-900 text-white rounded-full flex items-center justify-center shadow-lg border-2 border-white hover:bg-rose-500 transition-all"
                   >
                     <Loader2 size={12} className="hidden" />
-                    <span className="text-xs font-bold">Ã—</span>
+                    <span className="text-xs font-bold">×</span>
                   </button>
                   <div className="flex gap-4">
                     <div className="w-24 h-24 rounded-2xl bg-slate-100 overflow-hidden shrink-0 border border-black/5">
@@ -257,7 +257,7 @@ export default function ExploreMap() {
                             Price Starts
                           </span>
                           <span className="text-sm font-black text-slate-900">
-                            â‚¹{activeItem.price.toLocaleString()}
+                            ₹{activeItem.price.toLocaleString()}
                             <span className="text-[11px] font-bold text-slate-400">/night</span>
                           </span>
                         </div>

@@ -159,10 +159,10 @@ export default function MyBookings() {
             <table>
                 <thead><tr><th>Description</th><th>Amount</th></tr></thead>
                 <tbody>
-                    <tr><td>Accommodation (â‚¹${(b.pricePerNight || 0).toLocaleString()} Ã— ${b.nights} night${b.nights !== 1 ? 's' : ''})</td><td>â‚¹${baseAmount.toLocaleString()}</td></tr>
-                    <tr><td>GST${gst === 0 ? ' (Waived for Vehicles)' : ' @ 12%'}</td><td>${gst === 0 ? '<span style="color:#059669;font-weight:700;">Waived</span>' : `â‚¹${gst.toLocaleString()}`}</td></tr>
-                    <tr><td>Service & Platform Fee</td><td>â‚¹${serviceFee.toLocaleString()}</td></tr>
-                    <tr class="total-row"><td>Total Paid</td><td>â‚¹${(b.totalPrice || 0).toLocaleString()}</td></tr>
+                    <tr><td>Accommodation (₹${(b.pricePerNight || 0).toLocaleString()} × ${b.nights} night${b.nights !== 1 ? 's' : ''})</td><td>₹${baseAmount.toLocaleString()}</td></tr>
+                    <tr><td>GST${gst === 0 ? ' (Waived for Vehicles)' : ' @ 12%'}</td><td>${gst === 0 ? '<span style="color:#059669;font-weight:700;">Waived</span>' : `₹${gst.toLocaleString()}`}</td></tr>
+                    <tr><td>Service & Platform Fee</td><td>₹${serviceFee.toLocaleString()}</td></tr>
+                    <tr class="total-row"><td>Total Paid</td><td>₹${(b.totalPrice || 0).toLocaleString()}</td></tr>
                 </tbody>
             </table>
             <div class="badge">âœ“ Payment Confirmed</div>
@@ -327,7 +327,7 @@ export default function MyBookings() {
                           <div className="flex flex-wrap gap-2 md:gap-4">
                             <div className="bg-slate-50 px-3 md:px-4 py-1.5 md:py-2 rounded-xl flex items-center gap-2 md:gap-3 text-slate-600 text-[11px] md:text-xs font-bold uppercase">
                               <CalendarCheck size={14} className="text-emerald-500" />
-                              {start} â€” {end}
+                              {start} — {end}
                             </div>
                             {b.variantName && (
                               <div className="bg-white border border-slate-100 px-4 py-2 rounded-xl text-slate-500 text-[11px] font-bold uppercase tracking-wider">
@@ -344,7 +344,7 @@ export default function MyBookings() {
                             Total amount
                           </span>
                           <p className="text-2xl font-bold text-slate-900">
-                            â‚¹{(b.totalPrice || 0).toLocaleString()}
+                            ₹{(b.totalPrice || 0).toLocaleString()}
                           </p>
                         </div>
 

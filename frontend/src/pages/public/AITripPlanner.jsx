@@ -147,7 +147,7 @@ export default function AITripPlanner() {
               </div>
 
               <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                {['Beachfront villa', 'Budget under â‚¹5k', 'Couples getaway', 'Solo adventure'].map((label) => (
+                {['Beachfront villa', 'Budget under ₹5k', 'Couples getaway', 'Solo adventure'].map((label) => (
                   <div key={label} className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700">
                     {label}
                   </div>

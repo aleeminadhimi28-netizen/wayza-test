@@ -384,7 +384,7 @@ export default function PartnerBookings() {
                         <td className="px-6 py-4 text-right">
                           <div className="flex flex-col items-end gap-1">
                             <span className="text-base font-bold text-slate-900">
-                              â‚¹{(b.totalPrice || 0).toLocaleString()}
+                              ₹{(b.totalPrice || 0).toLocaleString()}
                             </span>
                             {b.status === 'arrived' && (
                               <button
@@ -411,7 +411,7 @@ export default function PartnerBookings() {
               <div className="flex items-center gap-2">
                 <span className="text-xs font-semibold text-slate-500">Confirmed Revenue:</span>
                 <span className="text-lg font-bold text-slate-900">
-                  â‚¹{totalRevenue.toLocaleString()}
+                  ₹{totalRevenue.toLocaleString()}
                 </span>
               </div>
             </div>

@@ -308,7 +308,7 @@ export default function PartnerCreateProperty() {
                         </button>
                       </div>
                       <p className="text-[11px] text-emerald-600 flex items-center gap-1.5">
-                        <Crosshair size={11} /> GPS coordinates locked â€” your property will appear
+                        <Crosshair size={11} /> GPS coordinates locked — your property will appear
                         on the map
                       </p>
                     </div>
@@ -457,7 +457,7 @@ export default function PartnerCreateProperty() {
                     />
                   </div>
                   <p className="font-semibold text-slate-700 text-sm">Click to upload a photo</p>
-                  <p className="text-xs text-slate-400 mt-1">JPEG, PNG or WebP â€” up to 10MB</p>
+                  <p className="text-xs text-slate-400 mt-1">JPEG, PNG or WebP — up to 10MB</p>
                 </div>
               ) : (
                 <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-lg border border-slate-200 group/preview">

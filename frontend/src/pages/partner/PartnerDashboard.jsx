@@ -93,7 +93,7 @@ export default function PartnerDashboard() {
   const kpis = [
     {
       label: 'Available Balance',
-      value: 'â‚¹' + (earnings?.availableBalance || 0).toLocaleString(),
+      value: '₹' + (earnings?.availableBalance || 0).toLocaleString(),
       icon: DollarSign,
       color: 'text-emerald-600',
       bg: 'bg-emerald-50',
@@ -102,7 +102,7 @@ export default function PartnerDashboard() {
     },
     {
       label: 'Pending Settlement',
-      value: 'â‚¹' + (earnings?.pendingBalance || 0).toLocaleString(),
+      value: '₹' + (earnings?.pendingBalance || 0).toLocaleString(),
       icon: Clock,
       color: 'text-amber-600',
       bg: 'bg-amber-50',
@@ -111,7 +111,7 @@ export default function PartnerDashboard() {
     },
     {
       label: 'Already Paid',
-      value: 'â‚¹' + (earnings?.alreadyPaid || 0).toLocaleString(),
+      value: '₹' + (earnings?.alreadyPaid || 0).toLocaleString(),
       icon: CheckCircle,
       bg: 'bg-blue-50',
       color: 'text-blue-600',
@@ -229,7 +229,7 @@ export default function PartnerDashboard() {
                   axisLine={false}
                   tickLine={false}
                   dx={-10}
-                  tickFormatter={(val) => `â‚¹${val}`}
+                  tickFormatter={(val) => `₹${val}`}
                 />
                 <Tooltip
                   contentStyle={{
@@ -426,7 +426,7 @@ export default function PartnerDashboard() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <p className="font-bold text-slate-900">
-                      â‚¹{Math.round(b.netEarnings || b.totalPrice * 0.9).toLocaleString()}
+                      ₹{Math.round(b.netEarnings || b.totalPrice * 0.9).toLocaleString()}
                     </p>
                     <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
                       Partner Share

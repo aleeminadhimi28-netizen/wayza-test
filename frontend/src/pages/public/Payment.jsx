@@ -222,7 +222,7 @@ export default function Payment() {
                   </p>
                   <div className="flex justify-between text-sm text-slate-600">
                     <span>{nights} night{nights > 1 ? 's' : ''} (incl. taxes & fees)</span>
-                    <span>â‚¹{price.toLocaleString()}</span>
+                    <span>₹{price.toLocaleString()}</span>
                   </div>
                   {couponCode && (
                     <div className="flex justify-between text-sm text-emerald-600 font-semibold">
@@ -232,7 +232,7 @@ export default function Payment() {
                   )}
                   <div className="flex justify-between font-black text-slate-900 text-base pt-4 border-t border-slate-100">
                     <span>Total</span>
-                    <span>â‚¹{price.toLocaleString()}</span>
+                    <span>₹{price.toLocaleString()}</span>
                   </div>
                 </div>
 

@@ -171,7 +171,7 @@ export default function CustomerSupport() {
               <div>
                 <h1 className="text-2xl md:text-3xl font-black uppercase tracking-tight">Customer Support</h1>
                 <p className="text-slate-400 font-bold uppercase text-[11px] md:text-xs tracking-widest mt-0.5">
-                  We're here to help â€” get support from the Wayzza team
+                  We're here to help — get support from the Wayzza team
                 </p>
               </div>
             </div>

@@ -448,7 +448,7 @@ export default function AdminDashboard() {
                                   </span>
                                 </div>
                                 <p className="text-xs text-slate-400">
-                                  {item.ownerEmail} Â· {item.location || 'No location'} Â· â‚¹
+                                  {item.ownerEmail} Â· {item.location || 'No location'} Â· ₹
                                   {item.price?.toLocaleString()}
                                 </p>
                               </div>
@@ -578,8 +578,8 @@ export default function AdminDashboard() {
                                 {activeTab === 'bookings'
                                   ? item.guestEmail
                                   : item.price
-                                    ? `â‚¹${item.price.toLocaleString()}`
-                                    : item.role || item.checkIn || 'â€”'}
+                                    ? `₹${item.price.toLocaleString()}`
+                                    : item.role || item.checkIn || '—'}
                               </span>
                             </td>
                             <td className="px-6 py-4 text-right">
