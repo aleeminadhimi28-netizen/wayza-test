@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link } from 'react-router-dom';
 import { Sparkles, RefreshCw, Home } from 'lucide-react';
 
@@ -45,21 +45,21 @@ class ErrorBoundary extends React.Component {
                 Something went <br />
                 <span className="text-rose-500 lowercase">unexpected.</span>
               </h1>
-              <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.4em] leading-relaxed">
+              <p className="text-slate-400 font-bold text-[11px] uppercase tracking-[0.4em] leading-relaxed">
                 &ldquo;The network encountered a synchronization anomaly.&rdquo;
               </p>
             </div>
             <div className="flex flex-col gap-4">
               <button
                 onClick={() => window.location.reload()}
-                className="w-full h-16 bg-slate-900 text-white rounded-2xl font-bold uppercase text-[10px] tracking-widest flex items-center justify-center gap-3 hover:bg-emerald-600 transition-all active:scale-95"
+                className="w-full h-16 bg-slate-900 text-white rounded-2xl font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-3 hover:bg-emerald-600 transition-all active:scale-95"
               >
                 <RefreshCw size={18} />
                 Re-Synchronize
               </button>
               <Link
                 to="/"
-                className="w-full h-16 bg-slate-50 text-slate-900 border border-slate-100 rounded-2xl font-bold uppercase text-[10px] tracking-widest flex items-center justify-center gap-3 hover:bg-white transition-all active:scale-95"
+                className="w-full h-16 bg-slate-50 text-slate-900 border border-slate-100 rounded-2xl font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-3 hover:bg-white transition-all active:scale-95"
               >
                 <Home size={18} />
                 Return Home

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../AuthContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -93,7 +93,7 @@ export default function PartnerDashboard() {
   const kpis = [
     {
       label: 'Available Balance',
-      value: '₹' + (earnings?.availableBalance || 0).toLocaleString(),
+      value: 'â‚¹' + (earnings?.availableBalance || 0).toLocaleString(),
       icon: DollarSign,
       color: 'text-emerald-600',
       bg: 'bg-emerald-50',
@@ -102,7 +102,7 @@ export default function PartnerDashboard() {
     },
     {
       label: 'Pending Settlement',
-      value: '₹' + (earnings?.pendingBalance || 0).toLocaleString(),
+      value: 'â‚¹' + (earnings?.pendingBalance || 0).toLocaleString(),
       icon: Clock,
       color: 'text-amber-600',
       bg: 'bg-amber-50',
@@ -111,7 +111,7 @@ export default function PartnerDashboard() {
     },
     {
       label: 'Already Paid',
-      value: '₹' + (earnings?.alreadyPaid || 0).toLocaleString(),
+      value: 'â‚¹' + (earnings?.alreadyPaid || 0).toLocaleString(),
       icon: CheckCircle,
       bg: 'bg-blue-50',
       color: 'text-blue-600',
@@ -135,7 +135,7 @@ export default function PartnerDashboard() {
       animate={{ opacity: 1, y: 0 }}
       className="space-y-8 font-sans selection:bg-emerald-100 selection:text-emerald-900 pb-20"
     >
-      {/* ─── HEADER ─── */}
+      {/* â”€â”€â”€ HEADER â”€â”€â”€ */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
         <div className="space-y-1">
           <div className="flex items-center gap-2 text-emerald-600 font-bold text-xs uppercase tracking-wide">
@@ -158,7 +158,7 @@ export default function PartnerDashboard() {
         </button>
       </div>
 
-      {/* ─── KPI GRID ─── */}
+      {/* â”€â”€â”€ KPI GRID â”€â”€â”€ */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map((c, i) => (
           <motion.div
@@ -194,7 +194,7 @@ export default function PartnerDashboard() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {/* ─── REVENUE CHART ─── */}
+        {/* â”€â”€â”€ REVENUE CHART â”€â”€â”€ */}
         <div className="xl:col-span-2 bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
           <div className="flex justify-between items-center mb-8">
             <div>
@@ -229,7 +229,7 @@ export default function PartnerDashboard() {
                   axisLine={false}
                   tickLine={false}
                   dx={-10}
-                  tickFormatter={(val) => `₹${val}`}
+                  tickFormatter={(val) => `â‚¹${val}`}
                 />
                 <Tooltip
                   contentStyle={{
@@ -255,7 +255,7 @@ export default function PartnerDashboard() {
           </div>
         </div>
 
-        {/* ─── SIDEBAR WIDGETS ─── */}
+        {/* â”€â”€â”€ SIDEBAR WIDGETS â”€â”€â”€ */}
         <div className="space-y-6">
           {/* Promo Widget */}
           <div className="bg-slate-900 rounded-3xl p-8 text-white relative overflow-hidden shadow-lg group">
@@ -324,7 +324,7 @@ export default function PartnerDashboard() {
         </div>
       </div>
 
-      {/* ─── RECENT BOOKINGS ─── */}
+      {/* â”€â”€â”€ RECENT BOOKINGS â”€â”€â”€ */}
       <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
         <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
@@ -392,7 +392,7 @@ export default function PartnerDashboard() {
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-600">
                     <div className="whitespace-nowrap">
-                      {b.checkIn} <span className="text-slate-300 mx-1">→</span> {b.checkOut}
+                      {b.checkIn} <span className="text-slate-300 mx-1">â†’</span> {b.checkOut}
                     </div>
                   </td>
                   <td className="px-6 py-4">
@@ -417,7 +417,7 @@ export default function PartnerDashboard() {
                       </span>
                       {b.status === 'paid' && (
                         <span
-                          className={`text-[10px] font-bold uppercase ${b.payoutStatus === 'paid_out' ? 'text-blue-500' : 'text-amber-500'}`}
+                          className={`text-[11px] font-bold uppercase ${b.payoutStatus === 'paid_out' ? 'text-blue-500' : 'text-amber-500'}`}
                         >
                           Payout: {b.payoutStatus === 'paid_out' ? 'Settled' : 'Pending'}
                         </span>
@@ -426,9 +426,9 @@ export default function PartnerDashboard() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <p className="font-bold text-slate-900">
-                      ₹{Math.round(b.netEarnings || b.totalPrice * 0.9).toLocaleString()}
+                      â‚¹{Math.round(b.netEarnings || b.totalPrice * 0.9).toLocaleString()}
                     </p>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
                       Partner Share
                     </p>
                   </td>

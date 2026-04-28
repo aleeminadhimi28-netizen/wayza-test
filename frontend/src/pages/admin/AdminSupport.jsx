@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+﻿import { motion } from 'framer-motion';
 import { MessageSquare, AlertCircle, CheckCircle, Mail, Trash2, Send, X } from 'lucide-react';
 import { useState } from 'react';
 import { api } from '../../utils/api.js';
@@ -119,13 +119,13 @@ export default function AdminSupport({ tickets, setTickets, loadTickets, loading
                       <p className="text-xs text-slate-400 truncate mt-0.5">{t.email}</p>
                     </div>
                     <span
-                      className={`shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase ${t.status === 'open' ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'}`}
+                      className={`shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold uppercase ${t.status === 'open' ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'}`}
                     >
                       {t.status}
                     </span>
                   </div>
                   <p className="text-xs text-slate-500 mt-1 line-clamp-2">{t.message}</p>
-                  <p className="text-[10px] text-slate-400 mt-1.5">
+                  <p className="text-[11px] text-slate-400 mt-1.5">
                     {new Date(t.createdAt).toLocaleDateString()}
                   </p>
                 </button>
@@ -149,13 +149,13 @@ export default function AdminSupport({ tickets, setTickets, loadTickets, loading
                   <h3 className="font-bold text-base text-slate-900">{selectedTicket.subject}</h3>
                   <div className="flex items-center gap-3 mt-1.5">
                     <span className="text-xs text-slate-500">{selectedTicket.email}</span>
-                    <span className="text-xs text-slate-400">·</span>
+                    <span className="text-xs text-slate-400">Â·</span>
                     <span
-                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase ${selectedTicket.status === 'open' ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'}`}
+                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold uppercase ${selectedTicket.status === 'open' ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'}`}
                     >
                       {selectedTicket.status}
                     </span>
-                    <span className="text-xs text-slate-400">·</span>
+                    <span className="text-xs text-slate-400">Â·</span>
                     <span className="text-xs text-slate-400 capitalize">
                       {selectedTicket.category}
                     </span>
@@ -190,7 +190,7 @@ export default function AdminSupport({ tickets, setTickets, loadTickets, loading
                     <p className="text-sm text-slate-700 leading-relaxed">
                       {selectedTicket.message}
                     </p>
-                    <p className="text-[10px] text-slate-400 mt-2">
+                    <p className="text-[11px] text-slate-400 mt-2">
                       {new Date(selectedTicket.createdAt).toLocaleString()}
                     </p>
                   </div>
@@ -212,9 +212,9 @@ export default function AdminSupport({ tickets, setTickets, loadTickets, loading
                     >
                       <p className="text-sm leading-relaxed">{r.message}</p>
                       <p
-                        className={`text-[10px] mt-2 ${r.from === 'admin' ? 'text-white/40' : 'text-slate-400'}`}
+                        className={`text-[11px] mt-2 ${r.from === 'admin' ? 'text-white/40' : 'text-slate-400'}`}
                       >
-                        {r.from === 'admin' ? 'Admin' : selectedTicket.email} ·{' '}
+                        {r.from === 'admin' ? 'Admin' : selectedTicket.email} Â·{' '}
                         {new Date(r.createdAt).toLocaleString()}
                       </p>
                     </div>

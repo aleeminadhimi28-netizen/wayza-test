@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+﻿import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../AuthContext.jsx';
 import { useToast } from '../../ToastContext.jsx';
@@ -23,10 +23,10 @@ import { api } from '../../utils/api.js';
 import { AMENITY_CATEGORIES } from '../../utils/amenities.js';
 
 const CATEGORIES = [
-  { value: 'hotel', label: '🏨 Stays (Hotels, Villas, Houses)' },
-  { value: 'bike', label: '🏍️ Bikes (Rentals, Scooters)' },
-  { value: 'car', label: '🏎️ Cars (Luxury, Daily, SUVs)' },
-  { value: 'activity', label: '🎯 Activities (Surfing, Tours, Yoga)' },
+  { value: 'hotel', label: 'ðŸ¨ Stays (Hotels, Villas, Houses)' },
+  { value: 'bike', label: 'ðŸï¸ Bikes (Rentals, Scooters)' },
+  { value: 'car', label: 'ðŸŽï¸ Cars (Luxury, Daily, SUVs)' },
+  { value: 'activity', label: 'ðŸŽ¯ Activities (Surfing, Tours, Yoga)' },
 ];
 
 export default function PartnerCreateProperty() {
@@ -258,7 +258,7 @@ export default function PartnerCreateProperty() {
                             <span className="text-xs font-bold text-emerald-700">
                               Use My GPS Location
                             </span>
-                            <span className="text-[10px] text-emerald-500">
+                            <span className="text-[11px] text-emerald-500">
                               Auto-detect your exact property coordinates
                             </span>
                           </>
@@ -266,7 +266,7 @@ export default function PartnerCreateProperty() {
                       </button>
                       <div className="relative flex items-center gap-3 my-1">
                         <div className="flex-1 h-px bg-slate-200" />
-                        <span className="text-[10px] font-semibold text-slate-400 uppercase">
+                        <span className="text-[11px] font-semibold text-slate-400 uppercase">
                           or type manually
                         </span>
                         <div className="flex-1 h-px bg-slate-200" />
@@ -308,7 +308,7 @@ export default function PartnerCreateProperty() {
                         </button>
                       </div>
                       <p className="text-[11px] text-emerald-600 flex items-center gap-1.5">
-                        <Crosshair size={11} /> GPS coordinates locked — your property will appear
+                        <Crosshair size={11} /> GPS coordinates locked â€” your property will appear
                         on the map
                       </p>
                     </div>
@@ -347,7 +347,7 @@ export default function PartnerCreateProperty() {
                       className="h-11 w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-4 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all"
                     />
                   </div>
-                  <p className="text-[10px] text-slate-400 font-medium ml-1">
+                  <p className="text-[11px] text-slate-400 font-medium ml-1">
                     Optional: Paste an 'embed' link for a high-fidelity virtual tour.
                   </p>
                 </div>
@@ -356,18 +356,18 @@ export default function PartnerCreateProperty() {
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="text-sm font-bold text-slate-900">Available Utilities</h3>
-                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">
+                      <p className="text-[11px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">
                         Professional Inventory Management
                       </p>
                     </div>
-                    <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md uppercase tracking-widest">
+                    <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md uppercase tracking-widest">
                       {selectedAmenities.length} selected
                     </span>
                   </div>
 
                   {/* Wifi Speed Input */}
                   <div className="space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block ml-1">
+                    <label className="text-[11px] font-black uppercase tracking-widest text-slate-400 block ml-1">
                       Verified Wi-Fi Speed (Mbps)
                     </label>
                     <div className="flex items-center gap-3">
@@ -381,7 +381,7 @@ export default function PartnerCreateProperty() {
                         onChange={(e) => setWifiSpeed(e.target.value)}
                         className="h-10 flex-1 bg-white border border-slate-200 rounded-lg px-4 text-sm font-bold text-slate-900 outline-none focus:border-emerald-500 transition-all"
                       />
-                      <span className="text-[10px] font-black text-slate-400">MBPS</span>
+                      <span className="text-[11px] font-black text-slate-400">MBPS</span>
                     </div>
                   </div>
 
@@ -390,7 +390,7 @@ export default function PartnerCreateProperty() {
                       <div key={cat.id} className="space-y-3">
                         <div className="flex items-center gap-2">
                           <div className="h-px w-4 bg-slate-200" />
-                          <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                          <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">
                             {cat.label}
                           </h4>
                         </div>
@@ -408,7 +408,7 @@ export default function PartnerCreateProperty() {
                                   setSelectedAmenities([...selectedAmenities, a.label]);
                                 }
                               }}
-                              className={`h-11 px-4 rounded-xl text-[10px] font-bold uppercase tracking-widest border transition-all flex items-center gap-3 ${
+                              className={`h-11 px-4 rounded-xl text-[11px] font-bold uppercase tracking-widest border transition-all flex items-center gap-3 ${
                                 selectedAmenities.includes(a.label)
                                   ? 'bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-500/20'
                                   : 'bg-white border-slate-100 text-slate-500 hover:border-emerald-200 hover:text-emerald-600 shadow-sm'
@@ -457,7 +457,7 @@ export default function PartnerCreateProperty() {
                     />
                   </div>
                   <p className="font-semibold text-slate-700 text-sm">Click to upload a photo</p>
-                  <p className="text-xs text-slate-400 mt-1">JPEG, PNG or WebP — up to 10MB</p>
+                  <p className="text-xs text-slate-400 mt-1">JPEG, PNG or WebP â€” up to 10MB</p>
                 </div>
               ) : (
                 <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-lg border border-slate-200 group/preview">

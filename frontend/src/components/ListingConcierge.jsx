@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare, Send, Sparkles, X, User, Bot, Loader2 } from 'lucide-react';
+import { BASE_URL } from '../utils/api.js';
 
 export default function ListingConcierge({ listingId, listingTitle }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -29,8 +30,7 @@ export default function ListingConcierge({ listingId, listingTitle }) {
     setIsThinking(true);
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-      const response = await fetch(`${API_URL}/api/v1/misc/chat`, {
+      const response = await fetch(`${BASE_URL}/api/v1/misc/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ listingId, query: textToSend }),
@@ -78,7 +78,7 @@ export default function ListingConcierge({ listingId, listingTitle }) {
                   <Sparkles size={20} className="text-slate-900" />
                 </div>
                 <div>
-                  <h3 className="font-black uppercase tracking-widest text-[10px] text-emerald-400">
+                  <h3 className="font-black uppercase tracking-widest text-[11px] text-emerald-400">
                     Concierge Intelligence
                   </h3>
                   <p className="font-black text-sm tracking-tighter">Wayzza Assistant</p>
@@ -133,7 +133,7 @@ export default function ListingConcierge({ listingId, listingTitle }) {
                     <button
                       key={q}
                       onClick={() => handleSend(q)}
-                      className="px-4 py-2 bg-white border border-slate-100 rounded-full text-[10px] font-bold text-slate-600 hover:border-emerald-500 hover:text-emerald-600 transition-all shadow-sm"
+                      className="px-4 py-2 bg-white border border-slate-100 rounded-full text-[11px] font-bold text-slate-600 hover:border-emerald-500 hover:text-emerald-600 transition-all shadow-sm"
                     >
                       {q}
                     </button>
@@ -161,7 +161,7 @@ export default function ListingConcierge({ listingId, listingTitle }) {
                   <Send size={14} />
                 </button>
               </div>
-              <p className="text-[9px] text-slate-300 font-bold uppercase tracking-[0.2em] text-center mt-4">
+              <p className="text-[11px] text-slate-300 font-bold uppercase tracking-[0.2em] text-center mt-4">
                 Orchestrated by Wayzza AI Protocol
               </p>
             </div>

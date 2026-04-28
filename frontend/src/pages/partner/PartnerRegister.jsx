@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -44,7 +44,7 @@ export default function PartnerRegister() {
 
     try {
       setLoading(true);
-      await new Promise((r) => setTimeout(r, 1500)); // Polished registration flow
+
 
       const data = await api.partnerRegister({ businessName, email, password, type });
 
@@ -92,7 +92,7 @@ export default function PartnerRegister() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
           >
-            <div className="mb-12 inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10 text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400">
+            <div className="mb-12 inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10 text-[11px] font-black uppercase tracking-[0.3em] text-emerald-400">
               Channel Expansion Phase II
             </div>
             <h1 className="text-7xl md:text-9xl font-black tracking-tighter uppercase leading-[0.8] mb-12">
@@ -110,26 +110,26 @@ export default function PartnerRegister() {
           <div className="flex gap-12 opacity-30 pointer-events-none">
             <div className="flex flex-col items-center gap-3">
               <Globe size={24} />
-              <span className="text-[9px] font-black uppercase tracking-[0.3em] text-center">
+              <span className="text-[11px] font-black uppercase tracking-[0.3em] text-center">
                 Global Audience
               </span>
             </div>
             <div className="flex flex-col items-center gap-3">
               <Zap size={24} className="text-emerald-400" />
-              <span className="text-[9px] font-black uppercase tracking-[0.3em] text-center">
+              <span className="text-[11px] font-black uppercase tracking-[0.3em] text-center">
                 Direct Channel
               </span>
             </div>
             <div className="flex flex-col items-center gap-3">
               <Activity size={24} />
-              <span className="text-[9px] font-black uppercase tracking-[0.3em] text-center">
+              <span className="text-[11px] font-black uppercase tracking-[0.3em] text-center">
                 Verified Net
               </span>
             </div>
           </div>
         </div>
 
-        <div className="relative z-10 text-[10px] font-black text-white/10 uppercase tracking-[1em] select-none hover:text-emerald-500/20 transition-colors">
+        <div className="relative z-10 text-[11px] font-black text-white/10 uppercase tracking-[1em] select-none hover:text-emerald-500/20 transition-colors">
           Wayzza Professional Growth Architecture
         </div>
       </div>
@@ -148,8 +148,8 @@ export default function PartnerRegister() {
             <header className="space-y-8">
               <div className="flex items-center gap-4">
                 <span className="h-px w-12 bg-emerald-500/20" />
-                <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-600">
-                  Merchant Onboarding
+                <span className="text-[11px] font-black uppercase tracking-[0.5em] text-emerald-600">
+                  Partner Sign Up
                 </span>
               </div>
               <h2 className="text-6xl md:text-8xl font-black tracking-tighter text-slate-900 uppercase leading-[0.85]">
@@ -162,7 +162,7 @@ export default function PartnerRegister() {
               {/* DUAL COLUMN FOR BUSINESS INFO */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-3 group/field">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] ml-2 group-focus-within/field:text-emerald-600 transition-colors">
+                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] ml-2 group-focus-within/field:text-emerald-600 transition-colors">
                     Legal Instance
                   </label>
                   <div className="relative">
@@ -184,7 +184,7 @@ export default function PartnerRegister() {
                 </div>
 
                 <div className="space-y-3 group/field">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] ml-2">
+                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] ml-2">
                     Service Portfolio
                   </label>
                   <div className="relative">
@@ -210,7 +210,7 @@ export default function PartnerRegister() {
               </div>
 
               <div className="space-y-3 group/field">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] ml-2 group-focus-within/field:text-emerald-600 transition-colors">
+                <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] ml-2 group-focus-within/field:text-emerald-600 transition-colors">
                   Credential Email
                 </label>
                 <div className="relative">
@@ -232,7 +232,7 @@ export default function PartnerRegister() {
               </div>
 
               <div className="space-y-3 group/field">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] ml-2 group-focus-within/field:text-emerald-600 transition-colors">
+                <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] ml-2 group-focus-within/field:text-emerald-600 transition-colors">
                   Account Access Password
                 </label>
                 <div className="relative">
@@ -247,7 +247,7 @@ export default function PartnerRegister() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••••••"
+                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                     className="w-full h-22 bg-slate-50/50 border border-slate-100 rounded-[28px] pl-20 pr-10 font-bold text-xl tracking-[0.2em] text-slate-900 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all placeholder:text-slate-200"
                   />
                   <button
@@ -280,13 +280,13 @@ export default function PartnerRegister() {
             </form>
 
             <div className="pt-16 flex flex-col items-center gap-10 text-center border-t border-slate-100">
-              <p className="text-slate-300 font-bold text-[10px] uppercase tracking-widest leading-relaxed max-w-sm">
+              <p className="text-slate-300 font-bold text-[11px] uppercase tracking-widest leading-relaxed max-w-sm">
                 "By establishing an account, you adhere to the Wayzza Pro Merchant Guidelines and
                 Operational Standards."
               </p>
               <Link
                 to="/partner-login"
-                className="inline-flex items-center gap-4 text-emerald-600 font-black text-[10px] uppercase tracking-[0.5em] hover:text-emerald-700 transition-all group"
+                className="inline-flex items-center gap-4 text-emerald-600 font-black text-[11px] uppercase tracking-[0.5em] hover:text-emerald-700 transition-all group"
               >
                 <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />{' '}
                 Already Resident? Sign in

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -31,7 +31,7 @@ export default function ForgotPassword() {
 
     try {
       // Manual delay for refined feel
-      await new Promise((r) => setTimeout(r, 1200));
+
 
       const data = await api.forgotPassword(email);
 
@@ -84,20 +84,20 @@ export default function ForgotPassword() {
           <div className="flex gap-8 opacity-40">
             <div className="flex flex-col items-center gap-2">
               <ShieldCheck size={20} className="text-emerald-600" />
-              <span className="text-[8px] font-bold uppercase tracking-widest text-slate-400">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-slate-400">
                 Secure
               </span>
             </div>
             <div className="flex flex-col items-center gap-2">
               <Sparkles size={20} className="text-emerald-600" />
-              <span className="text-[8px] font-bold uppercase tracking-widest text-slate-400">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-slate-400">
                 Instant
               </span>
             </div>
           </div>
         </div>
 
-        <div className="relative z-10 text-[9px] font-bold text-slate-300 uppercase tracking-[0.4em]">
+        <div className="relative z-10 text-[11px] font-bold text-slate-300 uppercase tracking-[0.4em]">
           Wayzza Guest Security Network v4.2
         </div>
       </div>
@@ -121,7 +121,7 @@ export default function ForgotPassword() {
                   <h2 className="text-3xl font-bold text-slate-900 uppercase tracking-tight">
                     Email Sent.
                   </h2>
-                  <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest leading-relaxed">
+                  <p className="text-slate-400 font-bold uppercase text-[11px] tracking-widest leading-relaxed">
                     A reset link has been sent to{' '}
                     <span className="text-slate-900 underline decoration-emerald-500 underline-offset-4">
                       {email}
@@ -131,7 +131,7 @@ export default function ForgotPassword() {
                 </div>
                 <button
                   onClick={() => navigate('/login')}
-                  className="w-full h-18 py-5 bg-slate-900 text-white rounded-3xl font-bold uppercase text-[10px] tracking-widest hover:bg-emerald-600 transition-all shadow-xl shadow-slate-900/10 flex items-center justify-center gap-3 active:scale-95"
+                  className="w-full h-18 py-5 bg-slate-900 text-white rounded-3xl font-bold uppercase text-[11px] tracking-widest hover:bg-emerald-600 transition-all shadow-xl shadow-slate-900/10 flex items-center justify-center gap-3 active:scale-95"
                 >
                   Back to Login <ArrowRight size={18} />
                 </button>
@@ -145,20 +145,20 @@ export default function ForgotPassword() {
                 className="space-y-12"
               >
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-emerald-600 font-bold text-[10px] uppercase tracking-widest">
+                  <div className="flex items-center gap-2 text-emerald-600 font-bold text-[11px] uppercase tracking-widest">
                     <Sparkles size={14} /> Security Support
                   </div>
                   <h2 className="text-4xl md:text-5xl font-bold text-slate-900 uppercase tracking-tight leading-none">
                     Find Your <span className="text-emerald-500">Account.</span>
                   </h2>
-                  <p className="text-slate-400 font-bold uppercase text-[9px] tracking-widest">
+                  <p className="text-slate-400 font-bold uppercase text-[11px] tracking-widest">
                     Enter your email address to receive a reset link
                   </p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-8">
                   <div className="space-y-3 group">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within:text-emerald-600 transition-colors">
+                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within:text-emerald-600 transition-colors">
                       Email Address
                     </label>
                     <div className="relative">
@@ -181,7 +181,7 @@ export default function ForgotPassword() {
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="p-5 bg-rose-50 text-rose-600 rounded-2xl border border-rose-100 font-bold text-[10px] uppercase tracking-widest flex items-center gap-3"
+                      className="p-5 bg-rose-50 text-rose-600 rounded-2xl border border-rose-100 font-bold text-[11px] uppercase tracking-widest flex items-center gap-3"
                     >
                       <Zap size={14} className="shrink-0" /> {error}
                     </motion.div>
@@ -190,7 +190,7 @@ export default function ForgotPassword() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full h-18 py-5 bg-slate-900 text-white rounded-3xl font-bold uppercase text-[10px] tracking-widest transition-all hover:bg-emerald-600 shadow-xl shadow-slate-900/10 active:scale-95 flex items-center justify-center gap-3 disabled:opacity-50"
+                    className="w-full h-18 py-5 bg-slate-900 text-white rounded-3xl font-bold uppercase text-[11px] tracking-widest transition-all hover:bg-emerald-600 shadow-xl shadow-slate-900/10 active:scale-95 flex items-center justify-center gap-3 disabled:opacity-50"
                   >
                     {loading ? (
                       <div className="w-5 h-5 border-4 border-white/20 border-t-white rounded-full animate-spin" />
@@ -206,7 +206,7 @@ export default function ForgotPassword() {
                 <div className="pt-8 text-center">
                   <Link
                     to="/login"
-                    className="inline-flex items-center gap-2 text-slate-300 font-bold text-[10px] uppercase tracking-widest hover:text-emerald-600 transition-colors"
+                    className="inline-flex items-center gap-2 text-slate-300 font-bold text-[11px] uppercase tracking-widest hover:text-emerald-600 transition-colors"
                   >
                     <ArrowLeft size={14} /> Back to Login
                   </Link>

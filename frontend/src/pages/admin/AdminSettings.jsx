@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { DollarSign, Layers, ShieldCheck, Activity, Save } from 'lucide-react';
 import { api } from '../../utils/api';
 import { useToast } from '../../ToastContext';
@@ -68,7 +68,7 @@ export default function AdminSettings() {
             </div>
             <div>
               <h3 className="text-white font-bold text-lg">Partner Commission Rate</h3>
-              <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mt-1">
+              <p className="text-[11px] uppercase tracking-widest text-slate-500 font-bold mt-1">
                 Platform Take-Home
               </p>
             </div>
@@ -106,7 +106,7 @@ export default function AdminSettings() {
             </div>
             <div>
               <h3 className="text-white font-bold text-lg">Guest Service Fee</h3>
-              <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mt-1">
+              <p className="text-[11px] uppercase tracking-widest text-slate-500 font-bold mt-1">
                 Flat Rate Booking Buffers
               </p>
             </div>
@@ -114,7 +114,7 @@ export default function AdminSettings() {
 
           <div className="space-y-4 relative z-10">
             <div className="flex items-baseline gap-2">
-              <span className="text-indigo-400 font-bold">₹</span>
+              <span className="text-indigo-400 font-bold">â‚¹</span>
               <span className="text-4xl font-black text-white">{config.serviceFee}</span>
             </div>
             <input
@@ -141,7 +141,7 @@ export default function AdminSettings() {
             </div>
             <div>
               <h3 className="text-white font-bold text-lg">GST Applicability</h3>
-              <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mt-1">
+              <p className="text-[11px] uppercase tracking-widest text-slate-500 font-bold mt-1">
                 Local Value Tax
               </p>
             </div>

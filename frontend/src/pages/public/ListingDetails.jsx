@@ -1,4 +1,4 @@
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+﻿import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { WayzzaLayout, WayzzaSkeleton } from '../../WayzzaUI.jsx';
 import { useAuth } from '../../AuthContext.jsx';
@@ -256,8 +256,8 @@ export default function ListingDetails() {
       />
       <div className="bg-white min-h-screen font-sans selection:bg-emerald-100 selection:text-emerald-900 pb-24 lg:pb-0">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12 py-8 lg:py-16">
-          {/* ─── BREADCRUMB ─── */}
-          <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-slate-300 mb-8 lg:mb-10 overflow-x-auto no-scrollbar whitespace-nowrap">
+          {/* â”€â”€â”€ BREADCRUMB â”€â”€â”€ */}
+          <div className="flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.4em] text-slate-300 mb-8 lg:mb-10 overflow-x-auto no-scrollbar whitespace-nowrap">
             <button
               onClick={() => navigate('/')}
               className="hover:text-emerald-600 transition-colors"
@@ -275,15 +275,15 @@ export default function ListingDetails() {
             <span className="text-slate-900 truncate max-w-[150px] md:max-w-[200px]">{listing.title}</span>
           </div>
 
-          {/* ─── TITLE & ACTIONS ─── */}
+          {/* â”€â”€â”€ TITLE & ACTIONS â”€â”€â”€ */}
           <div className="flex flex-col lg:flex-row justify-between items-start gap-8 lg:gap-12 mb-12 lg:mb-16">
             <div className="space-y-4 lg:space-y-6 max-w-4xl">
               <div className="flex flex-wrap gap-2 lg:gap-4 items-center">
-                <div className="px-2 lg:px-3 py-1 bg-slate-950 text-white text-[9px] lg:text-[10px] font-black uppercase tracking-[0.4em] rounded-md">
+                <div className="px-2 lg:px-3 py-1 bg-slate-950 text-white text-[11px] lg:text-[11px] font-black uppercase tracking-[0.4em] rounded-md">
                   {listing.category || 'Estate'}
                 </div>
                 {listing.price > 8000 && (
-                  <div className="flex items-center gap-2 text-amber-600 text-[9px] lg:text-[10px] font-black uppercase tracking-[0.4em]">
+                  <div className="flex items-center gap-2 text-amber-600 text-[11px] lg:text-[11px] font-black uppercase tracking-[0.4em]">
                     <Sparkles size={12} /> Priority Asset
                   </div>
                 )}
@@ -294,13 +294,13 @@ export default function ListingDetails() {
               <div className="flex flex-wrap items-center gap-x-6 lg:gap-x-10 gap-y-4">
                 <div className="flex items-center gap-3 lg:gap-4">
                   <div className="w-10 h-10 lg:w-12 lg:h-12 bg-emerald-50 flex items-center justify-center rounded-xl lg:rounded-2xl border border-emerald-100 font-black text-lg lg:text-xl text-emerald-600">
-                    {avgRating || '—'}
+                    {avgRating || 'â€”'}
                   </div>
                   <div>
-                    <p className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-slate-900">
+                    <p className="text-[11px] lg:text-[11px] font-black uppercase tracking-widest text-slate-900">
                       {avgRating ? (avgRating >= 9 ? 'Exceptional' : avgRating >= 8 ? 'Excellent' : 'Great') : 'New'}
                     </p>
-                    <p className="text-[9px] lg:text-[10px] font-bold text-slate-300 uppercase tracking-widest">
+                    <p className="text-[11px] lg:text-[11px] font-bold text-slate-300 uppercase tracking-widest">
                       {reviews.length} Audits
                     </p>
                   </div>
@@ -317,11 +317,11 @@ export default function ListingDetails() {
                       <MapPin size={18} />
                     </div>
                     <div>
-                      <p className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-slate-900">
+                      <p className="text-[11px] lg:text-[11px] font-black uppercase tracking-widest text-slate-900">
                         {listing.location || 'Kerala'}
                       </p>
-                      <p className="text-[9px] lg:text-[10px] font-bold text-emerald-600 uppercase tracking-widest leading-none mt-0.5 lg:mt-1 hover:underline">
-                        Open Maps ↗
+                      <p className="text-[11px] lg:text-[11px] font-bold text-emerald-600 uppercase tracking-widest leading-none mt-0.5 lg:mt-1 hover:underline">
+                        Open Maps â†—
                       </p>
                     </div>
                   </a>
@@ -331,10 +331,10 @@ export default function ListingDetails() {
                       <MapPin size={18} />
                     </div>
                     <div>
-                      <p className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-slate-900">
+                      <p className="text-[11px] lg:text-[11px] font-black uppercase tracking-widest text-slate-900">
                         {listing.location || 'Kerala'}
                       </p>
-                      <p className="text-[9px] lg:text-[10px] font-bold text-emerald-600 uppercase tracking-widest leading-none mt-0.5 lg:mt-1">
+                      <p className="text-[11px] lg:text-[11px] font-bold text-emerald-600 uppercase tracking-widest leading-none mt-0.5 lg:mt-1">
                         Prime Location
                       </p>
                     </div>
@@ -346,10 +346,10 @@ export default function ListingDetails() {
                     <div className="flex items-center gap-3 bg-emerald-50 px-3 lg:px-4 py-1.5 lg:py-2 rounded-xl border border-emerald-100">
                       <Wifi size={14} className="text-emerald-600" />
                       <div>
-                        <p className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-slate-900">
+                        <p className="text-[11px] lg:text-[11px] font-black uppercase tracking-widest text-slate-900">
                           Verified Wi-Fi
                         </p>
-                        <p className="text-[9px] lg:text-[10px] font-black text-emerald-600 uppercase tracking-widest">
+                        <p className="text-[11px] lg:text-[11px] font-black text-emerald-600 uppercase tracking-widest">
                           {listing.wifiSpeed} MBPS
                         </p>
                       </div>
@@ -362,7 +362,7 @@ export default function ListingDetails() {
             <div className="flex items-center gap-3 lg:gap-4 shrink-0 w-full lg:w-auto">
               <button
                 onClick={toggleWishlist}
-                className={`flex-1 lg:flex-none h-14 lg:h-16 px-6 lg:px-10 rounded-xl lg:rounded-2xl font-black uppercase text-[9px] lg:text-[10px] tracking-[0.4em] transition-all border flex items-center justify-center gap-3 lg:gap-4 ${saved ? 'bg-rose-50 border-rose-100 text-rose-600' : 'bg-white border-slate-100 text-slate-900 hover:border-rose-200'}`}
+                className={`flex-1 lg:flex-none h-14 lg:h-16 px-6 lg:px-10 rounded-xl lg:rounded-2xl font-black uppercase text-[11px] lg:text-[11px] tracking-[0.4em] transition-all border flex items-center justify-center gap-3 lg:gap-4 ${saved ? 'bg-rose-50 border-rose-100 text-rose-600' : 'bg-white border-slate-100 text-slate-900 hover:border-rose-200'}`}
               >
                 <Heart size={18} className={saved ? 'fill-rose-600' : ''} />
                 {saved ? 'Retained' : 'Archive'}
@@ -379,7 +379,7 @@ export default function ListingDetails() {
             </div>
           </div>
 
-          {/* ─── GALLERY GRID ─── */}
+          {/* â”€â”€â”€ GALLERY GRID â”€â”€â”€ */}
           <div className="lg:grid lg:grid-cols-[3fr_2fr] lg:grid-rows-2 gap-2 h-[350px] md:h-[480px] lg:h-[560px] rounded-2xl lg:rounded-3xl overflow-hidden relative mb-12 lg:mb-20">
             {/* Mobile View: Single image carousel simulation */}
             <div
@@ -397,7 +397,7 @@ export default function ListingDetails() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
               {/* Mobile photo count badge */}
-              <div className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-md text-white text-[10px] font-black px-3 py-1.5 rounded-full lg:hidden">
+              <div className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-md text-white text-[11px] font-black px-3 py-1.5 rounded-full lg:hidden">
                 1 / {images.length}
               </div>
             </div>
@@ -436,7 +436,7 @@ export default function ListingDetails() {
                   setGalleryIndex(0);
                   setGalleryOpen(true);
                 }}
-                className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm border border-slate-200 text-slate-900 px-4 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-slate-950 hover:text-white transition-all shadow-md"
+                className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm border border-slate-200 text-slate-900 px-4 py-2.5 rounded-full text-[11px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-slate-950 hover:text-white transition-all shadow-md"
               >
                 <Grid3x3 size={12} />
                 Show all photos ({images.length})
@@ -444,7 +444,7 @@ export default function ListingDetails() {
             </div>
           </div>
 
-          {/* ─── MAIN CONTENT ─── */}
+          {/* â”€â”€â”€ MAIN CONTENT â”€â”€â”€ */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 items-start">
             {/* LEFT: INFORMATION */}
             <div className="lg:col-span-7 space-y-20">
@@ -452,7 +452,7 @@ export default function ListingDetails() {
               <section className="space-y-6 lg:space-y-8">
                 <div className="flex items-center gap-4">
                   <span className="h-px w-8 lg:w-12 bg-emerald-500" />
-                  <span className="text-[9px] lg:text-[10px] font-black uppercase tracking-[0.5em] text-emerald-600">
+                  <span className="text-[11px] lg:text-[11px] font-black uppercase tracking-[0.5em] text-emerald-600">
                     Project Narrative
                   </span>
                 </div>
@@ -461,7 +461,7 @@ export default function ListingDetails() {
                     <h2 className="text-3xl lg:text-4xl font-black text-slate-900 uppercase tracking-tighter leading-none mb-3 lg:mb-4">
                       The Experience.
                     </h2>
-                    <p className="text-slate-400 font-bold uppercase text-[8px] lg:text-[9px] tracking-widest">
+                    <p className="text-slate-400 font-bold uppercase text-[11px] lg:text-[11px] tracking-widest">
                       Curated by Wayzza Network Architecture
                     </p>
                   </div>
@@ -486,7 +486,7 @@ export default function ListingDetails() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <span className="h-px w-12 bg-slate-200" />
-                      <span className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-300">
+                      <span className="text-[11px] font-black uppercase tracking-[0.5em] text-slate-300">
                         Available Utilities
                       </span>
                     </div>
@@ -505,7 +505,7 @@ export default function ListingDetails() {
                             <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-900">
                               {category.label}
                             </h3>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
                               {category.description}
                             </p>
                           </div>
@@ -520,7 +520,7 @@ export default function ListingDetails() {
                                     {a.label}
                                   </span>
                                   {a.id === 'wifi' && listing.wifiSpeed > 0 && (
-                                    <span className="text-[9px] font-bold text-emerald-600 uppercase tracking-widest">
+                                    <span className="text-[11px] font-bold text-emerald-600 uppercase tracking-widest">
                                       Verified {listing.wifiSpeed} Mbps
                                     </span>
                                   )}
@@ -538,7 +538,7 @@ export default function ListingDetails() {
               {/* Variants Detail */}
               {listing.variants?.length > 0 && (
                 <section className="space-y-10">
-                  <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-300">
+                  <h2 className="text-[11px] font-black uppercase tracking-[0.5em] text-slate-300">
                     Accommodation Options
                   </h2>
                   <div className="grid gap-6">
@@ -558,9 +558,9 @@ export default function ListingDetails() {
                         </div>
                         <div className="text-center md:text-right">
                           <p className="text-4xl font-black text-slate-900 tracking-tighter">
-                            ₹{v.price.toLocaleString()}
+                            â‚¹{v.price.toLocaleString()}
                           </p>
-                          <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">
+                          <p className="text-[11px] font-black text-slate-300 uppercase tracking-widest">
                             per cycle
                           </p>
                         </div>
@@ -573,15 +573,15 @@ export default function ListingDetails() {
               {/* Audit (Reviews) */}
               <section className="space-y-12">
                 <header className="flex items-center justify-between">
-                  <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-300">
+                  <h2 className="text-[11px] font-black uppercase tracking-[0.5em] text-slate-300">
                     Guest Audit
                   </h2>
                   <div className="flex items-center gap-4">
                     <span className="text-5xl font-black text-slate-900 tabular-nums">
-                      {avgRating || '—'}
+                      {avgRating || 'â€”'}
                     </span>
                     <div className="h-10 w-px bg-slate-200" />
-                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">
+                    <span className="text-[11px] font-black uppercase tracking-widest text-slate-400">
                       {reviews.length} Audits
                     </span>
                   </div>
@@ -602,7 +602,7 @@ export default function ListingDetails() {
                             <p className="text-sm font-black uppercase tracking-widest text-slate-900">
                               {r.guestEmail?.split('@')[0]}
                             </p>
-                            <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-widest leading-none mt-1">
+                            <p className="text-[11px] text-emerald-600 font-bold uppercase tracking-widest leading-none mt-1">
                               Verified Stay
                             </p>
                           </div>
@@ -636,12 +636,12 @@ export default function ListingDetails() {
             {/* RIGHT: RESERVATION CONSOLE */}
             <div className="lg:col-span-5 relative">
               <div className="sticky top-32 space-y-6">
-                {/* ── White Airbnb-style Booking Card ── */}
+                {/* â”€â”€ White Airbnb-style Booking Card â”€â”€ */}
                 <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-xl shadow-slate-900/8">
                   {/* Price */}
                   <div className="flex items-baseline gap-2 mb-1">
                     <span className="text-4xl font-black text-slate-900 tracking-tight">
-                      ₹{basePrice.toLocaleString()}
+                      â‚¹{basePrice.toLocaleString()}
                     </span>
                     <span className="text-sm text-slate-400 font-medium">/ night</span>
                   </div>
@@ -650,14 +650,14 @@ export default function ListingDetails() {
                   <div className="flex items-center gap-1.5 text-sm text-slate-500 mb-6">
                     <Star size={13} className="fill-amber-400 text-amber-400" />
                     <span>
-                      {avgRating || 'New'} · {reviews.length} review{reviews.length !== 1 ? 's' : ''}{avgRating && avgRating >= 9 ? ' · Exceptional' : ''}
+                      {avgRating || 'New'} Â· {reviews.length} review{reviews.length !== 1 ? 's' : ''}{avgRating && avgRating >= 9 ? ' Â· Exceptional' : ''}
                     </span>
                   </div>
 
                   {/* Dates */}
                   <div className="grid grid-cols-2 border border-slate-200 rounded-xl overflow-hidden mb-3">
                     <div className="p-3 border-r border-slate-200 hover:bg-slate-50 transition-colors cursor-pointer">
-                      <label className="block text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">
+                      <label className="block text-[11px] font-black uppercase tracking-widest text-slate-400 mb-1">
                         Check-in
                       </label>
                       <input
@@ -669,7 +669,7 @@ export default function ListingDetails() {
                       />
                     </div>
                     <div className="p-3 hover:bg-slate-50 transition-colors cursor-pointer">
-                      <label className="block text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">
+                      <label className="block text-[11px] font-black uppercase tracking-widest text-slate-400 mb-1">
                         Check-out
                       </label>
                       <input
@@ -684,7 +684,7 @@ export default function ListingDetails() {
 
                   {/* Guests */}
                   <div className="border border-slate-200 rounded-xl p-3 mb-5 hover:bg-slate-50 transition-colors cursor-pointer">
-                    <label className="block text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">
+                    <label className="block text-[11px] font-black uppercase tracking-widest text-slate-400 mb-1">
                       Guests
                     </label>
                     <span className="text-sm font-semibold text-slate-900">1 guest</span>
@@ -704,23 +704,23 @@ export default function ListingDetails() {
                       <>
                         <div className="flex justify-between text-sm text-slate-600">
                           <span>
-                            ₹{basePrice.toLocaleString()} × {nights} night{nights > 1 ? 's' : ''}
+                            â‚¹{basePrice.toLocaleString()} Ã— {nights} night{nights > 1 ? 's' : ''}
                           </span>
-                          <span>₹{(basePrice * nights).toLocaleString()}</span>
+                          <span>â‚¹{(basePrice * nights).toLocaleString()}</span>
                         </div>
                         {!isVehicle && gst > 0 && (
                           <div className="flex justify-between text-sm text-slate-600">
                             <span>GST ({Math.round(gstRate * 100)}%)</span>
-                            <span>₹{gst.toLocaleString()}</span>
+                            <span>â‚¹{gst.toLocaleString()}</span>
                           </div>
                         )}
                         <div className="flex justify-between text-sm text-slate-600">
                           <span>Wayzza service fee</span>
-                          <span>₹{serviceFee.toLocaleString()}</span>
+                          <span>â‚¹{serviceFee.toLocaleString()}</span>
                         </div>
                         <div className="flex justify-between font-black text-slate-900 pt-3 border-t border-slate-100 text-base">
                           <span>Total</span>
-                          <span>₹{total.toLocaleString()}</span>
+                          <span>â‚¹{total.toLocaleString()}</span>
                         </div>
                       </>
                     ) : (
@@ -740,19 +740,19 @@ export default function ListingDetails() {
                       <div className="w-9 h-9 bg-slate-100 rounded-lg flex items-center justify-center">
                         <Shield size={16} className="text-slate-500" />
                       </div>
-                      <span className="text-[10px] text-slate-400 font-medium">Secure</span>
+                      <span className="text-[11px] text-slate-400 font-medium">Secure</span>
                     </div>
                     <div className="flex flex-col items-center gap-1.5">
                       <div className="w-9 h-9 bg-emerald-50 rounded-lg flex items-center justify-center">
                         <CheckCircle size={16} className="text-emerald-500" />
                       </div>
-                      <span className="text-[10px] text-slate-400 font-medium">Verified</span>
+                      <span className="text-[11px] text-slate-400 font-medium">Verified</span>
                     </div>
                     <div className="flex flex-col items-center gap-1.5">
                       <div className="w-9 h-9 bg-amber-50 rounded-lg flex items-center justify-center">
                         <CreditCard size={16} className="text-amber-500" />
                       </div>
-                      <span className="text-[10px] text-slate-400 font-medium">Razorpay</span>
+                      <span className="text-[11px] text-slate-400 font-medium">Razorpay</span>
                     </div>
                   </div>
                 </div>
@@ -766,7 +766,7 @@ export default function ListingDetails() {
                     <p className="text-sm font-black uppercase tracking-widest text-slate-900">
                       Direct Inquiries
                     </p>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
                       Connect with our Concierge
                     </p>
                   </div>
@@ -777,31 +777,31 @@ export default function ListingDetails() {
           </div>
         </div>
 
-        {/* ─── MOBILE STICKY BOTTOM BAR ─── */}
+        {/* â”€â”€â”€ MOBILE STICKY BOTTOM BAR â”€â”€â”€ */}
         <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 p-4 z-[100] flex items-center justify-between shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
           <div>
             <p className="text-sm font-black text-slate-900">
-              ₹{basePrice.toLocaleString()} <span className="text-slate-400 font-medium">/ night</span>
+              â‚¹{basePrice.toLocaleString()} <span className="text-slate-400 font-medium">/ night</span>
             </p>
             <button
               onClick={() => {
                 const el = document.getElementById('reservation-console');
                 el?.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest"
+              className="text-[11px] font-bold text-emerald-600 uppercase tracking-widest"
             >
               {checkIn && checkOut ? `${nights} nights selected` : 'Select dates'}
             </button>
           </div>
           <button
             onClick={handleReserve}
-            className="px-8 py-4 bg-slate-950 text-white font-black uppercase text-[10px] tracking-[0.2em] rounded-xl shadow-lg active:scale-95"
+            className="px-8 py-4 bg-slate-950 text-white font-black uppercase text-[11px] tracking-[0.2em] rounded-xl shadow-lg active:scale-95"
           >
             Reserve
           </button>
         </div>
 
-        {/* ─── FULLSCREEN GALLERY ─── */}
+        {/* â”€â”€â”€ FULLSCREEN GALLERY â”€â”€â”€ */}
         <AnimatePresence>
           {galleryOpen && (
             <motion.div

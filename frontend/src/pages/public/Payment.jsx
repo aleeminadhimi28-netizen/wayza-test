@@ -1,4 +1,4 @@
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+﻿import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { WayzzaLayout, WayzzaButton } from '../../WayzzaUI.jsx';
 import { useAuth } from '../../AuthContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -89,7 +89,7 @@ export default function Payment() {
             });
 
             if (confirmData.ok) {
-              showToast('Payment confirmed! Your stay is verified. 🌿', 'success');
+              showToast('Payment confirmed! Your stay is verified. ðŸŒ¿', 'success');
               navigate('/payment-success');
             } else {
               showToast(confirmData.message || 'Payment verification failed.', 'error');
@@ -123,9 +123,9 @@ export default function Payment() {
     <WayzzaLayout noPadding>
       <div className="bg-white min-h-screen font-sans">
         <div className="max-w-6xl mx-auto px-6 md:px-12 py-10 md:py-16">
-          {/* ─── HEADER ─── */}
+          {/* â”€â”€â”€ HEADER â”€â”€â”€ */}
           <div className="flex items-center justify-between mb-10">
-            <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-slate-300">
+            <div className="flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.4em] text-slate-300">
               <button
                 onClick={() => navigate('/')}
                 className="hover:text-emerald-600 transition-colors"
@@ -151,7 +151,7 @@ export default function Payment() {
           </p>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-            {/* ── LEFT: PAYMENT FORM ── */}
+            {/* â”€â”€ LEFT: PAYMENT FORM â”€â”€ */}
             <div className="lg:col-span-7 space-y-8">
               {/* Payment Options */}
               <section>
@@ -165,7 +165,7 @@ export default function Payment() {
                     className="w-full h-16 bg-white border border-slate-200 text-slate-900 rounded-xl px-6 flex items-center justify-between font-bold text-sm hover:border-emerald-400 hover:shadow-md transition-all active:scale-[0.99] disabled:opacity-50 group"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-8 h-8 bg-purple-50 text-purple-600 rounded-lg flex items-center justify-center font-black text-[10px]">
+                      <div className="w-8 h-8 bg-purple-50 text-purple-600 rounded-lg flex items-center justify-center font-black text-[11px]">
                         UPI
                       </div>
                       <span>Pay via UPI (GPay, PhonePe, Paytm)</span>
@@ -193,46 +193,46 @@ export default function Payment() {
                     />
                   </button>
                 </div>
-                <p className="flex items-center gap-2 text-[10px] text-slate-400 font-medium mt-6">
+                <p className="flex items-center gap-2 text-[11px] text-slate-400 font-medium mt-6">
                   <Shield size={12} className="text-emerald-500" />
                   Payments are securely processed by Razorpay Checkout.
                 </p>
               </section>
             </div>
 
-            {/* ── RIGHT: ORDER SUMMARY ── */}
+            {/* â”€â”€ RIGHT: ORDER SUMMARY â”€â”€ */}
             <aside className="lg:col-span-5 lg:sticky lg:top-24">
               <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-lg">
                 {/* Property Info */}
                 <div className="p-6 border-b border-slate-100">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">
+                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3">
                     Your Booking
                   </p>
                   <h3 className="text-lg font-black text-slate-900 leading-tight">{title}</h3>
                   <p className="text-sm text-slate-400 mt-1">
-                    {nights} night{nights > 1 ? 's' : ''} · Ref: WZ-
+                    {nights} night{nights > 1 ? 's' : ''} Â· Ref: WZ-
                     {bookingId?.slice(-6).toUpperCase()}
                   </p>
                 </div>
 
                 {/* Price Breakdown */}
                 <div className="p-6 space-y-3">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">
+                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-4">
                     Price Summary
                   </p>
                   <div className="flex justify-between text-sm text-slate-600">
                     <span>{nights} night{nights > 1 ? 's' : ''} (incl. taxes & fees)</span>
-                    <span>₹{price.toLocaleString()}</span>
+                    <span>â‚¹{price.toLocaleString()}</span>
                   </div>
                   {couponCode && (
                     <div className="flex justify-between text-sm text-emerald-600 font-semibold">
                       <span>Promo: {couponCode}</span>
-                      <span>Applied ✓</span>
+                      <span>Applied âœ“</span>
                     </div>
                   )}
                   <div className="flex justify-between font-black text-slate-900 text-base pt-4 border-t border-slate-100">
                     <span>Total</span>
-                    <span>₹{price.toLocaleString()}</span>
+                    <span>â‚¹{price.toLocaleString()}</span>
                   </div>
                 </div>
 

@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+﻿import { motion } from 'framer-motion';
 import { CheckCircle, Clock, Banknote, XCircle } from 'lucide-react';
 import { api } from '../../utils/api.js';
 
@@ -36,11 +36,11 @@ export default function AdminWithdrawals({ withdrawals, setWithdrawals, stats, l
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right border-r border-slate-100 pr-6 hidden md:block">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
                 Platform Earned (10%)
               </p>
               <p className="text-xl font-bold text-emerald-600">
-                ₹{(stats.platformCommission || 0).toLocaleString()}
+                â‚¹{(stats.platformCommission || 0).toLocaleString()}
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -78,13 +78,13 @@ export default function AdminWithdrawals({ withdrawals, setWithdrawals, stats, l
                 <tr key={w._id || i} className="hover:bg-slate-50/50 transition-colors group">
                   <td className="px-6 py-4">
                     <p className="font-semibold text-sm text-slate-900">{w.email}</p>
-                    <p className="text-[10px] font-mono text-slate-400 mt-0.5">
+                    <p className="text-[11px] font-mono text-slate-400 mt-0.5">
                       #{(w._id || '').slice(-8).toUpperCase()}
                     </p>
                   </td>
                   <td className="px-6 py-4">
                     <p className="font-bold text-lg text-slate-900">
-                      ₹{Number(w.amount).toLocaleString()}
+                      â‚¹{Number(w.amount).toLocaleString()}
                     </p>
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-600">
@@ -96,7 +96,7 @@ export default function AdminWithdrawals({ withdrawals, setWithdrawals, stats, l
                   </td>
                   <td className="px-6 py-4">
                     <span
-                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${
+                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider border ${
                         w.status === 'completed'
                           ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
                           : w.status === 'rejected'
@@ -114,7 +114,7 @@ export default function AdminWithdrawals({ withdrawals, setWithdrawals, stats, l
                       {w.status}
                     </span>
                     {w.reason && (
-                      <p className="text-[10px] text-slate-400 mt-1 max-w-[180px] truncate">
+                      <p className="text-[11px] text-slate-400 mt-1 max-w-[180px] truncate">
                         {w.reason}
                       </p>
                     )}

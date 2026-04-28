@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+﻿import { Link } from 'react-router-dom';
 import { useCurrency } from '../../CurrencyContext.jsx';
 import { Wifi } from 'lucide-react';
 
@@ -43,12 +43,12 @@ export function HotelItem({ hotel, isSaved, onToggleWishlist }) {
 
             <div className="absolute top-4 left-4 md:top-6 md:left-6 flex flex-col gap-1.5 md:gap-2">
               {isRare && (
-                <span className="bg-white/95 backdrop-blur-md text-slate-950 text-[8px] md:text-[9px] font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-full uppercase tracking-widest border border-white shadow-md">
+                <span className="bg-white/95 backdrop-blur-md text-slate-950 text-[11px] md:text-[11px] font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-full uppercase tracking-widest border border-white shadow-md">
                   Rare Find
                 </span>
               )}
               {hotel.price > 8000 && (
-                <span className="bg-gradient-to-r from-amber-400 to-orange-400 text-slate-900 text-[8px] md:text-[9px] font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-full uppercase tracking-widest shadow-lg flex items-center gap-1 w-max">
+                <span className="bg-gradient-to-r from-amber-400 to-orange-400 text-slate-900 text-[11px] md:text-[11px] font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-full uppercase tracking-widest shadow-lg flex items-center gap-1 w-max">
                   <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" />
                   </svg>
@@ -56,7 +56,7 @@ export function HotelItem({ hotel, isSaved, onToggleWishlist }) {
                 </span>
               )}
               {!isRare && hotel.price <= 8000 && (
-                <span className="bg-emerald-500 text-white text-[8px] md:text-[9px] font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-full uppercase tracking-widest shadow-lg shadow-emerald-500/10">
+                <span className="bg-emerald-500 text-white text-[11px] md:text-[11px] font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-full uppercase tracking-widest shadow-lg shadow-emerald-500/10">
                   Trending
                 </span>
               )}
@@ -75,13 +75,13 @@ export function HotelItem({ hotel, isSaved, onToggleWishlist }) {
               </div>
             </div>
             <div className="flex justify-between items-center mb-3">
-              <p className="text-slate-400 font-bold text-[9px] md:text-[10px] uppercase tracking-widest truncate pr-2">
+              <p className="text-slate-400 font-bold text-[11px] md:text-[11px] uppercase tracking-widest truncate pr-2">
                 {hotel.location}
               </p>
               {hotel.wifiSpeed > 0 && (
                 <div className="flex items-center gap-1 px-1.5 py-0.5 md:px-2 md:py-1 bg-emerald-50 rounded-lg border border-emerald-100/50 shadow-sm shrink-0">
                   <Wifi size={8} className="text-emerald-500 md:w-[10px] md:h-[10px]" />
-                  <span className="text-[8px] md:text-[9px] font-black text-emerald-600 uppercase tracking-widest">
+                  <span className="text-[11px] md:text-[11px] font-black text-emerald-600 uppercase tracking-widest">
                     {hotel.wifiSpeed} Mbps
                   </span>
                 </div>
@@ -89,14 +89,14 @@ export function HotelItem({ hotel, isSaved, onToggleWishlist }) {
             </div>
             <div className="flex items-baseline gap-1.5 md:gap-2">
               <div className="flex flex-col">
-                <span className="text-[8px] md:text-[9px] font-bold text-slate-300 uppercase tracking-widest">
+                <span className="text-[11px] md:text-[11px] font-bold text-slate-300 uppercase tracking-widest">
                   Starting from
                 </span>
                 <span className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
                   {formatPrice(hotel.price)}
                 </span>
               </div>
-              <span className="text-[10px] md:text-xs font-bold text-slate-300">/ night</span>
+              <span className="text-[11px] md:text-xs font-bold text-slate-300">/ night</span>
             </div>
           </div>
         </div>

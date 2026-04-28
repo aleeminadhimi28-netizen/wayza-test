@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+﻿import { useEffect, useRef, useState } from 'react';
 import { WayzzaLayout, WayzzaHotelItem, WayzzaSkeleton } from '../../WayzzaUI.jsx';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -156,7 +156,7 @@ export default function LandingPage() {
         }}
       />
       <div className="bg-white font-sans text-slate-900 selection:bg-emerald-50 selection:text-emerald-900 leading-relaxed antialiased">
-        {/* ════ SECTION: PREMIUM HERO ════ */}
+        {/* â•â•â•â• SECTION: PREMIUM HERO â•â•â•â• */}
         <header className="relative h-[85vh] min-h-[620px] md:min-h-[700px] flex flex-col items-center justify-center overflow-hidden">
           <div className="absolute inset-0 z-0">
             <motion.div
@@ -200,7 +200,7 @@ export default function LandingPage() {
               <div className="bg-white/90 backdrop-blur-2xl rounded-[32px] md:rounded-[40px] p-2 md:p-3 shadow-[0_40px_100px_rgba(0,0,0,0.15)] border border-white/50 flex flex-col md:flex-row items-center gap-1 md:gap-2">
                 {/* Location */}
                 <div className="flex-[1.5] w-full px-4 md:px-5 lg:px-10 py-3 md:py-4 lg:py-5 rounded-[24px] md:rounded-[32px] hover:bg-slate-50/50 transition-all text-left cursor-pointer group">
-                  <p className="text-[9px] md:text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mb-1 group-hover:text-emerald-600 transition-colors">
+                  <p className="text-[11px] md:text-[11px] uppercase font-black text-slate-400 tracking-[0.2em] mb-1 group-hover:text-emerald-600 transition-colors">
                     Destinations
                   </p>
                   <input
@@ -215,7 +215,7 @@ export default function LandingPage() {
 
                 {/* Check In/Out */}
                 <div className="flex-[1.2] w-full px-4 md:px-5 lg:px-10 py-3 md:py-4 lg:py-5 rounded-[24px] md:rounded-[32px] hover:bg-slate-50/50 transition-all text-left cursor-pointer group">
-                  <p className="text-[9px] md:text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mb-1 group-hover:text-emerald-600 transition-colors">
+                  <p className="text-[11px] md:text-[11px] uppercase font-black text-slate-400 tracking-[0.2em] mb-1 group-hover:text-emerald-600 transition-colors">
                     Timeframe
                   </p>
                   <div className="flex items-center gap-2 md:gap-1 lg:gap-3">
@@ -223,14 +223,14 @@ export default function LandingPage() {
                       type="date"
                       value={checkIn}
                       onChange={(e) => setCheckIn(e.target.value)}
-                      className="bg-transparent border-none outline-none font-bold text-slate-900 text-xs md:text-[10px] lg:text-sm p-0 w-24 md:w-20 lg:w-28 cursor-pointer"
+                      className="bg-transparent border-none outline-none font-bold text-slate-900 text-xs md:text-[11px] lg:text-sm p-0 w-24 md:w-20 lg:w-28 cursor-pointer"
                     />
                     <span className="text-slate-300 hidden md:inline">-</span>
                     <input
                       type="date"
                       value={checkOut}
                       onChange={(e) => setCheckOut(e.target.value)}
-                      className="bg-transparent border-none outline-none font-bold text-slate-900 text-xs md:text-[10px] lg:text-sm p-0 w-24 md:w-20 lg:w-28 cursor-pointer"
+                      className="bg-transparent border-none outline-none font-bold text-slate-900 text-xs md:text-[11px] lg:text-sm p-0 w-24 md:w-20 lg:w-28 cursor-pointer"
                     />
                   </div>
                 </div>
@@ -239,7 +239,7 @@ export default function LandingPage() {
 
                 {/* Guests */}
                 <div className="flex-[0.8] w-full px-4 md:px-5 lg:px-10 py-3 md:py-4 lg:py-5 rounded-[24px] md:rounded-[32px] hover:bg-slate-50/50 transition-all text-left cursor-pointer group">
-                  <p className="text-[9px] md:text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mb-1 group-hover:text-emerald-600 transition-colors">
+                  <p className="text-[11px] md:text-[11px] uppercase font-black text-slate-400 tracking-[0.2em] mb-1 group-hover:text-emerald-600 transition-colors">
                     Guests
                   </p>
                   <div className="flex items-center gap-2">
@@ -269,7 +269,7 @@ export default function LandingPage() {
                     strokeWidth={3}
                     className="transition-transform group-hover:rotate-12 lg:hidden"
                   />
-                  <span className="font-black uppercase tracking-[0.3em] text-[10px] md:text-[9px] lg:text-[11px]">Explore</span>
+                  <span className="font-black uppercase tracking-[0.3em] text-[11px] md:text-[11px] lg:text-[11px]">Explore</span>
                 </button>
               </div>
             </motion.div>
@@ -287,12 +287,12 @@ export default function LandingPage() {
         </header>
 
 
-        {/* ════ MOBILE-LIKE PROMO + DESTINATIONS ════ */}
+        {/* â•â•â•â• MOBILE-LIKE PROMO + DESTINATIONS â•â•â•â• */}
         <section ref={moreListingsRef} className="px-6 max-w-7xl mx-auto space-y-8 pb-10">
           <div className="bg-white rounded-[32px] border border-slate-200 shadow-sm overflow-hidden">
             <div className="flex flex-col sm:flex-row items-stretch gap-4 p-5">
               <div className="flex-1 min-w-0">
-                <p className="text-emerald-500 uppercase tracking-[0.35em] text-[10px] font-black mb-3">
+                <p className="text-emerald-500 uppercase tracking-[0.35em] text-[11px] font-black mb-3">
                   {PROMO_OFFER.title}
                 </p>
                 <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-950 mb-3">
@@ -434,13 +434,13 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ════ DESTINATIONS MASONRY ════ */}
+        {/* â•â•â•â• DESTINATIONS MASONRY â•â•â•â• */}
         <section className="py-32 bg-slate-50 px-6 relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-white to-transparent" />
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-col md:flex-row items-end justify-between gap-10 mb-20">
               <div className="space-y-4">
-                <p className="text-emerald-500 font-black uppercase tracking-[0.4em] text-[10px]">
+                <p className="text-emerald-500 font-black uppercase tracking-[0.4em] text-[11px]">
                   Territories
                 </p>
                 <h2 className="text-4xl md:text-6xl font-bold tracking-tighter text-slate-900">
@@ -474,7 +474,7 @@ export default function LandingPage() {
 
                   <div className="absolute bottom-12 left-12 right-12 flex justify-between items-end">
                     <div className="space-y-2">
-                      <p className="text-[10px] uppercase font-black tracking-[0.3em] text-emerald-400">
+                      <p className="text-[11px] uppercase font-black tracking-[0.3em] text-emerald-400">
                         {d.properties}
                       </p>
                       <h3 className="font-bold text-4xl text-white tracking-tight">{d.name}</h3>
@@ -492,7 +492,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ════ TRUST STRIP ════ */}
+        {/* â•â•â•â• TRUST STRIP â•â•â•â• */}
         <section className="py-32 px-6 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
@@ -537,7 +537,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ════ SECTION: AI TRIP PLANNER ════ */}
+        {/* â•â•â•â• SECTION: AI TRIP PLANNER â•â•â•â• */}
         <section className="py-24 px-4 sm:px-6 lg:px-8 bg-[#06110d] text-white overflow-hidden relative">
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-[-20%] left-[5%] w-[45%] h-[65%] bg-emerald-500/10 blur-[130px] rounded-full" />
@@ -614,20 +614,20 @@ export default function LandingPage() {
                         Example prompt
                       </p>
                       <p className="leading-7 text-slate-200">
-                        I want a quiet clifftop villa in Varkala for 3 nights, with a motorbike and tips for hidden cafes. Budget around ₹15,000/night.
+                        I want a quiet clifftop villa in Varkala for 3 nights, with a motorbike and tips for hidden cafes. Budget around â‚¹15,000/night.
                       </p>
                     </div>
 
                     <div className="grid gap-4 sm:grid-cols-3">
                       {[
-                        { emoji: '🏡', title: 'Sea Cliff Retreat', detail: '₹12,500 / night' },
-                        { emoji: '🏍️', title: 'Royal Enfield 350', detail: '₹850 / day' },
-                        { emoji: '☕', title: 'Secret Café Trail', detail: '6 stops' },
+                        { emoji: 'ðŸ¡', title: 'Sea Cliff Retreat', detail: 'â‚¹12,500 / night' },
+                        { emoji: 'ðŸï¸', title: 'Royal Enfield 350', detail: 'â‚¹850 / day' },
+                        { emoji: 'â˜•', title: 'Secret CafÃ© Trail', detail: '6 stops' },
                       ].map((item) => (
                         <div key={item.title} className="rounded-3xl border border-white/10 bg-white/5 p-4">
                           <div className="flex items-center justify-between gap-3 text-sm text-slate-300">
                             <span>{item.emoji}</span>
-                            <span className="rounded-full bg-emerald-500/15 px-2 py-1 text-[10px] uppercase tracking-[0.35em] text-emerald-300">
+                            <span className="rounded-full bg-emerald-500/15 px-2 py-1 text-[11px] uppercase tracking-[0.35em] text-emerald-300">
                               Live
                             </span>
                           </div>
@@ -650,7 +650,7 @@ export default function LandingPage() {
 
                 <div className="mt-6 rounded-[32px] border border-white/10 bg-white/5 p-5">
                   <div className="flex flex-wrap gap-2">
-                    {['Beachfront villa', 'Budget under ₹5k', 'Couples getaway', 'Solo adventure'].map((label) => (
+                    {['Beachfront villa', 'Budget under â‚¹5k', 'Couples getaway', 'Solo adventure'].map((label) => (
                       <span key={label} className="rounded-full border border-white/10 bg-slate-950/50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-slate-200">
                         {label}
                       </span>
@@ -696,7 +696,7 @@ export default function LandingPage() {
                 {/* Premium Newsletter invitation */}
                 <div className="p-8 bg-white/5 backdrop-blur-xl border border-white/10 rounded-[32px] space-y-6 max-w-md group hover:border-emerald-500/30 transition-all duration-500">
                   <div className="space-y-2">
-                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400">
+                    <p className="text-[11px] font-black uppercase tracking-[0.3em] text-emerald-400">
                       The Insider List
                     </p>
                     <h4 className="text-xl font-bold text-white">Join the Wayzza circle.</h4>
@@ -717,7 +717,7 @@ export default function LandingPage() {
                       <Send size={18} strokeWidth={3} />
                     </button>
                   </form>
-                  <p className="text-[10px] text-white/20 font-medium">
+                  <p className="text-[11px] text-white/20 font-medium">
                     Monthly sanctuaries. Zero spam. Private access.
                   </p>
                 </div>
@@ -726,7 +726,7 @@ export default function LandingPage() {
               {/* Links Grid */}
               <div className="md:col-span-7 grid grid-cols-2 md:grid-cols-3 gap-12">
                 <div className="space-y-8">
-                  <h5 className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20">
+                  <h5 className="text-[11px] font-black uppercase tracking-[0.4em] text-white/20">
                     Platform
                   </h5>
                   <ul className="space-y-4">
@@ -743,7 +743,7 @@ export default function LandingPage() {
                   </ul>
                 </div>
                 <div className="space-y-8">
-                  <h5 className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20">
+                  <h5 className="text-[11px] font-black uppercase tracking-[0.4em] text-white/20">
                     Company
                   </h5>
                   <ul className="space-y-4">
@@ -760,7 +760,7 @@ export default function LandingPage() {
                   </ul>
                 </div>
                 <div className="space-y-8">
-                  <h5 className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20">
+                  <h5 className="text-[11px] font-black uppercase tracking-[0.4em] text-white/20">
                     Connect
                   </h5>
                   <div className="flex gap-4">
@@ -775,7 +775,7 @@ export default function LandingPage() {
                     ))}
                   </div>
                   <div className="space-y-2">
-                    <p className="text-[10px] text-white/20 font-black uppercase tracking-widest">
+                    <p className="text-[11px] text-white/20 font-black uppercase tracking-widest">
                       General Enquiries
                     </p>
                     <a
@@ -791,8 +791,8 @@ export default function LandingPage() {
 
             {/* Bottom Bar */}
             <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-10">
-              <div className="flex flex-wrap justify-center gap-8 text-[10px] font-black uppercase tracking-[0.3em] text-white/20">
-                <span>Wayzza © 2026</span>
+              <div className="flex flex-wrap justify-center gap-8 text-[11px] font-black uppercase tracking-[0.3em] text-white/20">
+                <span>Wayzza Â© 2026</span>
                 <Link to="/privacy" className="hover:text-white transition-colors">
                   Privacy
                 </Link>
@@ -806,11 +806,11 @@ export default function LandingPage() {
                   whileHover={{ scale: 1.05 }}
                   className="px-6 py-3 bg-white/[0.03] border border-white/5 rounded-full flex items-center gap-3"
                 >
-                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40">
-                    Made with <span className="text-rose-500 animate-pulse">❤️</span> in Varkala
+                  <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/40">
+                    Made with <span className="text-rose-500 animate-pulse">â¤ï¸</span> in Varkala
                   </span>
                 </motion.div>
-                <div className="hidden md:flex items-center gap-4 text-white/20 text-[10px] font-black uppercase tracking-widest">
+                <div className="hidden md:flex items-center gap-4 text-white/20 text-[11px] font-black uppercase tracking-widest">
                   <Globe size={14} className="text-emerald-500/50" />
                   <span>Global Gateway</span>
                 </div>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
 import { useAuth } from '../../AuthContext.jsx';
@@ -147,7 +147,7 @@ export default function MyBookings() {
                 <div class="invoice-meta"><div class="invoice-id">INVOICE #${invoiceId}</div><div class="invoice-date">${invoiceDate}</div></div>
             </div>
             <h2>${b.title}</h2>
-            <p class="subtitle">Booking Confirmed &nbsp;•&nbsp; Paid via Wayzza Secure Checkout</p>
+            <p class="subtitle">Booking Confirmed &nbsp;â€¢&nbsp; Paid via Wayzza Secure Checkout</p>
             <div class="details-grid">
                 <div class="detail-item"><div class="label">Guest</div><div class="value">${b.guestEmail}</div></div>
                 <div class="detail-item"><div class="label">Booking ID</div><div class="value">${invoiceId}</div></div>
@@ -159,16 +159,16 @@ export default function MyBookings() {
             <table>
                 <thead><tr><th>Description</th><th>Amount</th></tr></thead>
                 <tbody>
-                    <tr><td>Accommodation (₹${(b.pricePerNight || 0).toLocaleString()} × ${b.nights} night${b.nights !== 1 ? 's' : ''})</td><td>₹${baseAmount.toLocaleString()}</td></tr>
-                    <tr><td>GST${gst === 0 ? ' (Waived for Vehicles)' : ' @ 12%'}</td><td>${gst === 0 ? '<span style="color:#059669;font-weight:700;">Waived</span>' : `₹${gst.toLocaleString()}`}</td></tr>
-                    <tr><td>Service & Platform Fee</td><td>₹${serviceFee.toLocaleString()}</td></tr>
-                    <tr class="total-row"><td>Total Paid</td><td>₹${(b.totalPrice || 0).toLocaleString()}</td></tr>
+                    <tr><td>Accommodation (â‚¹${(b.pricePerNight || 0).toLocaleString()} Ã— ${b.nights} night${b.nights !== 1 ? 's' : ''})</td><td>â‚¹${baseAmount.toLocaleString()}</td></tr>
+                    <tr><td>GST${gst === 0 ? ' (Waived for Vehicles)' : ' @ 12%'}</td><td>${gst === 0 ? '<span style="color:#059669;font-weight:700;">Waived</span>' : `â‚¹${gst.toLocaleString()}`}</td></tr>
+                    <tr><td>Service & Platform Fee</td><td>â‚¹${serviceFee.toLocaleString()}</td></tr>
+                    <tr class="total-row"><td>Total Paid</td><td>â‚¹${(b.totalPrice || 0).toLocaleString()}</td></tr>
                 </tbody>
             </table>
-            <div class="badge">✓ Payment Confirmed</div>
+            <div class="badge">âœ“ Payment Confirmed</div>
             <div class="footer">
                 <div class="footer-note">Thank you for staying with Wayzza.<br>For support: support@wayzza.com</div>
-                <div class="footer-note">© ${new Date().getFullYear()} Wayzza Inc.</div>
+                <div class="footer-note">Â© ${new Date().getFullYear()} Wayzza Inc.</div>
             </div>
         </div></body></html>`;
     const w = window.open('', '_blank', 'width=780,height=900');
@@ -229,7 +229,7 @@ export default function MyBookings() {
               <h1 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight uppercase">
                 My Bookings
               </h1>
-              <p className="text-slate-400 font-bold uppercase text-[10px] md:text-xs tracking-widest">
+              <p className="text-slate-400 font-bold uppercase text-[11px] md:text-xs tracking-widest">
                 Manage your stays and travel history with Wayzza.
               </p>
             </div>
@@ -239,7 +239,7 @@ export default function MyBookings() {
                 <button
                   key={tab.key}
                   onClick={() => setFilterStatus(tab.key)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all whitespace-nowrap ${
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-[11px] uppercase tracking-wider transition-all whitespace-nowrap ${
                     filterStatus === tab.key
                       ? 'bg-white text-slate-900 shadow-sm border border-slate-100'
                       : 'text-slate-400 hover:text-slate-600'
@@ -276,7 +276,7 @@ export default function MyBookings() {
                 </div>
                 <Link
                   to="/listings"
-                  className="h-12 px-8 bg-slate-900 text-white rounded-xl font-bold uppercase text-[10px] tracking-widest hover:bg-emerald-600 transition-all flex items-center gap-2 mt-4"
+                  className="h-12 px-8 bg-slate-900 text-white rounded-xl font-bold uppercase text-[11px] tracking-widest hover:bg-emerald-600 transition-all flex items-center gap-2 mt-4"
                 >
                   Discover Stays <ArrowRight size={14} />
                 </Link>
@@ -288,7 +288,7 @@ export default function MyBookings() {
                 animate={{ opacity: 1 }}
                 className="py-24 text-center"
               >
-                <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest">
+                <p className="text-slate-400 font-bold uppercase text-[11px] tracking-widest">
                   No matching bookings found
                 </p>
               </motion.div>
@@ -311,11 +311,11 @@ export default function MyBookings() {
                       <div className="flex-1 space-y-6">
                         <div className="flex flex-wrap items-center gap-3">
                           <span
-                            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-bold text-[9px] uppercase tracking-wider ${cfg.bg} ${cfg.color} border ${cfg.border}`}
+                            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-bold text-[11px] uppercase tracking-wider ${cfg.bg} ${cfg.color} border ${cfg.border}`}
                           >
                             <cfg.icon size={12} strokeWidth={2.5} /> {cfg.label}
                           </span>
-                          <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">
+                          <span className="text-[11px] font-bold text-slate-300 uppercase tracking-widest">
                             ID: {b._id?.slice(-8).toUpperCase()}
                           </span>
                         </div>
@@ -325,12 +325,12 @@ export default function MyBookings() {
                             {b.title}
                           </h3>
                           <div className="flex flex-wrap gap-2 md:gap-4">
-                            <div className="bg-slate-50 px-3 md:px-4 py-1.5 md:py-2 rounded-xl flex items-center gap-2 md:gap-3 text-slate-600 text-[10px] md:text-xs font-bold uppercase">
+                            <div className="bg-slate-50 px-3 md:px-4 py-1.5 md:py-2 rounded-xl flex items-center gap-2 md:gap-3 text-slate-600 text-[11px] md:text-xs font-bold uppercase">
                               <CalendarCheck size={14} className="text-emerald-500" />
-                              {start} — {end}
+                              {start} â€” {end}
                             </div>
                             {b.variantName && (
-                              <div className="bg-white border border-slate-100 px-4 py-2 rounded-xl text-slate-500 text-[10px] font-bold uppercase tracking-wider">
+                              <div className="bg-white border border-slate-100 px-4 py-2 rounded-xl text-slate-500 text-[11px] font-bold uppercase tracking-wider">
                                 {b.variantName}
                               </div>
                             )}
@@ -340,11 +340,11 @@ export default function MyBookings() {
 
                       <div className="flex flex-col lg:items-end justify-between gap-6 border-t lg:border-t-0 lg:border-l border-slate-50 pt-6 lg:pt-0 lg:pl-8 lg:min-w-[240px]">
                         <div className="lg:text-right space-y-0.5">
-                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
                             Total amount
                           </span>
                           <p className="text-2xl font-bold text-slate-900">
-                            ₹{(b.totalPrice || 0).toLocaleString()}
+                            â‚¹{(b.totalPrice || 0).toLocaleString()}
                           </p>
                         </div>
 
@@ -354,21 +354,21 @@ export default function MyBookings() {
                               {b.status === 'paid' && (
                                 <button
                                   onClick={() => setPassportModal(b)}
-                                  className="h-12 w-full bg-emerald-600 text-white rounded-xl font-bold uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 hover:bg-slate-900 transition-all active:scale-95 shadow-md"
+                                  className="h-12 w-full bg-emerald-600 text-white rounded-xl font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-2 hover:bg-slate-900 transition-all active:scale-95 shadow-md"
                                 >
                                   <QrCode size={16} /> QR Passport
                                 </button>
                               )}
                               <button
                                 onClick={() => navigate('/guest-chat')}
-                                className="h-11 w-full text-slate-400 hover:text-emerald-600 font-bold uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 transition-all"
+                                className="h-11 w-full text-slate-400 hover:text-emerald-600 font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-2 transition-all"
                               >
                                 <MessageCircle size={16} /> Chat with host
                               </button>
                               <button
                                 onClick={() => cancelBooking(b._id)}
                                 disabled={cancellingId === b._id}
-                                className="h-10 w-full text-slate-300 hover:text-rose-500 font-bold uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                                className="h-10 w-full text-slate-300 hover:text-rose-500 font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-2 transition-all disabled:opacity-50"
                               >
                                 {cancellingId === b._id ? (
                                   <Loader2 className="w-3 h-3 animate-spin" />
@@ -384,14 +384,14 @@ export default function MyBookings() {
                             <>
                               <button
                                 onClick={() => downloadInvoice(b)}
-                                className="h-10 w-full border border-slate-100 text-slate-600 hover:bg-slate-50 rounded-xl font-bold uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 transition-all"
+                                className="h-10 w-full border border-slate-100 text-slate-600 hover:bg-slate-50 rounded-xl font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-2 transition-all"
                               >
                                 <FileText size={14} /> Download invoice
                               </button>
                               {!isFuture && (
                                 <button
                                   onClick={() => setReviewModal(b)}
-                                  className="h-10 w-full border border-amber-100 text-amber-700 bg-amber-50 rounded-xl font-bold uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 hover:bg-amber-500 hover:text-white transition-all mt-1"
+                                  className="h-10 w-full border border-amber-100 text-amber-700 bg-amber-50 rounded-xl font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-2 hover:bg-amber-500 hover:text-white transition-all mt-1"
                                 >
                                   <Star size={14} /> Leave review
                                 </button>
@@ -400,7 +400,7 @@ export default function MyBookings() {
                           )}
 
                           {b.status === 'cancelled' && (
-                            <div className="h-12 flex items-center justify-center gap-2 font-bold text-[10px] uppercase tracking-widest text-rose-500 bg-rose-50 rounded-xl border border-rose-100">
+                            <div className="h-12 flex items-center justify-center gap-2 font-bold text-[11px] uppercase tracking-widest text-rose-500 bg-rose-50 rounded-xl border border-rose-100">
                               <AlertCircle size={14} /> Reservation cancelled
                             </div>
                           )}
@@ -408,7 +408,7 @@ export default function MyBookings() {
                           {!isFuture && b.status !== 'cancelled' && (
                             <button
                               onClick={() => navigate(`/listing/${b.listingId}`)}
-                              className="h-12 w-full bg-slate-50 text-slate-600 rounded-xl font-bold uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 hover:bg-slate-900 hover:text-white transition-all shadow-sm"
+                              className="h-12 w-full bg-slate-50 text-slate-600 rounded-xl font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-2 hover:bg-slate-900 hover:text-white transition-all shadow-sm"
                             >
                               <History size={16} /> Rebook stay
                             </button>
@@ -470,7 +470,7 @@ export default function MyBookings() {
                   ))}
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
+                  <label className="text-[11px] font-bold uppercase tracking-widest text-slate-400 ml-1">
                     Your feedback (Optional)
                   </label>
                   <textarea
@@ -484,7 +484,7 @@ export default function MyBookings() {
                 <button
                   onClick={submitReview}
                   disabled={submittingReview}
-                  className="w-full h-14 bg-slate-900 hover:bg-amber-500 text-white rounded-xl font-bold uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 transition-all shadow-xl active:scale-95 disabled:opacity-50"
+                  className="w-full h-14 bg-slate-900 hover:bg-amber-500 text-white rounded-xl font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-2 transition-all shadow-xl active:scale-95 disabled:opacity-50"
                 >
                   {submittingReview ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -520,10 +520,10 @@ export default function MyBookings() {
 
               <div className="flex flex-col items-center space-y-6">
                 <div className="space-y-1">
-                  <p className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-600">
+                  <p className="text-[11px] font-black uppercase tracking-[0.4em] text-emerald-600">
                     Verification Passport
                   </p>
-                  <h3 className="text-xl font-black text-slate-900 uppercase">Neural Handshake</h3>
+                  <h3 className="text-xl font-black text-slate-900 uppercase">Check-in QR Code</h3>
                 </div>
 
                 <div className="p-4 bg-slate-50 border-2 border-emerald-100 rounded-[32px] shadow-inner relative group">
@@ -548,7 +548,7 @@ export default function MyBookings() {
 
                 <div className="space-y-4 w-full">
                   <div className="space-y-1">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
                       Manual Passcode
                     </p>
                     <div className="flex justify-center gap-2">
@@ -567,7 +567,7 @@ export default function MyBookings() {
                     <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shrink-0 text-emerald-600 shadow-sm">
                       <Scan size={16} />
                     </div>
-                    <p className="text-[10px] font-bold text-emerald-800 leading-relaxed uppercase tracking-wider">
+                    <p className="text-[11px] font-bold text-emerald-800 leading-relaxed uppercase tracking-wider">
                       Present this QR to the property staff at check-in. This protocol verifies your
                       neural identity and activates your stay.
                     </p>

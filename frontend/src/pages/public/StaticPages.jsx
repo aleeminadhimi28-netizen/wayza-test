@@ -1,4 +1,4 @@
-import { WayzzaLayout } from '../../WayzzaUI.jsx';
+﻿import { WayzzaLayout } from '../../WayzzaUI.jsx';
 import { motion } from 'framer-motion';
 import {
   Shield,
@@ -34,7 +34,7 @@ export default function StaticPage({ title, children, icon }) {
               <motion.span
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-emerald-600 font-bold text-[9px] md:text-[10px] uppercase tracking-[0.3em] block"
+                className="text-emerald-600 font-bold text-[11px] md:text-[11px] uppercase tracking-[0.3em] block"
               >
                 Information & Transparency
               </motion.span>
@@ -71,7 +71,7 @@ export default function StaticPage({ title, children, icon }) {
                   size={24}
                   className="text-emerald-600 group-hover:scale-110 transition-transform"
                 />
-                <span className="text-[9px] font-bold uppercase tracking-widest text-slate-900">
+                <span className="text-[11px] font-bold uppercase tracking-widest text-slate-900">
                   Secure
                 </span>
               </div>
@@ -80,7 +80,7 @@ export default function StaticPage({ title, children, icon }) {
                   size={24}
                   className="text-emerald-600 group-hover:scale-110 transition-transform"
                 />
-                <span className="text-[9px] font-bold uppercase tracking-widest text-slate-900">
+                <span className="text-[11px] font-bold uppercase tracking-widest text-slate-900">
                   Verified
                 </span>
               </div>
@@ -89,7 +89,7 @@ export default function StaticPage({ title, children, icon }) {
                   size={24}
                   className="text-emerald-600 group-hover:scale-110 transition-transform"
                 />
-                <span className="text-[9px] font-bold uppercase tracking-widest text-slate-900">
+                <span className="text-[11px] font-bold uppercase tracking-widest text-slate-900">
                   Global
                 </span>
               </div>
@@ -203,7 +203,7 @@ export function AboutUs() {
   return (
     <WayzzaLayout noPadding>
       <div className="bg-white font-sans text-slate-900 selection:bg-emerald-50 leading-relaxed antialiased overflow-hidden">
-        {/* ════ SECTION: CINEMATIC HERO ════ */}
+        {/* â•â•â•â• SECTION: CINEMATIC HERO â•â•â•â• */}
         <header className="relative h-[60vh] md:h-[70vh] min-h-[500px] md:min-h-[600px] flex items-center justify-center overflow-hidden bg-slate-950">
           <div className="absolute inset-0 z-0">
             <motion.div
@@ -225,7 +225,7 @@ export function AboutUs() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-500/10 backdrop-blur-md border border-emerald-500/20 rounded-full text-emerald-400 text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em]"
+              className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-500/10 backdrop-blur-md border border-emerald-500/20 rounded-full text-emerald-400 text-[11px] md:text-[11px] font-black uppercase tracking-[0.3em]"
             >
               <Compass size={12} /> The Wayzza Manifesto
             </motion.div>
@@ -254,7 +254,7 @@ export function AboutUs() {
           </div>
         </header>
 
-        {/* ════ SECTION: OUR MISSION (SPLIT) ════ */}
+        {/* â•â•â•â• SECTION: OUR MISSION (SPLIT) â•â•â•â• */}
         <section className="py-20 md:py-32 px-6 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-20 items-center">
             <motion.div
@@ -264,7 +264,7 @@ export function AboutUs() {
               className="space-y-6 md:space-y-8"
             >
               <div className="space-y-3 md:space-y-4">
-                <span className="text-emerald-500 font-black uppercase tracking-[0.4em] text-[10px]">
+                <span className="text-emerald-500 font-black uppercase tracking-[0.4em] text-[11px]">
                   The Mission
                 </span>
                 <h2 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 leading-[1.1] uppercase">
@@ -274,7 +274,7 @@ export function AboutUs() {
               </div>
               <p className="text-slate-500 text-base md:text-lg leading-relaxed font-medium">
                 We realized that the biggest problem for digital nomads and luxury travelers wasn't
-                finding a place to stay—it was finding a place they could trust.
+                finding a place to stayâ€”it was finding a place they could trust.
               </p>
               <p className="text-slate-500 text-base md:text-lg leading-relaxed font-medium">
                 Wayzza was founded to bridge that gap. We personally verify every clifftop villa,
@@ -284,13 +284,13 @@ export function AboutUs() {
               <div className="flex gap-10 pt-4 md:pt-6">
                 <div>
                   <p className="text-2xl md:text-3xl font-black text-slate-900">100%</p>
-                  <p className="text-[9px] md:text-[10px] text-slate-400 uppercase font-black tracking-widest mt-1">
+                  <p className="text-[11px] md:text-[11px] text-slate-400 uppercase font-black tracking-widest mt-1">
                     Verified Stays
                   </p>
                 </div>
                 <div>
                   <p className="text-2xl md:text-3xl font-black text-slate-900">24/7</p>
-                  <p className="text-[9px] md:text-[10px] text-slate-400 uppercase font-black tracking-widest mt-1">
+                  <p className="text-[11px] md:text-[11px] text-slate-400 uppercase font-black tracking-widest mt-1">
                     Nomad Support
                   </p>
                 </div>
@@ -313,12 +313,12 @@ export function AboutUs() {
           </div>
         </section>
 
-        {/* ════ SECTION: CORE VALUES (CARDS) ════ */}
+        {/* â•â•â•â• SECTION: CORE VALUES (CARDS) â•â•â•â• */}
         <section className="py-20 md:py-32 bg-slate-50 px-6 relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-white to-transparent" />
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16 md:mb-20 space-y-3 md:space-y-4">
-              <span className="text-emerald-500 font-black uppercase tracking-[0.4em] text-[10px]">
+              <span className="text-emerald-500 font-black uppercase tracking-[0.4em] text-[11px]">
                 The Wayzza Code
               </span>
               <h2 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 uppercase">
@@ -366,14 +366,14 @@ export function AboutUs() {
                   <h3 className="text-lg md:text-xl font-black text-slate-900 mb-3 md:mb-4 tracking-tight uppercase">
                     {v.title}
                   </h3>
-                  <p className="text-slate-400 font-bold uppercase text-[9px] md:text-xs leading-relaxed">{v.desc}</p>
+                  <p className="text-slate-400 font-bold uppercase text-[11px] md:text-xs leading-relaxed">{v.desc}</p>
                 </motion.div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ════ SECTION: FINAL CTA ════ */}
+        {/* â•â•â•â• SECTION: FINAL CTA â•â•â•â• */}
         <section className="py-24 md:py-40 px-6 text-center bg-white">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}

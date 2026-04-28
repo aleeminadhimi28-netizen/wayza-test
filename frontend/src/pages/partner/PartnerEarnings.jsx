@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useAuth } from '../../AuthContext.jsx';
 import { motion } from 'framer-motion';
 import {
@@ -58,28 +58,28 @@ export default function PartnerEarnings() {
   const kpis = [
     {
       label: 'Available to Withdraw',
-      value: '₹' + (earnings?.availableBalance || 0).toLocaleString(),
+      value: 'â‚¹' + (earnings?.availableBalance || 0).toLocaleString(),
       icon: CheckCircle,
       bg: 'bg-emerald-50',
       color: 'text-emerald-600',
     },
     {
       label: 'Pending Settlement',
-      value: '₹' + (earnings?.pendingBalance || 0).toLocaleString(),
+      value: 'â‚¹' + (earnings?.pendingBalance || 0).toLocaleString(),
       icon: Clock,
       bg: 'bg-amber-50',
       color: 'text-amber-600',
     },
     {
       label: 'Already Paid',
-      value: '₹' + (earnings?.alreadyPaid || 0).toLocaleString(),
+      value: 'â‚¹' + (earnings?.alreadyPaid || 0).toLocaleString(),
       icon: Shield,
       bg: 'bg-blue-50',
       color: 'text-blue-600',
     },
     {
       label: 'Total Revenue',
-      value: '₹' + (earnings?.totalRevenue || 0).toLocaleString(),
+      value: 'â‚¹' + (earnings?.totalRevenue || 0).toLocaleString(),
       icon: TrendingUp,
       bg: 'bg-slate-50',
       color: 'text-slate-600',
@@ -215,10 +215,10 @@ export default function PartnerEarnings() {
                 <tr key={i} className="hover:bg-slate-50/50 transition-colors">
                   <td className="px-6 py-4 font-semibold text-sm text-slate-900">{m.month}</td>
                   <td className="px-6 py-4 text-sm text-slate-700">
-                    ₹{(m.revenue || 0).toLocaleString()}
+                    â‚¹{(m.revenue || 0).toLocaleString()}
                   </td>
                   <td className="px-6 py-4 text-right font-bold text-sm text-emerald-600">
-                    ₹{Math.round((m.revenue || 0) * 0.9).toLocaleString()}
+                    â‚¹{Math.round((m.revenue || 0) * 0.9).toLocaleString()}
                   </td>
                 </tr>
               ))}
@@ -234,7 +234,7 @@ export default function PartnerEarnings() {
             <h3 className="text-lg font-bold text-slate-900">Settlement Ledger</h3>
             <p className="text-xs text-slate-500">Detailed breakdown of individual stay payouts.</p>
           </div>
-          <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-100 uppercase tracking-widest leading-none flex items-center gap-1.5 shadow-sm">
+          <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-100 uppercase tracking-widest leading-none flex items-center gap-1.5 shadow-sm">
             <CheckCircle size={10} /> Merchant Sync Active
           </span>
         </div>
@@ -265,18 +265,18 @@ export default function PartnerEarnings() {
                       <p className="font-semibold text-sm text-slate-900 truncate max-w-[200px]">
                         {b.title}
                       </p>
-                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">
+                      <p className="text-[11px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">
                         #{b._id.slice(-8).toUpperCase()}
                       </p>
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-xs font-medium text-slate-600">
-                        {b.checkIn} → {b.checkOut}
+                        {b.checkIn} â†’ {b.checkOut}
                       </span>
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${
+                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider border ${
                           b.payoutStatus === 'paid_out'
                             ? 'bg-blue-50 text-blue-700 border-blue-100'
                             : new Date(b.checkIn) <= new Date()
@@ -293,7 +293,7 @@ export default function PartnerEarnings() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <p className="font-bold text-sm text-slate-900">
-                        ₹{Math.round(b.netEarnings || b.totalPrice * 0.9).toLocaleString()}
+                        â‚¹{Math.round(b.netEarnings || b.totalPrice * 0.9).toLocaleString()}
                       </p>
                     </td>
                   </tr>

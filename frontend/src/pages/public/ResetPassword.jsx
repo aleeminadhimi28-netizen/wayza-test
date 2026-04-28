@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -39,13 +39,13 @@ export default function ResetPassword() {
             <h2 className="text-3xl font-bold text-slate-900 uppercase tracking-tight">
               Link Expired.
             </h2>
-            <p className="text-slate-400 font-bold uppercase text-[9px] tracking-widest">
+            <p className="text-slate-400 font-bold uppercase text-[11px] tracking-widest">
               The reset link is missing or has expired.
             </p>
           </div>
           <button
             onClick={() => navigate('/forgot-password')}
-            className="w-full h-18 bg-slate-900 text-white rounded-2xl font-bold uppercase text-[10px] tracking-widest hover:bg-emerald-600 transition-all flex items-center justify-center gap-3 shadow-xl active:scale-95"
+            className="w-full h-18 bg-slate-900 text-white rounded-2xl font-bold uppercase text-[11px] tracking-widest hover:bg-emerald-600 transition-all flex items-center justify-center gap-3 shadow-xl active:scale-95"
           >
             Request New Link <ArrowRight size={18} />
           </button>
@@ -70,7 +70,7 @@ export default function ResetPassword() {
     setLoading(true);
 
     try {
-      await new Promise((r) => setTimeout(r, 1500)); // Refined delay
+
 
       const data = await api.resetPassword({ token, password });
 
@@ -133,20 +133,20 @@ export default function ResetPassword() {
           <div className="flex gap-8 opacity-40">
             <div className="flex flex-col items-center gap-2">
               <Activity size={20} className="text-emerald-600" />
-              <span className="text-[8px] font-bold uppercase tracking-widest text-slate-400">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-slate-400">
                 Secure
               </span>
             </div>
             <div className="flex flex-col items-center gap-2">
               <Sparkles size={20} className="text-emerald-600" />
-              <span className="text-[8px] font-bold uppercase tracking-widest text-slate-400">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-slate-400">
                 Encrypted
               </span>
             </div>
           </div>
         </div>
 
-        <div className="relative z-10 text-[9px] font-bold text-slate-300 uppercase tracking-[0.4em]">
+        <div className="relative z-10 text-[11px] font-bold text-slate-300 uppercase tracking-[0.4em]">
           Wayzza Guest Security Network v4.2
         </div>
       </div>
@@ -169,7 +169,7 @@ export default function ResetPassword() {
                   <h2 className="text-3xl font-bold text-slate-900 uppercase tracking-tight">
                     Update Complete.
                   </h2>
-                  <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest leading-relaxed">
+                  <p className="text-slate-400 font-bold uppercase text-[11px] tracking-widest leading-relaxed">
                     Your new password is now active. Redirecting you to login...
                   </p>
                 </div>
@@ -190,13 +190,13 @@ export default function ResetPassword() {
                 className="space-y-12"
               >
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-emerald-600 font-bold text-[10px] uppercase tracking-widest">
+                  <div className="flex items-center gap-2 text-emerald-600 font-bold text-[11px] uppercase tracking-widest">
                     <Lock size={14} /> Security Update
                   </div>
                   <h2 className="text-4xl md:text-5xl font-bold text-slate-900 uppercase tracking-tight leading-none">
                     Choose <span className="text-emerald-500">New Password.</span>
                   </h2>
-                  <p className="text-slate-400 font-bold uppercase text-[9px] tracking-widest">
+                  <p className="text-slate-400 font-bold uppercase text-[11px] tracking-widest">
                     Enter your new password below to secure your account
                   </p>
                 </div>
@@ -204,7 +204,7 @@ export default function ResetPassword() {
                 <form onSubmit={handleSubmit} className="space-y-10">
                   <div className="space-y-6">
                     <div className="space-y-3 group">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within:text-emerald-600 transition-colors">
+                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within:text-emerald-600 transition-colors">
                         New Password
                       </label>
                       <div className="relative">
@@ -217,7 +217,7 @@ export default function ResetPassword() {
                           required
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          placeholder="••••••••••••"
+                          placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                           className="w-full h-16 bg-slate-50 border border-slate-100 rounded-2xl pl-16 pr-16 font-bold text-xl tracking-tight text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200 shadow-inner"
                         />
                         <button
@@ -237,7 +237,7 @@ export default function ResetPassword() {
                           animate={{ opacity: 1, height: 'auto' }}
                           className="px-2 space-y-2"
                         >
-                          <div className="flex justify-between items-center text-[9px] font-bold uppercase tracking-widest leading-none">
+                          <div className="flex justify-between items-center text-[11px] font-bold uppercase tracking-widest leading-none">
                             <span className="text-slate-300">Security Strength</span>
                             <span className={s.color.replace('bg-', 'text-')}>{s.label}</span>
                           </div>
@@ -252,7 +252,7 @@ export default function ResetPassword() {
                     </AnimatePresence>
 
                     <div className="space-y-3 group">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within:text-emerald-600 transition-colors">
+                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within:text-emerald-600 transition-colors">
                         Confirm Password
                       </label>
                       <div className="relative">
@@ -265,7 +265,7 @@ export default function ResetPassword() {
                           required
                           value={confirm}
                           onChange={(e) => setConfirm(e.target.value)}
-                          placeholder="••••••••••••"
+                          placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                           className="w-full h-16 bg-slate-50 border border-slate-100 rounded-2xl pl-16 pr-6 font-bold text-xl tracking-tight text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200 shadow-inner"
                         />
                       </div>
@@ -276,7 +276,7 @@ export default function ResetPassword() {
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="p-5 bg-rose-50 text-rose-600 rounded-2xl border border-rose-100 font-bold text-[10px] uppercase tracking-widest flex items-center gap-3"
+                      className="p-5 bg-rose-50 text-rose-600 rounded-2xl border border-rose-100 font-bold text-[11px] uppercase tracking-widest flex items-center gap-3"
                     >
                       <Zap size={14} className="shrink-0" /> {error}
                     </motion.div>
@@ -285,7 +285,7 @@ export default function ResetPassword() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full h-18 py-5 bg-slate-900 text-white rounded-3xl font-bold uppercase text-[10px] tracking-widest transition-all hover:bg-emerald-600 shadow-xl shadow-slate-900/10 active:scale-95 flex items-center justify-center gap-3 disabled:opacity-50"
+                    className="w-full h-18 py-5 bg-slate-900 text-white rounded-3xl font-bold uppercase text-[11px] tracking-widest transition-all hover:bg-emerald-600 shadow-xl shadow-slate-900/10 active:scale-95 flex items-center justify-center gap-3 disabled:opacity-50"
                   >
                     {loading ? (
                       <div className="w-5 h-5 border-4 border-white/20 border-t-white rounded-full animate-spin" />

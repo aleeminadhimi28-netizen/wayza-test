@@ -1,4 +1,4 @@
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+﻿import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../AuthContext.jsx';
 import { useToast } from '../../ToastContext.jsx';
@@ -373,16 +373,16 @@ export default function Booking() {
                     <div className="space-y-3">
                       <div className="flex justify-between text-slate-600 font-medium">
                         <span>
-                          ₹{pricePerNight.toLocaleString()} x {nights || 0} nights
+                          â‚¹{pricePerNight.toLocaleString()} x {nights || 0} nights
                         </span>
-                        <span>₹{baseAmount.toLocaleString()}</span>
+                        <span>â‚¹{baseAmount.toLocaleString()}</span>
                       </div>
                       {discountInfo && (
                         <div className="flex justify-between text-emerald-600 font-bold">
                           <span>
                             Discount ({Math.round(discountInfo.discountPercentage * 100)}%)
                           </span>
-                          <span>-₹{discountAmount.toLocaleString()}</span>
+                          <span>-â‚¹{discountAmount.toLocaleString()}</span>
                         </div>
                       )}
                       <div className="flex justify-between text-slate-600 font-medium">
@@ -392,12 +392,12 @@ export default function Booking() {
                         {isVehicle ? (
                           <span className="text-emerald-500 font-bold">Waived</span>
                         ) : (
-                          <span>₹{gst.toLocaleString()}</span>
+                          <span>â‚¹{gst.toLocaleString()}</span>
                         )}
                       </div>
                       <div className="flex justify-between text-slate-600 font-medium">
                         <span>Service Fee</span>
-                        <span>₹{serviceFee.toLocaleString()}</span>
+                        <span>â‚¹{serviceFee.toLocaleString()}</span>
                       </div>
                     </div>
                   </div>
@@ -406,7 +406,7 @@ export default function Booking() {
                   <div className="pt-6 border-t border-slate-100 flex justify-between items-center mb-4">
                     <span className="text-xl font-bold text-slate-900">Total</span>
                     <span className="text-3xl font-bold text-slate-900">
-                      ₹{totalAmount.toLocaleString()}
+                      â‚¹{totalAmount.toLocaleString()}
                     </span>
                   </div>
 
@@ -418,7 +418,7 @@ export default function Booking() {
                     Reserve Now
                   </button>
 
-                  <div className="flex items-center justify-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest pt-2">
+                  <div className="flex items-center justify-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-widest pt-2">
                     <Shield size={12} className="text-emerald-500" /> Secure Payment Guaranteed
                   </div>
                 </div>

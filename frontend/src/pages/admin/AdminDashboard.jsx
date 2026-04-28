@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Users,
@@ -296,12 +296,12 @@ export default function AdminDashboard() {
               <tab.icon size={17} className={activeTab === tab.id ? 'text-emerald-400' : ''} />
               {tab.label}
               {tab.id === 'support' && openTickets > 0 && (
-                <span className="ml-auto bg-rose-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md">
+                <span className="ml-auto bg-rose-500 text-white text-[11px] font-bold px-1.5 py-0.5 rounded-md">
                   {openTickets}
                 </span>
               )}
               {tab.id === 'withdrawals' && pendingWithdrawals > 0 && (
-                <span className="ml-auto bg-amber-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md">
+                <span className="ml-auto bg-amber-500 text-white text-[11px] font-bold px-1.5 py-0.5 rounded-md">
                   {pendingWithdrawals}
                 </span>
               )}
@@ -443,12 +443,12 @@ export default function AdminDashboard() {
                                   <p className="font-semibold text-sm text-slate-900">
                                     {item.title}
                                   </p>
-                                  <span className="text-[9px] bg-amber-200/50 text-amber-800 px-2 py-0.5 rounded-full uppercase font-bold">
+                                  <span className="text-[11px] bg-amber-200/50 text-amber-800 px-2 py-0.5 rounded-full uppercase font-bold">
                                     {item.category === 'activity' ? 'Experience' : 'Property'}
                                   </span>
                                 </div>
                                 <p className="text-xs text-slate-400">
-                                  {item.ownerEmail} · {item.location || 'No location'} · ₹
+                                  {item.ownerEmail} Â· {item.location || 'No location'} Â· â‚¹
                                   {item.price?.toLocaleString()}
                                 </p>
                               </div>
@@ -530,12 +530,12 @@ export default function AdminDashboard() {
                                       {item.title || item.businessName || item.email}
                                     </p>
                                     {item.muted && (
-                                      <span className="text-[10px] font-bold text-rose-500 bg-rose-50 px-1.5 py-0.5 rounded">
+                                      <span className="text-[11px] font-bold text-rose-500 bg-rose-50 px-1.5 py-0.5 rounded">
                                         MUTED
                                       </span>
                                     )}
                                     {activeTab === 'listings' && (
-                                      <span className="text-[9px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded uppercase font-bold">
+                                      <span className="text-[11px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded uppercase font-bold">
                                         {item.category === 'activity' ? 'Exp.' : 'Prop.'}
                                       </span>
                                     )}
@@ -565,7 +565,7 @@ export default function AdminDashboard() {
                                 </span>
                                 {activeTab === 'bookings' && item.status === 'paid' && (
                                   <span
-                                    className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded ${item.payoutStatus === 'paid_out' ? 'text-emerald-600 bg-emerald-50' : 'text-amber-600 bg-amber-50'}`}
+                                    className={`text-[11px] font-bold uppercase tracking-wide px-2 py-0.5 rounded ${item.payoutStatus === 'paid_out' ? 'text-emerald-600 bg-emerald-50' : 'text-amber-600 bg-amber-50'}`}
                                   >
                                     Payout:{' '}
                                     {item.payoutStatus === 'paid_out' ? 'Settled' : 'Pending'}
@@ -578,8 +578,8 @@ export default function AdminDashboard() {
                                 {activeTab === 'bookings'
                                   ? item.guestEmail
                                   : item.price
-                                    ? `₹${item.price.toLocaleString()}`
-                                    : item.role || item.checkIn || '—'}
+                                    ? `â‚¹${item.price.toLocaleString()}`
+                                    : item.role || item.checkIn || 'â€”'}
                               </span>
                             </td>
                             <td className="px-6 py-4 text-right">

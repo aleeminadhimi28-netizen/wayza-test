@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -28,12 +28,12 @@ import { useToast } from '../../ToastContext.jsx';
 import { api } from '../../utils/api.js';
 
 const CATEGORIES = [
-  { value: 'general', label: 'General Inquiry', icon: '💬' },
-  { value: 'booking', label: 'Booking Issue', icon: '📋' },
-  { value: 'payment', label: 'Payment Problem', icon: '💳' },
-  { value: 'account', label: 'Account Help', icon: '👤' },
-  { value: 'property', label: 'Property Report', icon: '🏠' },
-  { value: 'bug', label: 'Bug / Technical', icon: '🐛' },
+  { value: 'general', label: 'General Inquiry', icon: 'ðŸ’¬' },
+  { value: 'booking', label: 'Booking Issue', icon: 'ðŸ“‹' },
+  { value: 'payment', label: 'Payment Problem', icon: 'ðŸ’³' },
+  { value: 'account', label: 'Account Help', icon: 'ðŸ‘¤' },
+  { value: 'property', label: 'Property Report', icon: 'ðŸ ' },
+  { value: 'bug', label: 'Bug / Technical', icon: 'ðŸ›' },
 ];
 
 const STATUS_MAP = {
@@ -170,8 +170,8 @@ export default function CustomerSupport() {
               </div>
               <div>
                 <h1 className="text-2xl md:text-3xl font-black uppercase tracking-tight">Customer Support</h1>
-                <p className="text-slate-400 font-bold uppercase text-[9px] md:text-xs tracking-widest mt-0.5">
-                  We're here to help — get support from the Wayzza team
+                <p className="text-slate-400 font-bold uppercase text-[11px] md:text-xs tracking-widest mt-0.5">
+                  We're here to help â€” get support from the Wayzza team
                 </p>
               </div>
             </div>
@@ -218,7 +218,7 @@ export default function CustomerSupport() {
                 </div>
                 <div>
                   <p className="text-2xl font-black text-slate-900 tracking-tight">{kpi.value}</p>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{kpi.label}</p>
+                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{kpi.label}</p>
                 </div>
               </motion.div>
             ))}
@@ -312,16 +312,16 @@ export default function CustomerSupport() {
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-1">
                                 <span
-                                  className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase border ${st.color}`}
+                                  className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase border ${st.color}`}
                                 >
                                   {st.label}
                                 </span>
-                                <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-500 text-[10px] font-semibold">
+                                <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-500 text-[11px] font-semibold">
                                   {CATEGORIES.find((c) => c.value === ticket.category)?.icon}{' '}
                                   {ticket.category}
                                 </span>
                                 {hasAdminReply && (
-                                  <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-600 text-[10px] font-semibold flex items-center gap-1">
+                                  <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-600 text-[11px] font-semibold flex items-center gap-1">
                                     <Shield size={9} /> Admin replied
                                   </span>
                                 )}
@@ -336,14 +336,14 @@ export default function CustomerSupport() {
                               </p>
                             </div>
                             <div className="flex flex-col items-end gap-2 shrink-0">
-                              <span className="text-[10px] font-medium text-slate-400">
+                              <span className="text-[11px] font-medium text-slate-400">
                                 {new Date(ticket.updatedAt || ticket.createdAt).toLocaleDateString(
                                   'en-IN',
                                   { day: 'numeric', month: 'short' }
                                 )}
                               </span>
                               {ticket.replies?.length > 0 && (
-                                <span className="text-[10px] font-semibold text-slate-500 flex items-center gap-1">
+                                <span className="text-[11px] font-semibold text-slate-500 flex items-center gap-1">
                                   <MessageCircle size={10} /> {ticket.replies.length}
                                 </span>
                               )}
@@ -408,7 +408,7 @@ export default function CustomerSupport() {
                             }`}
                           >
                             <span className="text-xl block mb-1">{cat.icon}</span>
-                            <span className="text-[10px] md:text-xs font-bold uppercase tracking-tight">{cat.label}</span>
+                            <span className="text-[11px] md:text-xs font-bold uppercase tracking-tight">{cat.label}</span>
                           </button>
                         ))}
                       </div>
@@ -509,13 +509,13 @@ export default function CustomerSupport() {
                             const st = STATUS_MAP[selected.status] || STATUS_MAP.open;
                             return (
                               <span
-                                className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase border ${st.color}`}
+                                className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase border ${st.color}`}
                               >
                                 {st.label}
                               </span>
                             );
                           })()}
-                          <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-500 text-[10px] font-semibold">
+                          <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-500 text-[11px] font-semibold">
                             {CATEGORIES.find((c) => c.value === selected.category)?.icon}{' '}
                             {selected.category}
                           </span>
@@ -545,7 +545,7 @@ export default function CustomerSupport() {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           <span className="text-xs font-bold text-slate-700">You</span>
-                          <span className="text-[10px] text-slate-400">
+                          <span className="text-[11px] text-slate-400">
                             {new Date(selected.createdAt).toLocaleString('en-IN', {
                               day: 'numeric',
                               month: 'short',
@@ -581,7 +581,7 @@ export default function CustomerSupport() {
                               >
                                 {isAdmin ? 'Wayzza Support' : 'You'}
                               </span>
-                              <span className="text-[10px] text-slate-400">
+                              <span className="text-[11px] text-slate-400">
                                 {new Date(r.createdAt).toLocaleString('en-IN', {
                                   day: 'numeric',
                                   month: 'short',
@@ -635,7 +635,7 @@ export default function CustomerSupport() {
                           )}
                         </button>
                       </div>
-                      <p className="text-[10px] text-slate-400 mt-2">
+                      <p className="text-[11px] text-slate-400 mt-2">
                         Press Enter to send, Shift+Enter for new line
                       </p>
                     </div>

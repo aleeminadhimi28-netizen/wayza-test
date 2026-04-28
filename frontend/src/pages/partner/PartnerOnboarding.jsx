@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -54,7 +54,7 @@ export default function PartnerOnboarding() {
 
     setLoading(true);
     try {
-      await new Promise((r) => setTimeout(r, 1500)); // Smooth transition
+
 
       const data = await api.partnerOnboard({
         email,
@@ -90,7 +90,7 @@ export default function PartnerOnboarding() {
 
   return (
     <div className="min-h-screen bg-white font-sans flex items-center justify-center p-6 relative overflow-hidden selection:bg-emerald-100 selection:text-emerald-900">
-      {/* ─── PREMIUM MESH BACKGROUND ─── */}
+      {/* â”€â”€â”€ PREMIUM MESH BACKGROUND â”€â”€â”€ */}
       <div className="absolute inset-0 z-0">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-100/40 blur-[120px] rounded-full animate-pulse" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-slate-100/60 blur-[120px] rounded-full" />
@@ -104,10 +104,10 @@ export default function PartnerOnboarding() {
       >
         {/* PRO BRANDING */}
         <div className="absolute top-12 right-12 flex items-center gap-3">
-          <span className="text-[10px] font-black uppercase tracking-[0.6em] text-slate-300">
+          <span className="text-[11px] font-black uppercase tracking-[0.6em] text-slate-300">
             Wayzza
           </span>
-          <div className="px-3 py-1 bg-slate-950 text-white text-[9px] font-black uppercase tracking-[0.4em] rounded-md">
+          <div className="px-3 py-1 bg-slate-950 text-white text-[11px] font-black uppercase tracking-[0.4em] rounded-md">
             Pro
           </div>
         </div>
@@ -122,7 +122,7 @@ export default function PartnerOnboarding() {
               <div
                 className={`flex items-center gap-3 transition-opacity duration-500 ${step === s.id ? 'opacity-100' : 'opacity-20'}`}
               >
-                <span className="text-[9px] font-black uppercase tracking-[0.5em] text-slate-900">
+                <span className="text-[11px] font-black uppercase tracking-[0.5em] text-slate-900">
                   {s.title}
                 </span>
               </div>
@@ -142,7 +142,7 @@ export default function PartnerOnboarding() {
               <div className="space-y-8">
                 <div className="flex items-center gap-4">
                   <span className="h-px w-12 bg-emerald-500" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-600">
+                  <span className="text-[11px] font-black uppercase tracking-[0.5em] text-emerald-600">
                     Phase 01: Onboarding
                   </span>
                 </div>
@@ -150,7 +150,7 @@ export default function PartnerOnboarding() {
                   Partner <br />
                   <span className="lowercase">Identity.</span>
                 </h2>
-                <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest leading-relaxed max-w-sm">
+                <p className="text-slate-400 font-bold uppercase text-[11px] tracking-widest leading-relaxed max-w-sm">
                   "Define your presence within the Wayzza luxury network architecture."
                 </p>
               </div>
@@ -190,7 +190,7 @@ export default function PartnerOnboarding() {
               <div className="space-y-8">
                 <div className="flex items-center gap-4">
                   <span className="h-px w-12 bg-emerald-500" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-600">
+                  <span className="text-[11px] font-black uppercase tracking-[0.5em] text-emerald-600">
                     Phase 02: Deployment
                   </span>
                 </div>
@@ -198,20 +198,20 @@ export default function PartnerOnboarding() {
                   Operational <br />
                   <span className="lowercase">Location.</span>
                 </h2>
-                <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest leading-relaxed max-w-sm">
+                <p className="text-slate-400 font-bold uppercase text-[11px] tracking-widest leading-relaxed max-w-sm">
                   "Specify your geographic focus for guest discovery and route optimization."
                 </p>
               </div>
 
               <div className="space-y-12">
                 <FormInput
-                  label="Geographic Coordinates"
+                  label="Location"
                   value={location}
                   onChange={setLocation}
                   placeholder="E.G. VARKALA, KERALA"
                   icon={<MapPin size={24} />}
                 />
-                <div className="p-12 bg-slate-950/5 border border-slate-900/5 rounded-[40px] text-[10px] font-black text-slate-400 uppercase tracking-widest leading-relaxed">
+                <div className="p-12 bg-slate-950/5 border border-slate-900/5 rounded-[40px] text-[11px] font-black text-slate-400 uppercase tracking-widest leading-relaxed">
                   "Accuracy in location indexing ensures your assets are presented to the correct
                   guest tier based on proximity and travel intent."
                 </div>
@@ -231,7 +231,7 @@ export default function PartnerOnboarding() {
               <div className="space-y-8">
                 <div className="flex items-center gap-4">
                   <span className="h-px w-12 bg-emerald-500" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-600">
+                  <span className="text-[11px] font-black uppercase tracking-[0.5em] text-emerald-600">
                     Phase 03: Inventory
                   </span>
                 </div>
@@ -239,7 +239,7 @@ export default function PartnerOnboarding() {
                   Primary <br />
                   <span className="lowercase">Listing.</span>
                 </h2>
-                <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest leading-relaxed max-w-sm">
+                <p className="text-slate-400 font-bold uppercase text-[11px] tracking-widest leading-relaxed max-w-sm">
                   "Initial asset configuration. Granular details and variance controls can be
                   audited later."
                 </p>
@@ -290,7 +290,7 @@ export default function PartnerOnboarding() {
                   Protocol <br />
                   <span className="text-emerald-500">Initialized.</span>
                 </h2>
-                <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.5em] max-w-xs mx-auto">
+                <p className="text-slate-400 font-bold uppercase text-[11px] tracking-[0.5em] max-w-xs mx-auto">
                   Your partner signature is ready for audit and network activation.
                 </p>
               </div>
@@ -323,7 +323,7 @@ export default function PartnerOnboarding() {
 function FormInput({ label, value, onChange, placeholder, icon }) {
   return (
     <div className="space-y-4 group">
-      <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 group-focus-within:text-emerald-600 transition-colors">
+      <label className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 group-focus-within:text-emerald-600 transition-colors">
         {label}
       </label>
       <div className="relative">
@@ -344,7 +344,7 @@ function FormInput({ label, value, onChange, placeholder, icon }) {
 function FormSelect({ label, value, onChange, options }) {
   return (
     <div className="space-y-4 group">
-      <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2">
+      <label className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2">
         {label}
       </label>
       <div className="relative">
@@ -373,7 +373,7 @@ function Nav({ back, next }) {
       {back && (
         <button
           onClick={back}
-          className="h-20 flex-1 bg-white text-slate-400 rounded-[28px] font-black uppercase text-[10px] tracking-[0.4em] hover:bg-slate-50 hover:text-slate-900 transition-all flex items-center justify-center gap-4 border border-slate-100"
+          className="h-20 flex-1 bg-white text-slate-400 rounded-[28px] font-black uppercase text-[11px] tracking-[0.4em] hover:bg-slate-50 hover:text-slate-900 transition-all flex items-center justify-center gap-4 border border-slate-100"
         >
           <ArrowLeft size={18} /> Prev
         </button>
@@ -381,7 +381,7 @@ function Nav({ back, next }) {
       {next && (
         <button
           onClick={next}
-          className="h-20 flex-[2] bg-slate-950 text-white rounded-[28px] font-black uppercase text-[10px] tracking-[0.5em] hover:bg-emerald-600 transition-all flex items-center justify-center gap-4 shadow-xl shadow-slate-950/10 active:scale-[0.98]"
+          className="h-20 flex-[2] bg-slate-950 text-white rounded-[28px] font-black uppercase text-[11px] tracking-[0.5em] hover:bg-emerald-600 transition-all flex items-center justify-center gap-4 shadow-xl shadow-slate-950/10 active:scale-[0.98]"
         >
           Continue <ArrowRight size={18} />
         </button>

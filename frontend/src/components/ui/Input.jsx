@@ -1,8 +1,8 @@
-export function Input({ value, onChange, placeholder, type = 'text', label }) {
+﻿export function Input({ value, onChange, placeholder, type = 'text', label }) {
   return (
     <div className="flex flex-col gap-2.5">
       {label && (
-        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">
           {label}
         </label>
       )}

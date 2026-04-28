@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
 import { Sparkles, MapPin, Calendar, Heart, Search, Compass, Loader2 } from 'lucide-react';
@@ -147,7 +147,7 @@ export default function AITripPlanner() {
               </div>
 
               <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                {['Beachfront villa', 'Budget under ₹5k', 'Couples getaway', 'Solo adventure'].map((label) => (
+                {['Beachfront villa', 'Budget under â‚¹5k', 'Couples getaway', 'Solo adventure'].map((label) => (
                   <div key={label} className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700">
                     {label}
                   </div>
@@ -188,7 +188,7 @@ export default function AITripPlanner() {
                   >
                     <div className="grid gap-6 xl:grid-cols-[1.5fr_1fr]">
                       <div className="rounded-[32px] border border-slate-200 bg-white p-8 shadow-sm">
-                        <div className="text-[10px] uppercase tracking-[0.35em] text-emerald-600 font-bold">
+                        <div className="text-[11px] uppercase tracking-[0.35em] text-emerald-600 font-bold">
                           Generated itinerary
                         </div>
                         <h2 className="mt-4 text-4xl font-black text-slate-900 uppercase">
@@ -260,7 +260,7 @@ export default function AITripPlanner() {
                               <div key={itemIdx} className="grid gap-4 sm:grid-cols-[auto_1fr] items-start">
                                 <div className="relative">
                                   <div className="flex h-11 w-11 items-center justify-center rounded-3xl bg-slate-100 text-emerald-500 text-lg font-bold shadow-sm">
-                                    {item.type === 'hotel' ? '🏨' : item.type === 'car' ? '🏍️' : '☕'}
+                                    {item.type === 'hotel' ? 'ðŸ¨' : item.type === 'car' ? 'ðŸï¸' : 'â˜•'}
                                   </div>
                                   <div className="absolute left-5 top-full h-[calc(100%+0.5rem)] w-px bg-slate-200"></div>
                                 </div>

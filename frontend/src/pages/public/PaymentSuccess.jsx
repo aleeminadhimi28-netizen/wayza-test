@@ -5,7 +5,7 @@ import { WayzzaLayout } from '../../WayzzaUI.jsx';
 import { useAuth } from '../../AuthContext.jsx';
 import { CheckCircle, History, Sparkles, Home, Calendar, ShieldCheck } from 'lucide-react';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import { BASE_URL } from '../../utils/api.js';
 
 export default function PaymentSuccess() {
   const { token } = useAuth();
@@ -17,7 +17,7 @@ export default function PaymentSuccess() {
     const bookingId = params.get('bookingId');
     if (!bookingId || !token) return;
 
-    fetch(`${API}/confirm-booking`, {
+    fetch(`${BASE_URL}/api/v1/bookings/confirm`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

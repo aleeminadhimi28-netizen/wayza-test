@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -21,7 +21,7 @@ L.Icon.Default.mergeOptions({
 const createPriceIcon = (price) => {
   return L.divIcon({
     className: 'custom-price-marker',
-    html: `<div style="background: #10b981; color: white; padding: 4px 8px; border-radius: 12px; font-weight: 800; font-size: 11px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.2); white-space: nowrap;">₹${price > 0 ? price.toLocaleString() : '—'}</div>`,
+    html: `<div style="background: #10b981; color: white; padding: 4px 8px; border-radius: 12px; font-weight: 800; font-size: 11px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.2); white-space: nowrap;">â‚¹${price > 0 ? price.toLocaleString() : 'â€”'}</div>`,
     iconSize: [60, 24],
     iconAnchor: [30, 12],
   });
@@ -167,27 +167,27 @@ export default function ExploreMap() {
                         </div>
                       )}
                       <div className="absolute top-3 left-3 bg-white/95 backdrop-blur px-2.5 py-1 rounded-lg shadow-sm border border-black/5">
-                        <span className="text-[10px] font-black tracking-tight text-slate-900 uppercase">
-                          ₹{item.price.toLocaleString()}
+                        <span className="text-[11px] font-black tracking-tight text-slate-900 uppercase">
+                          â‚¹{item.price.toLocaleString()}
                         </span>
                       </div>
                     </div>
                     <div className="p-4 bg-white">
                       <div className="flex items-center gap-1.5 mb-1">
                         <Star size={10} className="text-amber-400 fill-amber-400" />
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
                           New Property
                         </span>
                       </div>
                       <h3 className="text-sm font-bold text-slate-900 mb-1 truncate">
                         {item.title}
                       </h3>
-                      <p className="text-[10px] font-medium text-slate-500 mb-4 flex items-center gap-1 uppercase tracking-wider">
+                      <p className="text-[11px] font-medium text-slate-500 mb-4 flex items-center gap-1 uppercase tracking-wider">
                         <MapPin size={10} className="text-emerald-500" /> {item.location}
                       </p>
                       <Link
                         to={`/listings/${item._id}`}
-                        className="block w-full text-center py-2.5 bg-emerald-600 text-white rounded-lg font-bold text-[10px] uppercase tracking-widest hover:bg-slate-900 transition-all shadow-lg shadow-emerald-500/10"
+                        className="block w-full text-center py-2.5 bg-emerald-600 text-white rounded-lg font-bold text-[11px] uppercase tracking-widest hover:bg-slate-900 transition-all shadow-lg shadow-emerald-500/10"
                       >
                         Book Now
                       </Link>
@@ -210,7 +210,7 @@ export default function ExploreMap() {
               onClick={() => setMapZoom((prev) => Math.max(prev - 1, 3))}
               className="w-12 h-12 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 shadow-xl hover:bg-slate-50 transition-all font-bold text-lg"
             >
-              −
+              âˆ’
             </button>
           </div>
 
@@ -229,7 +229,7 @@ export default function ExploreMap() {
                     className="absolute -top-3 -right-3 w-8 h-8 bg-slate-900 text-white rounded-full flex items-center justify-center shadow-lg border-2 border-white hover:bg-rose-500 transition-all"
                   >
                     <Loader2 size={12} className="hidden" />
-                    <span className="text-xs font-bold">×</span>
+                    <span className="text-xs font-bold">Ã—</span>
                   </button>
                   <div className="flex gap-4">
                     <div className="w-24 h-24 rounded-2xl bg-slate-100 overflow-hidden shrink-0 border border-black/5">
@@ -242,7 +242,7 @@ export default function ExploreMap() {
                       )}
                     </div>
                     <div className="flex-1 min-w-0 flex flex-col">
-                      <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mb-1">
+                      <p className="text-[11px] font-bold text-emerald-600 uppercase tracking-widest mb-1">
                         {activeItem.category || 'Property'}
                       </p>
                       <h3 className="text-lg font-bold text-slate-900 truncate mb-1">
@@ -253,17 +253,17 @@ export default function ExploreMap() {
                       </p>
                       <div className="flex items-center justify-between mt-auto">
                         <div className="flex flex-col">
-                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
                             Price Starts
                           </span>
                           <span className="text-sm font-black text-slate-900">
-                            ₹{activeItem.price.toLocaleString()}
-                            <span className="text-[10px] font-bold text-slate-400">/night</span>
+                            â‚¹{activeItem.price.toLocaleString()}
+                            <span className="text-[11px] font-bold text-slate-400">/night</span>
                           </span>
                         </div>
                         <Link
                           to={`/listings/${activeItem._id}`}
-                          className="h-9 px-5 bg-slate-900 text-white rounded-xl flex items-center gap-1.5 font-bold text-[10px] uppercase tracking-widest hover:bg-emerald-600 transition-all active:scale-95 shadow-lg shadow-slate-950/20"
+                          className="h-9 px-5 bg-slate-900 text-white rounded-xl flex items-center gap-1.5 font-bold text-[11px] uppercase tracking-widest hover:bg-emerald-600 transition-all active:scale-95 shadow-lg shadow-slate-950/20"
                         >
                           Details <ArrowUpRight size={12} className="hidden" />
                         </Link>
@@ -284,7 +284,7 @@ export default function ExploreMap() {
                     <p className="text-sm font-bold tracking-tight">
                       Click on a marker to see details
                     </p>
-                    <p className="text-[10px] text-white/50 font-medium uppercase tracking-widest">
+                    <p className="text-[11px] text-white/50 font-medium uppercase tracking-widest">
                       Explore available properties on the map
                     </p>
                   </div>

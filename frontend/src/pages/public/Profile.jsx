@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -23,10 +23,11 @@ import {
 } from 'lucide-react';
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
 import { useAuth } from '../../AuthContext.jsx';
+import { api, BASE_URL } from '../../utils/api.js';
 import { useToast } from '../../ToastContext.jsx';
 import TwoFactorSetup from '../../components/TwoFactorSetup.jsx';
 
-import { api } from '../../utils/api.js';
+
 
 const STATUS_CONFIG = {
   paid: {
@@ -171,8 +172,7 @@ export default function Profile() {
   function fixProfileImage(img) {
     if (!img) return null;
     if (img.startsWith('http')) return img;
-    const base = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-    return img.startsWith('/') ? `${base}${img}` : `${base}/${img}`;
+    return img.startsWith('/') ? `${BASE_URL}${img}` : `${BASE_URL}/${img}`;
   }
 
   async function handleAvatarUpload(file) {
@@ -217,7 +217,7 @@ export default function Profile() {
   return (
     <WayzzaLayout noPadding>
       <div className="bg-slate-50 min-h-screen font-sans">
-        {/* ─── PROFILE HEADER ─── */}
+        {/* â”€â”€â”€ PROFILE HEADER â”€â”€â”€ */}
         <div className="bg-white border-b border-slate-200">
           <div className="max-w-6xl mx-auto px-6 py-8 md:py-12 flex flex-col sm:flex-row items-center sm:items-end gap-6">
             {/* Avatar */}
@@ -259,7 +259,7 @@ export default function Profile() {
             {/* Info */}
             <div className="text-center sm:text-left flex-1">
               <div className="flex items-center justify-center sm:justify-start gap-2 mb-2">
-                <span className="text-[10px] md:text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100 flex items-center gap-1.5">
+                <span className="text-[11px] md:text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100 flex items-center gap-1.5">
                   <CheckCircle size={10} /> Verified Guest
                 </span>
               </div>
@@ -282,7 +282,7 @@ export default function Profile() {
           </div>
         </div>
 
-        {/* ─── MAIN LAYOUT ─── */}
+        {/* â”€â”€â”€ MAIN LAYOUT â”€â”€â”€ */}
         <div className="max-w-6xl mx-auto px-6 py-6 md:py-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
           {/* SIDEBAR NAV */}
           <aside className="lg:col-span-3 space-y-4">
@@ -317,7 +317,7 @@ export default function Profile() {
           <main className="lg:col-span-9">
             <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
               <AnimatePresence mode="wait">
-                {/* ── ACCOUNT TAB ── */}
+                {/* â”€â”€ ACCOUNT TAB â”€â”€ */}
                 {activeTab === 'account' && (
                   <motion.div
                     key="account"
@@ -327,7 +327,7 @@ export default function Profile() {
                     className="p-5 md:p-8 space-y-6 md:space-y-8"
                   >
                     <div className="border-b border-slate-100 pb-5 md:pb-6">
-                      <div className="flex items-center gap-2 text-emerald-600 font-bold text-[10px] md:text-xs uppercase tracking-wide mb-1">
+                      <div className="flex items-center gap-2 text-emerald-600 font-bold text-[11px] md:text-xs uppercase tracking-wide mb-1">
                         <Settings size={13} /> Account Settings
                       </div>
                       <h2 className="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight">Personal Information</h2>
@@ -404,7 +404,7 @@ export default function Profile() {
                   </motion.div>
                 )}
 
-                {/* ── BOOKINGS TAB ── */}
+                {/* â”€â”€ BOOKINGS TAB â”€â”€ */}
                 {activeTab === 'bookings' && (
                   <motion.div
                     key="bookings"
@@ -414,7 +414,7 @@ export default function Profile() {
                     className="p-5 md:p-8 space-y-6"
                   >
                     <div className="border-b border-slate-100 pb-5 md:pb-6">
-                      <div className="flex items-center gap-2 text-emerald-600 font-bold text-[10px] md:text-xs uppercase tracking-wide mb-1">
+                      <div className="flex items-center gap-2 text-emerald-600 font-bold text-[11px] md:text-xs uppercase tracking-wide mb-1">
                         <CalendarCheck size={13} /> Booking History
                       </div>
                       <h2 className="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight">My Stays</h2>
@@ -456,7 +456,7 @@ export default function Profile() {
                                 <div>
                                   <h4 className="font-bold text-slate-900 text-sm">{b.title}</h4>
                                   <p className="text-xs text-slate-400 mt-0.5">
-                                    {b.checkIn} → {b.checkOut}
+                                    {b.checkIn} â†’ {b.checkOut}
                                   </p>
                                   {b.variantName && (
                                     <p className="text-xs text-emerald-600 font-medium mt-0.5">
@@ -473,7 +473,7 @@ export default function Profile() {
                                   {cfg.label}
                                 </span>
                                 <span className="text-sm font-bold text-slate-900">
-                                  ₹{(b.totalPrice || 0).toLocaleString()}
+                                  â‚¹{(b.totalPrice || 0).toLocaleString()}
                                 </span>
                                 <button
                                   onClick={() => navigate(`/listing/${b.listingId}`)}
@@ -490,7 +490,7 @@ export default function Profile() {
                   </motion.div>
                 )}
 
-                {/* ── WISHLIST TAB ── */}
+                {/* â”€â”€ WISHLIST TAB â”€â”€ */}
                 {activeTab === 'wishlist' && (
                   <motion.div
                     key="wishlist"
@@ -500,7 +500,7 @@ export default function Profile() {
                     className="p-5 md:p-8 space-y-6"
                   >
                     <div className="border-b border-slate-100 pb-5 md:pb-6">
-                      <div className="flex items-center gap-2 text-emerald-600 font-bold text-[10px] md:text-xs uppercase tracking-wide mb-1">
+                      <div className="flex items-center gap-2 text-emerald-600 font-bold text-[11px] md:text-xs uppercase tracking-wide mb-1">
                         <Heart size={13} /> Saved Stays
                       </div>
                       <h2 className="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight">My Favourites</h2>
@@ -530,7 +530,7 @@ export default function Profile() {
                         {wishlist.map((l) => {
                           const img = l.image?.startsWith('http')
                             ? l.image
-                            : `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/uploads/${l.image}`;
+                            : `${BASE_URL}/uploads/${l.image}`;
                           const price =
                             l.variants?.length > 0
                               ? Math.min(...l.variants.map((v) => v.price || 0))
@@ -580,7 +580,7 @@ export default function Profile() {
                                   <div>
                                     <span className="text-base font-bold text-slate-900">
                                       {price > 0
-                                        ? `₹${price.toLocaleString()}`
+                                        ? `â‚¹${price.toLocaleString()}`
                                         : 'Price on request'}
                                     </span>
                                     {price > 0 && (
@@ -603,7 +603,7 @@ export default function Profile() {
                   </motion.div>
                 )}
 
-                {/* ── SECURITY TAB ── */}
+                {/* â”€â”€ SECURITY TAB â”€â”€ */}
                 {activeTab === 'security' && (
                   <motion.div
                     key="security"
@@ -613,7 +613,7 @@ export default function Profile() {
                     className="p-5 md:p-8 space-y-6 md:space-y-8"
                   >
                     <div className="border-b border-slate-100 pb-5 md:pb-6">
-                      <div className="flex items-center gap-2 text-emerald-600 font-bold text-[10px] md:text-xs uppercase tracking-wide mb-1">
+                      <div className="flex items-center gap-2 text-emerald-600 font-bold text-[11px] md:text-xs uppercase tracking-wide mb-1">
                         <Shield size={13} /> Security Protocols
                       </div>
                       <h2 className="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight">Account Protection</h2>
@@ -644,13 +644,13 @@ export default function Profile() {
                           </div>
 
                           {twoFactorEnabled ? (
-                            <span className="px-3 py-1 bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest rounded-full">
+                            <span className="px-3 py-1 bg-emerald-500 text-white text-[11px] font-black uppercase tracking-widest rounded-full">
                               Active
                             </span>
                           ) : (
                             <button
                               onClick={() => setIs2FASetupOpen(true)}
-                              className="h-10 px-6 bg-slate-900 text-white rounded-xl font-bold uppercase text-[10px] tracking-widest hover:bg-emerald-600 transition-all active:scale-95 shadow-lg shadow-slate-900/10"
+                              className="h-10 px-6 bg-slate-900 text-white rounded-xl font-bold uppercase text-[11px] tracking-widest hover:bg-emerald-600 transition-all active:scale-95 shadow-lg shadow-slate-900/10"
                             >
                               Activate 2FA
                             </button>
@@ -677,7 +677,7 @@ export default function Profile() {
                               <button
                                 onClick={handleDisable2FA}
                                 disabled={disabling2FA || disableToken.length !== 6}
-                                className="h-12 px-6 bg-rose-500 text-white rounded-xl font-bold uppercase text-[10px] tracking-widest hover:bg-rose-600 transition-all disabled:opacity-20 shadow-lg shadow-rose-500/10"
+                                className="h-12 px-6 bg-rose-500 text-white rounded-xl font-bold uppercase text-[11px] tracking-widest hover:bg-rose-600 transition-all disabled:opacity-20 shadow-lg shadow-rose-500/10"
                               >
                                 {disabling2FA ? (
                                   <Loader2 className="w-4 h-4 animate-spin" />

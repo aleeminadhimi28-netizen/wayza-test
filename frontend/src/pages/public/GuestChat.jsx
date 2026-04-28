@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+﻿import { useEffect, useRef, useState } from 'react';
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
 import { useAuth } from '../../AuthContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -133,7 +133,7 @@ export default function GuestChat() {
               </div>
               <button
                 onClick={() => (window.location.href = '/listings')}
-                className="h-12 px-8 bg-slate-900 text-white rounded-xl font-bold uppercase text-[10px] tracking-widest hover:bg-emerald-600 transition-all flex items-center gap-2 mt-4"
+                className="h-12 px-8 bg-slate-900 text-white rounded-xl font-bold uppercase text-[11px] tracking-widest hover:bg-emerald-600 transition-all flex items-center gap-2 mt-4"
               >
                 Explore Properties <ArrowRight size={14} />
               </button>
@@ -156,7 +156,7 @@ export default function GuestChat() {
                       className={`w-full text-left px-6 py-6 transition-all relative border-b border-slate-50 ${selected?._id === b._id ? 'bg-white' : 'hover:bg-white/50'}`}
                     >
                       <div className="flex flex-col gap-1">
-                        <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">
+                        <span className="text-[11px] font-bold text-emerald-600 uppercase tracking-widest">
                           Booking #{b._id?.slice(-6).toUpperCase()}
                         </span>
                         <h4
@@ -185,7 +185,7 @@ export default function GuestChat() {
                       <h3 className="font-bold text-lg text-slate-900 leading-tight uppercase tracking-tight">
                         {selected?.title}
                       </h3>
-                      <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-emerald-500">
+                      <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-emerald-500">
                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                         Active Host Chat
                       </div>
@@ -221,7 +221,7 @@ export default function GuestChat() {
                             >
                               {m.message}
                               <div
-                                className={`text-[9px] font-bold uppercase tracking-widest mt-2 opacity-40 ${isMe ? 'text-right' : 'text-left'}`}
+                                className={`text-[11px] font-bold uppercase tracking-widest mt-2 opacity-40 ${isMe ? 'text-right' : 'text-left'}`}
                               >
                                 {new Date(m.createdAt).toLocaleTimeString([], {
                                   hour: '2-digit',

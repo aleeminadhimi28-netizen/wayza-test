@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
@@ -194,7 +194,7 @@ export default function Listings() {
         }}
       />
       <div className="bg-slate-50 min-h-screen font-sans selection:bg-emerald-100 selection:text-emerald-900">
-        {/* ─── PREMIUM SEARCH BAR ─── */}
+        {/* â”€â”€â”€ PREMIUM SEARCH BAR â”€â”€â”€ */}
         <div className={`bg-white/95 backdrop-blur-xl border-b border-slate-200 sticky top-[64px] z-40 transition-all duration-300 ${scrolled ? 'py-2 shadow-md' : 'py-4'}`}>
           <div className="max-w-[1240px] mx-auto px-4">
             <div className={`bg-slate-50 border border-slate-200 rounded-2xl p-1.5 shadow-sm flex flex-col lg:flex-row items-stretch lg:items-center gap-1.5 transition-all ${scrolled ? 'lg:p-1' : 'p-2'}`}>
@@ -328,7 +328,7 @@ export default function Listings() {
                       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                         <div className="relative flex-1">
                           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-sm font-bold">
-                            ₹
+                            â‚¹
                           </span>
                           <input
                             type="number"
@@ -341,7 +341,7 @@ export default function Listings() {
                         <span className="hidden sm:block text-slate-200 self-center">/</span>
                         <div className="relative flex-1">
                           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-sm font-bold">
-                            ₹
+                            â‚¹
                           </span>
                           <input
                             type="number"
@@ -374,7 +374,7 @@ export default function Listings() {
           </div>
         </div>
 
-        {/* ─── RESULTS ─── */}
+        {/* â”€â”€â”€ RESULTS â”€â”€â”€ */}
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-6">
           {/* Result summary */}
           <div className="flex items-center justify-between mb-5">
@@ -395,7 +395,7 @@ export default function Listings() {
               {(start || end) && (
                 <p className="text-sm text-slate-400 mt-0.5">
                   {start && `Check-in: ${start}`}
-                  {start && end && ' · '}
+                  {start && end && ' Â· '}
                   {end && `Check-out: ${end}`}
                 </p>
               )}
@@ -515,18 +515,18 @@ export default function Listings() {
                         </button>
                         {/* Verified */}
                         {l.approved && (
-                          <div className="absolute bottom-3 left-3 bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-md">
+                          <div className="absolute bottom-3 left-3 bg-emerald-500 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-md">
                             <CheckCircle size={11} /> Verified
                           </div>
                         )}
                         <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
                           {/* Category label */}
-                          <div className="bg-black/50 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wide w-max shadow-sm">
+                          <div className="bg-black/50 backdrop-blur-sm text-white text-[11px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wide w-max shadow-sm">
                             {CATEGORIES.find((c) => c.id === l.category)?.label || 'Stay'}
                           </div>
                           {/* Superhost */}
                           {score >= 8.5 && reviewCount > 50 && (
-                            <div className="bg-gradient-to-r from-amber-400 to-orange-400 text-slate-900 text-[10px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-md w-max">
+                            <div className="bg-gradient-to-r from-amber-400 to-orange-400 text-slate-900 text-[11px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-md w-max">
                               <Sparkles size={11} className="text-slate-900" /> Superhost
                             </div>
                           )}
@@ -537,11 +537,11 @@ export default function Listings() {
                         <div className="flex-1 space-y-4">
                           <div>
                             <div className="flex items-center gap-2 mb-2">
-                              <span className="px-2 py-0.5 rounded-md bg-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-500 border border-slate-200">
+                              <span className="px-2 py-0.5 rounded-md bg-slate-100 text-[11px] font-black uppercase tracking-widest text-slate-500 border border-slate-200">
                                 {l.category || 'Hotel'}
                               </span>
                               {l.price > 8000 && (
-                                <span className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-amber-600">
+                                <span className="flex items-center gap-1 text-[11px] font-black uppercase tracking-widest text-amber-600">
                                   <Sparkles size={10} /> Signature Collection
                                 </span>
                               )}
@@ -571,7 +571,7 @@ export default function Listings() {
                             ].map((a, idx) => (
                               <div
                                 key={idx}
-                                className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-lg border border-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-widest"
+                                className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-lg border border-slate-100 text-[11px] font-bold text-slate-500 uppercase tracking-widest"
                               >
                                 <a.icon size={12} />
                                 {a.text}
@@ -584,10 +584,10 @@ export default function Listings() {
                           <div className="flex flex-col md:items-end gap-1.5">
                             <div className="flex items-center gap-3">
                               <div className="text-right hidden md:block">
-                                <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">
+                                <p className="text-[11px] font-black uppercase tracking-widest text-emerald-600">
                                   {score > 0 ? getRatingLabel(score) : 'New'}
                                 </p>
-                                <p className="text-[10px] text-slate-300 font-bold uppercase tracking-widest">
+                                <p className="text-[11px] text-slate-300 font-bold uppercase tracking-widest">
                                   {reviewCount > 0
                                     ? `${reviewCount} Verified Reviews`
                                     : 'No Reviews Yet'}
@@ -602,13 +602,13 @@ export default function Listings() {
                           <div className="text-right">
                             {minVariantPrice > 0 ? (
                               <>
-                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-300 mb-1">
+                                <p className="text-[11px] font-black uppercase tracking-widest text-slate-300 mb-1">
                                   Nightly rate from
                                 </p>
                                 <p className="text-3xl font-black text-slate-900 tracking-tighter">
-                                  ₹{minVariantPrice.toLocaleString()}
+                                  â‚¹{minVariantPrice.toLocaleString()}
                                 </p>
-                                <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mt-1">
+                                <p className="text-[11px] font-bold text-emerald-600 uppercase tracking-widest mt-1">
                                   Inclusive of Access
                                 </p>
                               </>
@@ -626,7 +626,7 @@ export default function Listings() {
                             }}
                             className="h-14 px-8 bg-slate-900 hover:bg-emerald-600 text-white rounded-2xl shadow-2xl shadow-slate-900/10 transition-all active:scale-[0.98] group/btn flex items-center justify-center gap-3"
                           >
-                            <span className="text-[10px] font-black uppercase tracking-[0.3em]">
+                            <span className="text-[11px] font-black uppercase tracking-[0.3em]">
                               Explore
                             </span>
                             <ArrowRight
@@ -643,7 +643,7 @@ export default function Listings() {
             )}
           </AnimatePresence>
 
-          {/* ─── PAGINATION ─── */}
+          {/* â”€â”€â”€ PAGINATION â”€â”€â”€ */}
           {!loading && pages > 1 && (
             <div className="mt-20 flex items-center justify-center gap-4">
               <button
@@ -686,7 +686,7 @@ export default function Listings() {
             </div>
           )}
 
-          {/* ─── TRUST STRIP ─── */}
+          {/* â”€â”€â”€ TRUST STRIP â”€â”€â”€ */}
           <div className="mt-12 pt-8 border-t border-slate-200">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               {[

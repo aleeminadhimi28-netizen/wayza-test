@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../AuthContext.jsx';
 import { useToast } from '../../ToastContext.jsx';
@@ -44,7 +44,7 @@ export default function PartnerLogin() {
 
     try {
       setLoading(true);
-      await new Promise((r) => setTimeout(r, 1200)); // Polished transition
+
 
       const data = await api.partnerLogin({ email, password });
 
@@ -104,7 +104,7 @@ export default function PartnerLogin() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <div className="mb-12 inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10 text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400">
+            <div className="mb-12 inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10 text-[11px] font-black uppercase tracking-[0.3em] text-emerald-400">
               Management Suite V2.5
             </div>
             <h1 className="text-7xl md:text-9xl font-black tracking-tighter uppercase leading-[0.8] mb-12">
@@ -134,11 +134,11 @@ export default function PartnerLogin() {
                 />
               </div>
             ))}
-            <div className="w-12 h-12 rounded-full border-2 border-slate-900 bg-emerald-500 flex items-center justify-center text-[10px] font-bold shadow-xl">
+            <div className="w-12 h-12 rounded-full border-2 border-slate-900 bg-emerald-500 flex items-center justify-center text-[11px] font-bold shadow-xl">
               +500
             </div>
           </div>
-          <span className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em]">
+          <span className="text-[11px] font-bold text-white/20 uppercase tracking-[0.2em]">
             Trusted by elite hosts worldwide
           </span>
         </div>
@@ -158,7 +158,7 @@ export default function PartnerLogin() {
             <header className="space-y-8">
               <div className="flex items-center gap-4">
                 <span className="h-px w-12 bg-emerald-500/20" />
-                <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-600">
+                <span className="text-[11px] font-black uppercase tracking-[0.5em] text-emerald-600">
                   Access Key Req.
                 </span>
               </div>
@@ -170,7 +170,7 @@ export default function PartnerLogin() {
 
             <form onSubmit={login} className="space-y-8">
               <div className="space-y-3 group/field">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] ml-2 group-focus-within/field:text-emerald-600 transition-colors">
+                <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] ml-2 group-focus-within/field:text-emerald-600 transition-colors">
                   Credential Email
                 </label>
                 <div className="relative">
@@ -192,7 +192,7 @@ export default function PartnerLogin() {
               </div>
 
               <div className="space-y-3 group/field">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] ml-2 group-focus-within/field:text-emerald-600 transition-colors">
+                <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] ml-2 group-focus-within/field:text-emerald-600 transition-colors">
                   Access Password
                 </label>
                 <div className="relative">
@@ -207,7 +207,7 @@ export default function PartnerLogin() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••••••"
+                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                     className="w-full h-22 bg-slate-50/50 border border-slate-100 rounded-[28px] pl-20 pr-10 font-bold text-xl tracking-[0.2em] text-slate-900 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all placeholder:text-slate-200"
                   />
                   <button
@@ -238,12 +238,12 @@ export default function PartnerLogin() {
 
             <div className="pt-12 flex flex-col items-center gap-8 text-center border-t border-slate-100">
               <div className="space-y-3">
-                <p className="text-slate-300 font-bold text-[10px] uppercase tracking-widest leading-relaxed">
+                <p className="text-slate-300 font-bold text-[11px] uppercase tracking-widest leading-relaxed">
                   Don't have a professional portfolio?
                 </p>
                 <Link
                   to="/partner-register"
-                  className="inline-flex items-center gap-4 text-emerald-600 font-black text-[10px] uppercase tracking-[0.5em] hover:text-emerald-700 transition-all group"
+                  className="inline-flex items-center gap-4 text-emerald-600 font-black text-[11px] uppercase tracking-[0.5em] hover:text-emerald-700 transition-all group"
                 >
                   Establish Residency{' '}
                   <ArrowRight
@@ -255,7 +255,7 @@ export default function PartnerLogin() {
 
               <Link
                 to="/login"
-                className="inline-flex items-center gap-4 text-slate-300 font-bold text-[9px] uppercase tracking-[0.4em] hover:text-slate-950 transition-colors pt-6 group"
+                className="inline-flex items-center gap-4 text-slate-300 font-bold text-[11px] uppercase tracking-[0.4em] hover:text-slate-950 transition-colors pt-6 group"
               >
                 <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />{' '}
                 Back to Guest Access

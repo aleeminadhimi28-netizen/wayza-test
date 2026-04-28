@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { WayzzaLayout, WayzzaHotelItem, WayzzaSkeleton } from '../../WayzzaUI.jsx';
 import { useAuth } from '../../AuthContext.jsx';
 import { useNavigate, Link } from 'react-router-dom';
@@ -66,7 +66,7 @@ export default function Wishlist() {
                 Curated <br />
                 <span className="text-emerald-500 lowercase">Collection.</span>
               </h1>
-              <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.3em] border-l-2 border-emerald-500/20 pl-4">
+              <p className="text-slate-400 font-bold uppercase text-[11px] tracking-[0.3em] border-l-2 border-emerald-500/20 pl-4">
                 "Your personal gallery of global masterpieces and unique sanctuaries."
               </p>
             </div>
@@ -116,14 +116,14 @@ export default function Wishlist() {
                   <h3 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tighter leading-none uppercase">
                     Registry is <span className="text-emerald-500 lowercase">Void.</span>
                   </h3>
-                  <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.4em] border-t border-slate-100 pt-6">
+                  <p className="text-slate-400 font-bold uppercase text-[11px] tracking-[0.4em] border-t border-slate-100 pt-6">
                     "Identify your next sanctuary and synchronize it with your registry."
                   </p>
                 </div>
 
                 <Link
                   to="/listings"
-                  className="h-20 px-12 bg-slate-900 text-white rounded-[24px] font-bold uppercase text-[10px] tracking-widest hover:bg-emerald-600 transition-all shadow-xl shadow-slate-900/10 inline-flex items-center gap-4 active:scale-95"
+                  className="h-20 px-12 bg-slate-900 text-white rounded-[24px] font-bold uppercase text-[11px] tracking-widest hover:bg-emerald-600 transition-all shadow-xl shadow-slate-900/10 inline-flex items-center gap-4 active:scale-95"
                 >
                   Explore Properties <ArrowRight size={18} />
                 </Link>
@@ -165,12 +165,12 @@ export default function Wishlist() {
                 <h3 className="text-4xl md:text-6xl font-bold text-white tracking-tight uppercase leading-none">
                   Find More Masterpieces.
                 </h3>
-                <p className="text-white/40 font-bold uppercase text-[10px] tracking-[0.4em]">
+                <p className="text-white/40 font-bold uppercase text-[11px] tracking-[0.4em]">
                   Expand your horizons and add to your unique collection
                 </p>
                 <Link
                   to="/listings"
-                  className="h-20 px-16 bg-white text-slate-900 rounded-[28px] font-bold uppercase text-[10px] tracking-widest transition-all hover:bg-emerald-500 hover:text-white shadow-3xl inline-flex items-center gap-4 active:scale-95"
+                  className="h-20 px-16 bg-white text-slate-900 rounded-[28px] font-bold uppercase text-[11px] tracking-widest transition-all hover:bg-emerald-500 hover:text-white shadow-3xl inline-flex items-center gap-4 active:scale-95"
                 >
                   Browse Portfolio <Search size={18} />
                 </Link>
@@ -180,7 +180,7 @@ export default function Wishlist() {
         )}
 
         <div className="py-20 text-center opacity-20 pointer-events-none select-none">
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.5em]">
+          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.5em]">
             Wayzza Selection Console v4.2
           </p>
         </div>

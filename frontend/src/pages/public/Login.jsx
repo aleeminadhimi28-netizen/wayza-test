@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../AuthContext.jsx';
 import { useToast } from '../../ToastContext.jsx';
@@ -130,7 +130,7 @@ export default function Login() {
 
     try {
       setLoading(true);
-      await new Promise((r) => setTimeout(r, 1200));
+
 
       const data = await api.login({ email, password });
 
@@ -179,7 +179,7 @@ export default function Login() {
       <AnimatePresence>
         {loading && (
           <VerificationSpinner
-            message={useOTP && !otpSent ? 'Generating OTP...' : 'Synchronizing Identity...'}
+            message={useOTP && !otpSent ? 'Generating OTP...' : 'Logging in...'}
             subtext="Verifying Member Presence"
           />
         )}
@@ -195,7 +195,7 @@ export default function Login() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-3 bg-white/10 border border-white/20 px-6 py-3 rounded-full text-white font-bold text-[10px] uppercase tracking-[0.2em] backdrop-blur-xl"
+            className="inline-flex items-center gap-3 bg-white/10 border border-white/20 px-6 py-3 rounded-full text-white font-bold text-[11px] uppercase tracking-[0.2em] backdrop-blur-xl"
           >
             <Sparkles size={16} className="text-emerald-400" /> Curated Travel Experiences
           </motion.div>
@@ -222,7 +222,7 @@ export default function Login() {
           <div className="w-12 h-1 bg-emerald-500 rounded-full" />
           <div className="w-2 h-1 bg-white/20 rounded-full" />
           <div className="w-2 h-1 bg-white/20 rounded-full" />
-          <span className="text-[9px] font-bold text-white/30 uppercase tracking-[0.4em] ml-4">
+          <span className="text-[11px] font-bold text-white/30 uppercase tracking-[0.4em] ml-4">
             Wayzza Guest Network
           </span>
         </div>
@@ -250,7 +250,7 @@ export default function Login() {
                 <form onSubmit={handleLogin} className="space-y-8 group">
                   <div className="space-y-6">
                     <div className="space-y-3 group/field">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within/field:text-emerald-600 transition-colors">
+                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within/field:text-emerald-600 transition-colors">
                         Email Address
                       </label>
                       <div className="relative">
@@ -276,13 +276,13 @@ export default function Login() {
                     {!useOTP ? (
                       <div className="space-y-3 group/field">
                         <div className="flex justify-between items-center ml-1">
-                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest group-focus-within/field:text-emerald-600 transition-colors">
+                          <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest group-focus-within/field:text-emerald-600 transition-colors">
                             Password
                           </label>
                           <Link
                             to="/forgot-password"
                             size={14}
-                            className="text-[9px] font-bold uppercase text-emerald-600 tracking-widest hover:text-emerald-700 transition-colors"
+                            className="text-[11px] font-bold uppercase text-emerald-600 tracking-widest hover:text-emerald-700 transition-colors"
                           >
                             Recovery Link?
                           </Link>
@@ -299,7 +299,7 @@ export default function Login() {
                             onChange={(e) => setPassword(e.target.value)}
                             autoComplete="current-password"
                             className="w-full h-18 bg-slate-50 border border-slate-100 rounded-2xl pl-16 pr-20 font-bold text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200 shadow-inner"
-                            placeholder="••••••••"
+                            placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                           />
                           <button
                             type="button"
@@ -313,7 +313,7 @@ export default function Login() {
                           <button
                             type="button"
                             onClick={() => setUseOTP(true)}
-                            className="text-[10px] font-bold uppercase tracking-widest text-emerald-600 hover:text-emerald-700 mt-2"
+                            className="text-[11px] font-bold uppercase tracking-widest text-emerald-600 hover:text-emerald-700 mt-2"
                           >
                             Log in with OTP instead
                           </button>
@@ -322,13 +322,13 @@ export default function Login() {
                     ) : (
                       <div className="space-y-3 group/field">
                         <div className="flex justify-between items-center ml-1">
-                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest group-focus-within/field:text-emerald-600 transition-colors">
+                          <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest group-focus-within/field:text-emerald-600 transition-colors">
                             6-Digit Code
                           </label>
                           <button
                             type="button"
                             onClick={() => setUseOTP(false)}
-                            className="text-[9px] font-bold uppercase text-emerald-600 tracking-widest hover:text-emerald-700 transition-colors"
+                            className="text-[11px] font-bold uppercase text-emerald-600 tracking-widest hover:text-emerald-700 transition-colors"
                           >
                             Use Password?
                           </button>
@@ -369,7 +369,7 @@ export default function Login() {
                       <div className="w-6 h-6 border-4 border-white/20 border-t-white rounded-full animate-spin" />
                     ) : (
                       <>
-                        <span>{useOTP && !otpSent ? 'Send OTP' : 'Synchronize Identity'}</span>
+                        <span>{useOTP && !otpSent ? 'Send OTP' : 'Log In'}</span>
                         <LogIn
                           size={20}
                           className="group-hover:translate-x-1 transition-transform"
@@ -380,7 +380,7 @@ export default function Login() {
 
                   <div className="relative flex items-center pt-4">
                     <div className="flex-grow border-t border-slate-100"></div>
-                    <span className="flex-shrink-0 mx-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                    <span className="flex-shrink-0 mx-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
                       Or continue with
                     </span>
                     <div className="flex-grow border-t border-slate-100"></div>
@@ -431,7 +431,7 @@ export default function Login() {
                     Secondary <br />
                     <span className="text-emerald-500 lowercase">Protocol.</span>
                   </h2>
-                  <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.4em] border-l-2 border-emerald-500/20 pl-4">
+                  <p className="text-slate-400 font-bold text-[11px] uppercase tracking-[0.4em] border-l-2 border-emerald-500/20 pl-4">
                     Enter the 6-digit code from your authenticator app.
                   </p>
                 </div>
@@ -451,7 +451,7 @@ export default function Login() {
                     <button
                       type="button"
                       onClick={() => setShowing2FA(false)}
-                      className="h-20 px-8 bg-slate-100 text-slate-500 rounded-[32px] font-bold uppercase text-[10px] tracking-widest hover:bg-slate-200 transition-all active:scale-95"
+                      className="h-20 px-8 bg-slate-100 text-slate-500 rounded-[32px] font-bold uppercase text-[11px] tracking-widest hover:bg-slate-200 transition-all active:scale-95"
                     >
                       Back
                     </button>
@@ -473,7 +473,7 @@ export default function Login() {
           </AnimatePresence>
 
           <div className="text-center space-y-6 pt-6">
-            <p className="font-bold text-slate-400 text-[10px] uppercase tracking-widest">
+            <p className="font-bold text-slate-400 text-[11px] uppercase tracking-widest">
               New to Wayzza?{' '}
               <Link
                 to="/signup"
@@ -490,7 +490,7 @@ export default function Login() {
                 size={18}
                 className="text-emerald-500 group-hover:scale-110 transition-transform"
               />
-              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-slate-400">
                 Secure Protocol Active
               </span>
             </div>

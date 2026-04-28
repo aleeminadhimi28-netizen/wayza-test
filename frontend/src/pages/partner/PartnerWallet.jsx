@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useAuth } from '../../AuthContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -97,7 +97,7 @@ export default function PartnerWallet() {
       if (d.ok) {
         setWithdrawMsg({
           type: 'success',
-          text: `₹${Number(withdrawAmount).toLocaleString()} withdrawal request submitted!`,
+          text: `â‚¹${Number(withdrawAmount).toLocaleString()} withdrawal request submitted!`,
         });
         setWithdrawAmount('');
         // Refresh requests
@@ -162,7 +162,7 @@ export default function PartnerWallet() {
       animate={{ opacity: 1, y: 0 }}
       className="space-y-8 font-sans pb-16"
     >
-      {/* ─── HEADER ─── */}
+      {/* â”€â”€â”€ HEADER â”€â”€â”€ */}
       <div>
         <div className="flex items-center gap-2 text-emerald-600 font-bold text-xs uppercase tracking-wide mb-1">
           <Wallet size={14} /> Partner Wallet
@@ -173,7 +173,7 @@ export default function PartnerWallet() {
         </p>
       </div>
 
-      {/* ─── BALANCE CARDS ─── */}
+      {/* â”€â”€â”€ BALANCE CARDS â”€â”€â”€ */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
         {balanceCards.map((c, i) => (
           <motion.div
@@ -189,8 +189,8 @@ export default function PartnerWallet() {
                 <c.icon size={20} />
               </div>
               <p className="text-white/70 text-xs font-semibold mb-1">{c.label}</p>
-              <p className="text-2xl font-bold">₹{Math.round(c.value).toLocaleString()}</p>
-              <p className="text-white/50 text-[10px] font-medium uppercase tracking-widest mt-1">
+              <p className="text-2xl font-bold">â‚¹{Math.round(c.value).toLocaleString()}</p>
+              <p className="text-white/50 text-[11px] font-medium uppercase tracking-widest mt-1">
                 {c.desc}
               </p>
             </div>
@@ -198,9 +198,9 @@ export default function PartnerWallet() {
         ))}
       </div>
 
-      {/* ─── MAIN GRID ─── */}
+      {/* â”€â”€â”€ MAIN GRID â”€â”€â”€ */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-        {/* ─── WITHDRAW ─── */}
+        {/* â”€â”€â”€ WITHDRAW â”€â”€â”€ */}
         <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
@@ -219,7 +219,7 @@ export default function PartnerWallet() {
                 Available Balance
               </p>
               <p className="text-2xl font-bold text-emerald-700 mt-0.5">
-                ₹{Math.round(available).toLocaleString()}
+                â‚¹{Math.round(available).toLocaleString()}
               </p>
             </div>
             <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
@@ -237,11 +237,11 @@ export default function PartnerWallet() {
           <form onSubmit={handleWithdraw} className="space-y-4">
             <div>
               <label className="text-xs font-bold text-slate-500 uppercase tracking-wide block mb-1.5">
-                Withdrawal Amount (₹)
+                Withdrawal Amount (â‚¹)
               </label>
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">
-                  ₹
+                  â‚¹
                 </span>
                 <input
                   type="number"
@@ -249,7 +249,7 @@ export default function PartnerWallet() {
                   max={Math.round(available)}
                   value={withdrawAmount}
                   onChange={(e) => setWithdrawAmount(e.target.value)}
-                  placeholder={`Max ₹${Math.round(available).toLocaleString()}`}
+                  placeholder={`Max â‚¹${Math.round(available).toLocaleString()}`}
                   className="w-full h-12 bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 text-sm font-semibold focus:bg-white focus:border-emerald-500 transition-all outline-none text-slate-900"
                 />
               </div>
@@ -296,7 +296,7 @@ export default function PartnerWallet() {
           </form>
         </div>
 
-        {/* ─── BANK DETAILS ─── */}
+        {/* â”€â”€â”€ BANK DETAILS â”€â”€â”€ */}
         <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
@@ -307,7 +307,7 @@ export default function PartnerWallet() {
               <p className="text-xs text-slate-500">Your payout destination account</p>
             </div>
             {wallet?.accountNumber && (
-              <span className="ml-auto flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-100">
+              <span className="ml-auto flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-100">
                 <ShieldCheck size={10} /> Verified
               </span>
             )}
@@ -402,14 +402,14 @@ export default function PartnerWallet() {
         </div>
       </div>
 
-      {/* ─── WITHDRAWAL HISTORY ─── */}
+      {/* â”€â”€â”€ WITHDRAWAL HISTORY â”€â”€â”€ */}
       <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
         <div className="p-6 border-b border-slate-100 flex items-center justify-between">
           <div>
             <h3 className="text-lg font-bold text-slate-900">Withdrawal History</h3>
             <p className="text-xs text-slate-500">All your past payout requests</p>
           </div>
-          <span className="text-[10px] font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100 flex items-center gap-1.5">
+          <span className="text-[11px] font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100 flex items-center gap-1.5">
             <ShieldCheck size={10} /> Merchant Protected
           </span>
         </div>
@@ -448,11 +448,11 @@ export default function PartnerWallet() {
                     })}
                   </td>
                   <td className="px-6 py-4 font-bold text-sm text-slate-900">
-                    ₹{Number(r.amount).toLocaleString()}
+                    â‚¹{Number(r.amount).toLocaleString()}
                   </td>
                   <td className="px-6 py-4">
                     <span
-                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${
+                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider border ${
                         r.status === 'completed' || r.status === 'paid'
                           ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
                           : r.status === 'rejected'

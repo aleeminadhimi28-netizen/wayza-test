@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+﻿import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Shield, X, Copy, Check, Loader2, Smartphone } from 'lucide-react';
 import { api } from '../utils/api.js';
@@ -119,7 +119,7 @@ export default function TwoFactorSetup({ isOpen, onClose, onComplete }) {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">
                         Manual Entry Key
                       </label>
                       <div className="flex gap-2">
@@ -159,7 +159,7 @@ export default function TwoFactorSetup({ isOpen, onClose, onComplete }) {
                     </div>
 
                     <div className="space-y-3">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">
                         Verification Code
                       </label>
                       <input
@@ -176,7 +176,7 @@ export default function TwoFactorSetup({ isOpen, onClose, onComplete }) {
                   <div className="flex gap-3">
                     <button
                       onClick={() => setStep(1)}
-                      className="h-14 px-6 bg-slate-100 text-slate-500 rounded-2xl font-bold uppercase text-[10px] tracking-widest hover:bg-slate-200 transition-all active:scale-95"
+                      className="h-14 px-6 bg-slate-100 text-slate-500 rounded-2xl font-bold uppercase text-[11px] tracking-widest hover:bg-slate-200 transition-all active:scale-95"
                     >
                       Back
                     </button>

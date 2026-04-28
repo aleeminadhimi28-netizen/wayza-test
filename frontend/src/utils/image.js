@@ -9,7 +9,8 @@
 const DEFAULT_FALLBACK =
   'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80';
 
-const BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import { BASE_URL } from './api.js';
+const BASE = BASE_URL;
 
 export function fixImg(img, fallback = DEFAULT_FALLBACK) {
   if (!img) return fallback;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { WayzzaLayout, WayzzaSkeleton } from '../../WayzzaUI.jsx';
@@ -70,7 +70,7 @@ export default function Experiences() {
   return (
     <WayzzaLayout noPadding hideFooter>
       <div className="bg-white font-sans text-slate-900 selection:bg-amber-100 selection:text-amber-900 overflow-hidden">
-        {/* ════ CINEMATIC HERO ════ */}
+        {/* â•â•â•â• CINEMATIC HERO â•â•â•â• */}
         <section className="relative h-[90vh] min-h-[800px] flex items-center justify-center bg-slate-950 overflow-hidden">
           <motion.div
             style={{ opacity: heroOpacity, scale: heroScale }}
@@ -92,7 +92,7 @@ export default function Experiences() {
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
               className="space-y-12"
             >
-              <div className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-3xl border border-white/20 px-8 py-3 rounded-full text-white font-bold text-[10px] uppercase tracking-[0.4em] shadow-2xl">
+              <div className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-3xl border border-white/20 px-8 py-3 rounded-full text-white font-bold text-[11px] uppercase tracking-[0.4em] shadow-2xl">
                 <Anchor size={14} className="text-amber-400" /> Beyond the Stay
               </div>
 
@@ -109,12 +109,12 @@ export default function Experiences() {
                 </p>
 
                 <div className="flex gap-4">
-                  <button className="h-16 px-10 bg-amber-500 text-slate-950 rounded-2xl font-bold uppercase text-[10px] tracking-widest hover:bg-amber-400 transition-all shadow-xl shadow-amber-500/20 flex items-center gap-3">
+                  <button className="h-16 px-10 bg-amber-500 text-slate-950 rounded-2xl font-bold uppercase text-[11px] tracking-widest hover:bg-amber-400 transition-all shadow-xl shadow-amber-500/20 flex items-center gap-3">
                     <PlayCircle size={18} /> Watch Discovery
                   </button>
                   <button
                     onClick={() => window.scrollTo({ top: 800, behavior: 'smooth' })}
-                    className="h-16 px-10 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-2xl font-bold uppercase text-[10px] tracking-widest hover:bg-white/20 transition-all"
+                    className="h-16 px-10 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-2xl font-bold uppercase text-[11px] tracking-widest hover:bg-white/20 transition-all"
                   >
                     Browse Grid
                   </button>
@@ -132,7 +132,7 @@ export default function Experiences() {
           </div>
         </section>
 
-        {/* ════ CATEGORY STRIP ════ */}
+        {/* â•â•â•â• CATEGORY STRIP â•â•â•â• */}
         <div className="relative z-30 -mt-16 max-w-7xl mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -145,7 +145,7 @@ export default function Experiences() {
                 <button
                   key={cat.id}
                   onClick={() => setActiveCat(cat.id)}
-                  className={`px-8 py-5 rounded-[24px] font-bold text-[10px] uppercase tracking-widest transition-all flex items-center gap-4 border-2 ${activeCat === cat.id ? 'bg-slate-950 border-slate-950 text-white shadow-2xl scale-105' : 'bg-transparent border-slate-50 text-slate-400 hover:border-slate-200 hover:text-slate-900'}`}
+                  className={`px-8 py-5 rounded-[24px] font-bold text-[11px] uppercase tracking-widest transition-all flex items-center gap-4 border-2 ${activeCat === cat.id ? 'bg-slate-950 border-slate-950 text-white shadow-2xl scale-105' : 'bg-transparent border-slate-50 text-slate-400 hover:border-slate-200 hover:text-slate-900'}`}
                 >
                   <cat.icon size={16} className={activeCat === cat.id ? 'text-amber-400' : ''} />
                   {cat.label}
@@ -155,11 +155,11 @@ export default function Experiences() {
           </motion.div>
         </div>
 
-        {/* ════ THE GRID ════ */}
+        {/* â•â•â•â• THE GRID â•â•â•â• */}
         <section className="py-32 px-6 max-w-7xl mx-auto">
           <header className="mb-24 flex flex-col md:flex-row justify-between items-end gap-10">
             <div className="space-y-4">
-              <div className="flex items-center gap-3 text-amber-600 font-bold text-[10px] uppercase tracking-[0.5em]">
+              <div className="flex items-center gap-3 text-amber-600 font-bold text-[11px] uppercase tracking-[0.5em]">
                 <Sparkles size={18} /> Top Rated Experiences
               </div>
               <h2 className="text-5xl md:text-7xl font-bold tracking-tighter uppercase leading-none">
@@ -200,11 +200,11 @@ export default function Experiences() {
 
                     {/* Badges */}
                     <div className="absolute top-8 left-8 flex flex-col gap-2">
-                      <span className="bg-white/95 backdrop-blur-md text-slate-950 text-[9px] font-bold px-4 py-2 rounded-full uppercase tracking-widest shadow-lg">
+                      <span className="bg-white/95 backdrop-blur-md text-slate-950 text-[11px] font-bold px-4 py-2 rounded-full uppercase tracking-widest shadow-lg">
                         Verified Experience
                       </span>
                       {exp.price > 10000 && (
-                        <span className="bg-amber-500 text-slate-950 text-[9px] font-bold px-4 py-2 rounded-full uppercase tracking-widest shadow-lg flex items-center gap-1.5">
+                        <span className="bg-amber-500 text-slate-950 text-[11px] font-bold px-4 py-2 rounded-full uppercase tracking-widest shadow-lg flex items-center gap-1.5">
                           <Award size={12} /> Elite Pick
                         </span>
                       )}
@@ -222,7 +222,7 @@ export default function Experiences() {
                     <div className="absolute bottom-10 left-10 right-10 space-y-4">
                       <div className="flex items-center gap-3">
                         <MapPin size={14} className="text-amber-500" />
-                        <span className="text-[10px] font-bold text-white/70 uppercase tracking-[0.2em]">
+                        <span className="text-[11px] font-bold text-white/70 uppercase tracking-[0.2em]">
                           {exp.location || 'Coastline'}
                         </span>
                       </div>
@@ -231,7 +231,7 @@ export default function Experiences() {
                       </h3>
                       <div className="flex justify-between items-end pt-4 border-t border-white/10">
                         <div>
-                          <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest mb-1">
+                          <p className="text-[11px] font-bold text-white/40 uppercase tracking-widest mb-1">
                             Starting From
                           </p>
                           <p className="text-2xl font-bold text-white">{formatPrice(exp.price)}</p>
@@ -248,7 +248,7 @@ export default function Experiences() {
           )}
         </section>
 
-        {/* ════ ADRENALINE FEEDS ════ */}
+        {/* â•â•â•â• ADRENALINE FEEDS â•â•â•â• */}
         <section className="py-48 bg-slate-950 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-1/3 h-full bg-amber-500/[0.03] blur-[150px] pointer-events-none" />
           <div className="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row items-center gap-24">
@@ -270,7 +270,7 @@ export default function Experiences() {
               </motion.div>
             </div>
             <div className="flex-1 space-y-12">
-              <div className="inline-flex items-center gap-4 bg-white/5 border border-white/10 text-amber-400 px-8 py-3 rounded-full font-bold text-[10px] uppercase tracking-[0.4em]">
+              <div className="inline-flex items-center gap-4 bg-white/5 border border-white/10 text-amber-400 px-8 py-3 rounded-full font-bold text-[11px] uppercase tracking-[0.4em]">
                 <Zap size={16} /> ADRENALINE PEAK
               </div>
               <h2 className="text-6xl md:text-9xl font-bold text-white tracking-tighter uppercase leading-[0.85]">
@@ -289,7 +289,7 @@ export default function Experiences() {
           </div>
         </section>
 
-        {/* ════ NATIVE SECRETS FOOTER CTA ════ */}
+        {/* â•â•â•â• NATIVE SECRETS FOOTER CTA â•â•â•â• */}
         <section className="py-48 px-6 bg-white relative overflow-hidden">
           <div className="max-w-7xl mx-auto">
             <motion.div
@@ -329,7 +329,7 @@ export default function Experiences() {
           </div>
         </section>
 
-        {/* ════ REFINED FOOTER ════ */}
+        {/* â•â•â•â• REFINED FOOTER â•â•â•â• */}
         <footer className="bg-white py-48 px-6 md:px-12 border-t border-slate-100 relative">
           <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-32">
             <div className="md:col-span-6 space-y-16">

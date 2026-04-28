@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useAuth } from '../../AuthContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -384,12 +384,12 @@ export default function PartnerBookings() {
                         <td className="px-6 py-4 text-right">
                           <div className="flex flex-col items-end gap-1">
                             <span className="text-base font-bold text-slate-900">
-                              ₹{(b.totalPrice || 0).toLocaleString()}
+                              â‚¹{(b.totalPrice || 0).toLocaleString()}
                             </span>
                             {b.status === 'arrived' && (
                               <button
                                 onClick={() => handleManualCheckOut(b._id)}
-                                className="text-[10px] font-bold text-emerald-600 hover:text-slate-900 uppercase tracking-widest flex items-center gap-1 mt-1"
+                                className="text-[11px] font-bold text-emerald-600 hover:text-slate-900 uppercase tracking-widest flex items-center gap-1 mt-1"
                               >
                                 <Shield size={10} /> Complete Stay
                               </button>
@@ -411,7 +411,7 @@ export default function PartnerBookings() {
               <div className="flex items-center gap-2">
                 <span className="text-xs font-semibold text-slate-500">Confirmed Revenue:</span>
                 <span className="text-lg font-bold text-slate-900">
-                  ₹{totalRevenue.toLocaleString()}
+                  â‚¹{totalRevenue.toLocaleString()}
                 </span>
               </div>
             </div>
@@ -443,10 +443,10 @@ export default function PartnerBookings() {
 
               <div className="space-y-6">
                 <div className="text-center space-y-1">
-                  <p className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-600">
+                  <p className="text-[11px] font-black uppercase tracking-[0.4em] text-emerald-600">
                     Verification Hub
                   </p>
-                  <h3 className="text-2xl font-black text-slate-900 uppercase">Neural Handshake</h3>
+                  <h3 className="text-2xl font-black text-slate-900 uppercase">Check-in QR Code</h3>
                 </div>
 
                 {!scanResult ? (
@@ -459,7 +459,7 @@ export default function PartnerBookings() {
                           <div className="w-48 h-48 border-2 border-emerald-500/50 rounded-3xl animate-pulse flex items-center justify-center">
                             <div className="w-full h-0.5 bg-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.8)] animate-scanline" />
                           </div>
-                          <p className="text-[10px] font-bold uppercase tracking-widest mt-6 opacity-60">
+                          <p className="text-[11px] font-bold uppercase tracking-widest mt-6 opacity-60">
                             Scanning for passport...
                           </p>
                         </div>
@@ -482,7 +482,7 @@ export default function PartnerBookings() {
                       <div className="absolute inset-0 flex items-center">
                         <div className="w-full border-t border-slate-100"></div>
                       </div>
-                      <div className="relative flex justify-center text-[10px]">
+                      <div className="relative flex justify-center text-[11px]">
                         <span className="px-4 bg-white text-slate-400 font-black uppercase tracking-widest">
                           Or Manual
                         </span>
@@ -526,7 +526,7 @@ export default function PartnerBookings() {
 
                     <div className="space-y-3">
                       <div className="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                        <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest">
                           Protocol
                         </span>
                         <span className="text-xs font-bold text-slate-900 uppercase">
@@ -534,7 +534,7 @@ export default function PartnerBookings() {
                         </span>
                       </div>
                       <div className="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                        <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest">
                           Property
                         </span>
                         <span className="text-xs font-bold text-slate-900 uppercase truncate max-w-[120px]">
@@ -546,7 +546,7 @@ export default function PartnerBookings() {
                     <button
                       onClick={confirmAction}
                       disabled={scanResult.status !== 'paid'}
-                      className="w-full h-16 bg-slate-900 text-white rounded-[24px] font-black uppercase text-[10px] tracking-widest flex items-center justify-center gap-3 hover:bg-emerald-600 transition-all shadow-xl shadow-emerald-900/10 active:scale-[0.98] disabled:opacity-50"
+                      className="w-full h-16 bg-slate-900 text-white rounded-[24px] font-black uppercase text-[11px] tracking-widest flex items-center justify-center gap-3 hover:bg-emerald-600 transition-all shadow-xl shadow-emerald-900/10 active:scale-[0.98] disabled:opacity-50"
                     >
                       <Zap size={18} fill="currentColor" />
                       Confirm Arrival
@@ -554,7 +554,7 @@ export default function PartnerBookings() {
 
                     <button
                       onClick={() => setScanResult(null)}
-                      className="w-full text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-rose-500 transition-colors"
+                      className="w-full text-[11px] font-black text-slate-400 uppercase tracking-widest hover:text-rose-500 transition-colors"
                     >
                       Wrong Booking? Back to Scan
                     </button>

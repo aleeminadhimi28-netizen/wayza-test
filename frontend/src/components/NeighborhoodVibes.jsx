@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { MapPin, Compass, Coffee, Utensils, Waves, Moon, Sparkles, Loader2 } from 'lucide-react';
+import { BASE_URL } from '../utils/api.js';
 
 const ICON_MAP = { Compass, Coffee, Waves, Moon, Utensils, MapPin };
 
@@ -10,9 +11,8 @@ export default function NeighborhoodVibes({ location, category }) {
   useEffect(() => {
     const fetchVibe = async () => {
       try {
-        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
         const res = await fetch(
-          `${API_URL}/api/v1/misc/neighborhood-vibe?location=${encodeURIComponent(location)}&category=${encodeURIComponent(category)}`
+          `${BASE_URL}/api/v1/misc/neighborhood-vibe?location=${encodeURIComponent(location)}&category=${encodeURIComponent(category)}`
         );
         const json = await res.json();
         if (json.ok) setData(json.data);
@@ -29,7 +29,7 @@ export default function NeighborhoodVibes({ location, category }) {
     return (
       <div className="h-[300px] bg-slate-50 rounded-[48px] flex flex-col items-center justify-center gap-4 animate-pulse">
         <Loader2 size={24} className="text-emerald-500 animate-spin" />
-        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">
+        <p className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-400">
           Architecting Neighbourhood Soul...
         </p>
       </div>
@@ -41,7 +41,7 @@ export default function NeighborhoodVibes({ location, category }) {
     <section className="space-y-12">
       <div className="flex items-center gap-4">
         <span className="h-px w-12 bg-emerald-500" />
-        <span className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-600">
+        <span className="text-[11px] font-black uppercase tracking-[0.5em] text-emerald-600">
           Local Soul
         </span>
       </div>
@@ -58,10 +58,10 @@ export default function NeighborhoodVibes({ location, category }) {
           </div>
 
           <div className="flex flex-wrap gap-4">
-            <div className="px-4 py-2 bg-slate-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg flex items-center gap-2">
+            <div className="px-4 py-2 bg-slate-900 text-white text-[11px] font-black uppercase tracking-widest rounded-lg flex items-center gap-2">
               <Sparkles size={12} className="text-emerald-400" /> High Vibe Area
             </div>
-            <div className="px-4 py-2 bg-emerald-50 text-emerald-600 text-[9px] font-black uppercase tracking-widest rounded-lg flex items-center gap-2">
+            <div className="px-4 py-2 bg-emerald-50 text-emerald-600 text-[11px] font-black uppercase tracking-widest rounded-lg flex items-center gap-2">
               <MapPin size={12} /> Prime Connectivity
             </div>
           </div>
@@ -79,7 +79,7 @@ export default function NeighborhoodVibes({ location, category }) {
                   <Icon size={22} />
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[9px] font-black text-emerald-600 uppercase tracking-widest leading-none">
+                  <p className="text-[11px] font-black text-emerald-600 uppercase tracking-widest leading-none">
                     {spot.label}
                   </p>
                   <p className="text-sm font-black text-slate-900 uppercase tracking-tight">

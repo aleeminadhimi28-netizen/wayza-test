@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Activity, Clock, ShieldAlert, Zap, Server, Globe } from 'lucide-react';
 import { api } from '../../utils/api.js';
@@ -136,7 +136,7 @@ export default function AdminLogs() {
                           {text}
                         </span>
                         {type === 'other' && (
-                          <span className="text-[10px] font-mono text-slate-400 max-w-xs truncate">
+                          <span className="text-[11px] font-mono text-slate-400 max-w-xs truncate">
                             {log.method} {log.url}
                           </span>
                         )}

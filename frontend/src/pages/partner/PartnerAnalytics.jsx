@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useAuth } from '../../AuthContext.jsx';
 import {
   BarChart,
@@ -113,28 +113,28 @@ export default function PartnerAnalytics() {
   const kpis = [
     {
       label: 'Total Revenue',
-      value: `₹${(earnings?.totalRevenue || 0).toLocaleString()}`,
+      value: `â‚¹${(earnings?.totalRevenue || 0).toLocaleString()}`,
       icon: TrendingUp,
       bg: 'bg-blue-50',
       color: 'text-blue-600',
     },
     {
       label: 'Available to Withdraw',
-      value: `₹${(earnings?.availableBalance || 0).toLocaleString()}`,
+      value: `â‚¹${(earnings?.availableBalance || 0).toLocaleString()}`,
       icon: CheckCircle,
       bg: 'bg-emerald-50',
       color: 'text-emerald-600',
     },
     {
       label: 'Pending Settlement',
-      value: `₹${(earnings?.pendingBalance || 0).toLocaleString()}`,
+      value: `â‚¹${(earnings?.pendingBalance || 0).toLocaleString()}`,
       icon: Clock,
       bg: 'bg-amber-50',
       color: 'text-amber-600',
     },
     {
       label: 'Already Paid',
-      value: `₹${(earnings?.alreadyPaid || 0).toLocaleString()}`,
+      value: `â‚¹${(earnings?.alreadyPaid || 0).toLocaleString()}`,
       icon: Shield,
       bg: 'bg-slate-50',
       color: 'text-slate-600',
@@ -154,7 +154,7 @@ export default function PartnerAnalytics() {
     },
     {
       label: 'Avg. Booking Value',
-      value: `₹${avgBookingValue.toLocaleString()}`,
+      value: `â‚¹${avgBookingValue.toLocaleString()}`,
       desc: 'Average revenue per booking',
       icon: Award,
       bg: 'bg-rose-50',
@@ -164,8 +164,8 @@ export default function PartnerAnalytics() {
     },
     {
       label: 'Best Month',
-      value: bestMonth?.month || '—',
-      desc: `₹${(bestMonth?.revenue || 0).toLocaleString()} peak`,
+      value: bestMonth?.month || 'â€”',
+      desc: `â‚¹${(bestMonth?.revenue || 0).toLocaleString()} peak`,
       icon: Star,
       bg: 'bg-amber-50',
       color: 'text-amber-600',
@@ -174,7 +174,7 @@ export default function PartnerAnalytics() {
     },
     {
       label: 'MoM Growth',
-      value: momGrowth !== null ? `${momGrowth > 0 ? '+' : ''}${momGrowth}%` : '—',
+      value: momGrowth !== null ? `${momGrowth > 0 ? '+' : ''}${momGrowth}%` : 'â€”',
       desc: 'Month over month revenue change',
       icon: momGrowth !== null && momGrowth >= 0 ? TrendingUp : TrendingDown,
       bg: momGrowth !== null && momGrowth >= 0 ? 'bg-emerald-50' : 'bg-rose-50',
@@ -245,11 +245,11 @@ export default function PartnerAnalytics() {
               <p className="text-xl font-bold text-slate-900">{c.value}</p>
               <div className="flex items-center gap-1.5 mt-2">
                 <span
-                  className={`text-[10px] font-bold ${c.trendUp ? 'text-emerald-600' : 'text-rose-500'}`}
+                  className={`text-[11px] font-bold ${c.trendUp ? 'text-emerald-600' : 'text-rose-500'}`}
                 >
-                  {c.trendUp ? '▲' : '▼'} {c.trend}
+                  {c.trendUp ? 'â–²' : 'â–¼'} {c.trend}
                 </span>
-                <span className="text-[10px] text-slate-400">{c.desc}</span>
+                <span className="text-[11px] text-slate-400">{c.desc}</span>
               </div>
             </motion.div>
           ))}
@@ -273,7 +273,7 @@ export default function PartnerAnalytics() {
               <span
                 className={`text-xs font-bold px-3 py-1.5 rounded-xl border ${momGrowth >= 0 ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-rose-50 text-rose-700 border-rose-100'}`}
               >
-                {momGrowth >= 0 ? '▲' : '▼'} {Math.abs(momGrowth)}% MoM
+                {momGrowth >= 0 ? 'â–²' : 'â–¼'} {Math.abs(momGrowth)}% MoM
               </span>
             )}
           </div>
@@ -306,7 +306,7 @@ export default function PartnerAnalytics() {
                     }}
                     itemStyle={{ color: '#10b981' }}
                     formatter={(value, name, props) => [
-                      `₹${value.toLocaleString()}`,
+                      `â‚¹${value.toLocaleString()}`,
                       props.payload.forecast ? 'Forecast' : 'Revenue',
                     ]}
                   />
@@ -511,7 +511,7 @@ export default function PartnerAnalytics() {
                   {b.status === 'paid' ? 'Confirmed' : b.status}
                 </span>
                 <span className="text-sm font-bold text-slate-900">
-                  ₹{(b.totalPrice || 0).toLocaleString()}
+                  â‚¹{(b.totalPrice || 0).toLocaleString()}
                 </span>
               </div>
             ))}

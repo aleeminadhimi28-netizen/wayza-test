@@ -1,4 +1,4 @@
-import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
+﻿import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../AuthContext.jsx';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -151,7 +151,7 @@ export default function PartnerLayout() {
           className={`px-6 py-4 border-b border-slate-800 flex items-center ${collapsed ? 'justify-center' : 'justify-between'}`}
         >
           {!collapsed && (
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest leading-none">
               Settings
             </span>
           )}
@@ -204,7 +204,7 @@ export default function PartnerLayout() {
                 <div className="text-sm font-semibold text-white truncate">
                   {user?.email?.split('@')[0]}
                 </div>
-                <div className="text-[10px] text-emerald-500 flex items-center gap-1 font-medium mt-0.5">
+                <div className="text-[11px] text-emerald-500 flex items-center gap-1 font-medium mt-0.5">
                   <ShieldCheck size={12} /> Verified Partner
                 </div>
               </div>
@@ -311,7 +311,7 @@ export default function PartnerLayout() {
                             className={`p-3 rounded-xl mb-1 flex flex-col gap-1 text-sm ${n.read ? 'bg-white text-slate-500' : 'bg-emerald-50 text-emerald-900 font-semibold'}`}
                           >
                             <span>{n.message}</span>
-                            <span className="text-[9px] uppercase tracking-widest opacity-50">
+                            <span className="text-[11px] uppercase tracking-widest opacity-50">
                               {new Date(n.createdAt).toLocaleDateString()}
                             </span>
                           </div>

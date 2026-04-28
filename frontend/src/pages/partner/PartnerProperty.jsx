@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom';
+﻿import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '../../ToastContext.jsx';
 
-import { api } from '../../utils/api.js';
+import { api, BASE_URL } from '../../utils/api.js';
 import { fixImg } from '../../utils/image.js';
 import { AMENITY_CATEGORIES } from '../../utils/amenities.js';
 
@@ -162,7 +162,7 @@ export default function PartnerProperty() {
     setPrice(v.price || '');
     setDesc(v.desc || '');
     setAvailable(v.available !== false);
-    const BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const BASE = BASE_URL;
     setPreview(v.image ? (v.image.startsWith('http') ? v.image : `${BASE}/${v.image}`) : '');
     setFile(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -282,12 +282,12 @@ export default function PartnerProperty() {
             exit={{ opacity: 0, height: 0 }}
             className="bg-slate-900 rounded-3xl p-8 border border-white/10 shadow-2xl overflow-hidden"
           >
-            <div className="flex items-center gap-3 text-emerald-400 font-black text-[10px] uppercase tracking-[0.4em] mb-6">
+            <div className="flex items-center gap-3 text-emerald-400 font-black text-[11px] uppercase tracking-[0.4em] mb-6">
               <Cpu size={14} /> Update Core Manifest
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-2">
+                <label className="text-[11px] font-black uppercase tracking-widest text-white/40 ml-2">
                   Property Identity
                 </label>
                 <input
@@ -298,7 +298,7 @@ export default function PartnerProperty() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-2">
+                <label className="text-[11px] font-black uppercase tracking-widest text-white/40 ml-2">
                   Walkthrough Intelligence (URL)
                 </label>
                 <input
@@ -312,17 +312,17 @@ export default function PartnerProperty() {
 
               <div className="md:col-span-2 space-y-6 pt-6 border-t border-white/10">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40">
+                  <h3 className="text-[11px] font-black uppercase tracking-[0.4em] text-white/40">
                     Available Utilities
                   </h3>
-                  <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">
+                  <span className="text-[11px] font-black text-emerald-500 uppercase tracking-widest">
                     {mainAmenities.length} Active
                   </span>
                 </div>
 
                 {/* Wifi Speed Edit */}
                 <div className="space-y-2 bg-white/5 p-4 rounded-2xl border border-white/10 max-w-xs">
-                  <label className="text-[9px] font-black uppercase tracking-widest text-white/30 block ml-1">
+                  <label className="text-[11px] font-black uppercase tracking-widest text-white/30 block ml-1">
                     Verified Wi-Fi Speed (Mbps)
                   </label>
                   <div className="flex items-center gap-3">
@@ -336,7 +336,7 @@ export default function PartnerProperty() {
                       onChange={(e) => setMainWifiSpeed(e.target.value)}
                       className="h-10 flex-1 bg-transparent border-b border-white/10 px-2 text-sm font-bold text-white outline-none focus:border-emerald-500 transition-all"
                     />
-                    <span className="text-[9px] font-black text-white/20 uppercase">MBPS</span>
+                    <span className="text-[11px] font-black text-white/20 uppercase">MBPS</span>
                   </div>
                 </div>
 
@@ -345,7 +345,7 @@ export default function PartnerProperty() {
                     <div key={cat.id} className="space-y-3">
                       <div className="flex items-center gap-2">
                         <div className="h-[1px] w-4 bg-white/10" />
-                        <h4 className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20">
+                        <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-white/20">
                           {cat.label}
                         </h4>
                       </div>
@@ -361,7 +361,7 @@ export default function PartnerProperty() {
                                 setMainAmenities([...mainAmenities, a.label]);
                               }
                             }}
-                            className={`h-11 px-4 rounded-xl text-[9px] font-bold uppercase tracking-widest border transition-all flex items-center gap-3 ${
+                            className={`h-11 px-4 rounded-xl text-[11px] font-bold uppercase tracking-widest border transition-all flex items-center gap-3 ${
                               mainAmenities.includes(a.label)
                                 ? 'bg-emerald-500 border-emerald-500 text-slate-900 shadow-lg shadow-emerald-500/20'
                                 : 'bg-white/5 border-white/10 text-white/40 hover:border-emerald-500/50 hover:text-emerald-500 shadow-sm'
@@ -385,14 +385,14 @@ export default function PartnerProperty() {
             <div className="flex justify-end gap-4 mt-8">
               <button
                 onClick={() => setIsEditingMain(false)}
-                className="h-12 px-6 text-white/40 font-black uppercase text-[10px] tracking-widest hover:text-white transition-colors"
+                className="h-12 px-6 text-white/40 font-black uppercase text-[11px] tracking-widest hover:text-white transition-colors"
               >
                 Abort
               </button>
               <button
                 onClick={updateMainDetails}
                 disabled={mainLoading}
-                className="h-12 px-10 bg-emerald-500 text-slate-950 font-black uppercase text-[10px] tracking-[0.3em] rounded-xl flex items-center gap-2 hover:bg-emerald-400 transition-all disabled:opacity-50"
+                className="h-12 px-10 bg-emerald-500 text-slate-950 font-black uppercase text-[11px] tracking-[0.3em] rounded-xl flex items-center gap-2 hover:bg-emerald-400 transition-all disabled:opacity-50"
               >
                 {mainLoading ? (
                   <Activity size={14} className="animate-spin" />
@@ -414,22 +414,22 @@ export default function PartnerProperty() {
                 <Target size={24} />
               </div>
               <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-300">
+                <p className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-300">
                   Property Identity
                 </p>
                 <h2 className="text-xl font-bold text-slate-900">{listing.title}</h2>
                 {listing.walkthroughVideo ? (
-                  <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-widest flex items-center gap-1 mt-1">
+                  <p className="text-[11px] text-emerald-600 font-bold uppercase tracking-widest flex items-center gap-1 mt-1">
                     <Zap size={10} /> Neural Walkthrough Active
                   </p>
                 ) : (
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest flex items-center gap-1 mt-1">
+                  <p className="text-[11px] text-slate-400 font-bold uppercase tracking-widest flex items-center gap-1 mt-1">
                     <History size={10} /> Using Default Sensory Link
                   </p>
                 )}
               </div>
             </div>
-            <button className="h-10 px-6 border border-slate-100 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-emerald-600 group-hover:border-emerald-100 transition-all">
+            <button className="h-10 px-6 border border-slate-100 rounded-xl text-[11px] font-black uppercase tracking-widest text-slate-400 group-hover:text-emerald-600 group-hover:border-emerald-100 transition-all">
               Configure Core
             </button>
           </div>
@@ -489,7 +489,7 @@ export default function PartnerProperty() {
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-700 block">Price (₹)</label>
+                <label className="text-xs font-semibold text-slate-700 block">Price (â‚¹)</label>
                 <div className="relative">
                   <Target
                     className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
@@ -667,7 +667,7 @@ export default function PartnerProperty() {
                           <h4 className="text-xl font-bold text-slate-900">{v.name}</h4>
                           <div className="text-right">
                             <div className="text-xl font-bold text-emerald-600">
-                              ₹{v.price.toLocaleString()}
+                              â‚¹{v.price.toLocaleString()}
                             </div>
                             <div className="text-xs font-semibold text-slate-500">
                               {listing.category === 'bike' || listing.category === 'car'

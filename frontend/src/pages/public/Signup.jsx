@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -74,7 +74,7 @@ export default function Signup() {
 
     setLoading(true);
     try {
-      await new Promise((r) => setTimeout(r, 1200)); // Cinematic delay for identity creation
+
 
       const data = await api.signup({ name, phone, email, password });
 
@@ -111,7 +111,7 @@ export default function Signup() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-3 bg-white/10 border border-white/20 px-6 py-3 rounded-full text-white font-bold text-[10px] uppercase tracking-widest backdrop-blur-xl"
+            className="inline-flex items-center gap-3 bg-white/10 border border-white/20 px-6 py-3 rounded-full text-white font-bold text-[11px] uppercase tracking-widest backdrop-blur-xl"
           >
             <UserPlus size={16} className="text-emerald-400" /> Join our community
           </motion.div>
@@ -157,7 +157,7 @@ export default function Signup() {
             <h2 className="text-5xl md:text-6xl font-bold text-slate-900 tracking-tighter leading-none uppercase">
               Begin Your <span className="text-emerald-500 lowercase">Journey.</span>
             </h2>
-            <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.4em] border-l-2 border-emerald-500/20 pl-4">
+            <p className="text-slate-400 font-bold text-[11px] uppercase tracking-[0.4em] border-l-2 border-emerald-500/20 pl-4">
               Join the network to experience the ultimate luxury.
             </p>
           </div>
@@ -165,7 +165,7 @@ export default function Signup() {
           <form onSubmit={handleSignup} className="space-y-8 group">
             <div className="space-y-6">
               <div className="space-y-3 group/field">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within/field:text-emerald-600 transition-colors">
+                <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within/field:text-emerald-600 transition-colors">
                   Full Name
                 </label>
                 <div className="relative">
@@ -185,7 +185,7 @@ export default function Signup() {
               </div>
 
               <div className="space-y-3 group/field">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within/field:text-emerald-600 transition-colors">
+                <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within/field:text-emerald-600 transition-colors">
                   Phone Number
                 </label>
                 <div className="relative">
@@ -205,7 +205,7 @@ export default function Signup() {
               </div>
 
               <div className="space-y-3 group/field">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within/field:text-emerald-600 transition-colors">
+                <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within/field:text-emerald-600 transition-colors">
                   Email Address
                 </label>
                 <div className="relative">
@@ -225,7 +225,7 @@ export default function Signup() {
               </div>
 
               <div className="space-y-3 group/field">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within/field:text-emerald-600 transition-colors">
+                <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within/field:text-emerald-600 transition-colors">
                   Password
                 </label>
                 <div className="relative">
@@ -239,7 +239,7 @@ export default function Signup() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full h-16 bg-slate-50 border border-slate-100 rounded-2xl pl-16 pr-20 font-bold text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200 shadow-inner"
-                    placeholder="••••••••"
+                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                   />
                   <button
                     type="button"
@@ -272,7 +272,7 @@ export default function Signup() {
 
             <div className="relative flex items-center pt-4">
               <div className="flex-grow border-t border-slate-100"></div>
-              <span className="flex-shrink-0 mx-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+              <span className="flex-shrink-0 mx-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
                 Or continue with
               </span>
               <div className="flex-grow border-t border-slate-100"></div>
@@ -323,7 +323,7 @@ export default function Signup() {
                 size={16}
                 className="text-emerald-500 group-hover:scale-110 transition-transform"
               />
-              <span className="text-[9px] font-bold uppercase tracking-widest text-slate-300">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-slate-300">
                 Enterprise Grade Security
               </span>
             </div>

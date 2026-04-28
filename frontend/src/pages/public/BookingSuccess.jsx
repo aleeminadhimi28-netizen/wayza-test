@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, Link } from 'react-router-dom';
+﻿import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
 import {
@@ -34,7 +34,7 @@ export default function BookingSuccess() {
           </div>
           <Link
             to="/my-bookings"
-            className="px-12 py-5 bg-slate-900 text-white rounded-2xl font-bold uppercase text-[10px] tracking-widest hover:bg-emerald-600 transition-all shadow-xl active:scale-95 inline-flex items-center gap-3"
+            className="px-12 py-5 bg-slate-900 text-white rounded-2xl font-bold uppercase text-[11px] tracking-widest hover:bg-emerald-600 transition-all shadow-xl active:scale-95 inline-flex items-center gap-3"
           >
             View My Bookings <Calendar size={18} />
           </Link>
@@ -73,7 +73,7 @@ export default function BookingSuccess() {
               Voyage <br />
               <span className="text-emerald-500 lowercase">Commenced.</span>
             </h1>
-            <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest max-w-xl mx-auto mt-6">
+            <p className="text-slate-400 font-bold uppercase text-[11px] tracking-widest max-w-xl mx-auto mt-6">
               Pack your bags! Your extraordinary stay is fixed and we can't wait to host you.
             </p>
           </motion.div>
@@ -95,12 +95,12 @@ export default function BookingSuccess() {
                   <h3 className="text-3xl font-bold text-slate-900 leading-none uppercase">
                     Great Choice!
                   </h3>
-                  <p className="text-slate-400 font-bold uppercase text-[9px] tracking-widest">
+                  <p className="text-slate-400 font-bold uppercase text-[11px] tracking-widest">
                     Your Reservation Details
                   </p>
                 </div>
                 <div className="text-right">
-                  <span className="text-[10px] font-bold text-slate-300 uppercase tracking-[0.3em] block mb-3">
+                  <span className="text-[11px] font-bold text-slate-300 uppercase tracking-[0.3em] block mb-3">
                     Manifest Reference
                   </span>
                   <span className="font-mono text-sm font-bold text-emerald-600 bg-emerald-50 px-5 py-2.5 rounded-2xl border border-emerald-100 uppercase tracking-tighter shadow-sm">
@@ -113,7 +113,7 @@ export default function BookingSuccess() {
                 <div className="space-y-3 bg-slate-50 p-6 rounded-3xl border border-slate-100">
                   <div className="flex items-center gap-3 text-slate-400">
                     <Home size={18} className="text-emerald-500" />
-                    <span className="text-[10px] font-bold uppercase tracking-widest">
+                    <span className="text-[11px] font-bold uppercase tracking-widest">
                       Property
                     </span>
                   </div>
@@ -125,29 +125,29 @@ export default function BookingSuccess() {
                 <div className="space-y-3 bg-slate-50 p-6 rounded-3xl border border-slate-100">
                   <div className="flex items-center gap-3 text-slate-400">
                     <Calendar size={18} className="text-emerald-500" />
-                    <span className="text-[10px] font-bold uppercase tracking-widest">Dates</span>
+                    <span className="text-[11px] font-bold uppercase tracking-widest">Dates</span>
                   </div>
                   <p className="text-xl font-bold text-slate-900 tracking-tight">
-                    {startDate} → {endDate}
+                    {startDate} â†’ {endDate}
                   </p>
                 </div>
 
                 <div className="space-y-3 bg-slate-50 p-8 rounded-[32px] border border-slate-100 shadow-inner group/card hover:bg-white hover:border-emerald-200 transition-all">
                   <div className="flex items-center gap-3 text-slate-400 group-hover:text-emerald-500 transition-colors">
                     <CreditCard size={20} />
-                    <span className="text-[10px] font-bold uppercase tracking-[0.3em]">
+                    <span className="text-[11px] font-bold uppercase tracking-[0.3em]">
                       Net Settlement
                     </span>
                   </div>
                   <p className="text-2xl font-bold text-slate-900 tracking-tighter">
-                    ₹{price.toLocaleString()}
+                    â‚¹{price.toLocaleString()}
                   </p>
                 </div>
 
                 <div className="space-y-3 bg-slate-50 p-6 rounded-3xl border border-slate-100">
                   <div className="flex items-center gap-3 text-slate-400">
                     <MessageSquare size={18} className="text-emerald-500" />
-                    <span className="text-[10px] font-bold uppercase tracking-widest">
+                    <span className="text-[11px] font-bold uppercase tracking-widest">
                       Need Help?
                     </span>
                   </div>
@@ -163,13 +163,13 @@ export default function BookingSuccess() {
               <div className="pt-10 flex flex-col md:flex-row gap-4">
                 <button
                   onClick={() => navigate('/')}
-                  className="flex-1 h-18 py-5 bg-slate-900 text-white rounded-3xl font-bold uppercase text-[10px] tracking-widest hover:bg-emerald-600 transition-all shadow-xl active:scale-95 flex items-center justify-center gap-3"
+                  className="flex-1 h-18 py-5 bg-slate-900 text-white rounded-3xl font-bold uppercase text-[11px] tracking-widest hover:bg-emerald-600 transition-all shadow-xl active:scale-95 flex items-center justify-center gap-3"
                 >
                   Return to Home <Home size={18} />
                 </button>
                 <button
                   onClick={() => navigate('/my-bookings')}
-                  className="px-10 h-18 py-5 bg-white text-slate-900 border border-slate-200 rounded-3xl font-bold uppercase text-[10px] tracking-widest hover:border-emerald-600 transition-all active:scale-95"
+                  className="px-10 h-18 py-5 bg-white text-slate-900 border border-slate-200 rounded-3xl font-bold uppercase text-[11px] tracking-widest hover:border-emerald-600 transition-all active:scale-95"
                 >
                   My Bookings
                 </button>
