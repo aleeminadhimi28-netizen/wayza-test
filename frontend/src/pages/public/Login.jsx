@@ -229,7 +229,7 @@ export default function Login() {
       </div>
 
       {/* RIGHT: AUTH INTERFACE */}
-      <main className="w-full lg:w-1/2 flex flex-col justify-center p-8 md:p-24 relative bg-white">
+      <main className="w-full lg:w-1/2 flex flex-col justify-center p-6 md:p-12 lg:p-24 relative bg-white">
         <div className="max-w-md w-full mx-auto space-y-12">
           <Link
             to="/"

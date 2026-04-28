@@ -546,7 +546,7 @@ export default function ListingDetails() {
                       <div
                         key={i}
                         onClick={() => setSelectedVariant(i)}
-                        className={`p-10 rounded-[40px] border-2 transition-all cursor-pointer flex flex-col md:flex-row justify-between items-center gap-8 ${selectedVariant === i ? 'border-emerald-500 bg-emerald-50/30' : 'border-slate-100 hover:border-emerald-200'}`}
+                        className={`p-6 md:p-10 rounded-[32px] md:rounded-[40px] border-2 transition-all cursor-pointer flex flex-col md:flex-row justify-between items-center gap-6 md:gap-8 ${selectedVariant === i ? 'border-emerald-500 bg-emerald-50/30' : 'border-slate-100 hover:border-emerald-200'}`}
                       >
                         <div className="space-y-3">
                           <h3 className="text-3xl font-black tracking-tighter text-slate-900 uppercase">
@@ -591,7 +591,7 @@ export default function ListingDetails() {
                   {reviews.slice(0, 3).map((r, i) => (
                     <div
                       key={i}
-                      className="bg-white p-10 rounded-[40px] border border-slate-100 shadow-sm space-y-6"
+                      className="bg-white p-6 md:p-10 rounded-[32px] md:rounded-[40px] border border-slate-100 shadow-sm space-y-6"
                     >
                       <div className="flex justify-between items-start">
                         <div className="flex items-center gap-4">

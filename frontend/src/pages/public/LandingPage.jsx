@@ -199,7 +199,7 @@ export default function LandingPage() {
             >
               <div className="bg-white/90 backdrop-blur-2xl rounded-[32px] md:rounded-[40px] p-2 md:p-3 shadow-[0_40px_100px_rgba(0,0,0,0.15)] border border-white/50 flex flex-col md:flex-row items-center gap-1 md:gap-2">
                 {/* Location */}
-                <div className="flex-[1.5] w-full px-5 md:px-10 py-3 md:py-5 rounded-[24px] md:rounded-[32px] hover:bg-slate-50/50 transition-all text-left cursor-pointer group">
+                <div className="flex-[1.5] w-full px-4 md:px-5 lg:px-10 py-3 md:py-4 lg:py-5 rounded-[24px] md:rounded-[32px] hover:bg-slate-50/50 transition-all text-left cursor-pointer group">
                   <p className="text-[9px] md:text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mb-1 group-hover:text-emerald-600 transition-colors">
                     Destinations
                   </p>
@@ -214,23 +214,23 @@ export default function LandingPage() {
                 <div className="hidden md:block w-px h-12 bg-slate-200/50" />
 
                 {/* Check In/Out */}
-                <div className="flex-1 w-full px-5 md:px-10 py-3 md:py-5 rounded-[24px] md:rounded-[32px] hover:bg-slate-50/50 transition-all text-left cursor-pointer group">
+                <div className="flex-[1.2] w-full px-4 md:px-5 lg:px-10 py-3 md:py-4 lg:py-5 rounded-[24px] md:rounded-[32px] hover:bg-slate-50/50 transition-all text-left cursor-pointer group">
                   <p className="text-[9px] md:text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mb-1 group-hover:text-emerald-600 transition-colors">
                     Timeframe
                   </p>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 md:gap-1 lg:gap-3">
                     <input
                       type="date"
                       value={checkIn}
                       onChange={(e) => setCheckIn(e.target.value)}
-                      className="bg-transparent border-none outline-none font-bold text-slate-900 text-xs md:text-sm p-0 w-24 md:w-28 cursor-pointer"
+                      className="bg-transparent border-none outline-none font-bold text-slate-900 text-xs md:text-[10px] lg:text-sm p-0 w-24 md:w-20 lg:w-28 cursor-pointer"
                     />
-                    <span className="text-slate-300">-</span>
+                    <span className="text-slate-300 hidden md:inline">-</span>
                     <input
                       type="date"
                       value={checkOut}
                       onChange={(e) => setCheckOut(e.target.value)}
-                      className="bg-transparent border-none outline-none font-bold text-slate-900 text-xs md:text-sm p-0 w-24 md:w-28 cursor-pointer"
+                      className="bg-transparent border-none outline-none font-bold text-slate-900 text-xs md:text-[10px] lg:text-sm p-0 w-24 md:w-20 lg:w-28 cursor-pointer"
                     />
                   </div>
                 </div>
@@ -238,18 +238,18 @@ export default function LandingPage() {
                 <div className="hidden md:block w-px h-12 bg-slate-200/50" />
 
                 {/* Guests */}
-                <div className="flex-1 w-full px-5 md:px-10 py-3 md:py-5 rounded-[24px] md:rounded-[32px] hover:bg-slate-50/50 transition-all text-left cursor-pointer group">
+                <div className="flex-[0.8] w-full px-4 md:px-5 lg:px-10 py-3 md:py-4 lg:py-5 rounded-[24px] md:rounded-[32px] hover:bg-slate-50/50 transition-all text-left cursor-pointer group">
                   <p className="text-[9px] md:text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mb-1 group-hover:text-emerald-600 transition-colors">
                     Guests
                   </p>
                   <div className="flex items-center gap-2">
-                    <Users size={14} className="text-slate-400" />
+                    <Users size={14} className="text-slate-400 hidden lg:block" />
                     <input
                       type="number"
                       min="1"
                       value={guests}
                       onChange={(e) => setGuests(e.target.value)}
-                      className="w-full bg-transparent border-none outline-none font-bold text-slate-900 text-base md:text-lg p-0 cursor-pointer"
+                      className="w-full bg-transparent border-none outline-none font-bold text-slate-900 text-base md:text-sm lg:text-lg p-0 cursor-pointer"
                     />
                   </div>
                 </div>
@@ -257,14 +257,19 @@ export default function LandingPage() {
                 {/* Search Button */}
                 <button
                   onClick={handleSearch}
-                  className="w-full md:w-auto bg-slate-900 text-white px-8 md:px-10 py-4 md:py-6 rounded-[24px] md:rounded-[32px] shadow-2xl shadow-slate-900/20 transition-all hover:bg-emerald-600 hover:scale-[1.01] active:scale-95 group flex items-center justify-center gap-3 md:gap-4 mt-2 md:mt-0"
+                  className="w-full md:w-auto bg-slate-900 text-white px-8 md:px-6 lg:px-10 py-4 md:py-5 lg:py-6 rounded-[24px] md:rounded-[32px] shadow-2xl shadow-slate-900/20 transition-all hover:bg-emerald-600 hover:scale-[1.01] active:scale-95 group flex items-center justify-center gap-2 lg:gap-4 mt-2 md:mt-0"
                 >
                   <Search
                     size={20}
                     strokeWidth={3}
-                    className="transition-transform group-hover:rotate-12"
+                    className="transition-transform group-hover:rotate-12 hidden lg:block"
                   />
-                  <span className="font-black uppercase tracking-[0.3em] text-[10px] md:text-[11px]">Explore</span>
+                  <Search
+                    size={16}
+                    strokeWidth={3}
+                    className="transition-transform group-hover:rotate-12 lg:hidden"
+                  />
+                  <span className="font-black uppercase tracking-[0.3em] text-[10px] md:text-[9px] lg:text-[11px]">Explore</span>
                 </button>
               </div>
             </motion.div>
