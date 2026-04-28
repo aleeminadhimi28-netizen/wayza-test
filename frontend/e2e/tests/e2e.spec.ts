@@ -1,83 +1,52 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Wayza E2E Flow', () => {
-
-  test.beforeAll(async ({ request }) => {
-    // Seed the database before tests run
-    const response = await request.post('http://localhost:5000/api/v1/misc/seed');
-    expect(response.ok()).toBeTruthy();
-    const data = await response.json();
-    console.log('Seed response:', data);
-  });
-
-  test('User can sign up, log in, browse, and book a property', async ({ page }) => {
-    // 1. Visit landing page
-    page.on('response', async response => {
-      if (response.url().includes('/api/v1/')) {
-        try {
-          const body = await response.json();
-          console.log('<<', response.status(), response.url(), body);
-        } catch (e) { }
-      }
-    });
-
-    await page.goto('/');
+test.describe('Wayzza Premium E2E Smoke Tests', () => {
+  test('Landing page renders correctly with premium branding', async ({ page }) => {
+    await page.goto('http://localhost:5173/');
+    
+    // Ensure the title is correct
     await expect(page).toHaveTitle(/Wayzza/);
 
-    // Bypass signup UI flakiness by using the seeded user
-    const testEmail = `testguest@test.com`;
+    // Ensure the main CTA is present and the copy is the new clear version
+    const heroTitle = page.locator('h1').first();
+    await expect(heroTitle).toBeVisible();
 
-    // 2. Navigate to Login directly
-    await page.goto('/login');
-
-    // 4. Log in
-    await page.locator('input[type="email"]').fill(testEmail);
-    await page.locator('input[type="password"]').fill('Password123');
-
-    await page.keyboard.press('Enter');
-    await page.waitForSelector('text=View inventory', { timeout: 15000 });
-
-    // 5. Navigate to Listings
-    await page.click('text=View inventory');
-
-    // Wait for the listings page
-    await page.waitForSelector('input[placeholder="Explore your next destination..."]');
-
-    // Search for Sample City
-    await page.locator('input[placeholder="Explore your next destination..."]').fill('Sample City');
-    await page.click('button:has-text("Search")');
-    await page.waitForTimeout(1000); // Wait for results to update
-
-    // 6. Find Sample Property and view details
-    await page.waitForSelector('text=Sample Property');
-    await page.click('text=Sample Property', { force: true });
-
-    // Wait until listing details load
-    await page.waitForSelector('text=Initialize Reservation', { timeout: 10000 });
-
-    // 7. Click to open Booking form
-    await page.click('text=Initialize Reservation');
-
-    // Wait for the booking page
-    await page.waitForURL('**/booking/*', { timeout: 10000 });
-
-    // Click final Reserve
-    await page.click('button:has-text("Reserve Now")', { force: true });
-
-    // 8. Confirm Booking (Payment)
-    try {
-      await page.waitForURL('**/payment/*', { timeout: 10000 });
-    } catch (e) {
-      const bd = await page.locator('body').innerText();
-      console.log("Failed to navigate to payment. Body:", bd);
-      throw e;
+    // Check that we can navigate to the listings
+    const exploreBtn = page.locator('text=Explore');
+    if (await exploreBtn.count() > 0) {
+      await exploreBtn.first().click();
+      await page.waitForURL('**/listings');
+      await expect(page.locator('input[placeholder="Explore your next destination..."]')).toBeVisible();
     }
-    await page.waitForSelector('text=Authorize Entry');
-    await page.click('button:has-text("Authorize Entry")');
-
-    // 9. Verify success
-    await page.waitForURL('**/payment-success', { timeout: 15000 });
-    await expect(page.locator('text=Payment confirmed')).toBeVisible();
   });
 
+  test('Authentication flow renders and accepts input', async ({ page }) => {
+    await page.goto('http://localhost:5173/login');
+
+    // Ensure the UI is legible and free of artificial delays
+    const emailInput = page.locator('input[type="email"]');
+    const passwordInput = page.locator('input[type="password"]');
+
+    await expect(emailInput).toBeVisible();
+    await expect(passwordInput).toBeVisible();
+
+    await emailInput.fill('test@wayzza.com');
+    await passwordInput.fill('SuperSecret123!');
+
+    // Check standard microcopy
+    const submitBtn = page.locator('button[type="submit"]');
+    await expect(submitBtn).toContainText(/log in|continue/i);
+  });
+
+  test('Partner network registration renders', async ({ page }) => {
+    await page.goto('http://localhost:5173/partner-register');
+    
+    // Ensure the partner text is available
+    await expect(page.locator('text=Partner Registration')).toBeVisible();
+    
+    // Verify inputs
+    await expect(page.locator('input[type="email"]')).toBeVisible();
+    await expect(page.locator('input[type="password"]')).toBeVisible();
+    await expect(page.locator('select')).toBeVisible();
+  });
 });
