@@ -39,186 +39,260 @@ export default function AITripPlanner() {
 
   return (
     <WayzzaLayout noPadding>
-      <div className="min-h-screen bg-slate-50 font-sans pb-32">
+      <div className="min-h-screen bg-slate-50 font-sans pb-24">
         {/* Hero Header */}
-        <header className="bg-slate-900 pt-32 pb-24 px-6 text-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 blur-[100px] pointer-events-none" />
-          <div className="max-w-3xl mx-auto relative z-10 space-y-6">
-            <div className="inline-flex items-center justify-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 rounded-full text-emerald-400 font-bold text-[10px] uppercase tracking-widest mb-4">
-              <Sparkles size={14} /> Wayzza Intelligence
+        <header className="relative overflow-hidden bg-slate-950 text-white">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.18),transparent_40%)]" />
+          <div className="absolute -top-20 left-1/2 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl -translate-x-1/2" />
+          <div className="absolute bottom-0 right-[-10%] w-96 h-96 bg-teal-500/10 rounded-full blur-3xl" />
+          <div className="relative max-w-6xl mx-auto px-6 py-24 sm:py-32">
+            <div className="mx-auto max-w-3xl space-y-6 text-center">
+              <div className="inline-flex items-center justify-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-[11px] uppercase tracking-[0.35em] text-emerald-300 shadow-sm">
+                <Sparkles size={14} /> Wayzza Intelligence
+              </div>
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight">
+                AI Trip
+                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300 mt-2 lowercase">
+                  Architect.
+                </span>
+              </h1>
+              <p className="mx-auto max-w-2xl text-base sm:text-lg text-slate-300 leading-8">
+                Tell us where you want to go and how you want to feel. Wayzza instantly
+                orchestrates the perfect stay, mobility, and local experiences.
+              </p>
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight uppercase leading-[0.9]">
-              AI Trip{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400 lowercase">
-                Architect.
-              </span>
-            </h1>
-            <p className="text-slate-400 text-lg md:text-xl font-medium border-l-4 border-emerald-500/30 pl-6 mx-auto max-w-xl text-left">
-              "Tell us where you want to go and how you want to feel. We will instantly orchestrate
-              the perfect stay, wheels, and experiences."
-            </p>
           </div>
         </header>
 
-        <main className="max-w-4xl mx-auto px-6 -mt-12 relative z-20">
-          {/* Input Panel */}
-          <div className="bg-white rounded-[32px] shadow-2xl shadow-slate-200/50 border border-slate-100 p-8 flex flex-col md:flex-row gap-6 mb-12">
-            <div className="flex-1 space-y-2">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                Where to?
-              </label>
-              <div className="relative">
-                <MapPin
-                  size={18}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-                />
-                <input
-                  value={destination}
-                  onChange={(e) => setDestination(e.target.value)}
-                  placeholder="e.g. Varkala, Kovalam, Munnar..."
-                  className="w-full h-14 pl-12 pr-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 font-bold text-slate-900 transition-all placeholder:font-medium"
-                />
-              </div>
-            </div>
+        <main className="max-w-6xl mx-auto px-4 sm:px-6 -mt-20 relative z-10">
+          <div className="grid gap-6">
+            <section className="rounded-[32px] border border-slate-200/80 bg-white p-6 sm:p-8 shadow-[0_35px_80px_-35px_rgba(15,23,42,0.25)]">
+              <div className="grid gap-6 xl:grid-cols-[1.6fr_0.9fr]">
+                <div className="space-y-4">
+                  <div className="text-sm uppercase tracking-[0.35em] text-slate-500 font-bold">
+                    Build your travel prompt
+                  </div>
+                  <p className="text-slate-600 leading-relaxed">
+                    Enter a destination and choose your vibe. Our AI will assemble a bespoke
+                    travel plan with verified stays, local vehicles, and curated experiences.
+                  </p>
+                </div>
 
-            <div className="flex-1 space-y-2">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                The Vibe
-              </label>
-              <div className="relative">
-                <Compass
-                  size={18}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-                />
-                <select
-                  value={vibe}
-                  onChange={(e) => setVibe(e.target.value)}
-                  className="w-full h-14 pl-12 pr-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:border-emerald-500 font-bold text-slate-900 appearance-none cursor-pointer transition-all"
+                <div className="space-y-4">
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+                      <div className="text-xs uppercase tracking-[0.35em] text-slate-500 font-semibold">
+                        Popular
+                      </div>
+                      <div className="mt-2 text-lg font-bold text-slate-900">Varkala</div>
+                    </div>
+                    <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+                      <div className="text-xs uppercase tracking-[0.35em] text-slate-500 font-semibold">
+                        First step
+                      </div>
+                      <div className="mt-2 text-lg font-bold text-slate-900">Set the mood</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 grid gap-6 lg:grid-cols-[1.5fr_auto] items-end">
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-[0.35em] text-slate-500">
+                      Where to?
+                    </label>
+                    <div className="relative">
+                      <MapPin size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                      <input
+                        value={destination}
+                        onChange={(e) => setDestination(e.target.value)}
+                        placeholder="e.g. Varkala, Kovalam, Munnar..."
+                        className="w-full h-14 rounded-3xl border border-slate-200 bg-slate-50 px-4 pl-12 text-slate-900 font-semibold outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-[0.35em] text-slate-500">
+                      The vibe
+                    </label>
+                    <div className="relative">
+                      <Compass size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                      <select
+                        value={vibe}
+                        onChange={(e) => setVibe(e.target.value)}
+                        className="w-full h-14 rounded-3xl border border-slate-200 bg-slate-50 px-4 pl-12 text-slate-900 font-semibold outline-none transition focus:border-emerald-500"
+                      >
+                        <option value="chill">Relaxing & Chill</option>
+                        <option value="adventure">High Adrenaline Adventure</option>
+                        <option value="culture">Cultural Deep Dive</option>
+                        <option value="luxury">Ultra Luxury & Pampering</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={generateTrip}
+                  disabled={isGenerating || !destination}
+                  title={!destination ? 'Enter a destination first' : ''}
+                  className={`rounded-3xl px-6 py-4 text-sm font-black uppercase tracking-[0.35em] transition-all ${!destination || isGenerating
+                      ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
+                      : 'bg-emerald-500 text-slate-950 hover:bg-emerald-400 shadow-lg shadow-emerald-500/20'
+                    }`}
                 >
-                  <option value="chill">Relaxing & Chill</option>
-                  <option value="adventure">High Adrenaline Adventure</option>
-                  <option value="culture">Cultural Deep Dive</option>
-                  <option value="luxury">Ultra Luxury & Pampering</option>
-                </select>
+                  {isGenerating ? 'Manifesting...' : 'Generate magic'}
+                </button>
               </div>
-            </div>
 
-            <div className="flex items-end">
-              <button
-                onClick={generateTrip}
-                disabled={isGenerating || !destination}
-                title={!destination ? 'Enter a destination first' : ''}
-                className={`h-14 px-8 text-white rounded-2xl font-bold uppercase tracking-widest text-xs flex items-center justify-center gap-2 transition-all w-full md:w-auto active:scale-95 ${
-                  !destination || isGenerating
-                    ? 'bg-slate-300 cursor-not-allowed opacity-70'
-                    : 'bg-slate-900 hover:bg-emerald-600 shadow-lg shadow-emerald-500/10 cursor-pointer'
-                }`}
-              >
-                {isGenerating ? (
-                  <Loader2 size={18} className="animate-spin" />
-                ) : (
-                  <Sparkles size={18} />
-                )}
-                {isGenerating
-                  ? 'Manifesting...'
-                  : !destination
-                    ? 'Enter Destination'
-                    : 'Generate Magic'}
-              </button>
-            </div>
-          </div>
+              <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                {['Beachfront villa', 'Budget under ₹5k', 'Couples getaway', 'Solo adventure'].map((label) => (
+                  <div key={label} className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700">
+                    {label}
+                  </div>
+                ))}
+              </div>
+            </section>
 
-          {/* Loading State or Results */}
-          <AnimatePresence mode="wait">
-            {isGenerating && (
-              <motion.div
-                key="loading"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="bg-white rounded-[40px] border border-emerald-100 p-16 text-center flex flex-col items-center justify-center min-h-[400px]"
-              >
-                <div className="relative w-24 h-24 mb-8">
-                  <div className="absolute inset-0 border-4 border-slate-100 rounded-full"></div>
-                  <div className="absolute inset-0 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-                  <Sparkles className="absolute inset-0 m-auto text-emerald-500" size={32} />
-                </div>
-                <h3 className="text-2xl font-bold text-slate-900 uppercase tracking-tight mb-2">
-                  Curating perfection...
-                </h3>
-                <p className="text-slate-400 font-medium">
-                  Scouring thousands of verified Stays, Cars, and Experiences for {destination}.
-                </p>
-              </motion.div>
-            )}
-
-            {itinerary && !isGenerating && (
-              <motion.div
-                key="result"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="space-y-8"
-              >
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-white p-8 rounded-[32px] border border-emerald-100 shadow-sm border-l-8 border-l-emerald-500">
-                  <div>
-                    <div className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mb-1">
-                      Generated Itinerary
+            <section>
+              <AnimatePresence mode="wait">
+                {isGenerating && (
+                  <motion.div
+                    key="loading"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className="rounded-[32px] border border-slate-200 bg-white p-12 text-center shadow-sm"
+                  >
+                    <div className="relative mx-auto mb-8 h-24 w-24">
+                      <div className="absolute inset-0 rounded-full border-4 border-slate-100" />
+                      <div className="absolute inset-0 rounded-full border-4 border-emerald-500 border-t-transparent animate-spin" />
+                      <Sparkles className="absolute inset-0 m-auto text-emerald-500" size={32} />
                     </div>
-                    <h2 className="text-3xl font-bold text-slate-900 uppercase">
-                      {itinerary.destination}
-                    </h2>
-                    <p className="text-slate-500 font-medium mt-1 capitalize text-lg">
-                      "{itinerary.vibe} Experience"
+                    <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tight mb-2">
+                      Curating perfection...
+                    </h3>
+                    <p className="text-slate-500">
+                      Scouring thousands of verified Stays, Cars, and Experiences for {destination}.
                     </p>
-                  </div>
-                  <div className="text-left md:text-right">
-                    <div className="text-sm font-bold text-slate-400 uppercase tracking-widest">
-                      Est. Package Total
-                    </div>
-                    <div className="text-3xl font-bold text-emerald-600">
-                      {itinerary.totalPrice}
-                    </div>
-                    <button className="mt-4 w-full md:w-auto px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold text-xs uppercase tracking-widest transition-all">
-                      Book Entire Package
-                    </button>
-                  </div>
-                </div>
+                  </motion.div>
+                )}
 
-                <div className="space-y-6">
-                  {itinerary.days.map((day, idx) => (
-                    <div
-                      key={idx}
-                      className="bg-white rounded-[32px] p-8 md:p-12 border border-slate-100 shadow-sm"
-                    >
-                      <h3 className="text-xl font-bold text-slate-900 uppercase mb-8 flex items-center gap-3">
-                        <span className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400">
-                          0{day.day}
-                        </span>
-                        {day.title}
-                      </h3>
+                {itinerary && !isGenerating && (
+                  <motion.div
+                    key="result"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="space-y-6"
+                  >
+                    <div className="grid gap-6 xl:grid-cols-[1.5fr_1fr]">
+                      <div className="rounded-[32px] border border-slate-200 bg-white p-8 shadow-sm">
+                        <div className="text-[10px] uppercase tracking-[0.35em] text-emerald-600 font-bold">
+                          Generated itinerary
+                        </div>
+                        <h2 className="mt-4 text-4xl font-black text-slate-900 uppercase">
+                          {itinerary.destination}
+                        </h2>
+                        <p className="mt-3 text-lg font-medium text-slate-500 capitalize">
+                          {itinerary.vibe} experience
+                        </p>
 
-                      <div className="space-y-8 pl-5 border-l-2 border-slate-100 ml-5">
-                        {day.items.map((item, itemIdx) => (
-                          <div key={itemIdx} className="relative pl-8">
-                            <div
-                              className={`absolute -left-[45px] top-0 w-6 h-6 rounded-full border-4 border-white shadow-sm flex items-center justify-center
-                                                            ${item.type === 'hotel' ? 'bg-amber-400' : item.type === 'car' ? 'bg-blue-400' : 'bg-rose-400'}
-                                                        `}
-                            ></div>
-                            <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
-                              {item.time}
-                            </div>
-                            <div className="text-lg font-bold text-slate-900">{item.title}</div>
-                            <p className="text-slate-500 mt-1">{item.desc}</p>
+                        <div className="mt-8 grid gap-4 sm:grid-cols-3">
+                          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
+                            <p className="text-xs uppercase tracking-[0.35em] text-slate-500 font-semibold">
+                              Days
+                            </p>
+                            <p className="mt-3 text-3xl font-black text-slate-900">{itinerary.days.length}</p>
                           </div>
-                        ))}
+                          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
+                            <p className="text-xs uppercase tracking-[0.35em] text-slate-500 font-semibold">
+                              Vibe
+                            </p>
+                            <p className="mt-3 text-3xl font-black text-slate-900 capitalize">{vibe}</p>
+                          </div>
+                          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
+                            <p className="text-xs uppercase tracking-[0.35em] text-slate-500 font-semibold">
+                              Theme
+                            </p>
+                            <p className="mt-3 text-3xl font-black text-slate-900">AI curated</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="rounded-[32px] bg-gradient-to-br from-emerald-500 to-teal-400 p-8 text-white shadow-xl">
+                        <div className="text-sm uppercase tracking-[0.35em] text-emerald-100/80 font-bold">
+                          Estimated package
+                        </div>
+                        <div className="mt-6 text-5xl font-black tracking-tight">
+                          {itinerary.totalPrice}
+                        </div>
+                        <p className="mt-3 text-slate-100/85 leading-relaxed">
+                          Total cost across stays, vehicles, and curated local experiences. Instant
+                          recommendations, no guesswork.
+                        </p>
+                        <button className="mt-8 w-full rounded-3xl bg-slate-950/95 py-4 text-sm font-black uppercase tracking-[0.35em] text-white shadow-lg shadow-slate-950/30 transition hover:bg-slate-900">
+                          Book entire package
+                        </button>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+
+                    <div className="space-y-6">
+                      {itinerary.days.map((day, idx) => (
+                        <div key={idx} className="rounded-[32px] border border-slate-200 bg-white p-8 shadow-sm">
+                          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
+                            <div className="flex items-center gap-4">
+                              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500 text-lg font-black">
+                                {day.day}
+                              </div>
+                              <div>
+                                <h3 className="text-2xl font-bold text-slate-900">{day.title}</h3>
+                                <p className="text-sm text-slate-500">Daily highlights and timing.</p>
+                              </div>
+                            </div>
+                            <div className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700">
+                              {day.items.length} stops
+                            </div>
+                          </div>
+
+                          <div className="space-y-6">
+                            {day.items.map((item, itemIdx) => (
+                              <div key={itemIdx} className="grid gap-4 sm:grid-cols-[auto_1fr] items-start">
+                                <div className="relative">
+                                  <div className="flex h-11 w-11 items-center justify-center rounded-3xl bg-slate-100 text-emerald-500 text-lg font-bold shadow-sm">
+                                    {item.type === 'hotel' ? '🏨' : item.type === 'car' ? '🏍️' : '☕'}
+                                  </div>
+                                  <div className="absolute left-5 top-full h-[calc(100%+0.5rem)] w-px bg-slate-200"></div>
+                                </div>
+                                <div className="space-y-3 pb-4">
+                                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                    <div>
+                                      <div className="text-xs uppercase tracking-[0.35em] text-slate-400 font-bold">
+                                        {item.time}
+                                      </div>
+                                      <div className="text-lg font-bold text-slate-900">{item.title}</div>
+                                    </div>
+                                    <span className="text-sm font-semibold text-slate-500">
+                                      {item.type === 'hotel'
+                                        ? 'Stay'
+                                        : item.type === 'car'
+                                          ? 'Mobility'
+                                          : 'Experience'}
+                                    </span>
+                                  </div>
+                                  <p className="text-slate-500">{item.desc}</p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </section>
+          </div>
         </main>
       </div>
     </WayzzaLayout>
