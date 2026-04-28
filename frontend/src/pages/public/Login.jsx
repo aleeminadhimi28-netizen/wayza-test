@@ -49,7 +49,7 @@ export default function Login() {
       try {
         const res = await api.googleAuth(tokenResponse.credential || tokenResponse.access_token);
         if (res.ok) {
-          login({ email: res.data.email, role: res.data.role, token: res.data.token });
+          login({ email: res.data.email, role: res.data.role });
           showToast('Google Authentication successful!', 'success');
           navigate('/');
         } else {
@@ -101,7 +101,7 @@ export default function Login() {
       try {
         setLoading(true);
         const data = await api.verifyOTP({ email, otp });
-        if (!data.ok || !data.data?.token) {
+        if (!data.ok) {
           if (data.twoFactorRequired) {
             setTempToken(data.tempToken);
             setShowing2FA(true);
@@ -112,7 +112,7 @@ export default function Login() {
           setLoading(false);
           return;
         }
-        login({ email: data.data.email, role: data.data.role, token: data.data.token });
+        login({ email: data.data.email, role: data.data.role });
         showToast('Welcome to Wayzza!', 'success');
         navigate('/');
       } catch (error) {
@@ -134,7 +134,7 @@ export default function Login() {
 
       const data = await api.login({ email, password });
 
-      if (!data.ok || !data.data?.token) {
+      if (!data.ok) {
         if (data.twoFactorRequired) {
           setTempToken(data.tempToken);
           setShowing2FA(true);
@@ -146,7 +146,7 @@ export default function Login() {
         return;
       }
 
-      login({ email: data.data.email, role: data.data.role, token: data.data.token });
+      login({ email: data.data.email, role: data.data.role });
       showToast('Welcome back to Wayzza!', 'success');
       navigate('/');
     } catch (error) {
@@ -161,8 +161,8 @@ export default function Login() {
     setLoading(true);
     try {
       const data = await api.verify2FA({ tempToken, token: twoFactorCode });
-      if (data.ok && data.data?.token) {
-        login({ email: data.data.email, role: data.data.role, token: data.data.token });
+      if (data.ok && data.data) {
+        login({ email: data.data.email, role: data.data.role });
         showToast('Success! Secure connection established.', 'success');
         navigate('/');
       } else {

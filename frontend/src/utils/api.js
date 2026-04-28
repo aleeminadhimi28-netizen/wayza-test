@@ -1,7 +1,45 @@
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const API_URL = `${BASE_URL}/api/v1`;
 
+/**
+ * Read the CSRF token from the csrf_token cookie
+ */
+function getCSRFToken() {
+  const match = document.cookie.match(/(?:^|;\s*)csrf_token=([^;]*)/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
+/**
+ * Fetch a fresh CSRF token from the server (sets the cookie automatically)
+ */
+async function ensureCSRFToken() {
+  try {
+    if (!getCSRFToken()) {
+      await fetch(`${API_URL}/auth/csrf-token`, { credentials: 'include' });
+    }
+  } catch {
+    // Non-critical — CSRF only enforced in production
+  }
+}
+
+// Fetch CSRF token on module load
+ensureCSRFToken();
+
 const customFetch = (url, options = {}) => {
+  const method = (options.method || 'GET').toUpperCase();
+  const isMutating = !['GET', 'HEAD', 'OPTIONS'].includes(method);
+
+  // Attach CSRF token header on mutating requests
+  if (isMutating) {
+    const csrfToken = getCSRFToken();
+    if (csrfToken) {
+      options.headers = {
+        ...options.headers,
+        'X-CSRF-Token': csrfToken,
+      };
+    }
+  }
+
   return fetch(url, { ...options, credentials: 'include' });
 };
 

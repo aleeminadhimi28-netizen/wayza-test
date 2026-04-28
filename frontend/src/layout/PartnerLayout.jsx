@@ -25,6 +25,7 @@ import {
   Sun,
 } from 'lucide-react';
 import { api } from '../utils/api.js';
+import { initiateSocketConnection, joinUserRoom, subscribeToNotifications, disconnectSocket } from '../utils/socket.js';
 
 const NAV = [
   { to: '/partner', label: 'Dashboard', icon: LayoutDashboard, end: true, detail: 'Overview' },
@@ -67,6 +68,7 @@ export default function PartnerLayout() {
   };
 
   useEffect(() => {
+    if (!user) return;
     async function fetchNotifs() {
       try {
         const res = await api.getNotifications();
@@ -76,9 +78,21 @@ export default function PartnerLayout() {
       }
     }
     fetchNotifs();
-    const int = setInterval(fetchNotifs, 10000);
-    return () => clearInterval(int);
-  }, []);
+    const int = setInterval(fetchNotifs, 30000);
+
+    // Real-time: join user room and listen for pushes
+    initiateSocketConnection();
+    joinUserRoom(user.email);
+    const unsubscribe = subscribeToNotifications((notification) => {
+      setNotifs((prev) => [notification, ...prev].slice(0, 20));
+    });
+
+    return () => {
+      clearInterval(int);
+      unsubscribe();
+      disconnectSocket();
+    };
+  }, [user]);
 
   async function openNotifs() {
     setShowNotifs(!showNotifs);

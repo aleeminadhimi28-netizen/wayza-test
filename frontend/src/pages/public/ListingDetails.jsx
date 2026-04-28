@@ -45,6 +45,7 @@ import SEO from '../../components/SEO.jsx';
 import ListingConcierge from '../../components/ListingConcierge.jsx';
 import NeighborhoodVibes from '../../components/NeighborhoodVibes.jsx';
 import { api } from '../../utils/api.js';
+import { fixImg } from '../../utils/image.js';
 import { AMENITY_CATEGORIES, getAmenityByLabel } from '../../utils/amenities.js';
 
 const AMENITIES = []; // Legacy
@@ -91,21 +92,13 @@ export default function ListingDetails() {
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
 
-  const fixImg = (img) => {
-    if (!img)
-      return 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80';
-    if (img.startsWith('http')) return img;
-    const BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-    if (img.startsWith('uploads/')) return `${BASE}/${img}`;
-    return `${BASE}/uploads/${img}`;
-  };
+
 
   useEffect(() => {
     window.scrollTo(0, 0);
     api.getListing(id).then((json) => setListing(json.data || json));
     loadReviews();
-    const token = localStorage.getItem('token');
-    if (token) {
+    if (user) {
       api.getWishlist().then((json) => {
         const list = Array.isArray(json.data) ? json.data : [];
         setSaved(list.some((x) => x.listingId === id));
@@ -122,8 +115,7 @@ export default function ListingDetails() {
       const data = await api.getReviews(id);
       const rows = Array.isArray(data.data) ? data.data : [];
       setReviews(rows);
-      const token = localStorage.getItem('token');
-      if (token && user?.email) setAlreadyReviewed(rows.some((r) => r.guestEmail === user.email));
+      if (user?.email) setAlreadyReviewed(rows.some((r) => r.guestEmail === user.email));
     } catch { }
   }
 
@@ -148,8 +140,7 @@ export default function ListingDetails() {
   }
 
   const toggleWishlist = async () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
+    if (!user) {
       navigate('/login', { state: { from: location } });
       return;
     }
@@ -211,7 +202,7 @@ export default function ListingDetails() {
 
   const avgRating = reviews.length
     ? (reviews.reduce((s, r) => s + (r.rating || 0), 0) / reviews.length).toFixed(1)
-    : '4.9';
+    : null;
 
   const activeVariant = listing.variants?.[selectedVariant];
   const basePrice = activeVariant?.price || listing.price || 0;
@@ -251,11 +242,11 @@ export default function ListingDetails() {
             availability: 'https://schema.org/InStock',
             url: currentUrl,
           },
-          aggregateRating: {
+          aggregateRating: reviews.length > 0 ? {
             '@type': 'AggregateRating',
             ratingValue: avgRating,
             reviewCount: reviews.length,
-          },
+          } : undefined,
         }}
         breadcrumb={[
           { name: 'Home', url: 'https://wayza-app.vercel.app' },
@@ -303,11 +294,11 @@ export default function ListingDetails() {
               <div className="flex flex-wrap items-center gap-x-6 lg:gap-x-10 gap-y-4">
                 <div className="flex items-center gap-3 lg:gap-4">
                   <div className="w-10 h-10 lg:w-12 lg:h-12 bg-emerald-50 flex items-center justify-center rounded-xl lg:rounded-2xl border border-emerald-100 font-black text-lg lg:text-xl text-emerald-600">
-                    {avgRating}
+                    {avgRating || '—'}
                   </div>
                   <div>
                     <p className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-slate-900">
-                      Exceptional
+                      {avgRating ? (avgRating >= 9 ? 'Exceptional' : avgRating >= 8 ? 'Excellent' : 'Great') : 'New'}
                     </p>
                     <p className="text-[9px] lg:text-[10px] font-bold text-slate-300 uppercase tracking-widest">
                       {reviews.length} Audits
@@ -548,7 +539,7 @@ export default function ListingDetails() {
               {listing.variants?.length > 0 && (
                 <section className="space-y-10">
                   <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-300">
-                    Accomodation Options
+                    Accommodation Options
                   </h2>
                   <div className="grid gap-6">
                     {listing.variants.map((v, i) => (
@@ -587,7 +578,7 @@ export default function ListingDetails() {
                   </h2>
                   <div className="flex items-center gap-4">
                     <span className="text-5xl font-black text-slate-900 tabular-nums">
-                      {avgRating}
+                      {avgRating || '—'}
                     </span>
                     <div className="h-10 w-px bg-slate-200" />
                     <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">
@@ -659,7 +650,7 @@ export default function ListingDetails() {
                   <div className="flex items-center gap-1.5 text-sm text-slate-500 mb-6">
                     <Star size={13} className="fill-amber-400 text-amber-400" />
                     <span>
-                      {avgRating} · {reviews.length} reviews · Exceptional
+                      {avgRating || 'New'} · {reviews.length} review{reviews.length !== 1 ? 's' : ''}{avgRating && avgRating >= 9 ? ' · Exceptional' : ''}
                     </span>
                   </div>
 

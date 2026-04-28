@@ -69,6 +69,11 @@ router.post("/login", async (req, res, next) => {
             return res.status(401).json({ ok: false, message: "Invalid email or password" });
         }
 
+        // Guard: Google-only users don't have a password
+        if (!user.password) {
+            return res.status(401).json({ ok: false, message: "This account uses Google sign-in. Please log in with Google." });
+        }
+
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(401).json({ ok: false, message: "Invalid email or password" });
@@ -97,8 +102,7 @@ router.post("/login", async (req, res, next) => {
             ok: true,
             data: {
                 email: user.email,
-                role: user.role,
-                token: token
+                role: user.role
             }
         });
     } catch (err) {
@@ -173,7 +177,7 @@ router.post("/google", async (req, res, next) => {
 
         res.json({
             ok: true,
-            data: { email: user.email, role: user.role, token }
+            data: { email: user.email, role: user.role }
         });
     } catch (err) {
         console.error("Google Auth Error:", err);
@@ -349,7 +353,7 @@ router.post("/verify-otp", async (req, res, next) => {
         const token = jwt.sign({ email: user.email, role: user.role }, SECRET, { expiresIn: JWT_EXPIRY });
 
         res.cookie("token", token, { httpOnly: true, secure: true, sameSite: "none", maxAge: 7 * 24 * 60 * 60 * 1000 });
-        res.json({ ok: true, data: { email: user.email, role: user.role, token } });
+        res.json({ ok: true, data: { email: user.email, role: user.role } });
     } catch (err) { next(err); }
 });
 
@@ -444,7 +448,7 @@ router.post("/2fa/verify", async (req, res, next) => {
         const token = jwt.sign({ email: user.email, role: user.role }, SECRET, { expiresIn: JWT_EXPIRY });
         res.cookie("token", token, { httpOnly: true, secure: true, sameSite: "none", maxAge: 7 * 24 * 60 * 60 * 1000 });
 
-        res.json({ ok: true, data: { email: user.email, role: user.role, token } });
+        res.json({ ok: true, data: { email: user.email, role: user.role } });
     } catch (err) { next(err); }
 });
 

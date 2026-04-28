@@ -24,6 +24,7 @@ import {
 import { WayzzaLayout, WayzzaSkeleton } from '../../WayzzaUI.jsx';
 
 import { api } from '../../utils/api.js';
+import { fixImg } from '../../utils/image.js';
 
 export default function Booking() {
   const { id } = useParams();
@@ -199,13 +200,7 @@ export default function Booking() {
       </WayzzaLayout>
     );
 
-  function fixImg(img) {
-    if (!img)
-      return 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80';
-    if (img.startsWith('http')) return img;
-    const BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-    return `${BASE}/uploads/${img}`;
-  }
+
 
   return (
     <WayzzaLayout noPadding>

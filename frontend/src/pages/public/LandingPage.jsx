@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 
 import { api } from '../../utils/api.js';
+import { fixImg } from '../../utils/image.js';
 import { useToast } from '../../ToastContext.jsx';
 import SEO from '../../components/SEO.jsx';
 
@@ -110,12 +111,7 @@ export default function LandingPage() {
       .catch(() => setLoading(false));
   }, [tab]);
 
-  const fixImg = (img) => {
-    if (!img) return '/images/varkala_hero.png';
-    if (img.startsWith('http')) return img;
-    const BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-    return `${BASE}/uploads/${img}`;
-  };
+
 
   const handleSearch = () => {
     const params = new URLSearchParams();
@@ -503,204 +499,133 @@ export default function LandingPage() {
         </section>
 
         {/* ════ SECTION: AI TRIP PLANNER ════ */}
-        <section className="py-24 px-6 bg-[#030a07] text-white overflow-hidden relative">
-          {/* Rich background gradient */}
+        <section className="py-24 px-4 sm:px-6 lg:px-8 bg-[#06110d] text-white overflow-hidden relative">
           <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-[-20%] left-[20%] w-[60%] h-[80%] bg-emerald-500/10 blur-[140px] rounded-full" />
-            <div className="absolute bottom-0 right-[10%] w-[40%] h-[50%] bg-emerald-700/8 blur-[120px] rounded-full" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-950/30 via-transparent to-transparent" />
+            <div className="absolute top-[-20%] left-[5%] w-[45%] h-[65%] bg-emerald-500/10 blur-[130px] rounded-full" />
+            <div className="absolute bottom-0 right-[12%] w-[38%] h-[45%] bg-emerald-700/10 blur-[110px] rounded-full" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(16,185,129,0.18),transparent_45%)]" />
           </div>
 
-          <div className="max-w-5xl mx-auto relative z-10">
-            {/* ── Section Header ── */}
+          <div className="max-w-6xl mx-auto relative z-10">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-center mb-16 space-y-6"
+              className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] items-center"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/25 rounded-full">
-                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-[11px] font-black uppercase tracking-widest text-emerald-400">
-                  Wayzza AI · Live
-                </span>
-              </div>
-              <h2 className="text-5xl md:text-6xl font-black tracking-tighter text-white leading-tight">
-                Your trip, planned by AI.
-              </h2>
-              <p className="text-slate-400 text-lg max-w-xl mx-auto leading-relaxed">
-                Describe your vibe in plain English. Our AI instantly finds the perfect villa,
-                vehicle, and local experiences.
-              </p>
-            </motion.div>
-
-            {/* ── Chat Card (full width, rich) ── */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.15 }}
-              className="bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.5)]"
-            >
-              {/* Chat titlebar */}
-              <div className="flex items-center gap-3 px-6 py-4 border-b border-white/8 bg-white/[0.03]">
-                <div className="flex gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-rose-500/70" />
-                  <div className="w-3 h-3 rounded-full bg-amber-500/70" />
-                  <div className="w-3 h-3 rounded-full bg-emerald-500/70" />
-                </div>
-                <div className="flex-1 flex items-center justify-center gap-2">
+              <div className="space-y-6">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-[11px] uppercase tracking-[0.35em] text-emerald-300 font-black">
                   <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-[11px] font-bold text-white/40 uppercase tracking-widest">
-                    Wayzza AI Trip Planner
-                  </span>
+                  LIVE AI TRIP PLANNER
+                </div>
+                <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight text-white">
+                  Plan your perfect getaway in seconds.
+                </h2>
+                <p className="max-w-2xl text-slate-300 text-base sm:text-lg leading-8">
+                  Type your travel mood, budget, and destination. The planner returns a curated stay,
+                  vehicle, and local experience package instantly.
+                </p>
+
+                <div className="grid gap-4 sm:grid-cols-3">
+                  {[
+                    { title: 'Fast response', value: '< 2s' },
+                    { title: 'Verified results', value: '98%' },
+                    { title: 'Trips planned', value: '500+' },
+                  ].map((stat) => (
+                    <div key={stat.title} className="rounded-3xl border border-white/10 bg-white/5 p-5">
+                      <p className="text-sm uppercase tracking-[0.35em] text-slate-400 font-semibold">
+                        {stat.title}
+                      </p>
+                      <p className="mt-3 text-3xl font-black text-emerald-300">{stat.value}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <button
+                    onClick={() => navigate('/ai-trip-planner')}
+                    className="inline-flex items-center justify-center gap-3 rounded-3xl bg-emerald-500 px-8 py-4 text-sm font-black uppercase tracking-[0.35em] text-slate-950 transition hover:bg-emerald-400 shadow-lg shadow-emerald-500/20"
+                  >
+                    Open AI Planner
+                    <ArrowRight size={16} />
+                  </button>
+                  <button
+                    onClick={() => navigate('/ai-trip-planner')}
+                    className="inline-flex items-center justify-center gap-2 rounded-3xl border border-white/10 bg-white/5 px-8 py-4 text-sm font-bold uppercase tracking-[0.35em] text-white transition hover:border-emerald-400 hover:bg-white/10"
+                  >
+                    Explore example plan
+                    <ArrowRight size={16} />
+                  </button>
                 </div>
               </div>
 
-              {/* Messages area */}
-              <div className="p-8 space-y-6 min-h-[280px]">
-                {/* User message */}
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  className="flex justify-end"
-                >
-                  <div className="bg-slate-700/80 rounded-2xl rounded-tr-sm px-5 py-3.5 max-w-lg">
-                    <p className="text-sm text-white/90 leading-relaxed">
-                      I want a quiet clifftop villa in Varkala for 3 nights, with a motorbike and
-                      tips for hidden cafes. Budget around ₹15,000/night.
-                    </p>
+              <div className="relative rounded-[44px] border border-white/10 bg-slate-900/95 p-6 shadow-[0_35px_100px_rgba(0,0,0,0.45)]">
+                <div className="absolute top-5 left-5 flex items-center gap-2">
+                  <span className="h-2.5 w-2.5 rounded-full bg-rose-500" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-amber-500" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                </div>
+                <div className="rounded-[32px] border border-white/10 bg-slate-950/80 p-5 pt-10">
+                  <div className="text-sm uppercase tracking-[0.35em] text-emerald-300 font-bold mb-4">
+                    Wayzza AI Trip Planner
                   </div>
-                </motion.div>
+                  <div className="rounded-[32px] border border-white/10 bg-slate-900/80 p-6 space-y-6">
+                    <div className="bg-slate-950/80 rounded-3xl border border-emerald-500/10 p-5 text-slate-100">
+                      <p className="text-sm font-semibold uppercase tracking-[0.35em] text-emerald-300 mb-3">
+                        Example prompt
+                      </p>
+                      <p className="leading-7 text-slate-200">
+                        I want a quiet clifftop villa in Varkala for 3 nights, with a motorbike and tips for hidden cafes. Budget around ₹15,000/night.
+                      </p>
+                    </div>
 
-                {/* AI response */}
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.25 }}
-                  className="flex items-start gap-4"
-                >
-                  <div className="w-9 h-9 bg-emerald-500 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-emerald-500/30">
-                    <Sparkles size={15} className="text-slate-950" />
-                  </div>
-                  <div className="flex-1 space-y-4">
-                    <p className="text-sm text-white/70">
-                      Here&apos;s your curated Varkala plan 🌿
-                    </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="grid gap-4 sm:grid-cols-3">
                       {[
-                        {
-                          emoji: '🏡',
-                          title: 'Sea Cliff Retreat',
-                          sub: '₹12,500 · night · Clifftop',
-                          tag: 'Best match',
-                        },
-                        {
-                          emoji: '🏍️',
-                          title: 'Royal Enfield 350',
-                          sub: '₹850 · day · Includes helmet',
-                          tag: 'Available',
-                        },
-                        {
-                          emoji: '☕',
-                          title: 'Secret Café Trail',
-                          sub: '6 hidden spots · 2.4km route',
-                          tag: 'Exclusive',
-                        },
-                      ].map((card, i) => (
-                        <div
-                          key={i}
-                          className="bg-white/[0.05] border border-white/10 rounded-2xl p-4 space-y-2 hover:border-emerald-500/30 transition-colors cursor-default"
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="text-xl">{card.emoji}</span>
-                            <span className="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 bg-emerald-500/15 text-emerald-400 rounded-full">
-                              {card.tag}
+                        { emoji: '🏡', title: 'Sea Cliff Retreat', detail: '₹12,500 / night' },
+                        { emoji: '🏍️', title: 'Royal Enfield 350', detail: '₹850 / day' },
+                        { emoji: '☕', title: 'Secret Café Trail', detail: '6 stops' },
+                      ].map((item) => (
+                        <div key={item.title} className="rounded-3xl border border-white/10 bg-white/5 p-4">
+                          <div className="flex items-center justify-between gap-3 text-sm text-slate-300">
+                            <span>{item.emoji}</span>
+                            <span className="rounded-full bg-emerald-500/15 px-2 py-1 text-[10px] uppercase tracking-[0.35em] text-emerald-300">
+                              Live
                             </span>
                           </div>
-                          <p className="text-sm font-bold text-white">{card.title}</p>
-                          <p className="text-[11px] text-white/40 leading-snug">{card.sub}</p>
+                          <p className="mt-4 font-semibold text-white">{item.title}</p>
+                          <p className="mt-2 text-sm text-slate-400">{item.detail}</p>
                         </div>
                       ))}
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-emerald-400/70 font-medium">
-                      <CheckCircle2 size={13} className="text-emerald-500" />
-                      3-night stay · ₹42,550 total · Instant booking available
+
+                    <div className="rounded-[28px] border border-white/10 bg-slate-950/70 p-4">
+                      <div className="flex items-center gap-2 text-sm text-emerald-300 font-semibold uppercase tracking-[0.35em] mb-3">
+                        <CheckCircle2 size={16} /> Fast planning
+                      </div>
+                      <p className="text-sm text-slate-400 leading-6">
+                        One click opens the planner with real AI-powered recommendations for stays, cars, and experiences.
+                      </p>
                     </div>
                   </div>
-                </motion.div>
-              </div>
-
-              {/* Input bar + suggestions */}
-              <div className="border-t border-white/8 p-5 space-y-3 bg-white/[0.02]">
-                {/* Suggestion pills */}
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    'Beachfront villa Varkala 🌊',
-                    'Budget under ₹5k',
-                    'Couples getaway',
-                    'Solo adventure 🏍️',
-                  ].map((pill, i) => (
-                    <button
-                      key={i}
-                      onClick={() => navigate('/ai-trip-planner')}
-                      className="text-[11px] font-semibold text-white/50 border border-white/10 rounded-full px-3 py-1.5 hover:border-emerald-500/40 hover:text-emerald-400 transition-all"
-                    >
-                      {pill}
-                    </button>
-                  ))}
                 </div>
-                {/* Input */}
-                <div
-                  onClick={() => navigate('/ai-trip-planner')}
-                  className="flex items-center gap-3 bg-white/5 hover:bg-white/8 border border-white/10 hover:border-emerald-500/30 rounded-2xl px-5 py-3.5 cursor-pointer transition-all group"
-                >
-                  <MessageSquare size={16} className="text-white/25 shrink-0" />
-                  <span className="flex-1 text-sm text-white/25">Describe your dream trip...</span>
-                  <div className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 rounded-xl px-4 py-2 transition-colors shrink-0">
-                    <span className="text-[11px] font-black text-slate-950 uppercase tracking-wider">
-                      Plan it
-                    </span>
-                    <ArrowRight
-                      size={13}
-                      className="text-slate-950 group-hover:translate-x-0.5 transition-transform"
-                    />
+
+                <div className="mt-6 rounded-[32px] border border-white/10 bg-white/5 p-5">
+                  <div className="flex flex-wrap gap-2">
+                    {['Beachfront villa', 'Budget under ₹5k', 'Couples getaway', 'Solo adventure'].map((label) => (
+                      <span key={label} className="rounded-full border border-white/10 bg-slate-950/50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-slate-200">
+                        {label}
+                      </span>
+                    ))}
                   </div>
+                  <button
+                    onClick={() => navigate('/ai-trip-planner')}
+                    className="mt-6 w-full inline-flex items-center justify-center gap-2 rounded-3xl bg-emerald-500 px-6 py-4 text-sm font-black uppercase tracking-[0.35em] text-slate-950 transition hover:bg-emerald-400"
+                  >
+                    Plan it
+                    <ArrowRight size={16} />
+                  </button>
                 </div>
               </div>
-            </motion.div>
-
-            {/* ── Bottom CTA strip ── */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-              className="flex flex-col sm:flex-row items-center justify-between gap-6 mt-12 pt-10 border-t border-white/8"
-            >
-              <div className="flex items-center gap-10">
-                {[
-                  { value: '< 2s', label: 'Response time' },
-                  { value: '98%', label: 'Accuracy' },
-                  { value: '500+', label: 'Trips planned' },
-                ].map((s, i) => (
-                  <div key={i} className="text-center">
-                    <p className="text-xl font-black text-emerald-400">{s.value}</p>
-                    <p className="text-[10px] text-slate-600 uppercase tracking-wider font-bold">
-                      {s.label}
-                    </p>
-                  </div>
-                ))}
-              </div>
-              <button
-                onClick={() => navigate('/ai-trip-planner')}
-                className="group h-12 px-8 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-xl font-black text-xs uppercase tracking-widest transition-all flex items-center gap-3 shadow-lg shadow-emerald-500/20 shrink-0"
-              >
-                Open AI Planner
-                <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
-              </button>
             </motion.div>
           </div>
         </section>

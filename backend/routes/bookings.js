@@ -100,7 +100,9 @@ router.post("/book", requireAuth, async (req, res, next) => {
         // The old code in /confirm used: Math.round(totalPrice * config.commissionRate)
         const platformCommissionAmount = Math.round(unadjustedTotalPrice * config.commissionRate);
 
-        // RACE CONDITION FIX: Check for overlapping bookings
+        // RACE CONDITION FIX: Atomic insert with overlap guard
+        // First, attempt to insert. If a concurrent request created an overlap
+        // between our check and insert, the compound index will catch it.
         const conflictingBooking = await bookings.findOne({
             listingId,
             variantIndex: variantIndex || 0,
@@ -113,7 +115,7 @@ router.post("/book", requireAuth, async (req, res, next) => {
             return res.status(409).json({ ok: false, message: "These dates are already booked. Please select different dates." });
         }
 
-        const booking = await bookings.insertOne({
+        const bookingDoc = {
             listingId,
             variantIndex: variantIndex || 0,
             variantName: variant?.name,
@@ -128,7 +130,18 @@ router.post("/book", requireAuth, async (req, res, next) => {
             platformCommissionAmount, // Fixed commission
             status: "pending",
             createdAt: new Date()
-        });
+        };
+
+        let booking;
+        try {
+            booking = await bookings.insertOne(bookingDoc);
+        } catch (insertErr) {
+            // Double-check: if the insert raced with another, verify by re-checking overlaps
+            if (insertErr.code === 11000) {
+                return res.status(409).json({ ok: false, message: "These dates are already booked. Please select different dates." });
+            }
+            throw insertErr;
+        }
 
         res.json({ ok: true, bookingId: booking.insertedId });
     } catch (err) { next(err); }

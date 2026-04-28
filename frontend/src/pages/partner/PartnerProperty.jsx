@@ -27,6 +27,7 @@ import {
 import { useToast } from '../../ToastContext.jsx';
 
 import { api } from '../../utils/api.js';
+import { fixImg } from '../../utils/image.js';
 import { AMENITY_CATEGORIES } from '../../utils/amenities.js';
 
 const AVAILABLE_AMENITIES = []; // Legacy constant for safety
@@ -224,13 +225,7 @@ export default function PartnerProperty() {
       </div>
     );
 
-  const fixImg = (img) => {
-    if (!img)
-      return 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80';
-    if (img.startsWith('http')) return img;
-    const BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-    return `${BASE}/uploads/${img}`;
-  };
+
 
   return (
     <motion.div

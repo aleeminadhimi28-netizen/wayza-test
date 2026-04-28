@@ -74,5 +74,17 @@ const createIndexes = async (db) => {
     await messages.createIndex({ timestamp: -1 });
     await resetTokens.createIndex({ expiry: 1 }, { expireAfterSeconds: 0 });
 
+    // TTL: Auto-expire pending bookings after 15 minutes (900 seconds)
+    // Only affects documents where status === "pending" (partial filter)
+    const pendingBookings = db.collection("bookings");
+    await pendingBookings.createIndex(
+        { createdAt: 1 },
+        { expireAfterSeconds: 900, partialFilterExpression: { status: "pending" } }
+    );
+
+    // Index for notification polling
+    const notifications = db.collection("notifications");
+    await notifications.createIndex({ email: 1, createdAt: -1 });
+
     console.log("✅ Database indexes verified");
 };

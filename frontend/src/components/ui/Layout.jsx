@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { PageTransition } from './PageTransition.jsx';
 import { Bell, X, Moon, Sun, Sparkles, Globe } from 'lucide-react';
 import { api } from '../../utils/api.js';
+import { initiateSocketConnection, joinUserRoom, subscribeToNotifications, disconnectSocket } from '../../utils/socket.js';
 import { useCurrency, CURRENCIES } from '../../CurrencyContext.jsx';
 
 export function Layout({ children, noPadding = false, hideFooter = false }) {
@@ -52,8 +53,21 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
       }
     }
     fetchNotifs();
-    const int = setInterval(fetchNotifs, 10000);
-    return () => clearInterval(int);
+    // Polling as fallback (reduced frequency since Socket.IO handles real-time)
+    const int = setInterval(fetchNotifs, 30000);
+
+    // Real-time: join user room and listen for pushes
+    initiateSocketConnection();
+    joinUserRoom(user.email);
+    const unsubscribe = subscribeToNotifications((notification) => {
+      setNotifs((prev) => [notification, ...prev].slice(0, 20));
+    });
+
+    return () => {
+      clearInterval(int);
+      unsubscribe();
+      disconnectSocket();
+    };
   }, [user]);
 
   async function openNotifs() {

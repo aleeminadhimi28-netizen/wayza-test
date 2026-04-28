@@ -43,11 +43,10 @@ const STATUS_CONFIG = {
 };
 
 export default function Profile() {
-  const { user, token, logout } = useAuth();
+  const { user, logout } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
-  const realToken = token || localStorage.getItem('token');
 
   const [activeTab, setActiveTab] = useState(location.state?.activeTab || 'account');
   const [loading, setLoading] = useState(true);
@@ -69,7 +68,7 @@ export default function Profile() {
   }, [location.state]);
 
   useEffect(() => {
-    if (!realToken) {
+    if (!user) {
       navigate('/login');
       return;
     }
@@ -89,10 +88,10 @@ export default function Profile() {
       }
     }
     loadProfile();
-  }, [realToken, navigate]);
+  }, [user, navigate]);
 
   useEffect(() => {
-    if (!realToken) return;
+    if (!user) return;
     async function loadTabData() {
       try {
         if (activeTab === 'bookings') {
@@ -114,7 +113,7 @@ export default function Profile() {
       }
     }
     loadTabData();
-  }, [activeTab, realToken]);
+  }, [activeTab, user]);
 
   async function saveProfile() {
     setSaving(true);

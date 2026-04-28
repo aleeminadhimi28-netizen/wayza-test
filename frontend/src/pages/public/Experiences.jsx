@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { useCurrency } from '../../CurrencyContext.jsx';
 import { api } from '../../utils/api.js';
+import { fixImg } from '../../utils/image.js';
 
 const CATEGORIES = [
   { id: 'all', label: 'All Secrets', icon: Globe },
@@ -50,13 +51,7 @@ export default function Experiences() {
   const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
   const heroScale = useTransform(scrollY, [0, 400], [1, 1.1]);
 
-  const fixImg = (img) => {
-    if (!img)
-      return 'https://images.unsplash.com/photo-1682695797221-8164ff1fafc9?auto=format&fit=crop&w=1200&q=80';
-    if (img.startsWith('http')) return img;
-    const BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-    return `${BASE}/uploads/${img}`;
-  };
+
 
   useEffect(() => {
     setLoading(true);
@@ -242,7 +237,7 @@ export default function Experiences() {
                           <p className="text-2xl font-bold text-white">{formatPrice(exp.price)}</p>
                         </div>
                         <div className="flex items-center gap-1.5 bg-amber-500/10 text-amber-500 px-3 py-1.5 rounded-full font-bold text-xs border border-amber-500/20">
-                          <Star size={12} className="fill-current" /> 4.9
+                          <Star size={12} className="fill-current" /> {exp.rating || 'New'}
                         </div>
                       </div>
                     </div>

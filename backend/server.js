@@ -15,6 +15,7 @@ import { globalLimiter, authLimiter, uploadLimiter, paymentLimiter } from "./mid
 import { requireAuth } from "./middleware/auth.js";
 import { activityLogger } from "./middleware/activityLogger.js";
 import { securityGuards } from "./middleware/security.js";
+import { generateCSRFToken, validateCSRF } from "./middleware/csrf.js";
 import { shutdownPostHog } from "./utils/posthog.js";
 
 
@@ -48,8 +49,8 @@ const checkOrigin = (origin, callback) => {
   if (allowedOrigins.includes(origin) || (process.env.NODE_ENV === "development" && origin.includes("localhost"))) {
     return callback(null, true);
   }
-  // Allow any Vercel domain (production and previews)
-  if (origin.endsWith(".vercel.app")) {
+  // Allow only Wayzza Vercel domains (production and previews)
+  if (origin.endsWith(".vercel.app") && (origin.includes("wayza") || origin.includes("wayzza"))) {
     return callback(null, true);
   }
   return callback(new Error("CORS: Origin not allowed by security policy"));
@@ -59,7 +60,7 @@ app.use(cors({
   origin: checkOrigin,
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "X-CSRF-Token"]
 }));
 
 // 2. INITIALIZE DATABASE
@@ -93,13 +94,22 @@ app.use(securityGuards);
 // 6. RATE LIMITING
 app.use(globalLimiter);
 
-// 7. BODY PARSING
+// 7. WEBHOOKS (raw body MUST come before express.json to preserve signature verification)
+app.use("/api/v1/webhooks/razorpay", express.raw({ type: "application/json" }));
+
+// 8. BODY PARSING
 app.use(express.json({ limit: "15kb" }));
 app.use(express.urlencoded({ extended: true, limit: "15kb" }));
 app.use(cookieParser());
 
-// 8. AUDIT LOGGING
+// 9. AUDIT LOGGING
 app.use(activityLogger); 
+
+// 10. CSRF PROTECTION (after cookieParser, before routes)
+// Skips GET/HEAD/OPTIONS and webhook routes automatically
+if (process.env.NODE_ENV === "production") {
+  app.use("/api/v1", validateCSRF);
+}
 
 app.use("/uploads", express.static("uploads"));
 
@@ -112,6 +122,9 @@ initSocket(httpServer, checkOrigin);
 app.get("/api/v1/health", (req, res) => {
   res.json({ ok: true, status: "up", uptime: process.uptime() });
 });
+
+// CSRF token endpoint (must be before the CSRF middleware for GET requests to work)
+app.get("/api/v1/auth/csrf-token", generateCSRFToken);
 
 
 
@@ -135,8 +148,7 @@ app.use("/api/v1/misc", miscRoutes);
 app.use("/api/v1/comm", communicationRoutes);
 app.use("/api/v1/payments", paymentLimiter, payRoutes);
 
-// WEBHOOKS need raw body BEFORE express.json()
-app.use("/api/v1/webhooks/razorpay", express.raw({ type: "application/json" }));
+// Webhook routes (raw body parser was registered above, before express.json)
 app.use("/api/v1/webhooks", webhookRoutes);
 
 app.get("/", (_, res) => res.json({ ok: true, status: "Wayzza API v1 Running" }));

@@ -46,10 +46,9 @@ const STATUS_MAP = {
 };
 
 export default function CustomerSupport() {
-  const { user, token } = useAuth();
+  const { user } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
-  const realToken = token || localStorage.getItem('token');
   const chatEndRef = useRef(null);
 
   const [view, setView] = useState('list'); // list | new | detail

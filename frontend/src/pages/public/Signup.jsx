@@ -22,7 +22,7 @@ import { api } from '../../utils/api.js';
 export default function Signup() {
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const { login } = useAuth();
+  const { login, user } = useAuth();
 
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -33,13 +33,10 @@ export default function Signup() {
 
   // AUTO REDIRECT IF ALREADY LOGGED IN
   useEffect(() => {
-    const email = localStorage.getItem('email');
-    const role = localStorage.getItem('role');
-    const loggedIn = localStorage.getItem('loggedIn');
-    if (email && loggedIn === 'true' && role === 'guest') {
+    if (user && user.role === 'guest') {
       navigate('/', { replace: true });
     }
-  }, [navigate]);
+  }, [user, navigate]);
 
   const googleLogin = useGoogleLogin({
     scope: 'openid email profile',
@@ -48,7 +45,7 @@ export default function Signup() {
       try {
         const res = await api.googleAuth(tokenResponse.credential || tokenResponse.access_token);
         if (res.ok) {
-          login({ email: res.data.email, role: res.data.role, token: res.data.token });
+          login({ email: res.data.email, role: res.data.role });
           showToast('Google Authentication successful!', 'success');
           navigate('/');
         } else {

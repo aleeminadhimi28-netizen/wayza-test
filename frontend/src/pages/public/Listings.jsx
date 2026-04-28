@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 
 import { api } from '../../utils/api.js';
+import { fixImg } from '../../utils/image.js';
 import SEO from '../../components/SEO.jsx';
 
 const CATEGORIES = [
@@ -57,8 +58,7 @@ function getRatingLabel(score) {
 export default function Listings() {
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
-  const { token } = useAuth();
-  const realToken = token || localStorage.getItem('token');
+  const { user } = useAuth();
 
   const [rows, setRows] = useState([]);
   const [saved, setSaved] = useState(new Set());
@@ -83,17 +83,10 @@ export default function Listings() {
   const start = params.get('start') || '';
   const end = params.get('end') || '';
 
-  const fixImg = (img) => {
-    if (!img)
-      return 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80';
-    if (img.startsWith('http')) return img;
-    // Use the base URL for uploads
-    const BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-    return `${BASE}/uploads/${img}`;
-  };
+
 
   async function loadWishlist() {
-    if (!realToken) return;
+    if (!user) return;
     try {
       const data = await api.getWishlist();
       if (data.ok) {
@@ -126,7 +119,7 @@ export default function Listings() {
   async function toggleWishlist(e, listingId) {
     e.preventDefault();
     e.stopPropagation();
-    if (!realToken) {
+    if (!user) {
       navigate('/login');
       return;
     }

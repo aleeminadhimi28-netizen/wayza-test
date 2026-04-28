@@ -25,6 +25,7 @@ import {
 
 import { api } from '../../utils/api.js';
 import { useToast } from '../../ToastContext.jsx';
+import { useAuth } from '../../AuthContext.jsx';
 
 // Sub-components
 import AdminOverview from './AdminOverview.jsx';
@@ -49,6 +50,7 @@ export default function AdminDashboard() {
   const [withdrawals, setWithdrawals] = useState([]);
 
   const { showToast } = useToast();
+  const { logout } = useAuth();
 
   useEffect(() => {
     api
@@ -123,7 +125,7 @@ export default function AdminDashboard() {
   }
 
   function handleLogout() {
-    localStorage.clear();
+    logout();
     window.location.href = '/admin-login';
   }
 

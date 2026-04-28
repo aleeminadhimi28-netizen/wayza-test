@@ -221,16 +221,8 @@ export default function Payment() {
                     Price Summary
                   </p>
                   <div className="flex justify-between text-sm text-slate-600">
-                    <span>Accommodation</span>
-                    <span>
-                      ₹{(price * 0.85).toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm text-slate-600">
-                    <span>Taxes & fees</span>
-                    <span>
-                      ₹{(price * 0.15).toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                    </span>
+                    <span>{nights} night{nights > 1 ? 's' : ''} (incl. taxes & fees)</span>
+                    <span>₹{price.toLocaleString()}</span>
                   </div>
                   {couponCode && (
                     <div className="flex justify-between text-sm text-emerald-600 font-semibold">

@@ -38,7 +38,7 @@ export default function AdminLogin() {
         return;
       }
 
-      localStorage.setItem('role', 'admin');
+
       setAuth({ email: data.email, role: 'admin' });
 
       showToast('Welcome back, Administrator.', 'success');

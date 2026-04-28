@@ -15,6 +15,14 @@ export const initSocket = (server, originCheck) => {
     io.on("connection", (socket) => {
         console.log(`[Socket] New client connected: ${socket.id}`);
 
+        // Join a user-specific room for notifications
+        socket.on("join_user", (email) => {
+            if (email) {
+                socket.join(`user:${email}`);
+                console.log(`[Socket] Client ${socket.id} joined user room: ${email}`);
+            }
+        });
+
         socket.on("join_room", (bookingId) => {
             socket.join(bookingId);
             console.log(`[Socket] Client ${socket.id} joined room: ${bookingId}`);
@@ -43,5 +51,16 @@ export const getIO = () => {
 export const emitMessage = (bookingId, message) => {
     if (io) {
         io.to(bookingId).emit("new_message", message);
+    }
+};
+
+/**
+ * Push a notification to a specific user's socket room
+ * @param {string} email - User email
+ * @param {object} notification - The notification document
+ */
+export const emitNotification = (email, notification) => {
+    if (io) {
+        io.to(`user:${email}`).emit("new_notification", notification);
     }
 };

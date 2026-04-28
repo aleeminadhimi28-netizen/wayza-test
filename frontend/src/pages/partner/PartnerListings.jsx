@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 
 import { api } from '../../utils/api.js';
+import { fixImg } from '../../utils/image.js';
 
 export default function PartnerListings() {
   const { user } = useAuth();
@@ -59,13 +60,7 @@ export default function PartnerListings() {
     setDeleting(null);
   }
 
-  const fixImg = (img) => {
-    if (!img)
-      return 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80';
-    if (img.startsWith('http')) return img;
-    const BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-    return `${BASE}/uploads/${img}`;
-  };
+
 
   if (loading)
     return (
