@@ -19,6 +19,8 @@ import {
   CheckCircle2,
   MessageSquare,
   Send,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 
 import { api } from '../../utils/api.js';
@@ -320,15 +322,31 @@ export default function LandingPage() {
                 <h3 className="text-2xl font-black tracking-tight text-slate-950">Featured listings</h3>
                 <p className="text-sm text-slate-500 font-medium">Explore select stays curated for mobile discovery.</p>
               </div>
-              <Link
-                to="/listings"
-                className="text-xs uppercase font-black tracking-[0.3em] text-slate-400 hover:text-slate-900"
-              >
-                View all
-              </Link>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => { const el = document.getElementById('featured-scroll'); if (el) el.scrollBy({ left: -300, behavior: 'smooth' }); }}
+                  className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
+                  aria-label="Scroll left"
+                >
+                  <ChevronLeft size={18} />
+                </button>
+                <button
+                  onClick={() => { const el = document.getElementById('featured-scroll'); if (el) el.scrollBy({ left: 300, behavior: 'smooth' }); }}
+                  className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
+                  aria-label="Scroll right"
+                >
+                  <ChevronRight size={18} />
+                </button>
+                <Link
+                  to="/listings"
+                  className="hidden sm:block text-xs uppercase font-black tracking-[0.3em] text-slate-400 hover:text-slate-900 ml-2"
+                >
+                  View all
+                </Link>
+              </div>
             </div>
 
-            <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory">
+            <div id="featured-scroll" className="flex gap-4 overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory scroll-smooth">
               {loading ? (
                 [1, 2, 3].map((index) => (
                   <div key={index} className="min-w-[280px] snap-start">
@@ -360,15 +378,31 @@ export default function LandingPage() {
                 <h3 className="text-2xl font-black tracking-tight text-slate-950">More listings</h3>
                 <p className="text-sm text-slate-500 font-medium">Browse more curated stays designed for your next trip.</p>
               </div>
-              <Link
-                to="/listings"
-                className="text-xs uppercase font-black tracking-[0.3em] text-slate-400 hover:text-slate-900"
-              >
-                Browse all
-              </Link>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => { const el = document.getElementById('more-scroll'); if (el) el.scrollBy({ left: -300, behavior: 'smooth' }); }}
+                  className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
+                  aria-label="Scroll left"
+                >
+                  <ChevronLeft size={18} />
+                </button>
+                <button
+                  onClick={() => { const el = document.getElementById('more-scroll'); if (el) el.scrollBy({ left: 300, behavior: 'smooth' }); }}
+                  className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
+                  aria-label="Scroll right"
+                >
+                  <ChevronRight size={18} />
+                </button>
+                <Link
+                  to="/listings"
+                  className="hidden sm:block text-xs uppercase font-black tracking-[0.3em] text-slate-400 hover:text-slate-900 ml-2"
+                >
+                  Browse all
+                </Link>
+              </div>
             </div>
 
-            <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory">
+            <div id="more-scroll" className="flex gap-4 overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory scroll-smooth">
               {loading ? (
                 [1, 2, 3].map((index) => (
                   <div key={index} className="min-w-[280px] snap-start">
