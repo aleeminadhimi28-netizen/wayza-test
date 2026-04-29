@@ -62,7 +62,10 @@ export default function Login() {
     },
     onError: (errorResponse) => {
       console.error('Google login error:', errorResponse);
-      const errorMsg = errorResponse?.error_description || errorResponse?.error || 'Google Popup failed or was closed.';
+      const errorMsg =
+        errorResponse?.error_description ||
+        errorResponse?.error ||
+        'Google Popup failed or was closed.';
       showToast(errorMsg, 'error');
     },
   });
