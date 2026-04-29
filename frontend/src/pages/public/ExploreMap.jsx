@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -8,6 +8,17 @@ import { Home, Navigation, MapPin, Loader2, Info, Star } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { api } from '../../utils/api.js';
+import {
+  Waves,
+  Palmtree,
+  Gem,
+  Tent,
+  Building,
+  History,
+  Compass,
+  Locate,
+  Search,
+} from 'lucide-react';
 
 // Fix Leaflet marker icons
 delete L.Icon.Default.prototype._getIconUrl;
@@ -40,31 +51,66 @@ export default function ExploreMap() {
   const [activeItem, setActiveItem] = useState(null);
   const [mapCenter, setMapCenter] = useState([8.7379, 76.7163]); // Varkala, Kerala
   const [mapZoom, setMapZoom] = useState(13);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [showSearchButton, setShowSearchButton] = useState(false);
+  const [isLocating, setIsLocating] = useState(false);
+
+  const categories = [
+    { id: 'all', label: 'All Stays', icon: <Compass size={16} /> },
+    { id: 'beachfront', label: 'Beachfront', icon: <Waves size={16} /> },
+    { id: 'luxury', label: 'Luxury', icon: <Gem size={16} /> },
+    { id: 'resort', label: 'Resorts', icon: <Palmtree size={16} /> },
+    { id: 'heritage', label: 'Heritage', icon: <History size={16} /> },
+    { id: 'villa', label: 'Villas', icon: <Building size={16} /> },
+    { id: 'glamping', label: 'Glamping', icon: <Tent size={16} /> },
+  ];
+
+  async function fetchData(params = {}) {
+    try {
+      setLoading(true);
+      const query = { limit: 100, ...params };
+      if (selectedCategory !== 'all') query.category = selectedCategory;
+
+      const data = await api.getListings(query);
+      if (data.ok) {
+        const rows = data.rows || data.data || (Array.isArray(data) ? data : []);
+        const withGps = rows.filter((r) => r.latitude && r.longitude);
+        setListings(withGps);
+
+        if (withGps.length > 0 && !params.lat) {
+          // Only center if we're not doing a targeted search
+          setMapCenter([withGps[0].latitude, withGps[0].longitude]);
+          setMapZoom(12);
+        }
+      }
+    } catch (err) {
+      setError('Failed to connect to the server.');
+    } finally {
+      setLoading(false);
+      setShowSearchButton(false);
+    }
+  }
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        setLoading(true);
-        const data = await api.getListings({ limit: 100 });
-        if (data.ok) {
-          const rows = data.rows || data.data || (Array.isArray(data) ? data : []);
-          const withGps = rows.filter((r) => r.latitude && r.longitude);
-          setListings(withGps);
-
-          if (withGps.length > 0) {
-            // Center map on the first property or average
-            setMapCenter([withGps[0].latitude, withGps[0].longitude]);
-            setMapZoom(12);
-          }
-        }
-      } catch (err) {
-        setError('Failed to connect to the server.');
-      } finally {
-        setLoading(false);
-      }
-    }
     fetchData();
-  }, []);
+  }, [selectedCategory]);
+
+  const handleNearMe = () => {
+    if (!navigator.geolocation) return;
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        setMapCenter([latitude, longitude]);
+        setMapZoom(14);
+        setIsLocating(false);
+        fetchData({ lat: latitude, lng: longitude }); // Optional: could filter by distance here if backend supported it
+      },
+      () => {
+        setIsLocating(false);
+      }
+    );
+  };
 
   return (
     <WayzzaLayout noPadding>
@@ -102,7 +148,42 @@ export default function ExploreMap() {
           </div>
         </div>
 
+        {/* Category Filter Bar */}
+        <div className="bg-white border-b border-slate-100 px-6 py-3 flex gap-3 overflow-x-auto no-scrollbar z-10 shrink-0">
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => setSelectedCategory(cat.id)}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-[11px] uppercase tracking-widest whitespace-nowrap transition-all ${
+                selectedCategory === cat.id
+                  ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20 scale-105'
+                  : 'bg-slate-50 text-slate-500 hover:bg-slate-100'
+              }`}
+            >
+              {cat.icon}
+              {cat.label}
+            </button>
+          ))}
+        </div>
+
         <div className="flex-1 relative">
+          <AnimatePresence>
+            {showSearchButton && (
+              <motion.div
+                initial={{ y: -20, opacity: 0, x: '-50%' }}
+                animate={{ y: 0, opacity: 1, x: '-50%' }}
+                exit={{ y: -20, opacity: 0, x: '-50%' }}
+                className="absolute top-6 left-1/2 z-[1001]"
+              >
+                <button
+                  onClick={() => fetchData()}
+                  className="bg-slate-900 text-white px-6 py-3 rounded-full flex items-center gap-2 font-bold text-xs uppercase tracking-widest shadow-2xl hover:bg-emerald-600 transition-all active:scale-95"
+                >
+                  <Search size={14} /> Search this area
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
           {loading ? (
             <div className="absolute inset-0 z-[1001] bg-white/80 backdrop-blur-sm flex items-center justify-center">
               <div className="flex flex-col items-center gap-4">
@@ -141,6 +222,7 @@ export default function ExploreMap() {
               url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
             />
 
+            <MapEventsHandler onMove={() => setShowSearchButton(true)} />
             <ChangeView center={mapCenter} zoom={mapZoom} />
 
             {listings.map((item) => (
@@ -211,6 +293,15 @@ export default function ExploreMap() {
               className="w-12 h-12 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 shadow-xl hover:bg-slate-50 transition-all font-bold text-lg"
             >
               âˆ’
+            </button>
+            <button
+              onClick={handleNearMe}
+              disabled={isLocating}
+              className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-xl transition-all ${
+                isLocating ? 'bg-emerald-50 text-emerald-600' : 'bg-white text-slate-700 hover:bg-slate-50'
+              } border border-slate-200`}
+            >
+              <Locate size={20} className={isLocating ? 'animate-pulse' : ''} />
             </button>
           </div>
 
@@ -314,9 +405,25 @@ export default function ExploreMap() {
           background: transparent !important;
           border: none !important;
         }
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
       `}</style>
     </WayzzaLayout>
   );
+}
+
+function MapEventsHandler({ onMove }) {
+  const map = useMap();
+  useEffect(() => {
+    map.on('moveend', onMove);
+    return () => map.off('moveend', onMove);
+  }, [map, onMove]);
+  return null;
 }
 
 function ArrowUpRight({ size, className }) {
