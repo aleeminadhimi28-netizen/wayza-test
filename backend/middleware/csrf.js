@@ -51,9 +51,10 @@ export function validateCSRF(req, res, next) {
     const headerToken = req.headers?.[CSRF_HEADER];
 
     if (!cookieToken || !headerToken) {
+        const missing = !cookieToken && !headerToken ? "both" : (!cookieToken ? "cookie" : "header");
         return res.status(403).json({
             ok: false,
-            message: "CSRF validation failed: Missing token"
+            message: `CSRF validation failed: Missing ${missing}`
         });
     }
 
