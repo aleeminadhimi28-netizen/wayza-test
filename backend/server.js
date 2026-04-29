@@ -42,7 +42,7 @@ app.set("trust proxy", 1);
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS 
   ? process.env.ALLOWED_ORIGINS.split(",") 
-  : ["http://localhost:5173", "http://localhost:3000", "https://wayza-test.vercel.app"];
+  : ["http://localhost:5173", "http://localhost:3000", "https://wayza-test.vercel.app", "https://wayzza.live", "https://www.wayzza.live"];
 
 const checkOrigin = (origin, callback) => {
   if (!origin) return callback(null, true);
@@ -76,7 +76,7 @@ app.use(helmet({
       scriptSrc: ["'self'", "'unsafe-inline'", "https://us.i.posthog.com"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       imgSrc: ["'self'", "data:", "https://res.cloudinary.com", "https://us.i.posthog.com"],
-      connectSrc: ["'self'", "wss:", "https://api.cloudinary.com", "https://*.onrender.com", "https://us.i.posthog.com", "https://*.vercel.app"],
+      connectSrc: ["'self'", "wss:", "https://api.cloudinary.com", "https://*.onrender.com", "https://us.i.posthog.com", "https://*.vercel.app", "https://*.wayzza.live", "https://wayzza.live"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       objectSrc: ["'none'"],
       upgradeInsecureRequests: [],
@@ -98,8 +98,8 @@ app.use(globalLimiter);
 app.use("/api/v1/webhooks/razorpay", express.raw({ type: "application/json" }));
 
 // 8. BODY PARSING
-app.use(express.json({ limit: "15kb" }));
-app.use(express.urlencoded({ extended: true, limit: "15kb" }));
+app.use(express.json({ limit: "50kb" }));
+app.use(express.urlencoded({ extended: true, limit: "50kb" }));
 app.use(cookieParser());
 
 // 9. AUDIT LOGGING

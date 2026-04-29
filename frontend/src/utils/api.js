@@ -1,10 +1,12 @@
 export const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const API_URL = `${BASE_URL}/api/v1`;
+let memoryCSRFToken = null;
 
 /**
  * Read the CSRF token from the csrf_token cookie
  */
 function getCSRFToken() {
+  if (memoryCSRFToken) return memoryCSRFToken;
   const match = document.cookie.match(/(?:^|;\s*)csrf_token=([^;]*)/);
   return match ? decodeURIComponent(match[1]) : null;
 }
@@ -14,8 +16,10 @@ function getCSRFToken() {
  */
 async function ensureCSRFToken() {
   try {
-    if (!getCSRFToken()) {
-      await fetch(`${API_URL}/auth/csrf-token`, { credentials: 'include' });
+    const res = await fetch(`${API_URL}/auth/csrf-token`, { credentials: 'include' });
+    const data = await res.json();
+    if (data.ok && data.csrfToken) {
+      memoryCSRFToken = data.csrfToken;
     }
   } catch {
     // Non-critical — CSRF only enforced in production

@@ -27,8 +27,8 @@ export function generateCSRFToken(req, res) {
 
     res.cookie(CSRF_COOKIE, token, {
         httpOnly: false,          // Must be readable by client JS
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
+        secure: true,             // Always use secure in production/staging
+        sameSite: "none",         // Required for cross-origin setups
         maxAge: 24 * 60 * 60 * 1000, // 24 hours
         path: "/",
     });
@@ -53,7 +53,7 @@ export function validateCSRF(req, res, next) {
     if (!cookieToken || !headerToken) {
         return res.status(403).json({
             ok: false,
-            error: "CSRF validation failed: Missing token"
+            message: "CSRF validation failed: Missing token"
         });
     }
 
@@ -61,7 +61,7 @@ export function validateCSRF(req, res, next) {
     if (cookieToken.length !== headerToken.length) {
         return res.status(403).json({
             ok: false,
-            error: "CSRF validation failed: Token mismatch"
+            message: "CSRF validation failed: Token mismatch"
         });
     }
 
@@ -73,7 +73,7 @@ export function validateCSRF(req, res, next) {
     if (!valid) {
         return res.status(403).json({
             ok: false,
-            error: "CSRF validation failed: Token mismatch"
+            message: "CSRF validation failed: Token mismatch"
         });
     }
 
