@@ -123,10 +123,10 @@ export default function ExploreMap() {
             </div>
             <div>
               <h1 className="text-xl font-bold text-slate-900 tracking-tight">
-                Explore Wayzza Map
+                Explore Varkala
               </h1>
               <p className="text-xs text-slate-500 font-medium">
-                Discover stays and properties near you
+                Discover curated stays and hidden gems
               </p>
             </div>
           </div>
