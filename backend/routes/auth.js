@@ -182,7 +182,7 @@ router.post("/google", async (req, res, next) => {
     } catch (err) {
         console.error("Google Auth Error:", err);
         // Provide more context if it's a verification error
-        const status = err.message?.includes("token") ? 401 : 401;
+        const status = (err.message && err.message.includes("token")) ? 401 : 401; // Standardize on 401 for auth errors
         res.status(status).json({ 
             ok: false, 
             message: err.message || "Google authentication failed",

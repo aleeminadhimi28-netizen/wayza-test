@@ -18,7 +18,7 @@ let csrfPromise = null;
 
 async function ensureCSRFToken() {
   if (csrfPromise) return csrfPromise;
-  
+
   csrfPromise = (async () => {
     try {
       const res = await fetch(`${API_URL}/auth/csrf-token`, { credentials: 'include' });
@@ -32,7 +32,7 @@ async function ensureCSRFToken() {
     }
     return null;
   })();
-  
+
   return csrfPromise;
 }
 
