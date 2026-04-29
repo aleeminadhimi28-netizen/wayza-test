@@ -14,27 +14,38 @@ function getCSRFToken() {
 /**
  * Fetch a fresh CSRF token from the server (sets the cookie automatically)
  */
+let csrfPromise = null;
+
 async function ensureCSRFToken() {
-  try {
-    const res = await fetch(`${API_URL}/auth/csrf-token`, { credentials: 'include' });
-    const data = await res.json();
-    if (data.ok && data.csrfToken) {
-      memoryCSRFToken = data.csrfToken;
+  if (csrfPromise) return csrfPromise;
+  
+  csrfPromise = (async () => {
+    try {
+      const res = await fetch(`${API_URL}/auth/csrf-token`, { credentials: 'include' });
+      const data = await res.json();
+      if (data.ok && data.csrfToken) {
+        memoryCSRFToken = data.csrfToken;
+        return data.csrfToken;
+      }
+    } catch {
+      // Non-critical — CSRF only enforced in production
     }
-  } catch {
-    // Non-critical — CSRF only enforced in production
-  }
+    return null;
+  })();
+  
+  return csrfPromise;
 }
 
 // Fetch CSRF token on module load
 ensureCSRFToken();
 
-const customFetch = (url, options = {}) => {
+const customFetch = async (url, options = {}) => {
   const method = (options.method || 'GET').toUpperCase();
   const isMutating = !['GET', 'HEAD', 'OPTIONS'].includes(method);
 
   // Attach CSRF token header on mutating requests
   if (isMutating) {
+    await ensureCSRFToken();
     const csrfToken = getCSRFToken();
     if (csrfToken) {
       options.headers = {
