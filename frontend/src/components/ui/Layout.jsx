@@ -128,7 +128,7 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
             Wayzza<span className="text-emerald-500">.</span>
           </Link>
           <div
-            className={`hidden lg:flex gap-10 font-bold uppercase tracking-widest text-[11px] ${subTextColor}`}
+            className={`hidden lg:flex gap-6 font-bold uppercase tracking-widest text-[11px] ${subTextColor}`}
           >
             {navLinks.map((link) => (
               <Link
@@ -144,7 +144,7 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
               </Link>
             ))}
           </div>
-          <div className="flex items-center gap-3 md:gap-6">
+          <div className="flex items-center gap-2 md:gap-4">
             {/* CURRENCY SELECTOR */}
             <div className="relative" ref={currRef}>
               <button

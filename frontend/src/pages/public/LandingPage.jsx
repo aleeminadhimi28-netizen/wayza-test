@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { WayzzaLayout, WayzzaHotelItem, WayzzaSkeleton } from '../../WayzzaUI.jsx';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -214,19 +214,33 @@ export default function LandingPage() {
                     Timeframe
                   </p>
                   <div className="flex items-center gap-2 md:gap-1 lg:gap-3">
-                    <input
-                      type="date"
-                      value={checkIn}
-                      onChange={(e) => setCheckIn(e.target.value)}
-                      className="bg-transparent border-none outline-none font-bold text-slate-900 text-xs md:text-[11px] lg:text-sm p-0 w-24 md:w-20 lg:w-28 cursor-pointer"
-                    />
-                    <span className="text-slate-300 hidden md:inline">-</span>
-                    <input
-                      type="date"
-                      value={checkOut}
-                      onChange={(e) => setCheckOut(e.target.value)}
-                      className="bg-transparent border-none outline-none font-bold text-slate-900 text-xs md:text-[11px] lg:text-sm p-0 w-24 md:w-20 lg:w-28 cursor-pointer"
-                    />
+                    <div className="relative">
+                      <input
+                        type="date"
+                        value={checkIn}
+                        onChange={(e) => setCheckIn(e.target.value)}
+                        className={`bg-transparent border-none outline-none font-bold text-slate-900 text-xs md:text-[11px] lg:text-sm p-0 w-24 md:w-20 lg:w-28 cursor-pointer ${!checkIn ? 'date-empty' : ''}`}
+                      />
+                      {!checkIn && (
+                        <span className="absolute inset-0 font-bold text-slate-400 text-xs md:text-[11px] lg:text-sm pointer-events-none flex items-center bg-transparent">
+                          Check In
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-slate-300 hidden md:inline">→</span>
+                    <div className="relative">
+                      <input
+                        type="date"
+                        value={checkOut}
+                        onChange={(e) => setCheckOut(e.target.value)}
+                        className={`bg-transparent border-none outline-none font-bold text-slate-900 text-xs md:text-[11px] lg:text-sm p-0 w-24 md:w-20 lg:w-28 cursor-pointer ${!checkOut ? 'date-empty' : ''}`}
+                      />
+                      {!checkOut && (
+                        <span className="absolute inset-0 font-bold text-slate-400 text-xs md:text-[11px] lg:text-sm pointer-events-none flex items-center bg-transparent">
+                          Check Out
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
 

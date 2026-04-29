@@ -1,10 +1,10 @@
 {
-    "short_name": "Wayza",
-    "name": "Wayza — Discover Your Next Escape",
-    "description": "Discover hotels, bikes, cars & experiences. Book your next adventure in one place.",
+    "short_name": "Wayzza",
+    "name": "Wayzza — Curated Sanctuaries",
+    "description": "Curated sanctuaries & elite mobility. Discover hotels, bikes, cars & experiences tailored for the modern explorer.",
     "icons": [
         {
-            "src": "https://cdn-icons-png.flaticon.com/512/3126/3126435.png",
+            "src": "/images/wayzza-icon.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "any maskable"
@@ -12,6 +12,6 @@
     ],
     "start_url": ".",
     "display": "standalone",
-    "theme_color": "#0ea5e9",
-    "background_color": "#ffffff"
-}
+    "theme_color": "#0a2618",
+    "background_color": "#0a2618"
+}
