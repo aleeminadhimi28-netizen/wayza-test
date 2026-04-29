@@ -1,8 +1,51 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
-    plugins: [react()],
+    plugins: [
+        react(),
+        VitePWA({
+            registerType: 'autoUpdate',
+            includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+            manifest: {
+                name: 'Wayzza — Curated Sanctuaries',
+                short_name: 'Wayzza',
+                description: 'Curated sanctuaries & elite mobility for the modern explorer.',
+                theme_color: '#0a2618',
+                background_color: '#0a2618',
+                display: 'standalone',
+                orientation: 'portrait',
+                icons: [
+                    {
+                        src: '/images/wayzza-icon.png',
+                        sizes: '512x512',
+                        type: 'image/png',
+                        purpose: 'any maskable'
+                    }
+                ]
+            },
+            workbox: {
+                globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+                runtimeCaching: [
+                    {
+                        urlPattern: /^https:\/\/wayzza-api\.render\.com\/api\/.*/i,
+                        handler: 'NetworkFirst',
+                        options: {
+                            cacheName: 'api-cache',
+                            expiration: {
+                                maxEntries: 100,
+                                maxAgeSeconds: 60 * 60 * 24 * 7 // 1 week
+                            },
+                            cacheableResponse: {
+                                statuses: [0, 200]
+                            }
+                        }
+                    }
+                ]
+            }
+        })
+    ],
     server: {
         host: true,
         port: 5173,
