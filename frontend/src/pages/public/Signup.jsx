@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -58,10 +58,8 @@ export default function Signup() {
     },
     onError: (errorResponse) => {
       console.error('Google login error:', errorResponse);
-      showToast(
-        errorResponse?.error_description || errorResponse?.error || 'Google Authentication failed.',
-        'error'
-      );
+      const errorMsg = errorResponse?.error_description || errorResponse?.error || 'Google Popup failed or was closed.';
+      showToast(errorMsg, 'error');
     },
   });
 
@@ -253,7 +251,7 @@ export default function Signup() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-20 bg-slate-900 text-white rounded-[32px] font-bold uppercase text-[11px] tracking-[0.3em] hover:bg-emerald-600 hover:shadow-emerald-500/25 hover:-translate-y-1 shadow-2xl shadow-slate-900/10 active:scale-95 transition-all duration-300 flex items-center justify-center gap-5 group disabled:opacity-20"
+              className="w-full h-16 bg-slate-900 text-white rounded-2xl font-bold uppercase text-[11px] tracking-[0.3em] hover:bg-emerald-600 hover:shadow-emerald-500/25 hover:-translate-y-1 shadow-2xl shadow-slate-900/10 active:scale-95 transition-all duration-300 flex items-center justify-center gap-5 group disabled:opacity-20"
             >
               {loading ? (
                 <div className="w-6 h-6 border-4 border-white/20 border-t-white rounded-full animate-spin" />
