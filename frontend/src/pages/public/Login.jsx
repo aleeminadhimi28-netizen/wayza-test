@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../AuthContext.jsx';
 import { useToast } from '../../ToastContext.jsx';
@@ -266,7 +266,7 @@ export default function Login() {
                             setOtpSent(false);
                           }}
                           autoComplete="email"
-                          className="w-full h-18 bg-slate-50 border border-slate-100 rounded-2xl pl-16 pr-6 font-bold text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200 shadow-inner"
+                          className="w-full h-16 bg-slate-50 border border-slate-100 rounded-2xl pl-16 pr-6 font-bold text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200 shadow-inner"
                           placeholder="email@example.com"
                         />
                       </div>
@@ -297,7 +297,7 @@ export default function Login() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             autoComplete="current-password"
-                            className="w-full h-18 bg-slate-50 border border-slate-100 rounded-2xl pl-16 pr-20 font-bold text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200 shadow-inner"
+                            className="w-full h-16 bg-slate-50 border border-slate-100 rounded-2xl pl-16 pr-20 font-bold text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200 shadow-inner"
                             placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                           />
                           <button
@@ -343,7 +343,7 @@ export default function Login() {
                               required
                               value={otp}
                               onChange={(e) => setOtp(e.target.value)}
-                              className="w-full h-18 bg-slate-50 border border-slate-100 rounded-2xl pl-16 pr-20 font-bold text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200 shadow-inner tracking-[0.5em] text-lg"
+                              className="w-full h-16 bg-slate-50 border border-slate-100 rounded-2xl pl-16 pr-20 font-bold text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200 shadow-inner tracking-[0.5em] text-lg"
                               placeholder="123456"
                               maxLength={6}
                             />
@@ -362,7 +362,7 @@ export default function Login() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full h-20 bg-slate-900 text-white rounded-[32px] font-bold uppercase text-[11px] tracking-[0.3em] hover:bg-emerald-600 shadow-2xl shadow-slate-900/10 active:scale-95 transition-all flex items-center justify-center gap-5 group disabled:opacity-20"
+                    className="w-full h-16 bg-slate-900 text-white rounded-2xl font-bold uppercase text-[11px] tracking-[0.3em] hover:bg-emerald-600 shadow-2xl shadow-slate-900/10 active:scale-95 transition-all flex items-center justify-center gap-5 group disabled:opacity-20"
                   >
                     {loading ? (
                       <div className="w-6 h-6 border-4 border-white/20 border-t-white rounded-full animate-spin" />
