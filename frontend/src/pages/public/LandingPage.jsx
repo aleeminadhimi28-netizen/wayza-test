@@ -127,7 +127,7 @@ export default function LandingPage() {
   return (
     <WayzzaLayout noPadding hideFooter>
       <SEO
-        title="Curated Sanctuaries & Elite Mobility"
+        title="Luxury Varkala Stays & Elite Mobility"
         breadcrumb={[{ name: 'Home', url: 'https://wayza-app.vercel.app' }]}
         schema={{
           '@context': 'https://schema.org',

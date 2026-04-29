@@ -64,7 +64,7 @@ export default function SEO({
         name="description"
         content={
           description ||
-          'Experience the ultimate digital nomad lifestyle. Verified luxury villas, Royal Enfield rentals, and hidden Varkala secrets. Curated for the modern explorer.'
+          'Discover the finest Varkala clifftop villas, premium Royal Enfield rentals, and exclusive local secrets. Verified sanctuaries curated for digital nomads and modern explorers in Varkala, Kerala.'
         }
       />
       <meta
@@ -76,7 +76,7 @@ export default function SEO({
       <meta charSet="utf-8" />
       <meta
         name="keywords"
-        content="luxury villas, Varkala, digital nomad, vacation rentals, Royal Enfield, experiences"
+        content="Varkala luxury villas, Varkala Cliff stays, Varkala beach rentals, digital nomad Varkala, Royal Enfield rental Varkala, Kerala backwater experiences, Varkala tourism"
       />
       <meta name="author" content="Wayzza" />
       <meta name="theme-color" content="#059669" />
@@ -92,7 +92,7 @@ export default function SEO({
         property="og:description"
         content={
           description ||
-          'Access a verified collection of clifftop villas, high-performance rentals, and hidden local secrets in Varkala.'
+          'Access a verified collection of premium clifftop villas, high-performance mobility, and hidden local secrets in the heart of Varkala.'
         }
       />
       <meta property="og:image" content={metaImage} />

@@ -19,6 +19,7 @@ import {
   Locate,
   Search,
 } from 'lucide-react';
+import SEO from '../../components/SEO.jsx';
 
 // Fix Leaflet marker icons
 delete L.Icon.Default.prototype._getIconUrl;
@@ -114,6 +115,14 @@ export default function ExploreMap() {
 
   return (
     <WayzzaLayout noPadding>
+      <SEO
+        title="Explore Varkala Stays on Map"
+        description="Discover and book the best clifftop villas and beach stays in Varkala using our interactive discovery map."
+        breadcrumb={[
+          { name: 'Home', url: 'https://wayza-app.vercel.app' },
+          { name: 'Explore Map', url: 'https://wayza-app.vercel.app/explore-map' },
+        ]}
+      />
       <div className="h-screen flex flex-col pt-20 overflow-hidden font-sans">
         {/* Header Toolbar */}
         <div className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between shadow-sm z-10 shrink-0">

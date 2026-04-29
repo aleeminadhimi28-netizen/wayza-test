@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
@@ -169,8 +169,12 @@ export default function Listings() {
   return (
     <WayzzaLayout noPadding>
       <SEO
-        title={location ? `${catLabel} in ${location}` : `Explore ${catLabel}`}
-        description={`Browse verified ${catLabel.toLowerCase()} directly from Wayzza.`}
+        title={location ? `${catLabel} in ${location}` : `Luxury ${catLabel} in Varkala`}
+        description={
+          location
+            ? `Browse verified ${catLabel.toLowerCase()} in ${location} on Wayzza. Best prices for clifftop stays and premium rentals.`
+            : `Experience the best of Varkala with verified ${catLabel.toLowerCase()} curated for digital nomads and travelers.`
+        }
         breadcrumb={[
           { name: 'Home', url: 'https://wayza-app.vercel.app' },
           { name: catLabel, url: currentUrl },
