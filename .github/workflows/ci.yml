@@ -15,6 +15,11 @@ jobs:
         image: mongo:6
         ports:
           - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     strategy:
       matrix:
@@ -53,7 +58,7 @@ jobs:
         NODE_ENV: test
         PORT: 5001
         JWT_SECRET: ci-test-secret-not-for-production
-        MONGO_URL: ${{ secrets.MONGO_URL || 'mongodb://localhost:27017/ci_test' }}
+        MONGO_URL: ${{ secrets.MONGO_URL || 'mongodb://127.0.0.1:27017/ci_test' }}
       run: |
         node server.js &
         SERVER_PID=$!
