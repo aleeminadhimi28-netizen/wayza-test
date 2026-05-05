@@ -59,6 +59,8 @@ jobs:
         PORT: 5001
         JWT_SECRET: ci-test-secret-not-for-production
         MONGO_URL: ${{ secrets.MONGO_URL || 'mongodb://127.0.0.1:27017/ci_test' }}
+        RAZORPAY_KEY_ID: ci-dummy-razorpay-key
+        RAZORPAY_KEY_SECRET: ci-dummy-razorpay-secret
       run: |
         node server.js > server.log 2>&1 &
         SERVER_PID=$!
