@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 :root {
-  --brand-primary: #0D2018; /* Deep Forest */
-  --brand-accent: #189B84;  /* Emerald */
-  --brand-bg: #F8F9F8;      /* Soft Sanctuary */
-  --brand-white: #FFFFFF;
+  --brand-primary: #0d2018; /* Deep Forest */
+  --brand-accent: #189b84; /* Emerald */
+  --brand-bg: #f8f9f8; /* Soft Sanctuary */
+  --brand-white: #ffffff;
 }
 
 body {
@@ -15,7 +15,12 @@ body {
 }
 
 @layer base {
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-black tracking-tight;
     color: var(--brand-primary);
   }
@@ -79,13 +84,13 @@ html.wayza-dark .recharts-wrapper {
 }
 
 /* Hide native date picker internal text when no value — allows custom placeholder overlay */
-input[type="date"].date-empty::-webkit-datetime-edit-text,
-input[type="date"].date-empty::-webkit-datetime-edit-month-field,
-input[type="date"].date-empty::-webkit-datetime-edit-day-field,
-input[type="date"].date-empty::-webkit-datetime-edit-year-field {
+input[type='date'].date-empty::-webkit-datetime-edit-text,
+input[type='date'].date-empty::-webkit-datetime-edit-month-field,
+input[type='date'].date-empty::-webkit-datetime-edit-day-field,
+input[type='date'].date-empty::-webkit-datetime-edit-year-field {
   color: transparent;
 }
-input[type="date"]::-webkit-calendar-picker-indicator {
+input[type='date']::-webkit-calendar-picker-indicator {
   opacity: 0.5;
   cursor: pointer;
 }

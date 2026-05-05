@@ -131,9 +131,7 @@ export default function ExploreMap() {
               <Navigation size={20} />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-slate-900 tracking-tight">
-                Explore Varkala
-              </h1>
+              <h1 className="text-xl font-bold text-slate-900 tracking-tight">Explore Varkala</h1>
               <p className="text-xs text-slate-500 font-medium">
                 Discover curated stays and hidden gems
               </p>
@@ -307,7 +305,9 @@ export default function ExploreMap() {
               onClick={handleNearMe}
               disabled={isLocating}
               className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-xl transition-all ${
-                isLocating ? 'bg-emerald-50 text-emerald-600' : 'bg-white text-slate-700 hover:bg-slate-50'
+                isLocating
+                  ? 'bg-emerald-50 text-emerald-600'
+                  : 'bg-white text-slate-700 hover:bg-slate-50'
               } border border-slate-200`}
             >
               <Locate size={20} className={isLocating ? 'animate-pulse' : ''} />

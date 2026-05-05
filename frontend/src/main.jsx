@@ -197,7 +197,6 @@ function AppContent() {
   );
 }
 
-
 function Root() {
   return (
     <PostHogProvider client={posthog}>
