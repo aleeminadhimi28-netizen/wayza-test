@@ -60,8 +60,13 @@ jobs:
         JWT_SECRET: ci-test-secret-not-for-production
         MONGO_URL: ${{ secrets.MONGO_URL || 'mongodb://127.0.0.1:27017/ci_test' }}
       run: |
-        node server.js &
+        node server.js > server.log 2>&1 &
         SERVER_PID=$!
         sleep 5
-        curl --fail --retry 3 --retry-delay 2 http://localhost:5001/api/v1/health
+        if ! curl --fail --retry 3 --retry-delay 2 http://127.0.0.1:5001/api/v1/health; then
+          echo "Server failed to start or health check failed. Server logs:"
+          cat server.log
+          kill $SERVER_PID
+          exit 1
+        fi
         kill $SERVER_PID
