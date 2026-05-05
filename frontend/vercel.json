@@ -1,14 +1,6 @@
 {
     "rewrites": [
         {
-            "source": "/api/v1/:path*",
-            "destination": "https://wayza-test.onrender.com/api/v1/:path*"
-        },
-        {
-            "source": "/socket.io/:path*",
-            "destination": "https://wayza-test.onrender.com/socket.io/:path*"
-        },
-        {
             "source": "/(.*)",
             "destination": "/"
         }
