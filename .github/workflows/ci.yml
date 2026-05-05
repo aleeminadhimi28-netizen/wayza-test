@@ -41,7 +41,16 @@ jobs:
       working-directory: ./backend
       run: npm ci
 
-    # You can add backend testing here once Jest tests are written
-    # - name: Run Backend Tests
-    #   working-directory: ./backend
-    #   run: npm test
+    - name: Backend Smoke Test (Health Check)
+      working-directory: ./backend
+      env:
+        NODE_ENV: test
+        PORT: 5001
+        JWT_SECRET: ci-test-secret-not-for-production
+        MONGO_URL: ${{ secrets.MONGO_URL || 'mongodb://localhost:27017/ci_test' }}
+      run: |
+        node server.js &
+        SERVER_PID=$!
+        sleep 5
+        curl --fail --retry 3 --retry-delay 2 http://localhost:5001/api/v1/health
+        kill $SERVER_PID

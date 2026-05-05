@@ -1,4 +1,5 @@
 import React, { lazy, Suspense } from 'react';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
@@ -196,7 +197,6 @@ function AppContent() {
   );
 }
 
-import { GoogleOAuthProvider } from '@react-oauth/google';
 
 function Root() {
   return (
