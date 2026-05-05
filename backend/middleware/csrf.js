@@ -32,6 +32,7 @@ export function generateCSRFToken(req, res) {
         sameSite: isProduction ? "none" : "lax", // cross-origin in prod, lax in dev
         maxAge: 24 * 60 * 60 * 1000,             // 24 hours
         path: "/",
+        domain: isProduction ? ".wayzza.live" : undefined
     });
 
     res.json({ ok: true, csrfToken: token });
