@@ -24,12 +24,13 @@ const TOKEN_LENGTH = 32;
  */
 export function generateCSRFToken(req, res) {
     const token = crypto.randomBytes(TOKEN_LENGTH).toString("hex");
+    const isProduction = process.env.NODE_ENV === "production";
 
     res.cookie(CSRF_COOKIE, token, {
-        httpOnly: false,          // Must be readable by client JS
-        secure: true,             // Always use secure in production/staging
-        sameSite: "none",         // Required for cross-origin setups
-        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        httpOnly: false,                          // Must be readable by client JS
+        secure: isProduction,                     // HTTPS-only in production; allows HTTP in dev
+        sameSite: isProduction ? "none" : "lax", // cross-origin in prod, lax in dev
+        maxAge: 24 * 60 * 60 * 1000,             // 24 hours
         path: "/",
     });
 
@@ -45,7 +46,7 @@ export function validateCSRF(req, res, next) {
     if (safeMethods.includes(req.method)) return next();
 
     // Skip webhook routes (they use their own signature verification)
-    if (req.path.includes("/webhooks")) return next();
+    if (req.path.startsWith("/webhooks/")) return next();
 
     const cookieToken = req.cookies?.[CSRF_COOKIE];
     const headerToken = req.headers?.[CSRF_HEADER];

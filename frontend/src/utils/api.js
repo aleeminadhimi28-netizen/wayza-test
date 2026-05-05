@@ -15,9 +15,12 @@ function getCSRFToken() {
  * Fetch a fresh CSRF token from the server (sets the cookie automatically)
  */
 let csrfPromise = null;
+let csrfTokenExpiry = 0;
+const CSRF_TTL_MS = 23 * 60 * 60 * 1000; // 23h — refresh before the 24h cookie expires
 
 async function ensureCSRFToken() {
-  if (csrfPromise) return csrfPromise;
+  // Re-fetch if the promise hasn't been set or the token is about to expire
+  if (csrfPromise && Date.now() < csrfTokenExpiry) return csrfPromise;
 
   csrfPromise = (async () => {
     try {
@@ -25,6 +28,7 @@ async function ensureCSRFToken() {
       const data = await res.json();
       if (data.ok && data.csrfToken) {
         memoryCSRFToken = data.csrfToken;
+        csrfTokenExpiry = Date.now() + CSRF_TTL_MS;
         return data.csrfToken;
       }
     } catch {
@@ -34,6 +38,15 @@ async function ensureCSRFToken() {
   })();
 
   return csrfPromise;
+}
+
+/**
+ * Call this on logout to force a fresh CSRF token on the next mutating request.
+ */
+export function clearCSRFToken() {
+  csrfPromise = null;
+  csrfTokenExpiry = 0;
+  memoryCSRFToken = null;
 }
 
 // Fetch CSRF token on module load
@@ -89,7 +102,10 @@ export const api = {
   logout: () =>
     customFetch(`${API_URL}/auth/logout`, {
       method: 'POST',
-    }).then((r) => r.json()),
+    }).then((r) => {
+      clearCSRFToken(); // Invalidate cached token so next session fetches a fresh one
+      return r.json();
+    }),
 
   getProfile: () =>
     customFetch(`${API_URL}/auth/me`, {
