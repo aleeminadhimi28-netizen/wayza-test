@@ -17,6 +17,7 @@ import { useAuth } from '../../AuthContext.jsx';
 import VerificationSpinner from '../../components/VerificationSpinner.jsx';
 import { useGoogleLogin } from '@react-oauth/google';
 import { api } from '../../utils/api.js';
+import './auth.css';
 
 /* ── Floating-label input ── */
 function FloatingInput({ id, type = 'text', label, value, onChange, icon: Icon, suffix }) {
