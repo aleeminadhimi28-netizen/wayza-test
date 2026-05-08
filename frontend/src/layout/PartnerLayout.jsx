@@ -78,8 +78,8 @@ export default function PartnerLayout() {
       try {
         const res = await api.getNotifications();
         if (res.ok) setNotifs(res.data || []);
-      } catch (_) {
-        // Silently handle notification fetch errors
+      } catch (err) {
+        console.error('Failed to fetch notifications:', err);
       }
     }
     fetchNotifs();

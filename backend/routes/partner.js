@@ -98,7 +98,10 @@ router.get("/status", requireAuth, async (req, res, next) => {
         const db = getDB();
         const partners = db.collection("partners");
         const partner = await partners.findOne({ email: req.user.email });
-        res.json({ onboarded: partner?.onboarded === true });
+        res.json({
+            onboarded: partner?.onboarded === true,
+            onboardingCompleted: partner?.onboardingCompleted === true
+        });
     } catch (err) { next(err); }
 });
 
@@ -115,7 +118,7 @@ router.post("/onboard", requireAuth, requireRole(["partner"]), async (req, res, 
 
         await partners.updateOne(
             { email },
-            { $set: { businessName, category, location, onboarded: true, updatedAt: new Date() } },
+            { $set: { businessName, category, location, onboardingCompleted: true, updatedAt: new Date() } },
             { upsert: true }
         );
 

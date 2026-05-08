@@ -126,9 +126,15 @@ router.get("/partners", requireAuth, requireRole(["admin"]), async (req, res, ne
 router.delete("/users/:email", requireAuth, requireRole(["admin"]), async (req, res, next) => {
     try {
         const db = getDB();
-        await db.collection("users").deleteOne({ email: req.params.email });
-        await db.collection("partners").deleteOne({ email: req.params.email });
-        await db.collection("listings").deleteMany({ ownerEmail: req.params.email });
+        const email = req.params.email;
+        await Promise.all([
+            db.collection("users").deleteOne({ email }),
+            db.collection("partners").deleteOne({ email }),
+            db.collection("listings").deleteMany({ ownerEmail: email }),
+            db.collection("bookings").deleteMany({ $or: [{ ownerEmail: email }, { guestEmail: email }] }),
+            db.collection("partnerWallets").deleteOne({ email }),
+            db.collection("withdrawalRequests").deleteMany({ email }),
+        ]);
         res.json({ ok: true });
     } catch (err) { next(err); }
 });
@@ -136,9 +142,15 @@ router.delete("/users/:email", requireAuth, requireRole(["admin"]), async (req, 
 router.delete("/partners/:email", requireAuth, requireRole(["admin"]), async (req, res, next) => {
     try {
         const db = getDB();
-        await db.collection("partners").deleteOne({ email: req.params.email });
-        await db.collection("users").deleteOne({ email: req.params.email });
-        await db.collection("listings").deleteMany({ ownerEmail: req.params.email });
+        const email = req.params.email;
+        await Promise.all([
+            db.collection("partners").deleteOne({ email }),
+            db.collection("users").deleteOne({ email }),
+            db.collection("listings").deleteMany({ ownerEmail: email }),
+            db.collection("bookings").deleteMany({ ownerEmail: email }),
+            db.collection("partnerWallets").deleteOne({ email }),
+            db.collection("withdrawalRequests").deleteMany({ email }),
+        ]);
         res.json({ ok: true });
     } catch (err) { next(err); }
 });

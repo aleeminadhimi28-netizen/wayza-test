@@ -26,7 +26,7 @@ export default function AdminOverview({ stats, setActiveTab }) {
       icon: Users,
       bg: 'bg-blue-50',
       color: 'text-blue-600',
-      trend: '+12%',
+      trend: 'All time',
       up: true,
     },
     {
@@ -35,7 +35,7 @@ export default function AdminOverview({ stats, setActiveTab }) {
       icon: Briefcase,
       bg: 'bg-violet-50',
       color: 'text-violet-600',
-      trend: '+5%',
+      trend: 'Active',
       up: true,
     },
     {
@@ -44,7 +44,7 @@ export default function AdminOverview({ stats, setActiveTab }) {
       icon: Clock,
       bg: 'bg-amber-50',
       color: 'text-amber-600',
-      trend: 'Review',
+      trend: 'Needs review',
       up: false,
     },
     {
@@ -53,7 +53,7 @@ export default function AdminOverview({ stats, setActiveTab }) {
       icon: TrendingUp,
       bg: 'bg-emerald-50',
       color: 'text-emerald-600',
-      trend: '+24%',
+      trend: `${stats.totalBookings || 0} bookings`,
       up: true,
     },
   ];

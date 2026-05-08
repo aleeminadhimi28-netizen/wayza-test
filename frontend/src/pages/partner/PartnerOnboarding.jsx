@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -68,7 +68,8 @@ export default function PartnerOnboarding() {
       });
 
       if (!data.ok) throw new Error();
-      showToast('Account successfully configured.', 'success');
+      showToast('Onboarding submitted! Your account is pending admin approval.', 'success');
+      sessionStorage.removeItem('partner_onboarded');
       navigate('/partner', { replace: true });
     } catch (err) {
       showToast('Failed to finalize setup. Please try again.', 'error');

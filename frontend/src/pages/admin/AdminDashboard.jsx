@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Users,
@@ -21,6 +21,7 @@ import {
   Settings,
   Tag,
   Activity,
+  Menu,
 } from 'lucide-react';
 
 import { api } from '../../utils/api.js';
@@ -39,6 +40,7 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dataList, setDataList] = useState([]);
   const [loadingData, setLoadingData] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -107,8 +109,9 @@ export default function AdminDashboard() {
     try {
       const d = await api.getSupportTickets();
       if (d.ok) setTickets(d.data || []);
-    } catch (_) {
-      // Silently handle ticket fetch errors
+    } catch (err) {
+      console.error('Failed to load support tickets:', err);
+      showToast('Failed to load support tickets.', 'error');
     }
     setLoadingData(false);
   }
@@ -118,8 +121,9 @@ export default function AdminDashboard() {
     try {
       const d = await api.adminGetWithdrawals();
       if (d.ok) setWithdrawals(d.data || []);
-    } catch (_) {
-      // Silently handle withdrawal fetch errors
+    } catch (err) {
+      console.error('Failed to load withdrawals:', err);
+      showToast('Failed to load withdrawal requests.', 'error');
     }
     setLoadingData(false);
   }
@@ -258,8 +262,18 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex overflow-hidden">
+      {/* MOBILE OVERLAY */}
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 xl:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
       {/* SIDEBAR */}
-      <aside className="w-64 h-screen bg-slate-900 flex flex-col shrink-0 hidden xl:flex">
+      <aside
+        className={`w-64 h-screen bg-slate-900 flex flex-col shrink-0 fixed xl:relative z-50 transition-transform duration-300 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full xl:translate-x-0'}`}
+      >
         <div className="p-6 mb-2">
           <div
             className="flex items-center gap-3 cursor-pointer"
@@ -331,15 +345,23 @@ export default function AdminDashboard() {
         {/* HEADER */}
         <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200 px-8 py-4">
           <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-bold text-slate-900 capitalize">
-                {activeTab === 'overview'
-                  ? 'Dashboard Overview'
-                  : activeTab === 'support'
-                    ? 'Customer Support'
-                    : `${activeTab} Management`}
-              </h2>
-              <p className="text-xs text-slate-500 mt-0.5">Wayzza Admin Panel</p>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setMobileMenuOpen(true)}
+                className="xl:hidden w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-200 transition-colors"
+              >
+                <Menu size={20} />
+              </button>
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 capitalize">
+                  {activeTab === 'overview'
+                    ? 'Dashboard Overview'
+                    : activeTab === 'support'
+                      ? 'Customer Support'
+                      : `${activeTab} Management`}
+                </h2>
+                <p className="text-xs text-slate-500 mt-0.5">Wayzza Admin Panel</p>
+              </div>
             </div>
             <div className="flex items-center gap-3">
               {activeTab !== 'overview' &&
@@ -448,7 +470,7 @@ export default function AdminDashboard() {
                                   </span>
                                 </div>
                                 <p className="text-xs text-slate-400">
-                                  {item.ownerEmail} Â· {item.location || 'No location'} Â· ₹
+                                  {item.ownerEmail} · {item.location || 'No location'} · ₹
                                   {item.price?.toLocaleString()}
                                 </p>
                               </div>
@@ -551,11 +573,15 @@ export default function AdminDashboard() {
                             <td className="px-6 py-4 text-sm font-medium">
                               <div className="flex flex-col gap-1">
                                 <span
-                                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold border ${item.status === 'paid' || item.approved || item.onboarded ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-amber-50 text-amber-700 border-amber-100'}`}
+                                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold border ${item.status === 'paid' || item.approved || item.onboarded ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : activeTab === 'partners' && !item.onboarded && !item.onboardingCompleted ? 'bg-slate-100 text-slate-600 border-slate-200' : 'bg-amber-50 text-amber-700 border-amber-100'}`}
                                 >
                                   {item.status === 'paid' || item.approved || item.onboarded ? (
                                     <>
                                       <CheckCircle size={11} /> Active
+                                    </>
+                                  ) : activeTab === 'partners' && !item.onboarded && !item.onboardingCompleted ? (
+                                    <>
+                                      <Clock size={11} /> Incomplete
                                     </>
                                   ) : (
                                     <>
@@ -622,13 +648,18 @@ export default function AdminDashboard() {
                                     )}
                                   </button>
                                 )}
-                                {activeTab === 'partners' && !item.onboarded && (
+                                {activeTab === 'partners' && !item.onboarded && item.onboardingCompleted && (
                                   <button
                                     onClick={() => handleApprovePartner(item.email)}
                                     className="h-8 px-4 bg-emerald-600 text-white rounded-lg font-semibold text-xs hover:bg-emerald-700 transition-colors flex items-center gap-1.5 shadow-sm"
                                   >
                                     <CheckCircle size={13} /> Approve
                                   </button>
+                                )}
+                                {activeTab === 'partners' && !item.onboarded && !item.onboardingCompleted && (
+                                  <span className="text-xs font-medium text-slate-400 flex items-center gap-1 mr-2 px-2">
+                                    Awaiting Details
+                                  </span>
                                 )}
                                 <button
                                   onClick={() =>

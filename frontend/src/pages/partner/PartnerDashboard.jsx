@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../AuthContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -64,7 +64,7 @@ export default function PartnerDashboard() {
           if (e.ok) setEarnings(e);
           if (m.ok) setMonthly(m.data || []);
         })
-        .catch(() => {})
+        .catch((err) => console.error('Failed to load partner dashboard data:', err))
         .finally(() => setLoading(false));
     }, 800);
   }, []);

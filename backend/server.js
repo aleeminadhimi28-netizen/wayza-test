@@ -142,6 +142,12 @@ app.use("/api/v1/auth", authLimiter);
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/listings", listingRoutes);
 app.use("/api/v1/bookings", bookingRoutes);
+
+// Apply auth rate limiter to admin & partner login/register endpoints
+app.use("/api/v1/partner/login", authLimiter);
+app.use("/api/v1/partner/register", authLimiter);
+app.use("/api/v1/admin/login", authLimiter);
+
 app.use("/api/v1/partner", partnerRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/misc", miscRoutes);

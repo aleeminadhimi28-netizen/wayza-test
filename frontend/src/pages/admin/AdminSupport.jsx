@@ -1,4 +1,4 @@
-﻿import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { MessageSquare, AlertCircle, CheckCircle, Mail, Trash2, Send, X } from 'lucide-react';
 import { useState } from 'react';
 import { api } from '../../utils/api.js';
@@ -24,8 +24,8 @@ export default function AdminSupport({ tickets, setTickets, loadTickets, loading
             { message: replyText.trim(), from: 'admin', createdAt: new Date() },
           ],
         });
-    } catch (_) {
-      // Silently handle reply sending errors
+    } catch (err) {
+      console.error('Failed to send reply:', err);
     }
     setSendingReply(false);
   }
@@ -35,8 +35,8 @@ export default function AdminSupport({ tickets, setTickets, loadTickets, loading
       await api.replyToTicket(id, { status: 'closed' });
       await loadTickets();
       if (selectedTicket?._id === id) setSelectedTicket((prev) => ({ ...prev, status: 'closed' }));
-    } catch (_) {
-      // Silently handle ticket close errors
+    } catch (err) {
+      console.error('Failed to close ticket:', err);
     }
   }
 
@@ -46,8 +46,8 @@ export default function AdminSupport({ tickets, setTickets, loadTickets, loading
       await api.deleteTicket(id);
       setTickets((prev) => prev.filter((t) => t._id !== id));
       if (selectedTicket?._id === id) setSelectedTicket(null);
-    } catch (_) {
-      // Silently handle ticket delete errors
+    } catch (err) {
+      console.error('Failed to delete ticket:', err);
     }
   }
 
@@ -149,13 +149,13 @@ export default function AdminSupport({ tickets, setTickets, loadTickets, loading
                   <h3 className="font-bold text-base text-slate-900">{selectedTicket.subject}</h3>
                   <div className="flex items-center gap-3 mt-1.5">
                     <span className="text-xs text-slate-500">{selectedTicket.email}</span>
-                    <span className="text-xs text-slate-400">Â·</span>
+                    <span className="text-xs text-slate-400">·</span>
                     <span
                       className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold uppercase ${selectedTicket.status === 'open' ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'}`}
                     >
                       {selectedTicket.status}
                     </span>
-                    <span className="text-xs text-slate-400">Â·</span>
+                    <span className="text-xs text-slate-400">·</span>
                     <span className="text-xs text-slate-400 capitalize">
                       {selectedTicket.category}
                     </span>
@@ -215,7 +215,7 @@ export default function AdminSupport({ tickets, setTickets, loadTickets, loading
                       <p
                         className={`text-[11px] mt-2 ${r.from === 'admin' ? 'text-white/40' : 'text-slate-400'}`}
                       >
-                        {r.from === 'admin' ? 'Admin' : selectedTicket.email} Â·{' '}
+                        {r.from === 'admin' ? 'Admin' : selectedTicket.email} ·{' '}
                         {new Date(r.createdAt).toLocaleString()}
                       </p>
                     </div>
