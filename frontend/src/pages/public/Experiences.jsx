@@ -84,7 +84,7 @@ export default function Experiences() {
               src="https://images.unsplash.com/photo-1626442651167-797745778a08?auto=format&fit=crop&w=2400&q=85"
               alt="Native Varkala Experience"
               className="w-full h-full object-cover"
-              fetchpriority="high"
+              fetchPriority="high"
               loading="eager"
             />
             <div className="absolute inset-0 bg-black/40" />

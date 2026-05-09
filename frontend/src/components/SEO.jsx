@@ -100,7 +100,6 @@ export default function SEO({
 
   const schemaJson = allSchemas.length === 1 ? allSchemas[0] : allSchemas;
 
-
   return (
     <Helmet>
       {/* Standard metadata tags */}
@@ -127,9 +126,7 @@ export default function SEO({
       <meta name="theme-color" content="#059669" />
       <meta name="apple-mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-      {googleVerification && (
-        <meta name="google-site-verification" content={googleVerification} />
-      )}
+      {googleVerification && <meta name="google-site-verification" content={googleVerification} />}
 
       {/* Meta OpenGraph tags */}
       <meta property="og:type" content={type} />

@@ -162,7 +162,7 @@ export default function LandingPage() {
                 src="/images/varkala_hero.png"
                 alt="Luxury Sanctuary"
                 className="w-full h-full object-cover"
-                fetchpriority="high"
+                fetchPriority="high"
                 loading="eager"
               />
             </motion.div>
