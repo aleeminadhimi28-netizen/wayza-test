@@ -144,24 +144,24 @@ export function PrivacyPolicy() {
         <li>Processing bookings and payments.</li>
         <li>Sending you technical notices, updates, and support messages.</li>
         <li>Responding to your comments and questions.</li>
-        <li>Monitoring and analyzing trends, usage, and activities in connection with our services.</li>
+        <li>
+          Monitoring and analyzing trends, usage, and activities in connection with our services.
+        </li>
       </ul>
 
       <h2 className="text-2xl mt-16 mb-8 flex items-center gap-4">
         <div className="w-1.5 h-8 bg-emerald-500 rounded-full" />
         3. Sharing of Information
       </h2>
-      <p>
-        We do not sell your personal information. We may share your information with:
-      </p>
+      <p>We do not sell your personal information. We may share your information with:</p>
       <ul>
         <li>
           <strong>Partner Hosts:</strong> To facilitate your bookings and provide necessary
           information for your stay.
         </li>
         <li>
-          <strong>Service Providers:</strong> Third-party vendors who perform services on our behalf,
-          such as payment processing (Razorpay) and analytics (PostHog).
+          <strong>Service Providers:</strong> Third-party vendors who perform services on our
+          behalf, such as payment processing (Razorpay) and analytics (PostHog).
         </li>
         <li>
           <strong>Legal Obligations:</strong> If required by law or in response to legal processes.
@@ -249,26 +249,36 @@ export function DataCompliance() {
         <div className="w-1.5 h-8 bg-emerald-500 rounded-full" />
         Security Standards
       </h2>
-      <p>
-        Our platform employs several layers of security:
-      </p>
+      <p>Our platform employs several layers of security:</p>
       <ul>
-        <li><strong>Encryption:</strong> All data in transit is encrypted using TLS 1.3.</li>
-        <li><strong>Authentication:</strong> Secure session management and JWT-based authentication.</li>
-        <li><strong>Infrastructure:</strong> Hosted on secured cloud environments with regular security audits.</li>
+        <li>
+          <strong>Encryption:</strong> All data in transit is encrypted using TLS 1.3.
+        </li>
+        <li>
+          <strong>Authentication:</strong> Secure session management and JWT-based authentication.
+        </li>
+        <li>
+          <strong>Infrastructure:</strong> Hosted on secured cloud environments with regular
+          security audits.
+        </li>
       </ul>
 
       <h2 className="text-2xl mt-16 mb-8 flex items-center gap-4">
         <div className="w-1.5 h-8 bg-emerald-500 rounded-full" />
         Regulatory Compliance
       </h2>
-      <p>
-        We work to ensure compliance with the following frameworks:
-      </p>
+      <p>We work to ensure compliance with the following frameworks:</p>
       <ul>
-        <li><strong>India IT Act:</strong> Compliance with Indian data protection regulations.</li>
-        <li><strong>GDPR Ready:</strong> Principles of data minimization and purpose limitation are core to our design.</li>
-        <li><strong>PCI DSS:</strong> Our payment flows (via Razorpay) are PCI compliant.</li>
+        <li>
+          <strong>India IT Act:</strong> Compliance with Indian data protection regulations.
+        </li>
+        <li>
+          <strong>GDPR Ready:</strong> Principles of data minimization and purpose limitation are
+          core to our design.
+        </li>
+        <li>
+          <strong>PCI DSS:</strong> Our payment flows (via Razorpay) are PCI compliant.
+        </li>
       </ul>
     </StaticPage>
   );
@@ -319,7 +329,8 @@ export function AboutUs() {
               transition={{ delay: 0.3 }}
               className="text-base md:text-xl font-medium text-white/60 max-w-2xl mx-auto leading-relaxed"
             >
-              Wayzza is not just a booking engine. It is your exclusive, hyper-local concierge to Varkala's most premium sanctuaries, verified for the modern explorer.
+              Wayzza is not just a booking engine. It is your exclusive, hyper-local concierge to
+              Varkala's most premium sanctuaries, verified for the modern explorer.
             </motion.p>
           </div>
 
@@ -342,15 +353,19 @@ export function AboutUs() {
                   The Mission
                 </span>
                 <h2 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 leading-[1.1] uppercase">
-                  Redefining luxury in{' '}
-                  <span className="italic text-emerald-600">Varkala.</span>
+                  Redefining luxury in <span className="italic text-emerald-600">Varkala.</span>
                 </h2>
               </div>
               <p className="text-slate-500 text-base md:text-lg leading-relaxed font-medium">
-                We realized that experiencing the true magic of Varkala required more than just finding a place to stay—it required finding a sanctuary you could trust, curated by locals who understand premium hospitality.
+                We realized that experiencing the true magic of Varkala required more than just
+                finding a place to stay—it required finding a sanctuary you could trust, curated by
+                locals who understand premium hospitality.
               </p>
               <p className="text-slate-500 text-base md:text-lg leading-relaxed font-medium">
-                Wayzza was born from a deep love for Varkala's cliffs, shores, and culture. We personally verify every clifftop villa, every premium Royal Enfield, and every bespoke local experience to ensure it meets our rigorous standards of quality and soul.
+                Wayzza was born from a deep love for Varkala's cliffs, shores, and culture. We
+                personally verify every clifftop villa, every premium Royal Enfield, and every
+                bespoke local experience to ensure it meets our rigorous standards of quality and
+                soul.
               </p>
               <div className="flex gap-10 pt-4 md:pt-6">
                 <div>
