@@ -779,13 +779,18 @@ export default function LandingPage() {
                     Platform
                   </h5>
                   <ul className="space-y-4">
-                    {['Stays', 'Mobility', 'Secrets', 'AI Planner'].map((l) => (
-                      <li key={l}>
+                    {[
+                      { name: 'Stays', to: '/listings' },
+                      { name: 'Mobility', to: '/listings' },
+                      { name: 'Secrets', to: '/experiences' },
+                      { name: 'AI Planner', to: '/ai-trip-planner' },
+                    ].map((link) => (
+                      <li key={link.name}>
                         <Link
-                          to="/listings"
+                          to={link.to}
                           className="text-sm font-bold text-white/40 hover:text-emerald-400 transition-all hover:translate-x-1 inline-block uppercase tracking-widest"
                         >
-                          {l}
+                          {link.name}
                         </Link>
                       </li>
                     ))}
@@ -796,13 +801,18 @@ export default function LandingPage() {
                     Company
                   </h5>
                   <ul className="space-y-4">
-                    {['Our Story', 'Partners', 'Careers', 'Support'].map((l) => (
-                      <li key={l}>
+                    {[
+                      { name: 'Our Story', to: '/about' },
+                      { name: 'Partners', to: '/partner-register' },
+                      { name: 'Privacy', to: '/privacy' },
+                      { name: 'Support', to: '/support' },
+                    ].map((link) => (
+                      <li key={link.name}>
                         <Link
-                          to="/about"
+                          to={link.to}
                           className="text-sm font-bold text-white/40 hover:text-emerald-400 transition-all hover:translate-x-1 inline-block uppercase tracking-widest"
                         >
-                          {l}
+                          {link.name}
                         </Link>
                       </li>
                     ))}

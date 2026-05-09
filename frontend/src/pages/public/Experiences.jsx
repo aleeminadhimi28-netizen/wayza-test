@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { WayzzaLayout, WayzzaSkeleton } from '../../WayzzaUI.jsx';
@@ -348,13 +348,18 @@ export default function Experiences() {
                 NAVIGATE
               </h3>
               <ul className="space-y-6">
-                {['Native Secrets', 'Interactive Map', 'Our Stays', 'Partner Program'].map((l) => (
-                  <li key={l}>
+                {[
+                  { name: 'Native Secrets', to: '/experiences' },
+                  { name: 'Interactive Map', to: '/explore-map' },
+                  { name: 'Our Stays', to: '/listings' },
+                  { name: 'Partner Program', to: '/partner-register' },
+                ].map((link) => (
+                  <li key={link.name}>
                     <Link
-                      to="/listings"
+                      to={link.to}
                       className="text-slate-400 font-bold text-lg hover:text-amber-600 transition-all uppercase tracking-tighter flex items-center gap-3"
                     >
-                      {l}
+                      {link.name}
                     </Link>
                   </li>
                 ))}
@@ -366,13 +371,18 @@ export default function Experiences() {
                 HELP
               </h3>
               <ul className="space-y-6">
-                {['Support Center', 'Privacy', 'Terms', 'About'].map((l) => (
-                  <li key={l}>
+                {[
+                  { name: 'Support Center', to: '/support' },
+                  { name: 'Privacy', to: '/privacy' },
+                  { name: 'Terms', to: '/terms' },
+                  { name: 'About', to: '/about' },
+                ].map((link) => (
+                  <li key={link.name}>
                     <Link
-                      to="/support"
+                      to={link.to}
                       className="text-slate-400 font-bold text-lg hover:text-amber-600 transition-all uppercase tracking-tighter flex items-center gap-3"
                     >
-                      {l}
+                      {link.name}
                     </Link>
                   </li>
                 ))}

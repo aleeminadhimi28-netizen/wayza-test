@@ -549,7 +549,7 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
                   <Link to="/partner-login">Partner Login</Link>
                 </li>
                 <li>
-                  <Link to="/about">Verification Policy</Link>
+                  <Link to="/compliance">Verification Policy</Link>
                 </li>
               </ul>
             </div>
