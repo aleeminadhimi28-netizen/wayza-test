@@ -206,12 +206,18 @@ export default function ListingDetails() {
           name: listing.title,
           description: listing.description,
           image: images.slice(0, 3),
+          brand: {
+            '@type': 'Brand',
+            name: 'Wayzza Verified',
+          },
+          sku: listing._id,
           offers: {
             '@type': 'Offer',
             priceCurrency: 'INR',
             price: basePrice,
             availability: 'https://schema.org/InStock',
             url: currentUrl,
+            priceValidUntil: new Date(Date.now() + 2592000000).toISOString().split('T')[0], // 30 days from now
           },
           aggregateRating:
             reviews.length > 0

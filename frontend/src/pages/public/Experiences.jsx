@@ -61,8 +61,13 @@ export default function Experiences() {
   return (
     <WayzzaLayout noPadding hideFooter>
       <SEO
-        title="Native Secrets & Experiences"
-        description="Unlock exclusive local secrets in Varkala. From hidden backwater trails to clifftop yoga, discover the most authentic Varkala experiences curated for the Wayzza network."
+        title="Native Secrets & Authentic Varkala Experiences"
+        description="Unlock exclusive local secrets in Varkala. From hidden backwater trails to clifftop yoga, discover the most authentic Varkala experiences curated by our local specialists. Verified by native explorers."
+        author={{
+          name: 'Wayzza Network Curators',
+          role: 'Varkala Experience Specialists',
+          bio: 'A collective of native Varkala residents and digital nomad veterans dedicated to mapping the unseen soul of the coast.',
+        }}
         breadcrumb={[
           { name: 'Home', url: 'https://wayza-app.vercel.app' },
           { name: 'Experiences', url: 'https://wayza-app.vercel.app/experiences' },

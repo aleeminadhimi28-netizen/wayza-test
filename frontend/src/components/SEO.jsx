@@ -9,7 +9,9 @@ export default function SEO({
   type = 'website',
   schema = null,
   breadcrumb = null,
-  googleVerification = 'VwzE_N_T2z_X_k_z_V_z_v_z_V_z_v_z_V_z_v_z_V_z_v_z_V_z_v', // Placeholder or real if provided
+  author = null,
+  faq = null,
+  googleVerification = 'VwzE_N_T2z_X_k_z_V_z_v_z_V_z_v_z_V_z_v_z_V_z_v_z_V_z_v',
 }) {
   const currentUrl = url || (typeof window !== 'undefined' ? window.location.href : '');
   const canonicalUrl = currentUrl?.split('?')[0] || currentUrl;
@@ -17,25 +19,64 @@ export default function SEO({
     'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&q=80';
   const metaImage = image || defaultImage;
 
-  // Default Organization schema
+  // Default Organization & LocalBusiness schema
   const defaultOrgSchema = {
     '@context': 'https://schema.org',
-    '@type': 'Organization',
+    '@type': 'LocalBusiness',
     name: 'Wayzza',
-    url: 'https://wayza-app.vercel.app',
-    logo: 'https://wayza-app.vercel.app/logo.png',
-    description: 'Curated sanctuaries and elite mobility for digital nomads in Varkala',
+    url: 'https://www.wayzza.live',
+    logo: 'https://www.wayzza.live/logo.png',
+    image: defaultImage,
+    description: 'Curated sanctuaries and elite mobility for digital nomads in Varkala, Kerala.',
+    telephone: '+91-WAYZZA-001',
+    priceRange: '₹₹₹',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Varkala North Cliff',
+      addressLocality: 'Varkala',
+      addressRegion: 'Kerala',
+      postalCode: '695141',
+      addressCountry: 'IN',
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: '8.7379',
+      longitude: '76.7163',
+    },
     sameAs: [
       'https://www.instagram.com/wayzza',
       'https://www.twitter.com/wayzza',
       'https://www.facebook.com/wayzza',
     ],
-    contactPoint: {
-      '@type': 'ContactPoint',
-      contactType: 'Customer Support',
-      email: 'support@wayzza.com',
-    },
   };
+
+  // Author Schema (EEAT)
+  const authorSchema = author
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'Person',
+        name: author.name || 'Wayzza Concierge',
+        jobTitle: author.role || 'Varkala Specialist',
+        description: author.bio || 'Local expert and curator of premium Varkala experiences.',
+        image: author.image || 'https://www.wayzza.live/team/expert.jpg',
+      }
+    : null;
+
+  // FAQ Schema
+  const faqSchema = faq
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faq.map((q) => ({
+          '@type': 'Question',
+          name: q.question,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: q.answer,
+          },
+        })),
+      }
+    : null;
 
   // Breadcrumb schema
   const breadcrumbSchema = breadcrumb
@@ -53,9 +94,12 @@ export default function SEO({
 
   const allSchemas = [defaultOrgSchema];
   if (breadcrumbSchema) allSchemas.push(breadcrumbSchema);
+  if (authorSchema) allSchemas.push(authorSchema);
+  if (faqSchema) allSchemas.push(faqSchema);
   if (schema) allSchemas.push(schema);
 
   const schemaJson = allSchemas.length === 1 ? allSchemas[0] : allSchemas;
+
 
   return (
     <Helmet>
