@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin/
 Disallow: /partner/
 
-Sitemap: https://www.wayzza.live/sitemap.xml
+Sitemap: https://wayzza.live/sitemap.xml
