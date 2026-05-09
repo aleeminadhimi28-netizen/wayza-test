@@ -1,8 +1,22 @@
 {
-    "rewrites": [
+  "headers": [
+    {
+      "source": "/sitemap.xml",
+      "headers": [
         {
-            "source": "/(.*)",
-            "destination": "/"
+          "key": "Content-Type",
+          "value": "application/xml"
         }
-    ]
+      ]
+    },
+    {
+      "source": "/robots.txt",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain"
+        }
+      ]
+    }
+  ]
 }
