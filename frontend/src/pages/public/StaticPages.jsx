@@ -1,4 +1,4 @@
-﻿import { WayzzaLayout } from '../../WayzzaUI.jsx';
+import { WayzzaLayout } from '../../WayzzaUI.jsx';
 import { motion } from 'framer-motion';
 import {
   Shield,
@@ -232,8 +232,8 @@ export function AboutUs() {
               transition={{ delay: 0.1 }}
               className="text-4xl md:text-8xl font-black tracking-tighter text-white leading-[0.9] md:leading-none uppercase"
             >
-              Escape the <br />
-              <span className="text-emerald-500 italic font-light">Ordinary.</span>
+              Discover the <br />
+              <span className="text-emerald-500 italic font-light">Soul of Varkala.</span>
             </motion.h1>
             <motion.p
               initial={{ opacity: 0 }}
@@ -241,8 +241,7 @@ export function AboutUs() {
               transition={{ delay: 0.3 }}
               className="text-base md:text-xl font-medium text-white/60 max-w-2xl mx-auto leading-relaxed"
             >
-              Wayzza is not just a booking engine. It is a curator of sanctuaries, verified for the
-              modern explorer who demands soul, security, and style.
+              Wayzza is not just a booking engine. It is your exclusive, hyper-local concierge to Varkala's most premium sanctuaries, verified for the modern explorer.
             </motion.p>
           </div>
 
@@ -265,18 +264,15 @@ export function AboutUs() {
                   The Mission
                 </span>
                 <h2 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 leading-[1.1] uppercase">
-                  Defining the new standard for{' '}
-                  <span className="italic text-emerald-600">verified inventory.</span>
+                  Redefining luxury in{' '}
+                  <span className="italic text-emerald-600">Varkala.</span>
                 </h2>
               </div>
               <p className="text-slate-500 text-base md:text-lg leading-relaxed font-medium">
-                We realized that the biggest problem for digital nomads and luxury travelers wasn't
-                finding a place to stay—it was finding a place they could trust.
+                We realized that experiencing the true magic of Varkala required more than just finding a place to stay—it required finding a sanctuary you could trust, curated by locals who understand premium hospitality.
               </p>
               <p className="text-slate-500 text-base md:text-lg leading-relaxed font-medium">
-                Wayzza was founded to bridge that gap. We personally verify every clifftop villa,
-                every Royal Enfield, and every local experience to ensure it meets our rigorous
-                standards of quality and soul.
+                Wayzza was born from a deep love for Varkala's cliffs, shores, and culture. We personally verify every clifftop villa, every premium Royal Enfield, and every bespoke local experience to ensure it meets our rigorous standards of quality and soul.
               </p>
               <div className="flex gap-10 pt-4 md:pt-6">
                 <div>
@@ -328,7 +324,7 @@ export function AboutUs() {
                 {
                   icon: Star,
                   title: 'Curated Soul',
-                  desc: 'No generic listings. Only sanctuaries that pass our rigorous vibe and quality check.',
+                  desc: 'No generic listings. Only Varkala sanctuaries that pass our rigorous vibe and quality check.',
                 },
                 {
                   icon: Shield,
@@ -343,7 +339,7 @@ export function AboutUs() {
                 {
                   icon: Heart,
                   title: 'Native Care',
-                  desc: 'Our team lives where you stay. We provide authentic, round-the-clock local support.',
+                  desc: 'Our team lives right here on the cliffs. We provide authentic, round-the-clock local Varkala support.',
                 },
               ].map((v, i) => (
                 <motion.div
