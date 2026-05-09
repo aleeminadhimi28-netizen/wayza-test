@@ -1,14 +1,6 @@
 User-agent: *
 Allow: /
-Disallow: /admin
-Disallow: /partner
-Disallow: /api
-Crawl-delay: 1
+Disallow: /admin/
+Disallow: /partner/
 
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-Sitemap: https://wayza-app.vercel.app/sitemap.xml
+Sitemap: https://www.wayzza.live/sitemap.xml

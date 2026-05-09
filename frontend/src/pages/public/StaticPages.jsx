@@ -1,5 +1,6 @@
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
 import { motion } from 'framer-motion';
+import SEO from '../../components/SEO.jsx';
 import {
   Shield,
   Lock,
@@ -15,6 +16,13 @@ import {
 export default function StaticPage({ title, children, icon }) {
   return (
     <WayzzaLayout noPadding>
+      <SEO
+        title={title}
+        breadcrumb={[
+          { name: 'Home', url: 'https://wayza-app.vercel.app' },
+          { name: title, url: window.location.href },
+        ]}
+      />
       <div className="min-h-screen bg-slate-50 font-sans overflow-hidden">
         {/* REFINED HERO */}
         <header className="bg-white py-20 md:py-32 px-6 relative overflow-hidden border-b border-slate-200">

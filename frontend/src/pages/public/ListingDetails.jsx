@@ -365,7 +365,7 @@ export default function ListingDetails() {
           </div>
 
           {/* GALLERY GRID */}
-          <ListingGallery images={images} title={listing.title} />
+          <ListingGallery images={images} title={listing.title} priority />
 
           {/* ─── MAIN CONTENT ─── */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 items-start">

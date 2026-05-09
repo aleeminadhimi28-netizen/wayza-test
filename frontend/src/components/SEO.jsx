@@ -9,6 +9,7 @@ export default function SEO({
   type = 'website',
   schema = null,
   breadcrumb = null,
+  googleVerification = 'VwzE_N_T2z_X_k_z_V_z_v_z_V_z_v_z_V_z_v_z_V_z_v_z_V_z_v', // Placeholder or real if provided
 }) {
   const currentUrl = url || (typeof window !== 'undefined' ? window.location.href : '');
   const canonicalUrl = currentUrl?.split('?')[0] || currentUrl;
@@ -76,10 +77,15 @@ export default function SEO({
       <meta charSet="utf-8" />
       <meta
         name="keywords"
-        content="Varkala luxury villas, Varkala Cliff stays, Varkala beach rentals, digital nomad Varkala, Royal Enfield rental Varkala, Kerala backwater experiences, Varkala tourism"
+        content="Varkala luxury villas, Varkala Cliff stays, Varkala beach rentals, digital nomad Varkala, Royal Enfield rental Varkala, Kerala backwater experiences, Varkala tourism, luxury mobility Varkala, clifftop sanctuaries, verified stays Varkala, Varkala workation, premium concierge Varkala"
       />
       <meta name="author" content="Wayzza" />
       <meta name="theme-color" content="#059669" />
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+      {googleVerification && (
+        <meta name="google-site-verification" content={googleVerification} />
+      )}
 
       {/* Meta OpenGraph tags */}
       <meta property="og:type" content={type} />

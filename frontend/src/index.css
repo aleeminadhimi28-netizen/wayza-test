@@ -94,3 +94,33 @@ input[type='date']::-webkit-calendar-picker-indicator {
   opacity: 0.5;
   cursor: pointer;
 }
+
+/* ════ CORE WEB VITALS OPTIMIZATIONS ════ */
+
+/* Remove click delay for better INP */
+button, 
+a, 
+[role="button"] {
+  touch-action: manipulation;
+}
+
+/* Progressive Rendering for long pages */
+.performance-section {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 1000px;
+}
+
+/* Prevent layout shift during font load */
+body {
+  font-display: swap;
+}
+
+/* Premium Mobile Tap Feedback */
+@media (max-width: 768px) {
+  .mobile-tap-active:active {
+    background-color: rgba(16, 185, 129, 0.05);
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+}
+

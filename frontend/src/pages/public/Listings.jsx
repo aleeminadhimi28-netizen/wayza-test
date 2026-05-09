@@ -510,6 +510,8 @@ export default function Listings() {
                           src={fixImg(l.image)}
                           alt={l.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                          decoding="async"
+                          loading="lazy"
                         />
                         {/* Wishlist */}
                         <button

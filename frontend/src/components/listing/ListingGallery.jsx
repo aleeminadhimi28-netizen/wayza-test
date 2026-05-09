@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, X, Grid3x3 } from 'lucide-react';
 
-export default function ListingGallery({ images, title }) {
+export default function ListingGallery({ images, title, priority = false }) {
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [galleryIndex, setGalleryIndex] = useState(0);
 
@@ -24,6 +24,8 @@ export default function ListingGallery({ images, title }) {
             src={images[0]}
             alt="Main"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            fetchpriority={priority ? 'high' : 'auto'}
+            loading={priority ? 'eager' : 'lazy'}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           <div className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-md text-white text-[11px] font-black px-3 py-1.5 rounded-full lg:hidden">

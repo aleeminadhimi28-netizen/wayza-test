@@ -22,6 +22,7 @@ import {
 import { useCurrency } from '../../CurrencyContext.jsx';
 import { api } from '../../utils/api.js';
 import { fixImg } from '../../utils/image.js';
+import SEO from '../../components/SEO.jsx';
 
 const CATEGORIES = [
   { id: 'all', label: 'All Secrets', icon: Globe },
@@ -59,6 +60,14 @@ export default function Experiences() {
 
   return (
     <WayzzaLayout noPadding hideFooter>
+      <SEO
+        title="Native Secrets & Experiences"
+        description="Unlock exclusive local secrets in Varkala. From hidden backwater trails to clifftop yoga, discover the most authentic Varkala experiences curated for the Wayzza network."
+        breadcrumb={[
+          { name: 'Home', url: 'https://wayza-app.vercel.app' },
+          { name: 'Experiences', url: 'https://wayza-app.vercel.app/experiences' },
+        ]}
+      />
       <div className="bg-white font-sans text-slate-900 selection:bg-amber-100 selection:text-amber-900 overflow-hidden">
         {/* ════ CINEMATIC HERO ════ */}
         <section className="relative h-[90vh] min-h-[800px] flex items-center justify-center bg-slate-950 overflow-hidden">
@@ -68,8 +77,10 @@ export default function Experiences() {
           >
             <img
               src="https://images.unsplash.com/photo-1626442651167-797745778a08?auto=format&fit=crop&w=2400&q=85"
-              alt="Experience Background"
+              alt="Native Varkala Experience"
               className="w-full h-full object-cover"
+              fetchpriority="high"
+              loading="eager"
             />
             <div className="absolute inset-0 bg-black/40" />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />

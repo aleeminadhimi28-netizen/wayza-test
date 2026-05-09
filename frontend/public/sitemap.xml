@@ -1,63 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://wayza-app.vercel.app/</loc>
-    <lastmod>2026-04-26</lastmod>
+    <loc>https://www.wayzza.live/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://wayza-app.vercel.app/listings</loc>
-    <lastmod>2026-04-26</lastmod>
+    <loc>https://www.wayzza.live/listings</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://wayza-app.vercel.app/experiences</loc>
-    <lastmod>2026-04-26</lastmod>
+    <loc>https://www.wayzza.live/experiences</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.wayzza.live/explore-map</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://wayza-app.vercel.app/login</loc>
-    <lastmod>2026-04-26</lastmod>
+    <loc>https://www.wayzza.live/about</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://wayza-app.vercel.app/signup</loc>
-    <lastmod>2026-04-26</lastmod>
+    <loc>https://www.wayzza.live/privacy</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://wayza-app.vercel.app/explore-map</loc>
-    <lastmod>2026-04-26</lastmod>
+    <loc>https://www.wayzza.live/terms</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://www.wayzza.live/compliance</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://www.wayzza.live/support</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://wayza-app.vercel.app/ai-trip-planner</loc>
-    <lastmod>2026-04-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://wayza-app.vercel.app/about</loc>
-    <lastmod>2026-04-26</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://wayza-app.vercel.app/terms</loc>
-    <lastmod>2026-04-26</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://wayza-app.vercel.app/privacy</loc>
-    <lastmod>2026-04-26</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
   </url>
 </urlset>
