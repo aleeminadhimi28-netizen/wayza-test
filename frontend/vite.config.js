@@ -7,7 +7,7 @@ export default defineConfig({
         react(),
         VitePWA({
             registerType: 'autoUpdate',
-            includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+            includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg', 'sitemap.xml', 'robots.txt'],
             manifest: {
                 name: 'Wayzza — Curated Sanctuaries',
                 short_name: 'Wayzza',
@@ -26,7 +26,7 @@ export default defineConfig({
                 ]
             },
             workbox: {
-                globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+                globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2,xml,txt}'],
                 runtimeCaching: [
                     {
                         urlPattern: /^https:\/\/wayzza-api\.render\.com\/api\/.*/i,
