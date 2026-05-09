@@ -1,20 +1,9 @@
 ﻿import { useEffect, useState } from 'react';
-import { WayzzaLayout, WayzzaHotelItem, WayzzaSkeleton } from '../../WayzzaUI.jsx';
+import { WayzzaLayout, WayzzaSkeleton } from '../../WayzzaUI.jsx';
 import MapView from '../../components/MapView.jsx';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Map as MapIcon,
-  Layers,
-  Target,
-  Compass,
-  Zap,
-  MapPin,
-  Grid,
-  Activity,
-  Sparkles,
-  Navigation,
-} from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Layers, Compass, MapPin, Grid, Activity, Sparkles, Navigation } from 'lucide-react';
 
 import { api } from '../../utils/api.js';
 

@@ -11,16 +11,7 @@ import {
   CartesianGrid,
   Cell,
 } from 'recharts';
-import {
-  Wallet,
-  TrendingUp,
-  CreditCard,
-  Shield,
-  BarChart3,
-  Download,
-  CheckCircle,
-  Clock,
-} from 'lucide-react';
+import { TrendingUp, Shield, BarChart3, Download, CheckCircle, Clock } from 'lucide-react';
 
 import { api } from '../../utils/api.js';
 
@@ -271,7 +262,7 @@ export default function PartnerEarnings() {
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-xs font-medium text-slate-600">
-                        {b.checkIn} â†’ {b.checkOut}
+                        {b.checkIn} → {b.checkOut}
                       </span>
                     </td>
                     <td className="px-6 py-4">

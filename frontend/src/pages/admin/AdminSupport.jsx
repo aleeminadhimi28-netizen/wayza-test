@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { MessageSquare, AlertCircle, CheckCircle, Mail, Trash2, Send, X } from 'lucide-react';
+import { MessageSquare, AlertCircle, CheckCircle, Mail, Trash2, Send } from 'lucide-react';
 import { useState } from 'react';
 import { api } from '../../utils/api.js';
 

@@ -3,7 +3,7 @@ import { WayzzaLayout, WayzzaHotelItem, WayzzaSkeleton } from '../../WayzzaUI.js
 import { useAuth } from '../../AuthContext.jsx';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Sparkles, Search, ArrowRight, Bookmark, Compass, MapPin } from 'lucide-react';
+import { Heart, Sparkles, Search, ArrowRight } from 'lucide-react';
 
 import { api } from '../../utils/api.js';
 

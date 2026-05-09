@@ -299,7 +299,7 @@ export default function ExploreMap() {
               onClick={() => setMapZoom((prev) => Math.max(prev - 1, 3))}
               className="w-12 h-12 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 shadow-xl hover:bg-slate-50 transition-all font-bold text-lg"
             >
-              âˆ’
+              −
             </button>
             <button
               onClick={handleNearMe}

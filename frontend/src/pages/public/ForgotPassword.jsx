@@ -9,7 +9,6 @@ import {
   Zap,
   CheckCircle,
   Lock,
-  Server,
   Sparkles,
 } from 'lucide-react';
 

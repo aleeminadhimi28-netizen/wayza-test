@@ -4,8 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Calendar,
   CheckCircle,
-  Clock,
-  MapPin,
   ArrowRight,
   CalendarDays,
   ChevronLeft,
@@ -203,7 +201,7 @@ export default function PartnerCalendar() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
-        {/* â•â•â•â• LEFT: CALENDAR â•â•â•â• */}
+        {/* ════ LEFT: CALENDAR ════ */}
         <div className="xl:col-span-2 space-y-6">
           <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
             <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/60">
@@ -316,7 +314,7 @@ export default function PartnerCalendar() {
           </div>
         </div>
 
-        {/* â•â•â•â• RIGHT: ALERTS & UPCOMING â•â•â•â• */}
+        {/* ════ RIGHT: ALERTS & UPCOMING ════ */}
         <div className="space-y-6">
           {/* WHATSAPP CARD */}
           <div className="bg-slate-900 rounded-2xl p-6 text-white shadow-xl shadow-slate-900/20 relative overflow-hidden">

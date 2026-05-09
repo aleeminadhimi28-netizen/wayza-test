@@ -162,7 +162,7 @@ export default function PartnerWallet() {
       animate={{ opacity: 1, y: 0 }}
       className="space-y-8 font-sans pb-16"
     >
-      {/* â”€â”€â”€ HEADER â”€â”€â”€ */}
+      {/* ─── HEADER ─── */}
       <div>
         <div className="flex items-center gap-2 text-emerald-600 font-bold text-xs uppercase tracking-wide mb-1">
           <Wallet size={14} /> Partner Wallet
@@ -173,7 +173,7 @@ export default function PartnerWallet() {
         </p>
       </div>
 
-      {/* â”€â”€â”€ BALANCE CARDS â”€â”€â”€ */}
+      {/* ─── BALANCE CARDS ─── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
         {balanceCards.map((c, i) => (
           <motion.div
@@ -198,9 +198,9 @@ export default function PartnerWallet() {
         ))}
       </div>
 
-      {/* â”€â”€â”€ MAIN GRID â”€â”€â”€ */}
+      {/* ─── MAIN GRID ─── */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-        {/* â”€â”€â”€ WITHDRAW â”€â”€â”€ */}
+        {/* ─── WITHDRAW ─── */}
         <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
@@ -296,7 +296,7 @@ export default function PartnerWallet() {
           </form>
         </div>
 
-        {/* â”€â”€â”€ BANK DETAILS â”€â”€â”€ */}
+        {/* ─── BANK DETAILS ─── */}
         <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
@@ -402,7 +402,7 @@ export default function PartnerWallet() {
         </div>
       </div>
 
-      {/* â”€â”€â”€ WITHDRAWAL HISTORY â”€â”€â”€ */}
+      {/* ─── WITHDRAWAL HISTORY ─── */}
       <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
         <div className="p-6 border-b border-slate-100 flex items-center justify-between">
           <div>

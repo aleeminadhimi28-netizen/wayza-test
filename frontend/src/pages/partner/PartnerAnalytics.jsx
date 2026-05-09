@@ -247,7 +247,7 @@ export default function PartnerAnalytics() {
                 <span
                   className={`text-[11px] font-bold ${c.trendUp ? 'text-emerald-600' : 'text-rose-500'}`}
                 >
-                  {c.trendUp ? 'â–²' : 'â–¼'} {c.trend}
+                  {c.trendUp ? '▲' : '▼'} {c.trend}
                 </span>
                 <span className="text-[11px] text-slate-400">{c.desc}</span>
               </div>
@@ -273,7 +273,7 @@ export default function PartnerAnalytics() {
               <span
                 className={`text-xs font-bold px-3 py-1.5 rounded-xl border ${momGrowth >= 0 ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-rose-50 text-rose-700 border-rose-100'}`}
               >
-                {momGrowth >= 0 ? 'â–²' : 'â–¼'} {Math.abs(momGrowth)}% MoM
+                {momGrowth >= 0 ? '▲' : '▼'} {Math.abs(momGrowth)}% MoM
               </span>
             )}
           </div>

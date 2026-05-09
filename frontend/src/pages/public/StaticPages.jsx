@@ -5,12 +5,9 @@ import {
   Lock,
   FileText,
   Globe,
-  Zap,
   Compass,
   Activity,
-  Server,
   Sparkles,
-  CheckCircle,
   Heart,
   Star,
 } from 'lucide-react';
@@ -203,7 +200,7 @@ export function AboutUs() {
   return (
     <WayzzaLayout noPadding>
       <div className="bg-white font-sans text-slate-900 selection:bg-emerald-50 leading-relaxed antialiased overflow-hidden">
-        {/* â•â•â•â• SECTION: CINEMATIC HERO â•â•â•â• */}
+        {/* ════ SECTION: ════ */}
         <header className="relative h-[60vh] md:h-[70vh] min-h-[500px] md:min-h-[600px] flex items-center justify-center overflow-hidden bg-slate-950">
           <div className="absolute inset-0 z-0">
             <motion.div
@@ -254,7 +251,7 @@ export function AboutUs() {
           </div>
         </header>
 
-        {/* â•â•â•â• SECTION: OUR MISSION (SPLIT) â•â•â•â• */}
+        {/* ════ SECTION: ════ */}
         <section className="py-20 md:py-32 px-6 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-20 items-center">
             <motion.div
@@ -313,7 +310,7 @@ export function AboutUs() {
           </div>
         </section>
 
-        {/* â•â•â•â• SECTION: CORE VALUES (CARDS) â•â•â•â• */}
+        {/* ════ SECTION: ════ */}
         <section className="py-20 md:py-32 bg-slate-50 px-6 relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-white to-transparent" />
           <div className="max-w-7xl mx-auto">
@@ -375,7 +372,7 @@ export function AboutUs() {
           </div>
         </section>
 
-        {/* â•â•â•â• SECTION: FINAL CTA â•â•â•â• */}
+        {/* ════ SECTION: ════ */}
         <section className="py-24 md:py-40 px-6 text-center bg-white">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}

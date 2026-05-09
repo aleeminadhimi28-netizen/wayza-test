@@ -22,7 +22,6 @@ import {
   PlusSquare,
   Flame,
   Bluetooth,
-  Tv,
 } from 'lucide-react';
 
 export const AMENITY_CATEGORIES = [

@@ -1,8 +1,7 @@
 ﻿import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
-import { Sparkles, MapPin, Calendar, Heart, Search, Compass, Loader2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Sparkles, MapPin, Compass } from 'lucide-react';
 import { useCurrency } from '../../CurrencyContext.jsx';
 import { api } from '../../utils/api.js';
 
@@ -288,7 +287,7 @@ export default function AITripPlanner() {
                                       ? 'ðŸ¨'
                                       : item.type === 'car'
                                         ? 'ðŸï¸'
-                                        : 'â˜•'}
+                                        : '☕'}
                                   </div>
                                   <div className="absolute left-5 top-full h-[calc(100%+0.5rem)] w-px bg-slate-200"></div>
                                 </div>

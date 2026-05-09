@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'; // eslint-disable-line no-unused-vars
+import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../AuthContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -578,7 +578,7 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
           </div>
           <div className="max-w-7xl mx-auto px-8 py-10 md:py-16 border-t border-white/5 text-center">
             <p className="text-[11px] font-black uppercase tracking-[0.4em] text-white/40 flex flex-col md:flex-row items-center justify-center gap-2">
-              Made with <span className="text-rose-500 animate-pulse text-lg">â¤ï¸</span> in Varkala
+              Made with <span className="text-rose-500 animate-pulse">❤️</span> in Varkala
             </p>
           </div>
         </footer>

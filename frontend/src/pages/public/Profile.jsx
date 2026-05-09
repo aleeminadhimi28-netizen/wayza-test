@@ -217,7 +217,7 @@ export default function Profile() {
   return (
     <WayzzaLayout noPadding>
       <div className="bg-slate-50 min-h-screen font-sans">
-        {/* â”€â”€â”€ PROFILE HEADER â”€â”€â”€ */}
+        {/* ─── PROFILE HEADER ─── */}
         <div className="bg-white border-b border-slate-200">
           <div className="max-w-6xl mx-auto px-6 py-8 md:py-12 flex flex-col sm:flex-row items-center sm:items-end gap-6">
             {/* Avatar */}
@@ -282,7 +282,7 @@ export default function Profile() {
           </div>
         </div>
 
-        {/* â”€â”€â”€ MAIN LAYOUT â”€â”€â”€ */}
+        {/* ─── MAIN LAYOUT ─── */}
         <div className="max-w-6xl mx-auto px-6 py-6 md:py-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
           {/* SIDEBAR NAV */}
           <aside className="lg:col-span-3 space-y-4">
@@ -318,7 +318,7 @@ export default function Profile() {
           <main className="lg:col-span-9">
             <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
               <AnimatePresence mode="wait">
-                {/* â”€â”€ ACCOUNT TAB â”€â”€ */}
+                {/* ── ACCOUNT TAB ── */}
                 {activeTab === 'account' && (
                   <motion.div
                     key="account"
@@ -407,7 +407,7 @@ export default function Profile() {
                   </motion.div>
                 )}
 
-                {/* â”€â”€ BOOKINGS TAB â”€â”€ */}
+                {/* ── BOOKINGS TAB ── */}
                 {activeTab === 'bookings' && (
                   <motion.div
                     key="bookings"
@@ -461,7 +461,7 @@ export default function Profile() {
                                 <div>
                                   <h4 className="font-bold text-slate-900 text-sm">{b.title}</h4>
                                   <p className="text-xs text-slate-400 mt-0.5">
-                                    {b.checkIn} â†’ {b.checkOut}
+                                    {b.checkIn} → {b.checkOut}
                                   </p>
                                   {b.variantName && (
                                     <p className="text-xs text-emerald-600 font-medium mt-0.5">
@@ -495,7 +495,7 @@ export default function Profile() {
                   </motion.div>
                 )}
 
-                {/* â”€â”€ WISHLIST TAB â”€â”€ */}
+                {/* ── WISHLIST TAB ── */}
                 {activeTab === 'wishlist' && (
                   <motion.div
                     key="wishlist"
@@ -610,7 +610,7 @@ export default function Profile() {
                   </motion.div>
                 )}
 
-                {/* â”€â”€ SECURITY TAB â”€â”€ */}
+                {/* ── SECURITY TAB ── */}
                 {activeTab === 'security' && (
                   <motion.div
                     key="security"

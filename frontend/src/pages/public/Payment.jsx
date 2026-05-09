@@ -1,24 +1,7 @@
 ﻿import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { WayzzaLayout, WayzzaButton } from '../../WayzzaUI.jsx';
+import { WayzzaLayout } from '../../WayzzaUI.jsx';
 import { useAuth } from '../../AuthContext.jsx';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  ShieldCheck,
-  CreditCard,
-  Apple,
-  Wallet,
-  CheckCircle,
-  Lock,
-  Zap,
-  ArrowLeft,
-  ArrowRight,
-  Shield,
-  Activity,
-  Globe,
-  CreditCard as CardIcon,
-  Sparkles,
-  ChevronRight,
-} from 'lucide-react';
+import { ShieldCheck, CreditCard, ArrowLeft, Shield, ChevronRight } from 'lucide-react';
 import { useToast } from '../../ToastContext.jsx';
 import { useState, useEffect } from 'react';
 
@@ -123,7 +106,7 @@ export default function Payment() {
     <WayzzaLayout noPadding>
       <div className="bg-white min-h-screen font-sans">
         <div className="max-w-6xl mx-auto px-6 md:px-12 py-10 md:py-16">
-          {/* â”€â”€â”€ HEADER â”€â”€â”€ */}
+          {/* ─── HEADER ─── */}
           <div className="flex items-center justify-between mb-10">
             <div className="flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.4em] text-slate-300">
               <button
@@ -151,7 +134,7 @@ export default function Payment() {
           </p>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-            {/* â”€â”€ LEFT: PAYMENT FORM â”€â”€ */}
+            {/* ── LEFT: PAYMENT FORM ── */}
             <div className="lg:col-span-7 space-y-8">
               {/* Payment Options */}
               <section>
@@ -200,7 +183,7 @@ export default function Payment() {
               </section>
             </div>
 
-            {/* â”€â”€ RIGHT: ORDER SUMMARY â”€â”€ */}
+            {/* ── RIGHT: ORDER SUMMARY ── */}
             <aside className="lg:col-span-5 lg:sticky lg:top-24">
               <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-lg">
                 {/* Property Info */}
@@ -210,7 +193,7 @@ export default function Payment() {
                   </p>
                   <h3 className="text-lg font-black text-slate-900 leading-tight">{title}</h3>
                   <p className="text-sm text-slate-400 mt-1">
-                    {nights} night{nights > 1 ? 's' : ''} Â· Ref: WZ-
+                    {nights} night{nights > 1 ? 's' : ''} · Ref: WZ-
                     {bookingId?.slice(-6).toUpperCase()}
                   </p>
                 </div>
@@ -229,7 +212,7 @@ export default function Payment() {
                   {couponCode && (
                     <div className="flex justify-between text-sm text-emerald-600 font-semibold">
                       <span>Promo: {couponCode}</span>
-                      <span>Applied âœ“</span>
+                      <span>Applied ✓</span>
                     </div>
                   )}
                   <div className="flex justify-between font-black text-slate-900 text-base pt-4 border-t border-slate-100">

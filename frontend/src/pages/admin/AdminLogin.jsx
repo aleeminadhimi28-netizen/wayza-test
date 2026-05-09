@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../AuthContext.jsx';
 import { useToast } from '../../ToastContext.jsx';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Shield, Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft } from 'lucide-react';
 
 import { api } from '../../utils/api.js';

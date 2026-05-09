@@ -5,7 +5,6 @@ import {
   Briefcase,
   Home,
   CalendarCheck,
-  TrendingUp,
   LogOut,
   LayoutDashboard,
   Trash2,
@@ -579,7 +578,9 @@ export default function AdminDashboard() {
                                     <>
                                       <CheckCircle size={11} /> Active
                                     </>
-                                  ) : activeTab === 'partners' && !item.onboarded && !item.onboardingCompleted ? (
+                                  ) : activeTab === 'partners' &&
+                                    !item.onboarded &&
+                                    !item.onboardingCompleted ? (
                                     <>
                                       <Clock size={11} /> Incomplete
                                     </>
@@ -648,19 +649,23 @@ export default function AdminDashboard() {
                                     )}
                                   </button>
                                 )}
-                                {activeTab === 'partners' && !item.onboarded && item.onboardingCompleted && (
-                                  <button
-                                    onClick={() => handleApprovePartner(item.email)}
-                                    className="h-8 px-4 bg-emerald-600 text-white rounded-lg font-semibold text-xs hover:bg-emerald-700 transition-colors flex items-center gap-1.5 shadow-sm"
-                                  >
-                                    <CheckCircle size={13} /> Approve
-                                  </button>
-                                )}
-                                {activeTab === 'partners' && !item.onboarded && !item.onboardingCompleted && (
-                                  <span className="text-xs font-medium text-slate-400 flex items-center gap-1 mr-2 px-2">
-                                    Awaiting Details
-                                  </span>
-                                )}
+                                {activeTab === 'partners' &&
+                                  !item.onboarded &&
+                                  item.onboardingCompleted && (
+                                    <button
+                                      onClick={() => handleApprovePartner(item.email)}
+                                      className="h-8 px-4 bg-emerald-600 text-white rounded-lg font-semibold text-xs hover:bg-emerald-700 transition-colors flex items-center gap-1.5 shadow-sm"
+                                    >
+                                      <CheckCircle size={13} /> Approve
+                                    </button>
+                                  )}
+                                {activeTab === 'partners' &&
+                                  !item.onboarded &&
+                                  !item.onboardingCompleted && (
+                                    <span className="text-xs font-medium text-slate-400 flex items-center gap-1 mr-2 px-2">
+                                      Awaiting Details
+                                    </span>
+                                  )}
                                 <button
                                   onClick={() =>
                                     handleDeleteItem(activeTab, item.email || item._id)

@@ -3,50 +3,23 @@ import { useEffect, useState } from 'react';
 import { WayzzaLayout, WayzzaSkeleton } from '../../WayzzaUI.jsx';
 import { useAuth } from '../../AuthContext.jsx';
 import { useToast } from '../../ToastContext.jsx';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useCurrency } from '../../CurrencyContext.jsx';
 import {
-  ChevronLeft,
   ChevronRight,
-  X,
   Star,
   Share2,
   Heart,
   MapPin,
-  CheckCircle,
-  Shield,
-  Info,
   Wifi,
-  Coffee,
-  Wind,
-  Tv,
-  Utensils,
-  Zap,
-  Phone,
-  Send,
   MessageSquare,
-  ArrowRight,
-  Grid3x3,
-  Users,
-  Calendar,
-  Car,
-  Bike,
-  Anchor,
-  Hotel,
-  Clock,
-  CreditCard,
-  ChevronDown,
-  ChevronUp,
   Sparkles,
-  ShieldCheck,
 } from 'lucide-react';
-import MapView from '../../components/MapView.jsx';
 import SEO from '../../components/SEO.jsx';
 import ListingConcierge from '../../components/ListingConcierge.jsx';
 import NeighborhoodVibes from '../../components/NeighborhoodVibes.jsx';
 import { api } from '../../utils/api.js';
 import { fixImg } from '../../utils/image.js';
-import { AMENITY_CATEGORIES, getAmenityByLabel } from '../../utils/amenities.js';
+import { AMENITY_CATEGORIES } from '../../utils/amenities.js';
 import ListingGallery from '../../components/listing/ListingGallery.jsx';
 import ListingReviews from '../../components/listing/ListingReviews.jsx';
 import BookingCard from '../../components/listing/BookingCard.jsx';
@@ -260,7 +233,7 @@ export default function ListingDetails() {
       />
       <div className="bg-white min-h-screen font-sans selection:bg-emerald-100 selection:text-emerald-900 pb-24 lg:pb-0">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12 py-8 lg:py-16">
-          {/* â”€â”€â”€ BREADCRUMB â”€â”€â”€ */}
+          {/* ─── BREADCRUMB ─── */}
           <div className="flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.4em] text-slate-300 mb-8 lg:mb-10 overflow-x-auto no-scrollbar whitespace-nowrap">
             <button
               onClick={() => navigate('/')}
@@ -281,7 +254,7 @@ export default function ListingDetails() {
             </span>
           </div>
 
-          {/* â”€â”€â”€ TITLE & ACTIONS â”€â”€â”€ */}
+          {/* ─── TITLE & ACTIONS ─── */}
           <div className="flex flex-col lg:flex-row justify-between items-start gap-8 lg:gap-12 mb-12 lg:mb-16">
             <div className="space-y-4 lg:space-y-6 max-w-4xl">
               <div className="flex flex-wrap gap-2 lg:gap-4 items-center">
@@ -333,7 +306,7 @@ export default function ListingDetails() {
                         {listing.location || 'Kerala'}
                       </p>
                       <p className="text-[11px] lg:text-[11px] font-bold text-emerald-600 uppercase tracking-widest leading-none mt-0.5 lg:mt-1 hover:underline">
-                        Open Maps â†—
+                        Open Maps ↗
                       </p>
                     </div>
                   </a>
@@ -394,7 +367,7 @@ export default function ListingDetails() {
           {/* GALLERY GRID */}
           <ListingGallery images={images} title={listing.title} />
 
-          {/* â”€â”€â”€ MAIN CONTENT â”€â”€â”€ */}
+          {/* ─── MAIN CONTENT ─── */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 items-start">
             {/* LEFT: INFORMATION */}
             <div className="lg:col-span-7 space-y-20">
@@ -566,7 +539,7 @@ export default function ListingDetails() {
           </div>
         </div>
 
-        {/* â”€â”€â”€ MOBILE STICKY BOTTOM BAR â”€â”€â”€ */}
+        {/* ─── MOBILE STICKY BOTTOM BAR ─── */}
         <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 p-4 z-[100] flex items-center justify-between shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
           <div>
             <p className="text-sm font-black text-slate-900">

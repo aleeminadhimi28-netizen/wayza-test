@@ -7,19 +7,15 @@ import {
   ArrowLeft,
   Clock,
   CheckCircle,
-  XCircle,
   Headphones,
-  Tag,
   ChevronRight,
   Loader2,
   AlertCircle,
   Plus,
   MessageCircle,
-  User,
   Shield,
   Inbox,
   Search,
-  Filter,
 } from 'lucide-react';
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
 import { useAuth } from '../../AuthContext.jsx';

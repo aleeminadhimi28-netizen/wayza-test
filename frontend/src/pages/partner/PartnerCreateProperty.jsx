@@ -13,7 +13,6 @@ import {
   Info,
   ArrowRight,
   CheckCircle,
-  Navigation,
   Crosshair,
   Loader2,
   Check,

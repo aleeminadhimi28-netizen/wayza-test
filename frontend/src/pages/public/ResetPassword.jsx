@@ -9,7 +9,6 @@ import {
   CheckCircle,
   ArrowRight,
   Zap,
-  Server,
   Activity,
   Sparkles,
 } from 'lucide-react';
@@ -215,7 +214,7 @@ export default function ResetPassword() {
                           required
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                          placeholder="••••••••••••"
                           className="w-full h-16 bg-slate-50 border border-slate-100 rounded-2xl pl-16 pr-16 font-bold text-xl tracking-tight text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200 shadow-inner"
                         />
                         <button
@@ -263,7 +262,7 @@ export default function ResetPassword() {
                           required
                           value={confirm}
                           onChange={(e) => setConfirm(e.target.value)}
-                          placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                          placeholder="••••••••••••"
                           className="w-full h-16 bg-slate-50 border border-slate-100 rounded-2xl pl-16 pr-6 font-bold text-xl tracking-tight text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200 shadow-inner"
                         />
                       </div>

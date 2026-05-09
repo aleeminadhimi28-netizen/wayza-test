@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../../AuthContext.jsx';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Send, MessageSquare, CheckCircle, User, Search, Info } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Send, MessageSquare, CheckCircle, Search } from 'lucide-react';
 
 import { api } from '../../utils/api.js';
 import {

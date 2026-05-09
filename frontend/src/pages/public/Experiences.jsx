@@ -1,11 +1,9 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { WayzzaLayout, WayzzaSkeleton } from '../../WayzzaUI.jsx';
 import {
   Anchor,
-  Compass,
-  Navigation,
   ArrowRight,
   PlayCircle,
   Star,
@@ -14,15 +12,9 @@ import {
   Sparkles,
   Zap,
   Shield,
-  Heart,
-  Info,
-  ChevronRight,
   Globe,
-  Layers,
   Award,
   Music,
-  Camera,
-  Palmtree,
   Wind,
   Waves,
   Coffee,
@@ -68,7 +60,7 @@ export default function Experiences() {
   return (
     <WayzzaLayout noPadding hideFooter>
       <div className="bg-white font-sans text-slate-900 selection:bg-amber-100 selection:text-amber-900 overflow-hidden">
-        {/* â•â•â•â• CINEMATIC HERO â•â•â•â• */}
+        {/* ════ CINEMATIC HERO ════ */}
         <section className="relative h-[90vh] min-h-[800px] flex items-center justify-center bg-slate-950 overflow-hidden">
           <motion.div
             style={{ opacity: heroOpacity, scale: heroScale }}
@@ -130,7 +122,7 @@ export default function Experiences() {
           </div>
         </section>
 
-        {/* â•â•â•â• CATEGORY STRIP â•â•â•â• */}
+        {/* ════ CATEGORY STRIP ════ */}
         <div className="relative z-30 -mt-16 max-w-7xl mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -153,7 +145,7 @@ export default function Experiences() {
           </motion.div>
         </div>
 
-        {/* â•â•â•â• THE GRID â•â•â•â• */}
+        {/* ════ THE GRID ════ */}
         <section className="py-32 px-6 max-w-7xl mx-auto">
           <header className="mb-24 flex flex-col md:flex-row justify-between items-end gap-10">
             <div className="space-y-4">
@@ -246,7 +238,7 @@ export default function Experiences() {
           )}
         </section>
 
-        {/* â•â•â•â• ADRENALINE FEEDS â•â•â•â• */}
+        {/* ════ ADRENALINE FEEDS ════ */}
         <section className="py-48 bg-slate-950 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-1/3 h-full bg-amber-500/[0.03] blur-[150px] pointer-events-none" />
           <div className="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row items-center gap-24">
@@ -287,7 +279,7 @@ export default function Experiences() {
           </div>
         </section>
 
-        {/* â•â•â•â• NATIVE SECRETS FOOTER CTA â•â•â•â• */}
+        {/* ════ NATIVE SECRETS FOOTER CTA ════ */}
         <section className="py-48 px-6 bg-white relative overflow-hidden">
           <div className="max-w-7xl mx-auto">
             <motion.div
@@ -327,7 +319,7 @@ export default function Experiences() {
           </div>
         </section>
 
-        {/* â•â•â•â• REFINED FOOTER â•â•â•â• */}
+        {/* ════ REFINED FOOTER ════ */}
         <footer className="bg-white py-48 px-6 md:px-12 border-t border-slate-100 relative">
           <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-32">
             <div className="md:col-span-6 space-y-16">

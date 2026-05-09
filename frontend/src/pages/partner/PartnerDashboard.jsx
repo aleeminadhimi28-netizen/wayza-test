@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../AuthContext.jsx';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   AreaChart,
   Area,
@@ -12,12 +12,10 @@ import {
   CartesianGrid,
 } from 'recharts';
 import {
-  LayoutDashboard,
   Users,
   Home,
   Activity,
   Search,
-  Filter,
   Plus,
   DollarSign,
   Star,
@@ -25,14 +23,7 @@ import {
   CheckCircle,
   Clock,
   ArrowUpRight,
-  MoreVertical,
-  ChevronRight,
-  Bell,
   Sparkles,
-  ShieldCheck,
-  TrendingUp,
-  Navigation,
-  CalendarCheck,
 } from 'lucide-react';
 import VerificationSpinner from '../../components/VerificationSpinner.jsx';
 
@@ -135,7 +126,7 @@ export default function PartnerDashboard() {
       animate={{ opacity: 1, y: 0 }}
       className="space-y-8 font-sans selection:bg-emerald-100 selection:text-emerald-900 pb-20"
     >
-      {/* â”€â”€â”€ HEADER â”€â”€â”€ */}
+      {/* ─── HEADER ─── */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
         <div className="space-y-1">
           <div className="flex items-center gap-2 text-emerald-600 font-bold text-xs uppercase tracking-wide">
@@ -158,7 +149,7 @@ export default function PartnerDashboard() {
         </button>
       </div>
 
-      {/* â”€â”€â”€ KPI GRID â”€â”€â”€ */}
+      {/* ─── KPI GRID ─── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map((c, i) => (
           <motion.div
@@ -194,7 +185,7 @@ export default function PartnerDashboard() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {/* â”€â”€â”€ REVENUE CHART â”€â”€â”€ */}
+        {/* ─── REVENUE CHART ─── */}
         <div className="xl:col-span-2 bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
           <div className="flex justify-between items-center mb-8">
             <div>
@@ -255,7 +246,7 @@ export default function PartnerDashboard() {
           </div>
         </div>
 
-        {/* â”€â”€â”€ SIDEBAR WIDGETS â”€â”€â”€ */}
+        {/* ─── SIDEBAR WIDGETS ─── */}
         <div className="space-y-6">
           {/* Promo Widget */}
           <div className="bg-slate-900 rounded-3xl p-8 text-white relative overflow-hidden shadow-lg group">
@@ -324,7 +315,7 @@ export default function PartnerDashboard() {
         </div>
       </div>
 
-      {/* â”€â”€â”€ RECENT BOOKINGS â”€â”€â”€ */}
+      {/* ─── RECENT BOOKINGS ─── */}
       <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
         <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
@@ -392,7 +383,7 @@ export default function PartnerDashboard() {
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-600">
                     <div className="whitespace-nowrap">
-                      {b.checkIn} <span className="text-slate-300 mx-1">â†’</span> {b.checkOut}
+                      {b.checkIn} <span className="text-slate-300 mx-1">→</span> {b.checkOut}
                     </div>
                   </td>
                   <td className="px-6 py-4">

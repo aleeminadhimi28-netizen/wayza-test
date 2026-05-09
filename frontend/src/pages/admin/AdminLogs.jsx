@@ -1,6 +1,6 @@
 ﻿import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Activity, Clock, ShieldAlert, Zap, Server, Globe } from 'lucide-react';
+import { Activity, Clock, Server, Globe } from 'lucide-react';
 import { api } from '../../utils/api.js';
 import { useToast } from '../../ToastContext.jsx';
 

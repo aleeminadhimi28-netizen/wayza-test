@@ -8,11 +8,8 @@ import {
   CheckCircle,
   ArrowRight,
   ArrowLeft,
-  Activity,
-  Sparkles,
   Building,
   Wallet,
-  Navigation,
   ChevronDown,
 } from 'lucide-react';
 import { useAuth } from '../../AuthContext.jsx';
@@ -89,7 +86,7 @@ export default function PartnerOnboarding() {
 
   return (
     <div className="min-h-screen bg-white font-sans flex items-center justify-center p-6 relative overflow-hidden selection:bg-emerald-100 selection:text-emerald-900">
-      {/* â”€â”€â”€ PREMIUM MESH BACKGROUND â”€â”€â”€ */}
+      {/* ─── PREMIUM MESH BACKGROUND ─── */}
       <div className="absolute inset-0 z-0">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-100/40 blur-[120px] rounded-full animate-pulse" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-slate-100/60 blur-[120px] rounded-full" />
@@ -113,7 +110,7 @@ export default function PartnerOnboarding() {
 
         {/* PROGRESS TRACKER */}
         <div className="flex items-center gap-6 mb-24">
-          {steps.map((s, i) => (
+          {steps.map((s, _i) => (
             <div key={s.id} className="flex-1 space-y-4">
               <div
                 className={`h-1.5 rounded-full transition-all duration-1000 ${step >= s.id ? 'bg-emerald-500 shadow-lg shadow-emerald-500/20' : 'bg-slate-100'}`}

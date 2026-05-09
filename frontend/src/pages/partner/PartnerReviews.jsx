@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../AuthContext.jsx';
 import { motion } from 'framer-motion';
-import { Star, MessageSquare, Shield, Quote } from 'lucide-react';
+import { Star, MessageSquare, Shield } from 'lucide-react';
 
 import { api } from '../../utils/api.js';
 

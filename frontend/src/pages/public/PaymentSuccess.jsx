@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams, Link, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
 import { useAuth } from '../../AuthContext.jsx';
-import { CheckCircle, History, Sparkles, Home, Calendar, ShieldCheck } from 'lucide-react';
+import { CheckCircle, Home, Calendar, ShieldCheck } from 'lucide-react';
 
 import { BASE_URL } from '../../utils/api.js';
 

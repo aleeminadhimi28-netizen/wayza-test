@@ -11,11 +11,9 @@ import {
   CheckCircle,
   AlertCircle,
   ArrowRight,
-  Shield,
   Star,
   FileText,
   History,
-  Info,
   Navigation,
 } from 'lucide-react';
 
@@ -147,7 +145,7 @@ export default function MyBookings() {
                 <div class="invoice-meta"><div class="invoice-id">INVOICE #${invoiceId}</div><div class="invoice-date">${invoiceDate}</div></div>
             </div>
             <h2>${b.title}</h2>
-            <p class="subtitle">Booking Confirmed &nbsp;â€¢&nbsp; Paid via Wayzza Secure Checkout</p>
+            <p class="subtitle">Booking Confirmed &nbsp;•&nbsp; Paid via Wayzza Secure Checkout</p>
             <div class="details-grid">
                 <div class="detail-item"><div class="label">Guest</div><div class="value">${b.guestEmail}</div></div>
                 <div class="detail-item"><div class="label">Booking ID</div><div class="value">${invoiceId}</div></div>
@@ -165,10 +163,10 @@ export default function MyBookings() {
                     <tr class="total-row"><td>Total Paid</td><td>₹${(b.totalPrice || 0).toLocaleString()}</td></tr>
                 </tbody>
             </table>
-            <div class="badge">âœ“ Payment Confirmed</div>
+            <div class="badge">✓ Payment Confirmed</div>
             <div class="footer">
                 <div class="footer-note">Thank you for staying with Wayzza.<br>For support: support@wayzza.com</div>
-                <div class="footer-note">Â© ${new Date().getFullYear()} Wayzza Inc.</div>
+                <div class="footer-note">© ${new Date().getFullYear()} Wayzza Inc.</div>
             </div>
         </div></body></html>`;
     const w = window.open('', '_blank', 'width=780,height=900');

@@ -3,24 +3,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../../AuthContext.jsx';
 import { useToast } from '../../ToastContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Calendar,
-  CheckCircle,
-  Zap,
-  Info,
-  ArrowRight,
-  Home,
-  CreditCard,
-  Sparkles,
-  MapPin,
-  Clock,
-  Shield,
-  Globe,
-  Star,
-  Navigation,
-  Target,
-  Tag,
-} from 'lucide-react';
+import { Calendar, CheckCircle, Zap, Info, Clock, Shield, Tag } from 'lucide-react';
 import { WayzzaLayout, WayzzaSkeleton } from '../../WayzzaUI.jsx';
 
 import { api } from '../../utils/api.js';

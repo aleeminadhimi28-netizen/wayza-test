@@ -21,9 +21,7 @@ import {
   Navigation,
   CheckCircle,
   X,
-  Filter,
   ThumbsUp,
-  Star,
   ArrowRight,
   Sparkles,
   SlidersHorizontal,
@@ -197,7 +195,7 @@ export default function Listings() {
         }}
       />
       <div className="bg-slate-50 min-h-screen font-sans selection:bg-emerald-100 selection:text-emerald-900">
-        {/* â”€â”€â”€ PREMIUM SEARCH BAR â”€â”€â”€ */}
+        {/* ─── PREMIUM SEARCH BAR ─── */}
         <div
           className={`bg-white/95 backdrop-blur-xl border-b border-slate-200 sticky top-[64px] z-40 transition-all duration-300 ${scrolled ? 'py-2 shadow-md' : 'py-4'}`}
         >
@@ -388,7 +386,7 @@ export default function Listings() {
           </div>
         </div>
 
-        {/* â”€â”€â”€ RESULTS â”€â”€â”€ */}
+        {/* ─── RESULTS ─── */}
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-6">
           {/* Result summary */}
           <div className="flex items-center justify-between mb-5">
@@ -409,7 +407,7 @@ export default function Listings() {
               {(start || end) && (
                 <p className="text-sm text-slate-400 mt-0.5">
                   {start && `Check-in: ${start}`}
-                  {start && end && ' Â· '}
+                  {start && end && ' · '}
                   {end && `Check-out: ${end}`}
                 </p>
               )}
@@ -657,7 +655,7 @@ export default function Listings() {
             )}
           </AnimatePresence>
 
-          {/* â”€â”€â”€ PAGINATION â”€â”€â”€ */}
+          {/* ─── PAGINATION ─── */}
           {!loading && pages > 1 && (
             <div className="mt-20 flex items-center justify-center gap-4">
               <button
@@ -700,7 +698,7 @@ export default function Listings() {
             </div>
           )}
 
-          {/* â”€â”€â”€ TRUST STRIP â”€â”€â”€ */}
+          {/* ─── TRUST STRIP ─── */}
           <div className="mt-12 pt-8 border-t border-slate-200">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               {[

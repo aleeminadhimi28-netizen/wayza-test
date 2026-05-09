@@ -9,7 +9,6 @@ import {
   Globe,
   Compass,
   ArrowRight,
-  Award,
   Bike,
   Car,
   Home,
@@ -17,7 +16,6 @@ import {
   Twitter,
   Facebook,
   CheckCircle2,
-  MessageSquare,
   Send,
   ChevronLeft,
   ChevronRight,
@@ -151,7 +149,7 @@ export default function LandingPage() {
         }}
       />
       <div className="bg-white font-sans text-slate-900 selection:bg-emerald-50 selection:text-emerald-900 leading-relaxed antialiased">
-        {/* â•â•â•â• SECTION: PREMIUM HERO â•â•â•â• */}
+        {/* ════ SECTION: ════ */}
         <header className="relative h-[85vh] min-h-[620px] md:min-h-[700px] flex flex-col items-center justify-center overflow-hidden">
           <div className="absolute inset-0 z-0">
             <motion.div
@@ -302,7 +300,7 @@ export default function LandingPage() {
           </motion.div>
         </header>
 
-        {/* â•â•â•â• MOBILE-LIKE PROMO + DESTINATIONS â•â•â•â• */}
+        {/* ════ MOBILE-LIKE PROMO + DESTINATIONS ════ */}
         <section ref={moreListingsRef} className="px-6 max-w-7xl mx-auto space-y-8 pb-10">
           <div className="bg-white rounded-[32px] border border-slate-200 shadow-sm overflow-hidden">
             <div className="flex flex-col sm:flex-row items-stretch gap-4 p-5">
@@ -469,7 +467,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* â•â•â•â• DESTINATIONS MASONRY â•â•â•â• */}
+        {/* ════ DESTINATIONS MASONRY ════ */}
         <section className="py-32 bg-slate-50 px-6 relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-white to-transparent" />
           <div className="max-w-7xl mx-auto">
@@ -527,7 +525,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* â•â•â•â• TRUST STRIP â•â•â•â• */}
+        {/* ════ TRUST STRIP ════ */}
         <section className="py-32 px-6 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
@@ -572,7 +570,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* â•â•â•â• SECTION: AI TRIP PLANNER â•â•â•â• */}
+        {/* ════ SECTION: ════ */}
         <section className="py-24 px-4 sm:px-6 lg:px-8 bg-[#06110d] text-white overflow-hidden relative">
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-[-20%] left-[5%] w-[45%] h-[65%] bg-emerald-500/10 blur-[130px] rounded-full" />
@@ -661,7 +659,7 @@ export default function LandingPage() {
                       {[
                         { emoji: 'ðŸ¡', title: 'Sea Cliff Retreat', detail: '₹12,500 / night' },
                         { emoji: 'ðŸï¸', title: 'Royal Enfield 350', detail: '₹850 / day' },
-                        { emoji: 'â˜•', title: 'Secret CafÃ© Trail', detail: '6 stops' },
+                        { emoji: '☕', title: 'Secret Café Trail', detail: '6 stops' },
                       ].map((item) => (
                         <div
                           key={item.title}
@@ -843,7 +841,7 @@ export default function LandingPage() {
             {/* Bottom Bar */}
             <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-10">
               <div className="flex flex-wrap justify-center gap-8 text-[11px] font-black uppercase tracking-[0.3em] text-white/20">
-                <span>Wayzza Â© 2026</span>
+                <span>Wayzza © 2026</span>
                 <Link to="/privacy" className="hover:text-white transition-colors">
                   Privacy
                 </Link>
@@ -858,7 +856,7 @@ export default function LandingPage() {
                   className="px-6 py-3 bg-white/[0.03] border border-white/5 rounded-full flex items-center gap-3"
                 >
                   <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/40">
-                    Made with <span className="text-rose-500 animate-pulse">â¤ï¸</span> in Varkala
+                    Made with <span className="text-rose-500 animate-pulse">❤️</span> in Varkala
                   </span>
                 </motion.div>
                 <div className="hidden md:flex items-center gap-4 text-white/20 text-[11px] font-black uppercase tracking-widest">

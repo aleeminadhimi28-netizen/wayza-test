@@ -2,17 +2,7 @@
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
 import { useAuth } from '../../AuthContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Send,
-  MessageSquare,
-  Info,
-  ShieldCheck,
-  User,
-  Clock,
-  ArrowRight,
-  Home,
-  Sparkles,
-} from 'lucide-react';
+import { Send, MessageSquare, ShieldCheck, ArrowRight, Sparkles } from 'lucide-react';
 
 import { api } from '../../utils/api.js';
 import {

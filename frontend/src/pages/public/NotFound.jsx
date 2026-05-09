@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
-import { Map, ArrowLeft, Home, Search, Compass } from 'lucide-react';
+import { Map, ArrowLeft, Home, Compass } from 'lucide-react';
 
 export default function NotFound() {
   const navigate = useNavigate();

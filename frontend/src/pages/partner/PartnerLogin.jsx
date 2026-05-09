@@ -3,20 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../AuthContext.jsx';
 import { useToast } from '../../ToastContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Briefcase,
-  Zap,
-  Mail,
-  Lock,
-  Eye,
-  EyeOff,
-  ArrowRight,
-  ArrowLeft,
-  Activity,
-  ShieldCheck,
-  Sparkles,
-  Navigation,
-} from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
 import VerificationSpinner from '../../components/VerificationSpinner.jsx';
 
 import { api } from '../../utils/api.js';
@@ -206,7 +193,7 @@ export default function PartnerLogin() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                    placeholder="••••••••••••"
                     className="w-full h-22 bg-slate-50/50 border border-slate-100 rounded-[28px] pl-20 pr-10 font-bold text-xl tracking-[0.2em] text-slate-900 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all placeholder:text-slate-200"
                   />
                   <button

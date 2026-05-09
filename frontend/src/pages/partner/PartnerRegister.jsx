@@ -1,13 +1,10 @@
 ﻿import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
-  Hammer,
   Zap,
-  ShieldCheck,
   Mail,
   Lock,
-  Briefcase,
   Eye,
   EyeOff,
   ArrowRight,
@@ -16,7 +13,6 @@ import {
   Globe,
   Sparkles,
   Building,
-  Wallet,
   ChevronDown,
 } from 'lucide-react';
 import { useToast } from '../../ToastContext.jsx';
@@ -246,7 +242,7 @@ export default function PartnerRegister() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                    placeholder="••••••••••••"
                     className="w-full h-22 bg-slate-50/50 border border-slate-100 rounded-[28px] pl-20 pr-10 font-bold text-xl tracking-[0.2em] text-slate-900 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all placeholder:text-slate-200"
                   />
                   <button

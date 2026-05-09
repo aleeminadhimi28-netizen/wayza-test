@@ -7,7 +7,6 @@ import {
   Home,
   Calendar,
   CreditCard,
-  MapPin,
   Zap,
   MessageSquare,
   Sparkles,
@@ -128,7 +127,7 @@ export default function BookingSuccess() {
                     <span className="text-[11px] font-bold uppercase tracking-widest">Dates</span>
                   </div>
                   <p className="text-xl font-bold text-slate-900 tracking-tight">
-                    {startDate} â†’ {endDate}
+                    {startDate} → {endDate}
                   </p>
                 </div>
 
