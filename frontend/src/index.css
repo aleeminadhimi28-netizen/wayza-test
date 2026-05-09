@@ -98,9 +98,9 @@ input[type='date']::-webkit-calendar-picker-indicator {
 /* ════ CORE WEB VITALS OPTIMIZATIONS ════ */
 
 /* Remove click delay for better INP */
-button, 
-a, 
-[role="button"] {
+button,
+a,
+[role='button'] {
   touch-action: manipulation;
 }
 
@@ -123,4 +123,3 @@ body {
     transition: transform 0.1s ease;
   }
 }
-
