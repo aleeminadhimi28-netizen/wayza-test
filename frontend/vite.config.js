@@ -26,23 +26,10 @@ export default defineConfig({
                 ]
             },
             workbox: {
-                globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
-                runtimeCaching: [
-                    {
-                        urlPattern: /^https:\/\/wayzza-api\.render\.com\/api\/.*/i,
-                        handler: 'NetworkFirst',
-                        options: {
-                            cacheName: 'api-cache',
-                            expiration: {
-                                maxEntries: 100,
-                                maxAgeSeconds: 60 * 60 * 24 * 7 // 1 week
-                            },
-                            cacheableResponse: {
-                                statuses: [0, 200]
-                            }
-                        }
-                    }
-                ]
+                // Only precache static app-shell assets. API calls can contain user-,
+                // booking-, payment-, and admin-specific data, so keep them network-only
+                // instead of persisting cross-session responses in the service worker.
+                globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}']
             }
         })
     ],
