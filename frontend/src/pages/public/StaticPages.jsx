@@ -112,44 +112,70 @@ export function PrivacyPolicy() {
 
       <h2 className="text-2xl mt-16 mb-8 flex items-center gap-4">
         <div className="w-1.5 h-8 bg-emerald-500 rounded-full" />
-        Information We Collect
+        1. Information We Collect
       </h2>
       <p>
-        We only collect and process information that is necessary to provide our services and ensure
-        a secure environment for all users:
+        We collect information that you provide directly to us, such as when you create or modify
+        your account, request services, contact customer support, or otherwise communicate with us.
       </p>
       <ul>
         <li>
-          <strong>Profile Information:</strong> Your name, email, and profile details provided
-          during account creation.
+          <strong>Personal Information:</strong> Name, email address, phone number, and profile
+          picture.
         </li>
         <li>
-          <strong>Contact Information:</strong> Details used to communicate with you regarding
-          bookings and updates.
+          <strong>Payment Information:</strong> We use third-party payment processors (Razorpay) to
+          process payments. We do not store your full credit card details.
         </li>
         <li>
-          <strong>Booking History:</strong> Records of your completed and upcoming stays and
-          experiences.
+          <strong>Usage Information:</strong> We collect information about how you interact with our
+          services using PostHog, including page views and interaction data.
         </li>
       </ul>
 
       <h2 className="text-2xl mt-16 mb-8 flex items-center gap-4">
         <div className="w-1.5 h-8 bg-emerald-500 rounded-full" />
-        How We Use Data
+        2. How We Use Your Information
       </h2>
       <p>
-        Your data is used strictly for provide our services, including: Confirming bookings,
-        protecting your account, and providing personalized travel recommendations to enhance your
-        journey.
+        We use the information we collect to provide, maintain, and improve our services, including:
       </p>
+      <ul>
+        <li>Processing bookings and payments.</li>
+        <li>Sending you technical notices, updates, and support messages.</li>
+        <li>Responding to your comments and questions.</li>
+        <li>Monitoring and analyzing trends, usage, and activities in connection with our services.</li>
+      </ul>
 
       <h2 className="text-2xl mt-16 mb-8 flex items-center gap-4">
         <div className="w-1.5 h-8 bg-emerald-500 rounded-full" />
-        Data Security
+        3. Sharing of Information
       </h2>
       <p>
-        We use industry-standard encryption and security protocols to prevent unauthorized access.
-        Your data is protected throughout its transit and storage within our platform.
+        We do not sell your personal information. We may share your information with:
+      </p>
+      <ul>
+        <li>
+          <strong>Partner Hosts:</strong> To facilitate your bookings and provide necessary
+          information for your stay.
+        </li>
+        <li>
+          <strong>Service Providers:</strong> Third-party vendors who perform services on our behalf,
+          such as payment processing (Razorpay) and analytics (PostHog).
+        </li>
+        <li>
+          <strong>Legal Obligations:</strong> If required by law or in response to legal processes.
+        </li>
+      </ul>
+
+      <h2 className="text-2xl mt-16 mb-8 flex items-center gap-4">
+        <div className="w-1.5 h-8 bg-emerald-500 rounded-full" />
+        4. Your Rights
+      </h2>
+      <p>
+        Depending on your location, you may have the right to access, correct, or delete your
+        personal data. You can manage your profile settings or contact us directly to exercise these
+        rights.
       </p>
     </StaticPage>
   );
@@ -157,7 +183,7 @@ export function PrivacyPolicy() {
 
 export function TermsOfService() {
   return (
-    <StaticPage title="Terms of Service" icon={<Shield size={32} />}>
+    <StaticPage title="Terms of Use & Service" icon={<Shield size={32} />}>
       <p className="text-xl text-slate-900 font-bold mb-10">
         Effective Date: {new Date().toLocaleDateString()}
       </p>
@@ -168,30 +194,82 @@ export function TermsOfService() {
 
       <h2 className="text-2xl mt-16 mb-8 flex items-center gap-4">
         <div className="w-1.5 h-8 bg-emerald-500 rounded-full" />
-        User Registration
+        1. Booking and Payments
       </h2>
       <p>
-        To use Wayzza, you must provide accurate and current information. Maintaining the security
-        of your account credentials is your responsibility.
+        All bookings made through Wayzza are subject to availability. Payments are processed through
+        Razorpay. By confirming a booking, you agree to the price and specific terms mentioned in
+        the listing.
       </p>
 
       <h2 className="text-2xl mt-16 mb-8 flex items-center gap-4">
         <div className="w-1.5 h-8 bg-emerald-500 rounded-full" />
-        Property Care
+        2. Cancellation and Refunds
       </h2>
       <p>
-        During your stay at our partner properties, we ask that you respect the property rules and
-        maintain the space. Any damage incurred may be subject to our resolution process.
+        Cancellation policies vary by property. Please review the specific cancellation policy of
+        the sanctuary you are booking. Refunds, if applicable, will be processed via the original
+        payment method within standard banking timelines.
       </p>
 
       <h2 className="text-2xl mt-16 mb-8 flex items-center gap-4">
         <div className="w-1.5 h-8 bg-emerald-500 rounded-full" />
-        Service Termination
+        3. User Conduct
       </h2>
       <p>
-        Wayzza reserves the right to suspend or terminate accounts that violate our terms or exhibit
-        inappropriate conduct within our community.
+        Users are expected to behave responsibly. Any damage to partner properties or violation of
+        local laws during your stay may result in account termination and legal action.
       </p>
+
+      <h2 className="text-2xl mt-16 mb-8 flex items-center gap-4">
+        <div className="w-1.5 h-8 bg-emerald-500 rounded-full" />
+        4. Limitation of Liability
+      </h2>
+      <p>
+        Wayzza acts as a marketplace between travelers and hosts. We are not liable for direct or
+        indirect damages arising from your stay, although we facilitate resolution through our
+        verified standards.
+      </p>
+    </StaticPage>
+  );
+}
+
+export function DataCompliance() {
+  return (
+    <StaticPage title="Data Compliance" icon={<Activity size={32} />}>
+      <p className="text-xl text-slate-900 font-bold mb-10">
+        Last Verified: {new Date().toLocaleDateString()}
+      </p>
+      <p>
+        Wayzza is built with a "security-first" architecture. We adhere to global data protection
+        standards to ensure your information remains yours.
+      </p>
+
+      <h2 className="text-2xl mt-16 mb-8 flex items-center gap-4">
+        <div className="w-1.5 h-8 bg-emerald-500 rounded-full" />
+        Security Standards
+      </h2>
+      <p>
+        Our platform employs several layers of security:
+      </p>
+      <ul>
+        <li><strong>Encryption:</strong> All data in transit is encrypted using TLS 1.3.</li>
+        <li><strong>Authentication:</strong> Secure session management and JWT-based authentication.</li>
+        <li><strong>Infrastructure:</strong> Hosted on secured cloud environments with regular security audits.</li>
+      </ul>
+
+      <h2 className="text-2xl mt-16 mb-8 flex items-center gap-4">
+        <div className="w-1.5 h-8 bg-emerald-500 rounded-full" />
+        Regulatory Compliance
+      </h2>
+      <p>
+        We work to ensure compliance with the following frameworks:
+      </p>
+      <ul>
+        <li><strong>India IT Act:</strong> Compliance with Indian data protection regulations.</li>
+        <li><strong>GDPR Ready:</strong> Principles of data minimization and purpose limitation are core to our design.</li>
+        <li><strong>PCI DSS:</strong> Our payment flows (via Razorpay) are PCI compliant.</li>
+      </ul>
     </StaticPage>
   );
 }

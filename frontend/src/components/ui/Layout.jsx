@@ -530,6 +530,9 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
                 <li>
                   <Link to="/terms">Terms of Service</Link>
                 </li>
+                <li>
+                  <Link to="/compliance">Data Compliance</Link>
+                </li>
               </ul>
             </div>
             <div className="text-center md:text-left">

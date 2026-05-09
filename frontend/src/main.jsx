@@ -59,6 +59,9 @@ const TermsOfService = lazy(() =>
 const AboutUs = lazy(() =>
   import('./pages/public/StaticPages.jsx').then((m) => ({ default: m.AboutUs }))
 );
+const DataCompliance = lazy(() =>
+  import('./pages/public/StaticPages.jsx').then((m) => ({ default: m.DataCompliance }))
+);
 
 /* ================= PARTNER ================= */
 const PartnerLogin = lazy(() => import('./pages/partner/PartnerLogin.jsx'));
@@ -147,6 +150,7 @@ function AppContent() {
           <Route path="/about" element={<AboutUs />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/compliance" element={<DataCompliance />} />
           <Route
             path="/support"
             element={
