@@ -10,7 +10,11 @@ import {
   ArrowLeft,
   Building,
   Wallet,
-  ChevronDown,
+  Home,
+  Bike,
+  Car,
+  Sparkles,
+  Zap,
 } from 'lucide-react';
 import { useAuth } from '../../AuthContext.jsx';
 import { useToast } from '../../ToastContext.jsx';
@@ -28,6 +32,7 @@ export default function PartnerOnboarding() {
 
   const [businessName, setBusinessName] = useState('');
   const [category, setCategory] = useState('hotel');
+  const [brandVision, setBrandVision] = useState('');
   const [location, setLocation] = useState('');
   const [listingName, setListingName] = useState('');
   const [price, setPrice] = useState('');
@@ -55,6 +60,7 @@ export default function PartnerOnboarding() {
         email,
         businessName,
         category,
+        brandVision,
         location,
         firstListing: listingName
           ? {
@@ -159,17 +165,74 @@ export default function PartnerOnboarding() {
                   placeholder="E.G. AZURE CLIFF ESTATE"
                   icon={<Building size={24} />}
                 />
-                <FormSelect
-                  label="Operation Category"
-                  value={category}
-                  onChange={setCategory}
-                  options={[
-                    { value: 'hotel', label: 'Hospitality & Stays' },
-                    { value: 'bike', label: 'Premium Mobility (Two-Wheeler)' },
-                    { value: 'car', label: 'Luxury Mobility (Four-Wheeler)' },
-                    { value: 'activity', label: 'Curated Experiences' },
-                  ]}
-                />
+
+                <div className="space-y-6">
+                  <label className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2">
+                    Operation Category
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {[
+                      {
+                        value: 'hotel',
+                        label: 'Hospitality',
+                        icon: Home,
+                        desc: 'Stays & Villas',
+                      },
+                      {
+                        value: 'bike',
+                        label: 'Mobility',
+                        icon: Bike,
+                        desc: 'Two-Wheelers',
+                      },
+                      {
+                        value: 'car',
+                        label: 'Luxury',
+                        icon: Car,
+                        desc: 'Four-Wheelers',
+                      },
+                      {
+                        value: 'activity',
+                        label: 'Experiences',
+                        icon: Sparkles,
+                        desc: 'Curated Events',
+                      },
+                    ].map((item) => (
+                      <button
+                        key={item.value}
+                        onClick={() => setCategory(item.value)}
+                        className={`p-6 rounded-[32px] border-2 transition-all text-left flex items-center gap-6 group/btn ${category === item.value ? 'bg-emerald-600 border-emerald-600 text-white shadow-xl shadow-emerald-600/20' : 'bg-white/50 border-slate-100 text-slate-900 hover:border-emerald-200'}`}
+                      >
+                        <div
+                          className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-colors ${category === item.value ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-400 group-hover/btn:text-emerald-500'}`}
+                        >
+                          <item.icon size={24} />
+                        </div>
+                        <div>
+                          <p className="font-black uppercase tracking-widest text-xs">
+                            {item.label}
+                          </p>
+                          <p
+                            className={`text-[10px] font-bold uppercase tracking-widest mt-0.5 ${category === item.value ? 'text-white/60' : 'text-slate-400'}`}
+                          >
+                            {item.desc}
+                          </p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-4 group">
+                  <label className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 group-focus-within:text-emerald-600 transition-colors">
+                    Brand Vision Signature
+                  </label>
+                  <textarea
+                    value={brandVision}
+                    onChange={(e) => setBrandVision(e.target.value)}
+                    placeholder="Briefly describe your property's soul..."
+                    className="w-full h-32 bg-white/50 border border-slate-100 rounded-[32px] p-8 font-bold text-lg tracking-tight text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-100 shadow-sm resize-none"
+                  />
+                </div>
               </div>
               <Nav next={() => setStep(2)} />
             </motion.div>
@@ -201,15 +264,43 @@ export default function PartnerOnboarding() {
 
               <div className="space-y-12">
                 <FormInput
-                  label="Location"
+                  label="Primary Operation Hub"
                   value={location}
                   onChange={setLocation}
-                  placeholder="E.G. VARKALA, KERALA"
+                  placeholder="E.G. VARKALA CLIFF, KERALA"
                   icon={<MapPin size={24} />}
                 />
-                <div className="p-12 bg-slate-950/5 border border-slate-900/5 rounded-[40px] text-[11px] font-black text-slate-400 uppercase tracking-widest leading-relaxed">
-                  "Accuracy in location indexing ensures your assets are presented to the correct
-                  guest tier based on proximity and travel intent."
+
+                <div className="space-y-4">
+                  <label className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2">
+                    Suggested Premium Hubs
+                  </label>
+                  <div className="flex flex-wrap gap-3">
+                    {[
+                      'Varkala North Cliff',
+                      'South Cliff Shore',
+                      'Black Beach District',
+                      'Edava Lakefront',
+                    ].map((h) => (
+                      <button
+                        key={h}
+                        onClick={() => setLocation(h)}
+                        className={`px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${location === h ? 'bg-emerald-600 text-white shadow-lg' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
+                      >
+                        {h}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="p-10 bg-emerald-50 rounded-[40px] border border-emerald-100/50 flex gap-6 items-start">
+                  <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shrink-0 shadow-sm">
+                    <Zap size={20} className="text-emerald-500" />
+                  </div>
+                  <p className="text-[11px] font-black text-emerald-900/60 uppercase tracking-widest leading-relaxed">
+                    "Accuracy in location indexing ensures your assets are presented to the correct
+                    guest tier based on proximity and travel intent."
+                  </p>
                 </div>
               </div>
               <Nav back={() => setStep(1)} next={() => setStep(3)} />
@@ -249,13 +340,32 @@ export default function PartnerOnboarding() {
                   placeholder="E.G. OCEAN FRONT SANCTUARY"
                   icon={<Building size={24} />}
                 />
-                <FormInput
-                  label="Base Access Rate (INR)"
-                  value={price}
-                  onChange={setPrice}
-                  placeholder="7500"
-                  icon={<Wallet size={24} />}
-                />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <FormInput
+                    label="Base Access Rate (INR)"
+                    value={price}
+                    onChange={setPrice}
+                    placeholder="7500"
+                    icon={<Wallet size={24} />}
+                  />
+                  <div className="h-24 bg-slate-900 rounded-[32px] p-8 flex flex-col justify-center">
+                    <p className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">
+                      Estimated Net Payout
+                    </p>
+                    <p className="text-2xl font-black text-white tracking-tighter">
+                      ₹{price ? (parseInt(price) * 0.88).toLocaleString() : '0'}{' '}
+                      <span className="text-[10px] text-white/30 uppercase tracking-widest ml-2">
+                        / Nightly
+                      </span>
+                    </p>
+                  </div>
+                </div>
+                <div className="p-8 bg-slate-50 rounded-[32px] border border-slate-100">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-relaxed">
+                    "Platform commission (12%) covers verification, global marketing, and clifftop
+                    concierge support."
+                  </p>
+                </div>
               </div>
               <Nav back={() => setStep(2)} next={() => setStep(4)} />
             </motion.div>
@@ -332,32 +442,6 @@ function FormInput({ label, value, onChange, placeholder, icon }) {
           placeholder={placeholder}
           className="w-full h-24 bg-white/50 border border-slate-100 rounded-[32px] pl-24 pr-10 font-bold text-2xl tracking-tighter text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-100 shadow-sm"
         />
-      </div>
-    </div>
-  );
-}
-
-function FormSelect({ label, value, onChange, options }) {
-  return (
-    <div className="space-y-4 group">
-      <label className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2">
-        {label}
-      </label>
-      <div className="relative">
-        <select
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="w-full h-24 bg-white/50 border border-slate-100 rounded-[32px] px-10 font-bold text-2xl tracking-tighter text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all appearance-none uppercase shadow-sm cursor-pointer"
-        >
-          {options.map((o) => (
-            <option key={o.value} value={o.value}>
-              {o.label}
-            </option>
-          ))}
-        </select>
-        <div className="absolute right-10 top-1/2 -translate-y-1/2 pointer-events-none text-slate-200 group-hover:text-emerald-500 transition-colors">
-          <ChevronDown size={24} />
-        </div>
       </div>
     </div>
   );
