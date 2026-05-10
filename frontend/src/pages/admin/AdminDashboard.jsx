@@ -35,7 +35,22 @@ import AdminSettings from './AdminSettings.jsx';
 import AdminCoupons from './AdminCoupons.jsx';
 import AdminLogs from './AdminLogs.jsx';
 
-export default function AdminDashboard() {
+
+ 
+ const TABS = [
+   { id: 'overview', icon: LayoutDashboard, label: 'Overview' },
+   { id: 'users', icon: Users, label: 'Users' },
+   { id: 'partners', icon: Briefcase, label: 'Partners' },
+   { id: 'listings', icon: Home, label: 'Inventory' },
+   { id: 'bookings', icon: CalendarCheck, label: 'Bookings' },
+   { id: 'withdrawals', icon: Banknote, label: 'Finance' },
+   { id: 'support', icon: MessageSquare, label: 'Support' },
+   { id: 'coupons', icon: Tag, label: 'Promotions' },
+   { id: 'logs', icon: Activity, label: 'Activity Logs' },
+   { id: 'settings', icon: Settings, label: 'Settings' },
+ ];
+ 
+ export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
@@ -243,18 +258,7 @@ export default function AdminDashboard() {
     return (item.email || item.title || item.businessName || '').toLowerCase().includes(query);
   });
 
-  const TABS = [
-    { id: 'overview', icon: LayoutDashboard, label: 'Overview' },
-    { id: 'users', icon: Users, label: 'Users' },
-    { id: 'partners', icon: Briefcase, label: 'Partners' },
-    { id: 'listings', icon: Home, label: 'Inventory' },
-    { id: 'bookings', icon: CalendarCheck, label: 'Bookings' },
-    { id: 'withdrawals', icon: Banknote, label: 'Finance' },
-    { id: 'support', icon: MessageSquare, label: 'Support' },
-    { id: 'coupons', icon: Tag, label: 'Promotions' },
-    { id: 'logs', icon: Activity, label: 'Activity Logs' },
-    { id: 'settings', icon: Settings, label: 'Settings' },
-  ];
+
 
   const pendingWithdrawals = withdrawals.filter((w) => w.status === 'pending').length;
   const openTickets = tickets.filter((t) => t.status === 'open').length;
