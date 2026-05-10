@@ -15,7 +15,8 @@ export default function SEO({
   googleVerification = 'VwzE_N_T2z_X_k_z_V_z_v_z_V_z_v_z_V_z_v_z_V_z_v_z_V_z_v',
 }) {
   const currentUrl = url || (typeof window !== 'undefined' ? window.location.href : '');
-  const canonicalUrl = currentUrl?.split('?')[0] || currentUrl;
+  // Force Apex domain for canonicals to avoid www/apex split authority
+  const canonicalUrl = (currentUrl?.split('?')[0] || currentUrl).replace('www.', '');
   const defaultImage = 'https://wayzza.live/og-image.png';
   const metaImage = image || defaultImage;
 
@@ -58,7 +59,7 @@ export default function SEO({
         name: author.name || 'Wayzza Concierge',
         jobTitle: author.role || 'Varkala Specialist',
         description: author.bio || 'Local expert and curator of premium Varkala experiences.',
-        image: author.image || 'https://www.wayzza.live/team/expert.jpg',
+        image: author.image || 'https://wayzza.live/team/expert.jpg',
       }
     : null;
 
