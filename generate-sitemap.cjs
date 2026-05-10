@@ -50,7 +50,7 @@ async function generateSitemap() {
     // Add Dynamic Listing Routes
     listings.forEach(listing => {
       xml += '  <url>\n';
-      xml += `    <loc>${DOMAIN}/listings/${listing._id}</loc>\n`;
+      xml += `    <loc>${DOMAIN}/listing/${listing._id}</loc>\n`;
       xml += `    <lastmod>${lastmod}</lastmod>\n`;
       xml += '    <changefreq>weekly</changefreq>\n';
       xml += '    <priority>0.8</priority>\n';
