@@ -7,6 +7,7 @@ import { ShieldCheck, Mail, Lock, Eye, EyeOff, Sparkles, LogIn, Shield } from 'l
 import VerificationSpinner from '../../components/VerificationSpinner.jsx';
 import { useGoogleLogin } from '@react-oauth/google';
 import { api } from '../../utils/api.js';
+import SEO from '../../components/SEO.jsx';
 import './auth.css';
 
 function FloatingInput({
@@ -241,6 +242,7 @@ export default function Login() {
 
   return (
     <>
+      <SEO title="Secure Access" noindex={true} />
       <AnimatePresence>
         {loading && (
           <VerificationSpinner

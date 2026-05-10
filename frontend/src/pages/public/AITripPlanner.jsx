@@ -1,9 +1,10 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
 import { Sparkles, MapPin, Compass } from 'lucide-react';
 import { useCurrency } from '../../CurrencyContext.jsx';
 import { api } from '../../utils/api.js';
+import SEO from '../../components/SEO.jsx';
 
 export default function AITripPlanner() {
   const [destination, setDestination] = useState('');
@@ -38,6 +39,14 @@ export default function AITripPlanner() {
 
   return (
     <WayzzaLayout noPadding>
+      <SEO
+        title="AI Trip Architect | Bespoke Varkala Itineraries"
+        description="Let Wayzza Intelligence orchestrate your perfect Varkala escape. Personalized itineraries combining premium clifftop stays, high-performance mobility, and native secrets."
+        breadcrumb={[
+          { name: 'Home', url: 'https://wayzza.live' },
+          { name: 'AI Planner', url: 'https://wayzza.live/ai-planner' },
+        ]}
+      />
       <div className="min-h-screen bg-slate-50 font-sans pb-24">
         {/* Hero Header */}
         <header className="relative overflow-hidden bg-slate-950 text-white">

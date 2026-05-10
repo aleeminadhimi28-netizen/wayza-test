@@ -11,12 +11,12 @@ export default function SEO({
   breadcrumb = null,
   author = null,
   faq = null,
+  noindex = false,
   googleVerification = 'VwzE_N_T2z_X_k_z_V_z_v_z_V_z_v_z_V_z_v_z_V_z_v_z_V_z_v',
 }) {
   const currentUrl = url || (typeof window !== 'undefined' ? window.location.href : '');
   const canonicalUrl = currentUrl?.split('?')[0] || currentUrl;
-  const defaultImage =
-    'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&q=80';
+  const defaultImage = 'https://wayzza.live/og-image.png';
   const metaImage = image || defaultImage;
 
   // Default Organization & LocalBusiness schema
@@ -28,7 +28,7 @@ export default function SEO({
     logo: 'https://wayzza.live/logo.png',
     image: defaultImage,
     description: 'Curated sanctuaries and elite mobility for digital nomads in Varkala, Kerala.',
-    telephone: '+91-WAYZZA-001',
+    telephone: '+91 80892 22444',
     priceRange: '₹₹₹',
     address: {
       '@type': 'PostalAddress',
@@ -113,7 +113,7 @@ export default function SEO({
       />
       <meta
         name="robots"
-        content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+        content={noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"}
       />
       <link rel="canonical" href={canonicalUrl} />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />

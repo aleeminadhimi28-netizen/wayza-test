@@ -162,7 +162,7 @@ export default function Listings() {
   const catLabel = CATEGORIES.find((c) => c.id === category)?.label || 'Properties';
 
   const currentUrl =
-    typeof window !== 'undefined' ? window.location.href : 'https://wayza-app.vercel.app/listings';
+    typeof window !== 'undefined' ? window.location.href : 'https://wayzza.live/listings';
 
   return (
     <WayzzaLayout noPadding>
@@ -174,7 +174,7 @@ export default function Listings() {
             : `Experience the best of Varkala with verified ${catLabel.toLowerCase()} curated for digital nomads and travelers.`
         }
         breadcrumb={[
-          { name: 'Home', url: 'https://wayza-app.vercel.app' },
+          { name: 'Home', url: 'https://wayzza.live' },
           { name: catLabel, url: currentUrl },
         ]}
         schema={{
@@ -188,7 +188,7 @@ export default function Listings() {
             itemListElement: rows.slice(0, 10).map((item, index) => ({
               '@type': 'ListItem',
               position: index + 1,
-              url: `https://wayza-app.vercel.app/listing/${item._id}`,
+              url: `https://wayzza.live/listing/${item._id}`,
               name: item.title,
             })),
           },

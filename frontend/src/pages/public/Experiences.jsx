@@ -69,8 +69,8 @@ export default function Experiences() {
           bio: 'A collective of native Varkala residents and digital nomad veterans dedicated to mapping the unseen soul of the coast.',
         }}
         breadcrumb={[
-          { name: 'Home', url: 'https://wayza-app.vercel.app' },
-          { name: 'Experiences', url: 'https://wayza-app.vercel.app/experiences' },
+          { name: 'Home', url: 'https://wayzza.live' },
+          { name: 'Experiences', url: 'https://wayzza.live/experiences' },
         ]}
       />
       <div className="bg-white font-sans text-slate-900 selection:bg-amber-100 selection:text-amber-900 overflow-hidden">

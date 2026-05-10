@@ -1,4 +1,4 @@
-﻿import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
 import { useAuth } from '../../AuthContext.jsx';
 import { ShieldCheck, CreditCard, ArrowLeft, Shield, ChevronRight } from 'lucide-react';
@@ -6,6 +6,7 @@ import { useToast } from '../../ToastContext.jsx';
 import { useState, useEffect } from 'react';
 
 import { api } from '../../utils/api.js';
+import SEO from '../../components/SEO.jsx';
 
 export default function Payment() {
   const { id: bookingId } = useParams();
@@ -104,6 +105,7 @@ export default function Payment() {
 
   return (
     <WayzzaLayout noPadding>
+      <SEO title="Secure Checkout" noindex={true} />
       <div className="bg-white min-h-screen font-sans">
         <div className="max-w-6xl mx-auto px-6 md:px-12 py-10 md:py-16">
           {/* ─── HEADER ─── */}

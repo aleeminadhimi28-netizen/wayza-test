@@ -1,4 +1,4 @@
-﻿import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../AuthContext.jsx';
 import { useToast } from '../../ToastContext.jsx';
@@ -8,6 +8,7 @@ import { WayzzaLayout, WayzzaSkeleton } from '../../WayzzaUI.jsx';
 
 import { api } from '../../utils/api.js';
 import { fixImg } from '../../utils/image.js';
+import SEO from '../../components/SEO.jsx';
 
 export default function Booking() {
   const { id } = useParams();
@@ -185,6 +186,7 @@ export default function Booking() {
 
   return (
     <WayzzaLayout noPadding>
+      <SEO title="Confirm Reservation" noindex={true} />
       <div className="bg-white min-h-screen font-sans selection:bg-emerald-50 selection:text-emerald-900">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 py-12 md:py-20">
           <header className="mb-12 space-y-2">

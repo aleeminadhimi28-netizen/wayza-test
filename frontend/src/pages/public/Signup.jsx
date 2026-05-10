@@ -17,6 +17,7 @@ import { useAuth } from '../../AuthContext.jsx';
 import VerificationSpinner from '../../components/VerificationSpinner.jsx';
 import { useGoogleLogin } from '@react-oauth/google';
 import { api } from '../../utils/api.js';
+import SEO from '../../components/SEO.jsx';
 import './auth.css';
 
 /* ── Floating-label input ── */
@@ -163,6 +164,7 @@ export default function Signup() {
 
   return (
     <>
+      <SEO title="Create Account" noindex={true} />
       <style>{`
         /* ── Page shell ── */
         .su-page {

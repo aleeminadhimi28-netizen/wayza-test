@@ -1,10 +1,11 @@
-﻿import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
 import { useAuth } from '../../AuthContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, MessageSquare, ShieldCheck, ArrowRight, Sparkles } from 'lucide-react';
 
 import { api } from '../../utils/api.js';
+import SEO from '../../components/SEO.jsx';
 import {
   initiateSocketConnection,
   disconnectSocket,
@@ -99,6 +100,7 @@ export default function GuestChat() {
 
   return (
     <WayzzaLayout noPadding>
+      <SEO title="Concierge Command" noindex={true} />
       <div className="bg-white min-h-screen font-sans selection:bg-emerald-50 selection:text-emerald-900">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 py-12 md:py-16">
           <header className="mb-12">
