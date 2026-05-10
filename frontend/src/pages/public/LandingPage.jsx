@@ -126,6 +126,7 @@ export default function LandingPage() {
     <WayzzaLayout noPadding hideFooter>
       <SEO
         title="Luxury Varkala Stays & Elite Mobility"
+        description="Handpicked clifftop villas, Royal Enfield rentals, and hidden local secrets curated for the modern explorer in Varkala."
         breadcrumb={[{ name: 'Home', url: 'https://wayzza.live' }]}
         schema={{
           '@context': 'https://schema.org',
@@ -825,10 +826,16 @@ export default function LandingPage() {
                     Connect
                   </h5>
                   <div className="flex gap-4">
-                    {[Instagram, Twitter, Facebook].map((Icon, i) => (
+                    {[
+                      { Icon: Instagram, url: 'https://www.instagram.com/wayzza' },
+                      { Icon: Twitter, url: 'https://www.twitter.com/wayzza' },
+                      { Icon: Facebook, url: 'https://www.facebook.com/wayzza' },
+                    ].map(({ Icon, url }, i) => (
                       <a
                         key={i}
-                        href="#"
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white/40 hover:text-emerald-400 hover:border-emerald-500/50 hover:-translate-y-1 transition-all"
                       >
                         <Icon size={20} />
