@@ -25,9 +25,9 @@ export default function SEO({
     '@type': 'LocalBusiness',
     name: 'Wayzza',
     url: 'https://wayzza.live',
-    logo: 'https://wayzza.live/logo.png',
+    logo: 'https://wayzza.live/favicon.svg',
     image: defaultImage,
-    description: 'Curated sanctuaries and elite mobility for digital nomads in Varkala, Kerala.',
+    description: 'Curated sanctuaries and elite mobility for the modern explorer in Varkala, Kerala.',
     telephone: '+91 80892 22444',
     priceRange: '₹₹₹',
     address: {
@@ -103,7 +103,7 @@ export default function SEO({
   return (
     <Helmet>
       {/* Standard metadata tags */}
-      <title>{title ? `${title} | Wayzza` : 'Wayzza | Escape the Ordinary'}</title>
+      <title>{title ? `Wayzza | ${title}` : 'Wayzza | Escape the Ordinary'}</title>
       <meta
         name="description"
         content={
@@ -140,7 +140,7 @@ export default function SEO({
       <meta property="og:url" content={currentUrl} />
       <meta
         property="og:title"
-        content={title ? `${title} | Wayzza` : 'Wayzza | Escape the Ordinary'}
+        content={title ? `Wayzza | ${title}` : 'Wayzza | Escape the Ordinary'}
       />
       <meta
         property="og:description"
@@ -161,7 +161,7 @@ export default function SEO({
       <meta name="twitter:url" content={currentUrl} />
       <meta
         name="twitter:title"
-        content={title ? `${title} | Wayzza` : 'Wayzza | Escape the Ordinary'}
+        content={title ? `Wayzza | ${title}` : 'Wayzza | Escape the Ordinary'}
       />
       <meta
         name="twitter:description"
