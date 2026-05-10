@@ -125,7 +125,7 @@ export default function LandingPage() {
   return (
     <WayzzaLayout noPadding hideFooter>
       <SEO
-        title="Escape the Ordinary"
+        title="Premium Varkala Stays & Luxury Mobility"
         description="Handpicked clifftop villas, Royal Enfield rentals, and hidden local secrets curated for the modern explorer in Varkala."
         breadcrumb={[{ name: 'Home', url: 'https://wayzza.live' }]}
         schema={{

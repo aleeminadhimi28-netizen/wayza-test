@@ -103,7 +103,7 @@ export default function SEO({
   return (
     <Helmet>
       {/* Standard metadata tags */}
-      <title>{title ? `Wayzza | ${title}` : 'Wayzza | Escape the Ordinary'}</title>
+      <title>{title ? `Wayzza | ${title}` : 'Wayzza | Premium Varkala Stays & Luxury Mobility'}</title>
       <meta
         name="description"
         content={
@@ -140,7 +140,7 @@ export default function SEO({
       <meta property="og:url" content={currentUrl} />
       <meta
         property="og:title"
-        content={title ? `Wayzza | ${title}` : 'Wayzza | Escape the Ordinary'}
+        content={title ? `Wayzza | ${title}` : 'Wayzza | Premium Varkala Stays & Luxury Mobility'}
       />
       <meta
         property="og:description"
@@ -161,7 +161,7 @@ export default function SEO({
       <meta name="twitter:url" content={currentUrl} />
       <meta
         name="twitter:title"
-        content={title ? `Wayzza | ${title}` : 'Wayzza | Escape the Ordinary'}
+        content={title ? `Wayzza | ${title}` : 'Wayzza | Premium Varkala Stays & Luxury Mobility'}
       />
       <meta
         name="twitter:description"
