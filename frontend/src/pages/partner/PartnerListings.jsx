@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../AuthContext.jsx';
 import { useToast } from '../../ToastContext.jsx';
@@ -31,16 +31,16 @@ export default function PartnerListings() {
 
   useEffect(() => {
     load();
-  }, [user?.email]);
+  }, [load]);
 
-  async function load() {
+  const load = useCallback(async () => {
     if (!user?.email) return;
     try {
       const data = await api.getOwnerListings(user.email);
       setListings(Array.isArray(data) ? data : []);
     } catch {}
     setLoading(false);
-  }
+  }, [user?.email]);
 
   async function handleDelete(id) {
     if (!window.confirm('Are you sure you want to delete this property? This cannot be undone.'))

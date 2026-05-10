@@ -121,11 +121,22 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
         className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 py-4 ${headerBg}`}
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between">
-          <Link
-            to="/"
-            className={`text-2xl md:text-3xl font-bold transition-all duration-500 tracking-tight uppercase ${textColor}`}
+          <Link 
+            to="/" 
+            className={`flex items-center group transition-all duration-300 ${mobileMenuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
           >
-            Wayzza<span className="text-emerald-500">.</span>
+            <div className="relative h-14 md:h-18 w-[240px] md:w-[320px]">
+              <img
+                src="/images/logo-dark.svg"
+                alt="Wayzza Logo"
+                className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-500 ${scrolled || !isHomePage ? 'opacity-0' : 'opacity-100'}`}
+              />
+              <img
+                src="/images/logo-light.svg"
+                alt="Wayzza Logo"
+                className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-500 ${scrolled || !isHomePage ? 'opacity-100' : 'opacity-0'}`}
+              />
+            </div>
           </Link>
           <div
             className={`hidden lg:flex gap-6 font-bold uppercase tracking-widest text-[11px] ${subTextColor}`}
@@ -360,134 +371,120 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
           </div>
         </div>
 
-        {/* MOBILE MENU PANEL */}
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, x: '100%' }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed inset-0 z-[110] bg-white lg:hidden flex flex-col"
-            >
-              <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-                <Link
-                  to="/"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-2xl font-bold tracking-tight uppercase text-slate-900"
-                >
-                  Wayzza<span className="text-emerald-500">.</span>
-                </Link>
-                <button
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-900"
-                >
-                  <X size={24} />
-                </button>
+      </nav>
+      {/* MOBILE MENU PANEL */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, x: '100%' }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: '100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="fixed inset-0 z-[9999] bg-white dark:bg-slate-950 lg:hidden flex flex-col shadow-2xl"
+          >
+            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+              <Link
+                to="/"
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-xl font-black uppercase tracking-[0.3em] text-slate-900 dark:text-white"
+              >
+                Wayzza
+              </Link>
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-900"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-8 space-y-8">
+              <div className="space-y-4">
+                <div className="grid gap-2">
+                  {navLinks.map((link) => (
+                    <Link
+                      key={link.name}
+                      to={link.to}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center justify-between p-6 rounded-[24px] font-black text-xl uppercase tracking-tighter transition-all active:scale-95 ${link.icon ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-slate-50 text-slate-900 border border-slate-100'}`}
+                    >
+                      <div className="flex items-center gap-4">
+                        {link.icon && <link.icon size={20} />}
+                        {link.name}
+                      </div>
+                      <ArrowRight size={20} className="opacity-30" />
+                    </Link>
+                  ))}
+                </div>
               </div>
-              <div className="flex-1 overflow-y-auto p-8 space-y-8">
-                <div className="space-y-4">
-                  <p className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-300">
-                    Explorer Menu
-                  </p>
-                  <div className="grid gap-2">
-                    {navLinks.map((link) => (
-                      <Link
-                        key={link.name}
-                        to={link.to}
-                        onClick={() => setMobileMenuOpen(false)}
-                        className={`flex items-center justify-between p-6 rounded-[24px] font-black text-xl uppercase tracking-tighter transition-all active:scale-95 ${link.icon ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-slate-50 text-slate-900 border border-slate-100'}`}
-                      >
-                        <div className="flex items-center gap-4">
-                          {link.icon && <link.icon size={20} />}
-                          {link.name}
-                        </div>
-                        <ArrowRight size={20} className="opacity-30" />
-                      </Link>
-                    ))}
+
+              {!user ? (
+                <div className="space-y-4 pt-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <Link
+                      to="/login"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="h-20 bg-slate-950 text-white rounded-[24px] flex flex-col items-center justify-center gap-1 font-black text-[11px] uppercase tracking-widest shadow-xl shadow-slate-900/20"
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      to="/signup"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="h-20 bg-emerald-500 text-slate-950 rounded-[24px] flex flex-col items-center justify-center gap-1 font-black text-[11px] uppercase tracking-widest shadow-xl shadow-emerald-500/20"
+                    >
+                      Join Now
+                    </Link>
                   </div>
                 </div>
-
-                {!user ? (
-                  <div className="space-y-4 pt-4">
-                    <p className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-300">
-                      Account Protocol
-                    </p>
-                    <div className="grid grid-cols-2 gap-4">
+              ) : (
+                <div className="space-y-4 pt-4">
+                  <div className="bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 rounded-[32px] p-8 space-y-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-14 h-14 bg-slate-950 text-white rounded-2xl flex items-center justify-center font-black text-xl">
+                        {user.email.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="text-lg font-black text-slate-900 leading-none truncate w-40">
+                          {user.email.split('@')[0]}
+                        </p>
+                        <p className="text-[11px] font-bold text-slate-400 mt-1 uppercase tracking-widest">
+                          Verified Member
+                        </p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
                       <Link
-                        to="/login"
+                        to="/profile"
                         onClick={() => setMobileMenuOpen(false)}
-                        className="h-20 bg-slate-950 text-white rounded-[24px] flex flex-col items-center justify-center gap-1 font-black text-[11px] uppercase tracking-widest shadow-xl shadow-slate-900/20"
+                        className="py-4 bg-white border border-slate-200 rounded-xl text-center text-[11px] font-black uppercase tracking-widest"
                       >
-                        Sign In
+                        Account
                       </Link>
                       <Link
-                        to="/signup"
+                        to="/my-bookings"
                         onClick={() => setMobileMenuOpen(false)}
-                        className="h-20 bg-emerald-500 text-slate-950 rounded-[24px] flex flex-col items-center justify-center gap-1 font-black text-[11px] uppercase tracking-widest shadow-xl shadow-emerald-500/20"
+                        className="py-4 bg-white border border-slate-200 rounded-xl text-center text-[11px] font-black uppercase tracking-widest"
                       >
-                        Join Now
+                        Bookings
                       </Link>
                     </div>
+                    <button
+                      onClick={() => {
+                        logout();
+                        setMobileMenuOpen(false);
+                        navigate('/');
+                      }}
+                      className="w-full py-5 bg-slate-950 text-white rounded-[20px] font-black text-[11px] uppercase tracking-[0.3em]"
+                    >
+                      Log Out
+                    </button>
                   </div>
-                ) : (
-                  <div className="space-y-4 pt-4">
-                    <p className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-300">
-                      Your Profile
-                    </p>
-                    <div className="bg-slate-50 border border-slate-100 rounded-[32px] p-8 space-y-6">
-                      <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 bg-slate-950 text-white rounded-2xl flex items-center justify-center font-black text-xl">
-                          {user.email.charAt(0).toUpperCase()}
-                        </div>
-                        <div>
-                          <p className="text-lg font-black text-slate-900 leading-none truncate w-40">
-                            {user.email.split('@')[0]}
-                          </p>
-                          <p className="text-[11px] font-bold text-slate-400 mt-1 uppercase tracking-widest">
-                            Verified Member
-                          </p>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <Link
-                          to="/profile"
-                          onClick={() => setMobileMenuOpen(false)}
-                          className="py-4 bg-white border border-slate-200 rounded-xl text-center text-[11px] font-black uppercase tracking-widest"
-                        >
-                          Account
-                        </Link>
-                        <Link
-                          to="/my-bookings"
-                          onClick={() => setMobileMenuOpen(false)}
-                          className="py-4 bg-white border border-slate-200 rounded-xl text-center text-[11px] font-black uppercase tracking-widest"
-                        >
-                          Bookings
-                        </Link>
-                      </div>
-                      <button
-                        onClick={() => {
-                          logout();
-                          setMobileMenuOpen(false);
-                          navigate('/');
-                        }}
-                        className="w-full py-5 bg-slate-950 text-white rounded-[20px] font-black text-[11px] uppercase tracking-[0.3em]"
-                      >
-                        Log Out
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-              <div className="p-8 border-t border-slate-100 bg-slate-50 text-center">
-                <p className="text-[11px] font-black uppercase tracking-[0.5em] text-slate-300">
-                  Wayzza Network v2.0
-                </p>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </nav>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <PageTransition>
         <main
@@ -501,11 +498,12 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
         <footer className="bg-slate-950 text-white/40">
           <div className="max-w-7xl mx-auto px-8 py-16 md:py-32 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-20">
             <div className="space-y-6 md:space-y-10 text-center md:text-left">
-              <Link
-                to="/"
-                className="text-3xl md:text-4xl font-black tracking-tight uppercase text-white"
-              >
-                Wayzza<span className="text-emerald-500">.</span>
+              <Link to="/" className="flex items-center justify-center md:justify-start group">
+                <img
+                  src="/images/logo-dark.svg"
+                  alt="Wayzza Logo"
+                  className="h-12 md:h-16 w-auto object-contain transition-all"
+                />
               </Link>
               <p className="text-base md:text-lg font-medium leading-relaxed text-white/30 max-w-xs mx-auto md:mx-0">
                 &ldquo;Connecting travelers with extraordinary stays.&rdquo;

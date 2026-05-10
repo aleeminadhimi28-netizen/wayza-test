@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
@@ -11,8 +11,6 @@ export default function PaymentSuccess() {
   const { token } = useAuth();
   const [params] = useSearchParams();
   const navigate = useNavigate();
-  const [confirmed, setConfirmed] = useState(false);
-
   useEffect(() => {
     const bookingId = params.get('bookingId');
     if (!bookingId || !token) return;
@@ -29,10 +27,10 @@ export default function PaymentSuccess() {
       }),
     })
       .then((r) => r.json())
-      .then((data) => {
-        if (data.ok) setConfirmed(true);
+      .then(() => {
+        // Confirmation successful
       });
-  }, [token]);
+  }, [token, params]);
 
   return (
     <WayzzaLayout noPadding>

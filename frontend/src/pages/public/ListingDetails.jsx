@@ -1,5 +1,5 @@
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { WayzzaLayout, WayzzaSkeleton } from '../../WayzzaUI.jsx';
 import { useAuth } from '../../AuthContext.jsx';
 import { useToast } from '../../ToastContext.jsx';
@@ -81,16 +81,16 @@ export default function ListingDetails() {
         setCanReview(bookings.some((b) => b.listingId === id && b.status === 'paid'));
       });
     }
-  }, [id]);
+  }, [id, user, loadReviews]);
 
-  async function loadReviews() {
+  const loadReviews = useCallback(async () => {
     try {
       const data = await api.getReviews(id);
       const rows = Array.isArray(data.data) ? data.data : [];
       setReviews(rows);
       if (user?.email) setAlreadyReviewed(rows.some((r) => r.guestEmail === user.email));
     } catch {}
-  }
+  }, [id, user?.email]);
 
   async function submitReview() {
     if (!rating) return;

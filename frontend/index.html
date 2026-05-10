@@ -1,36 +1,95 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/png" href="/images/wayzza-icon.png?v=2" />
-  <link rel="apple-touch-icon" href="/images/wayzza-icon.png?v=2" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/wayzza_favicon.svg" />
+  <link rel="apple-touch-icon" href="/wayzza_favicon.svg" />
+  <link rel="manifest" href="/manifest.json" />
+
+  <!-- Viewport -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <!-- Theme -->
   <meta name="theme-color" content="#0a2618" />
+  <meta name="msapplication-TileColor" content="#0a2618" />
+
+  <!-- Apple PWA -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Wayzza" />
-  <meta name="description" content="Wayzza | Curated Sanctuaries & High-Performance Mobility. Escape the ordinary gracefully." />
-  
-  <!-- Critical Resource Preload -->
-  <link rel="preload" href="/images/wayzza-icon.png?v=2" as="image" />
-  <link rel="preconnect" href="https://images.unsplash.com" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  
+
   <!-- Primary Meta Tags -->
-  <meta name="title" content="Wayzza | Curated Sanctuaries & Elite Mobility" />
-  <meta name="description" content="Access a verified collection of clifftop villas, high-performance rentals, and hidden local secrets in Varkala." />
+  <title>Escape the Ordinary | Wayzza</title>
+  <meta name="title" content="Escape the Ordinary | Wayzza" />
+  <meta name="description"
+    content="Access a verified collection of clifftop villas, high-performance rentals, and hidden local secrets in Varkala. Curated sanctuaries & elite mobility for the modern explorer." />
+  <meta name="keywords"
+    content="Varkala stays, luxury villas Varkala, bike rentals Varkala, car rentals Varkala, curated travel Kerala, Wayzza" />
+  <meta name="author" content="Wayzza" />
+  <meta name="robots" content="index, follow" />
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://wayzza.live/" />
-  
-  <link rel="manifest" href="/manifest.json" />
-  <title>Wayzza | Curated Sanctuaries</title>
+  <meta property="og:title" content="Escape the Ordinary | Wayzza" />
+  <meta property="og:description"
+    content="Curated sanctuaries & elite mobility for the modern explorer in Varkala. Clifftop villas, performance bikes, and hidden local secrets." />
+  <meta property="og:image" content="https://wayzza.live/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content="Wayzza" />
+  <meta property="og:locale" content="en_IN" />
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://wayzza.live/" />
+  <meta name="twitter:title" content="Escape the Ordinary | Wayzza" />
+  <meta name="twitter:description" content="Curated sanctuaries & elite mobility for the modern explorer in Varkala." />
+  <meta name="twitter:image" content="https://wayzza.live/og-image.jpg" />
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://wayzza.live/" />
+
+  <!-- Critical Resource Preloads -->
+  <link rel="preload" href="/wayzza_favicon.svg" as="image" />
+  <link rel="preconnect" href="https://images.unsplash.com" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TravelAgency",
+    "name": "Wayzza",
+    "url": "https://wayzza.live",
+    "logo": "https://wayzza.live/wayzza_favicon.svg",
+    "description": "Curated sanctuaries and elite mobility for the modern explorer in Varkala, Kerala.",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Varkala",
+      "addressRegion": "Kerala",
+      "addressCountry": "IN"
+    },
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "email": "hello@wayzza.live",
+      "contactType": "customer support"
+    },
+    "sameAs": [
+      "https://www.instagram.com/wayzza",
+      "https://www.twitter.com/wayzza"
+    ]
+  }
+  </script>
 </head>
+
 <body style="margin:0;font-family:system-ui">
-<div id="root"></div>
-<script type="module" src="/src/main.jsx"></script>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
 </body>
+
 </html>

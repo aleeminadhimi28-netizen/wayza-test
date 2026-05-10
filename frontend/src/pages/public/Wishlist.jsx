@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { WayzzaLayout, WayzzaHotelItem, WayzzaSkeleton } from '../../WayzzaUI.jsx';
 import { useAuth } from '../../AuthContext.jsx';
 import { useNavigate, Link } from 'react-router-dom';
@@ -16,7 +16,7 @@ export default function Wishlist() {
 
   const fixImg = (img) => api.fixImg(img);
 
-  async function load() {
+  const load = useCallback(async () => {
     try {
       const data = await api.getWishlist();
       const saved = Array.isArray(data.data) ? data.data : [];
@@ -34,14 +34,14 @@ export default function Wishlist() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
   useEffect(() => {
     if (user?.email) load();
     else if (!loading) {
       navigate('/login');
     }
-  }, [user?.email, loading]);
+  }, [user?.email, loading, load, navigate]);
 
   async function toggle(listingId) {
     await api.toggleWishlist({ listingId });

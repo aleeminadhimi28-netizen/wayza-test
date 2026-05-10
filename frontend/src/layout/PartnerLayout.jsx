@@ -1,6 +1,6 @@
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../AuthContext.jsx';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
@@ -23,6 +23,7 @@ import {
   X,
   Moon,
   Sun,
+  Menu,
 } from 'lucide-react';
 import { api } from '../utils/api.js';
 import {
@@ -50,12 +51,26 @@ export default function PartnerLayout() {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  // THEME
   const [isDarkMode, setIsDarkMode] = useState(false);
-
   const [notifs, setNotifs] = useState([]);
   const [showNotifs, setShowNotifs] = useState(false);
+  const notifRef = useRef(null);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
+
+  // Close notif dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (notifRef.current && !notifRef.current.contains(e.target)) {
+        setShowNotifs(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     setIsDarkMode(document.documentElement.classList.contains('wayzza-dark'));
@@ -85,7 +100,6 @@ export default function PartnerLayout() {
     fetchNotifs();
     const int = setInterval(fetchNotifs, 30000);
 
-    // Real-time: join user room and listen for pushes
     initiateSocketConnection();
     joinUserRoom(user.email);
     const unsubscribe = subscribeToNotifications((notification) => {
@@ -100,7 +114,7 @@ export default function PartnerLayout() {
   }, [user]);
 
   async function openNotifs() {
-    setShowNotifs(!showNotifs);
+    setShowNotifs((prev) => !prev);
     if (!showNotifs && notifs.some((n) => !n.read)) {
       await api.markNotificationsRead();
       setNotifs((prev) => prev.map((n) => ({ ...n, read: true })));
@@ -112,22 +126,38 @@ export default function PartnerLayout() {
     navigate('/');
   }
 
+  const unreadCount = notifs.filter((n) => !n.read).length;
+  const currentPage = NAV.find((n) => n.to === location.pathname);
+
   return (
     <div className="flex h-screen bg-slate-50 font-sans selection:bg-emerald-100 selection:text-emerald-900 overflow-hidden">
-      {/* ===== SIDEBAR - PARTNER SUITE ===== */}
+
+      {/* Mobile Overlay */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 z-40 md:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* ===== SIDEBAR ===== */}
       <aside
-        className={`bg-slate-900 flex flex-col transition-all duration-300 ease-in-out shrink-0 sticky top-0 h-screen z-50 shadow-xl ${collapsed ? 'w-20' : 'w-64'} ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} fixed md:relative`}
+        className={`bg-slate-900 flex flex-col transition-all duration-300 ease-in-out shrink-0 h-screen z-50 shadow-xl
+          fixed md:relative
+          ${collapsed ? 'w-20' : 'w-64'}
+          ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+        `}
       >
         {/* Branding */}
-        <div
-          className={`h-20 flex items-center px-6 border-b border-slate-800 ${collapsed ? 'justify-center' : 'justify-between'}`}
-        >
+        <div className={`h-20 flex items-center px-4 border-b border-slate-800 ${collapsed ? 'justify-center' : 'justify-between'}`}>
           {!collapsed && (
-            <div
-              className="flex items-center gap-3 cursor-pointer"
-              onClick={() => navigate('/partner')}
-            >
-              <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center text-white font-bold text-lg">
+            <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/partner')}>
+              <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shrink-0">
                 W
               </div>
               <span className="font-bold text-lg text-white">
@@ -137,32 +167,34 @@ export default function PartnerLayout() {
           )}
           {collapsed && (
             <div
-              className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center text-white font-bold text-lg cursor-pointer"
+              className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center text-white font-bold text-lg cursor-pointer shrink-0"
               onClick={() => setCollapsed(false)}
             >
               W
             </div>
           )}
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className={`w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors flex items-center justify-center shrink-0 ${collapsed ? 'hidden' : 'block'}`}
-          >
-            <ChevronLeft size={16} />
-          </button>
+          {!collapsed && (
+            <button
+              onClick={() => setCollapsed(true)}
+              className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors flex items-center justify-center shrink-0"
+              aria-label="Collapse sidebar"
+            >
+              <ChevronLeft size={16} />
+            </button>
+          )}
         </div>
 
-        {/* Theme & Meta */}
-        <div
-          className={`px-6 py-4 border-b border-slate-800 flex items-center ${collapsed ? 'justify-center' : 'justify-between'}`}
-        >
+        {/* Theme toggle */}
+        <div className={`px-4 py-4 border-b border-slate-800 flex items-center ${collapsed ? 'justify-center' : 'justify-between'}`}>
           {!collapsed && (
             <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest leading-none">
-              Settings
+              Appearance
             </span>
           )}
           <button
             onClick={toggleTheme}
             className={`w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center transition-all ${isDarkMode ? 'text-amber-400' : 'text-slate-400 hover:text-white'}`}
+            aria-label="Toggle theme"
           >
             {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
           </button>
@@ -181,25 +213,31 @@ export default function PartnerLayout() {
               to={item.to}
               end={item.end}
               className={({ isActive }) =>
-                `flex items-center gap-3 p-3 rounded-xl transition-all relative group ${isActive ? 'bg-emerald-500/10 text-emerald-500 font-semibold' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`
+                `flex items-center gap-3 p-3 rounded-xl transition-all relative group
+                ${isActive
+                  ? 'bg-emerald-500/10 text-emerald-400 font-semibold'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                }`
               }
               title={collapsed ? item.label : undefined}
             >
-              <item.icon size={20} className={collapsed ? 'mx-auto shrink-0' : 'shrink-0'} />
-              {!collapsed && (
-                <div className="flex flex-col items-start leading-none">
-                  <span className="text-sm">{item.label}</span>
-                </div>
-              )}
-              {location.pathname === item.to && !collapsed && (
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-emerald-500 rounded-r-full" />
+              {({ isActive }) => (
+                <>
+                  {isActive && !collapsed && (
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-emerald-500 rounded-r-full" />
+                  )}
+                  <item.icon size={20} className={collapsed ? 'mx-auto shrink-0' : 'shrink-0'} />
+                  {!collapsed && (
+                    <span className="text-sm truncate">{item.label}</span>
+                  )}
+                </>
               )}
             </NavLink>
           ))}
         </nav>
 
-        {/* Partner Info & Sign Out */}
-        <div className="p-4 border-t border-slate-800 bg-slate-900/50 space-y-4">
+        {/* Partner info & logout */}
+        <div className="p-4 border-t border-slate-800 bg-slate-900/50 space-y-3">
           {!collapsed && (
             <div className="flex items-center gap-3 p-3 bg-slate-800 rounded-xl">
               <div className="w-10 h-10 rounded-lg bg-emerald-500/20 text-emerald-500 flex items-center justify-center font-bold text-sm shrink-0">
@@ -215,7 +253,6 @@ export default function PartnerLayout() {
               </div>
             </div>
           )}
-
           <button
             onClick={handleLogout}
             className={`w-full h-10 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2 border border-slate-700 text-slate-300 hover:bg-rose-500 hover:text-white hover:border-rose-500 ${collapsed ? 'justify-center px-0' : 'justify-center px-4'}`}
@@ -227,86 +264,87 @@ export default function PartnerLayout() {
         </div>
       </aside>
 
-      {/* Mobile Overlay */}
-      {mobileMenuOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
-          onClick={() => setMobileMenuOpen(false)}
-        />
-      )}
+      {/* ===== MAIN CONTENT ===== */}
+      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
 
-      {/* ===== MAIN EXPANSE ===== */}
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden relative">
-        {/* Global Header */}
-        <header className="bg-white border-b border-slate-200 h-20 px-4 md:px-8 flex items-center justify-between shrink-0 shadow-sm z-40">
-          <div className="flex items-center gap-4">
+        {/* Header */}
+        <header className="bg-white border-b border-slate-200 h-16 md:h-20 px-4 md:px-8 flex items-center justify-between shrink-0 shadow-sm z-40">
+          <div className="flex items-center gap-3">
+            {/* Mobile hamburger */}
             <button
               onClick={() => setMobileMenuOpen(true)}
               className="md:hidden w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-200 transition-colors"
+              aria-label="Open menu"
             >
-              <Navigation size={20} />
+              <Menu size={20} />
             </button>
+            {/* Desktop expand when collapsed */}
             {collapsed && (
               <button
                 onClick={() => setCollapsed(false)}
-                className="hidden md:block w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-200 transition-colors"
+                className="hidden md:flex w-10 h-10 rounded-xl bg-slate-100 text-slate-600 items-center justify-center hover:bg-slate-200 transition-colors"
+                aria-label="Expand sidebar"
               >
                 <ChevronRight size={20} />
               </button>
             )}
             <div className="flex flex-col">
-              <h1 className="text-xl font-bold text-slate-900">
-                {NAV.find((n) => n.to === location.pathname)?.label || 'Dashboard'}
+              <h1 className="text-base md:text-xl font-bold text-slate-900 leading-tight">
+                {currentPage?.label || 'Dashboard'}
               </h1>
-              <div className="flex items-center gap-1.5 mt-0.5 text-slate-500">
-                <Activity size={12} className="text-emerald-500" />
-                <span className="text-xs font-medium">System Active</span>
+              <div className="flex items-center gap-1.5 text-slate-500">
+                <Activity size={11} className="text-emerald-500" />
+                <span className="text-[11px] font-medium">System Active</span>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4">
             <button
               onClick={() => navigate('/')}
-              className="h-10 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-semibold text-sm flex items-center gap-2 transition-colors"
+              className="h-9 md:h-10 px-3 md:px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-semibold text-sm flex items-center gap-2 transition-colors"
             >
-              <Globe size={16} /> <span className="hidden sm:inline">Public Site</span>
+              <Globe size={16} />
+              <span className="hidden sm:inline">Public Site</span>
             </button>
 
-            {/* NOTIFICATION BELL */}
-            <div className="relative">
+            {/* Notifications */}
+            <div className="relative" ref={notifRef}>
               <button
                 onClick={openNotifs}
                 className="w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-colors relative"
+                aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ''}`}
               >
                 <Bell size={18} />
-                {notifs.filter((n) => !n.read).length > 0 && (
-                  <span className="absolute top-2 right-2.5 w-2 h-2 bg-rose-500 rounded-full animate-pulse" />
+                {unreadCount > 0 && (
+                  <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full animate-pulse" />
                 )}
               </button>
 
               <AnimatePresence>
                 {showNotifs && (
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                    initial={{ opacity: 0, scale: 0.95, y: 8 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                    exit={{ opacity: 0, scale: 0.95, y: 8 }}
+                    transition={{ duration: 0.15 }}
                     className="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50 flex flex-col max-h-[400px]"
                   >
-                    <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                    <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
                       <span className="font-bold text-sm text-slate-900 uppercase tracking-widest">
                         Notifications
                       </span>
                       <button
                         onClick={() => setShowNotifs(false)}
-                        className="text-slate-400 hover:text-slate-900"
+                        className="text-slate-400 hover:text-slate-900 transition-colors"
+                        aria-label="Close notifications"
                       >
                         <X size={16} />
                       </button>
                     </div>
                     <div className="overflow-y-auto overflow-x-hidden p-2 flex-1">
                       {notifs.length === 0 ? (
-                        <p className="text-center text-xs text-slate-400 py-6">
+                        <p className="text-center text-xs text-slate-400 py-8">
                           No new notifications
                         </p>
                       ) : (
@@ -328,10 +366,14 @@ export default function PartnerLayout() {
               </AnimatePresence>
             </div>
 
+            {/* Avatar */}
             <div
-              className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm cursor-pointer hover:bg-emerald-200 transition-colors border border-emerald-200"
+              className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm cursor-pointer hover:bg-emerald-200 transition-colors border border-emerald-200 shrink-0"
               onClick={() => navigate('/profile')}
               title="Account Profile"
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && navigate('/profile')}
             >
               {(user?.email || 'P').charAt(0).toUpperCase()}
             </div>
@@ -339,11 +381,9 @@ export default function PartnerLayout() {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-6 md:p-8 relative z-10 bg-slate-50">
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 bg-slate-50">
           <Outlet />
-
-          {/* Footer inside main content area */}
-          <div className="mt-12 py-6 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-400 font-medium">
+          <div className="mt-12 py-6 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-slate-400 font-medium">
             <div className="flex items-center gap-2">
               <Navigation size={14} /> Wayzza Partner Suite
             </div>

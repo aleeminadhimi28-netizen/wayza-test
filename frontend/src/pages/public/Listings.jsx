@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
@@ -81,7 +81,7 @@ export default function Listings() {
   const start = params.get('start') || '';
   const end = params.get('end') || '';
 
-  async function loadWishlist() {
+  const loadWishlist = useCallback(async () => {
     if (!user) return;
     try {
       const data = await api.getWishlist();
@@ -89,9 +89,9 @@ export default function Listings() {
         setSaved(new Set(data.data?.map((x) => x.listingId) || []));
       }
     } catch {}
-  }
+  }, [user]);
 
-  async function loadListings() {
+  const loadListings = useCallback(async () => {
     setLoading(true);
     try {
       const data = await api.getListings({
@@ -110,7 +110,7 @@ export default function Listings() {
       setTotal(data.total || data.rows?.length || 0);
     } catch {}
     setLoading(false);
-  }
+  }, [location, minPrice, maxPrice, sort, category, page, start, end]);
 
   async function toggleWishlist(e, listingId) {
     e.preventDefault();
@@ -147,7 +147,7 @@ export default function Listings() {
     loadListings();
     loadWishlist();
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [location, minPrice, maxPrice, sort, category, page, start, end]);
+  }, [loadListings, loadWishlist]);
 
   useEffect(() => {
     setPage(1);

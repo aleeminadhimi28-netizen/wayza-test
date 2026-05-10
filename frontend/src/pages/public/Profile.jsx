@@ -127,19 +127,6 @@ export default function Profile() {
     }
   }
 
-  async function cancelBooking(id) {
-    if (!window.confirm('Are you sure you want to cancel this reservation?')) return;
-    try {
-      const data = await api.cancelBooking({ bookingId: id });
-      if (data.ok) {
-        showToast('Reservation cancelled.', 'success');
-        setBookings((prev) => prev.map((b) => (b._id === id ? { ...b, status: 'cancelled' } : b)));
-      } else showToast(data.message, 'error');
-    } catch {
-      showToast('Connection error. Please try again.', 'error');
-    }
-  }
-
   async function toggleWishlist(listingId) {
     try {
       await api.toggleWishlist({ listingId });

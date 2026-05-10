@@ -35,22 +35,20 @@ import AdminSettings from './AdminSettings.jsx';
 import AdminCoupons from './AdminCoupons.jsx';
 import AdminLogs from './AdminLogs.jsx';
 
+const TABS = [
+  { id: 'overview', icon: LayoutDashboard, label: 'Overview' },
+  { id: 'users', icon: Users, label: 'Users' },
+  { id: 'partners', icon: Briefcase, label: 'Partners' },
+  { id: 'listings', icon: Home, label: 'Inventory' },
+  { id: 'bookings', icon: CalendarCheck, label: 'Bookings' },
+  { id: 'withdrawals', icon: Banknote, label: 'Finance' },
+  { id: 'support', icon: MessageSquare, label: 'Support' },
+  { id: 'coupons', icon: Tag, label: 'Promotions' },
+  { id: 'logs', icon: Activity, label: 'Activity Logs' },
+  { id: 'settings', icon: Settings, label: 'Settings' },
+];
 
- 
- const TABS = [
-   { id: 'overview', icon: LayoutDashboard, label: 'Overview' },
-   { id: 'users', icon: Users, label: 'Users' },
-   { id: 'partners', icon: Briefcase, label: 'Partners' },
-   { id: 'listings', icon: Home, label: 'Inventory' },
-   { id: 'bookings', icon: CalendarCheck, label: 'Bookings' },
-   { id: 'withdrawals', icon: Banknote, label: 'Finance' },
-   { id: 'support', icon: MessageSquare, label: 'Support' },
-   { id: 'coupons', icon: Tag, label: 'Promotions' },
-   { id: 'logs', icon: Activity, label: 'Activity Logs' },
-   { id: 'settings', icon: Settings, label: 'Settings' },
- ];
- 
- export default function AdminDashboard() {
+export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
@@ -119,28 +117,28 @@ import AdminLogs from './AdminLogs.jsx';
   }, [activeTab, loadTickets, loadWithdrawals, showToast]);
 
   const loadTickets = useCallback(async () => {
-     setLoadingData(true);
-     try {
-       const d = await api.getSupportTickets();
-       if (d.ok) setTickets(d.data || []);
-     } catch (err) {
-       console.error('Failed to load support tickets:', err);
-       showToast('Failed to load support tickets.', 'error');
-     }
-     setLoadingData(false);
-   }, [showToast]);
- 
-   const loadWithdrawals = useCallback(async () => {
-     setLoadingData(true);
-     try {
-       const d = await api.adminGetWithdrawals();
-       if (d.ok) setWithdrawals(d.data || []);
-     } catch (err) {
-       console.error('Failed to load withdrawals:', err);
-       showToast('Failed to load withdrawal requests.', 'error');
-     }
-     setLoadingData(false);
-   }, [showToast]);
+    setLoadingData(true);
+    try {
+      const d = await api.getSupportTickets();
+      if (d.ok) setTickets(d.data || []);
+    } catch (err) {
+      console.error('Failed to load support tickets:', err);
+      showToast('Failed to load support tickets.', 'error');
+    }
+    setLoadingData(false);
+  }, [showToast]);
+
+  const loadWithdrawals = useCallback(async () => {
+    setLoadingData(true);
+    try {
+      const d = await api.adminGetWithdrawals();
+      if (d.ok) setWithdrawals(d.data || []);
+    } catch (err) {
+      console.error('Failed to load withdrawals:', err);
+      showToast('Failed to load withdrawal requests.', 'error');
+    }
+    setLoadingData(false);
+  }, [showToast]);
 
   function handleLogout() {
     logout();
@@ -261,8 +259,6 @@ import AdminLogs from './AdminLogs.jsx';
     const query = searchQuery.toLowerCase();
     return (item.email || item.title || item.businessName || '').toLowerCase().includes(query);
   });
-
-
 
   const pendingWithdrawals = withdrawals.filter((w) => w.status === 'pending').length;
   const openTickets = tickets.filter((t) => t.status === 'open').length;

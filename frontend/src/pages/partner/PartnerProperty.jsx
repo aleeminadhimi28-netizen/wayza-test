@@ -1,5 +1,5 @@
-﻿import { useParams, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plus,
@@ -55,9 +55,9 @@ export default function PartnerProperty() {
 
   useEffect(() => {
     load();
-  }, [id]);
+  }, [load]);
 
-  async function load() {
+  const load = useCallback(async () => {
     try {
       const data = await api.getListing(id);
       const l = data.data || data;
@@ -74,7 +74,7 @@ export default function PartnerProperty() {
       console.error('Failed to load property:', err);
       showToast('Protocol failure: Data retrieval interrupted.', 'error');
     }
-  }
+  }, [id, editIndex, showToast]);
 
   function resetForm() {
     setType(listing?.category === 'bike' || listing?.category === 'car' ? 'Vehicle' : 'Room');

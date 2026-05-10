@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '../../AuthContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -69,9 +69,9 @@ export default function PartnerBookings() {
   useEffect(() => {
     if (!user?.email) return;
     refresh();
-  }, [user?.email]);
+  }, [user?.email, refresh]);
 
-  const refresh = () => {
+  const refresh = useCallback(() => {
     setLoading(true);
     api
       .getPartnerBookings()
@@ -80,7 +80,7 @@ export default function PartnerBookings() {
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  };
+  }, []);
 
   const visible = bookings.filter((b) => {
     const matchStatus = filter === 'all' || b.status === filter;

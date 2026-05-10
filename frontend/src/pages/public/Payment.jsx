@@ -37,7 +37,7 @@ export default function Payment() {
     };
   }, []);
 
-  async function handlePayment(method = 'card') {
+  async function handlePayment() {
     if (!bookingId) {
       showToast('Invalid transaction reference.', 'error');
       return;
@@ -145,7 +145,7 @@ export default function Payment() {
                 </p>
                 <div className="space-y-3">
                   <button
-                    onClick={() => handlePayment('upi')}
+                    onClick={() => handlePayment()}
                     disabled={submitting}
                     className="w-full h-16 bg-white border border-slate-200 text-slate-900 rounded-xl px-6 flex items-center justify-between font-bold text-sm hover:border-emerald-400 hover:shadow-md transition-all active:scale-[0.99] disabled:opacity-50 group"
                   >
@@ -162,7 +162,7 @@ export default function Payment() {
                   </button>
 
                   <button
-                    onClick={() => handlePayment('card')}
+                    onClick={() => handlePayment()}
                     disabled={submitting}
                     className="w-full h-16 bg-white border border-slate-200 text-slate-900 rounded-xl px-6 flex items-center justify-between font-bold text-sm hover:border-emerald-400 hover:shadow-md transition-all active:scale-[0.99] disabled:opacity-50 group"
                   >

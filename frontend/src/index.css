@@ -3,18 +3,24 @@
 @tailwind utilities;
 
 :root {
-  --brand-primary: #0d2018; /* Deep Forest */
-  --brand-accent: #189b84; /* Emerald */
-  --brand-bg: #f8f9f8; /* Soft Sanctuary */
+  --brand-primary: #0d2018;
+  /* Deep Forest */
+  --brand-accent: #189b84;
+  /* Emerald */
+  --brand-bg: #f8f9f8;
+  /* Soft Sanctuary */
   --brand-white: #ffffff;
 }
 
 body {
   background-color: var(--brand-bg);
   color: var(--brand-primary);
+  overflow-x: hidden;
+  /* Prevent horizontal scroll on mobile */
 }
 
 @layer base {
+
   h1,
   h2,
   h3,
@@ -30,6 +36,7 @@ body {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -74,8 +81,10 @@ body {
 /* Instant Cinematic Dark Mode */
 html.wayza-dark {
   filter: invert(1) hue-rotate(180deg);
-  background-color: #020617; /* Very dark slate */
+  background-color: #020617;
+  /* Very dark slate */
 }
+
 html.wayza-dark img,
 html.wayza-dark video,
 html.wayza-dark .leaflet-container,
@@ -90,6 +99,7 @@ input[type='date'].date-empty::-webkit-datetime-edit-day-field,
 input[type='date'].date-empty::-webkit-datetime-edit-year-field {
   color: transparent;
 }
+
 input[type='date']::-webkit-calendar-picker-indicator {
   opacity: 0.5;
   cursor: pointer;
@@ -122,4 +132,69 @@ body {
     transform: scale(0.98);
     transition: transform 0.1s ease;
   }
+}
+
+/* ════ MOBILE RESPONSIVE FIXES ════ */
+
+/* Search bar — stack vertically on mobile */
+@media (max-width: 640px) {
+
+  .search-bar,
+  .search-bar-inner {
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 0.75rem !important;
+  }
+
+  .search-bar-inner>* {
+    width: 100% !important;
+    border-right: none !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+  }
+
+  .search-bar-inner>*:last-child {
+    border-bottom: none !important;
+  }
+}
+
+/* Hero heading — scale down on mobile */
+@media (max-width: 640px) {
+  h1 {
+    font-size: clamp(2rem, 8vw, 3.5rem) !important;
+    line-height: 1.1 !important;
+  }
+}
+
+/* Touch targets — minimum 44x44px for all interactive elements */
+@media (max-width: 768px) {
+
+  button,
+  a,
+  [role='button'],
+  input[type='submit'],
+  input[type='button'] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Footer grid — single column on mobile */
+@media (max-width: 640px) {
+  .footer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+}
+
+/* Prevent any child element from causing horizontal overflow */
+* {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+img,
+video,
+iframe {
+  max-width: 100%;
+  height: auto;
 }

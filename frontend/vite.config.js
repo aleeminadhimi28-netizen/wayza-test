@@ -16,18 +16,45 @@ export default defineConfig({
                 background_color: '#0a2618',
                 display: 'standalone',
                 orientation: 'portrait',
+                start_url: '/',
+                scope: '/',
                 icons: [
+                    {
+                        src: '/images/wayzza-icon.png',
+                        sizes: '192x192',
+                        type: 'image/png',
+                        purpose: 'any'
+                    },
                     {
                         src: '/images/wayzza-icon.png',
                         sizes: '512x512',
                         type: 'image/png',
-                        purpose: 'any maskable'
+                        purpose: 'any'
+                    },
+                    {
+                        src: '/images/wayzza-icon.png',
+                        sizes: '512x512',
+                        type: 'image/png',
+                        purpose: 'maskable'
                     }
                 ]
             },
             workbox: {
-                globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2,xml,txt}'],
-                navigateFallback: '/index.html'
+                // Only precache static app-shell assets. API calls contain user-,
+                // booking-, payment-, and admin-specific data — keep them network-only
+                // instead of persisting cross-session responses in the service worker.
+                globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+                navigateFallback: '/index.html',
+                navigateFallbackDenylist: [
+                    // Don't fallback on API routes or backend paths
+                    /^\/api\//,
+                    /^\/admin\//
+                ],
+                // Clean up outdated caches on SW activation
+                cleanupOutdatedCaches: true,
+                // Skip waiting so new SW activates immediately
+                skipWaiting: true,
+                clientsClaim: true
             }
         })
     ],
@@ -40,6 +67,8 @@ export default defineConfig({
         ]
     },
     build: {
+        // Generate source maps for production error tracking
+        sourcemap: false,
         rollupOptions: {
             output: {
                 manualChunks: {
@@ -54,6 +83,6 @@ export default defineConfig({
                 }
             }
         },
-        chunkSizeWarningLimit: 600 // Increase limit slightly
+        chunkSizeWarningLimit: 600
     }
 });

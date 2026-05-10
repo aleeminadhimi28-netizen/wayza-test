@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { useAuth } from '../../AuthContext.jsx';
 import { motion } from 'framer-motion';
 import { Send, MessageSquare, CheckCircle, Search } from 'lucide-react';
@@ -58,15 +58,15 @@ export default function PartnerChat() {
     return () => {
       leaveBookingRoom(selected._id);
     };
-  }, [selected?._id]);
+  }, [selected?._id, loadMessages]);
 
-  async function loadMessages() {
+  const loadMessages = useCallback(async () => {
     if (!selected) return;
     try {
       const data = await api.getChat(selected._id);
       if (data.ok) setMessages(data.data || []);
     } catch (_) {}
-  }
+  }, [selected]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });

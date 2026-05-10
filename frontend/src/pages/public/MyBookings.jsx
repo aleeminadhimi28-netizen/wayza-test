@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
 import { useAuth } from '../../AuthContext.jsx';
@@ -21,6 +21,37 @@ import { api } from '../../utils/api.js';
 import { QRCodeCanvas } from 'qrcode.react';
 import { Scan, QrCode } from 'lucide-react';
 
+const statusConfig = {
+  paid: {
+    label: 'Confirmed',
+    color: 'text-emerald-600',
+    bg: 'bg-emerald-50',
+    icon: CheckCircle,
+    border: 'border-emerald-100',
+  },
+  pending: {
+    label: 'Pending',
+    color: 'text-amber-600',
+    bg: 'bg-amber-50',
+    icon: Clock,
+    border: 'border-amber-100',
+  },
+  cancelled: {
+    label: 'Cancelled',
+    color: 'text-rose-600',
+    bg: 'bg-rose-50',
+    icon: XCircle,
+    border: 'border-rose-100',
+  },
+};
+
+const tabs = [
+  { key: 'all', label: 'All Bookings', icon: History },
+  { key: 'paid', label: 'Confirmed', icon: CheckCircle },
+  { key: 'pending', label: 'Pending', icon: Clock },
+  { key: 'cancelled', label: 'Cancelled', icon: XCircle },
+];
+
 export default function MyBookings() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -29,6 +60,8 @@ export default function MyBookings() {
   const [loading, setLoading] = useState(true);
   const [cancellingId, setCancellingId] = useState(null);
   const [filterStatus, setFilterStatus] = useState('all');
+
+  const filtered = filterStatus === 'all' ? rows : rows.filter((b) => b.status === filterStatus);
 
   // Review State
   const [reviewModal, setReviewModal] = useState(null);
@@ -174,39 +207,6 @@ export default function MyBookings() {
     w.document.close();
     setTimeout(() => w.print(), 500);
   }
-
-  const statusConfig = {
-    paid: {
-      label: 'Confirmed',
-      color: 'text-emerald-600',
-      bg: 'bg-emerald-50',
-      icon: CheckCircle,
-      border: 'border-emerald-100',
-    },
-    pending: {
-      label: 'Pending',
-      color: 'text-amber-600',
-      bg: 'bg-amber-50',
-      icon: Clock,
-      border: 'border-amber-100',
-    },
-    cancelled: {
-      label: 'Cancelled',
-      color: 'text-rose-600',
-      bg: 'bg-rose-50',
-      icon: XCircle,
-      border: 'border-rose-100',
-    },
-  };
-
-  const filtered = filterStatus === 'all' ? rows : rows.filter((b) => b.status === filterStatus);
-
-  const tabs = [
-    { key: 'all', label: 'All Bookings', icon: History },
-    { key: 'paid', label: 'Confirmed', icon: CheckCircle },
-    { key: 'pending', label: 'Pending', icon: Clock },
-    { key: 'cancelled', label: 'Cancelled', icon: XCircle },
-  ];
 
   if (loading)
     return (

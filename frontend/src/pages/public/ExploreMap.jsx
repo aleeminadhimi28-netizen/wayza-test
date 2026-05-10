@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -66,35 +66,38 @@ export default function ExploreMap() {
     { id: 'glamping', label: 'Glamping', icon: <Tent size={16} /> },
   ];
 
-  async function fetchData(params = {}) {
-    try {
-      setLoading(true);
-      const query = { limit: 100, ...params };
-      if (selectedCategory !== 'all') query.category = selectedCategory;
+  const fetchData = useCallback(
+    async (params = {}) => {
+      try {
+        setLoading(true);
+        const query = { limit: 100, ...params };
+        if (selectedCategory !== 'all') query.category = selectedCategory;
 
-      const data = await api.getListings(query);
-      if (data.ok) {
-        const rows = data.rows || data.data || (Array.isArray(data) ? data : []);
-        const withGps = rows.filter((r) => r.latitude && r.longitude);
-        setListings(withGps);
+        const data = await api.getListings(query);
+        if (data.ok) {
+          const rows = data.rows || data.data || (Array.isArray(data) ? data : []);
+          const withGps = rows.filter((r) => r.latitude && r.longitude);
+          setListings(withGps);
 
-        if (withGps.length > 0 && !params.lat) {
-          // Only center if we're not doing a targeted search
-          setMapCenter([withGps[0].latitude, withGps[0].longitude]);
-          setMapZoom(12);
+          if (withGps.length > 0 && !params.lat) {
+            // Only center if we're not doing a targeted search
+            setMapCenter([withGps[0].latitude, withGps[0].longitude]);
+            setMapZoom(12);
+          }
         }
+      } catch (err) {
+        setError('Failed to connect to the server.');
+      } finally {
+        setLoading(false);
+        setShowSearchButton(false);
       }
-    } catch (err) {
-      setError('Failed to connect to the server.');
-    } finally {
-      setLoading(false);
-      setShowSearchButton(false);
-    }
-  }
+    },
+    [selectedCategory]
+  );
 
   useEffect(() => {
     fetchData();
-  }, [selectedCategory]);
+  }, [fetchData]);
 
   const handleNearMe = () => {
     if (!navigator.geolocation) return;

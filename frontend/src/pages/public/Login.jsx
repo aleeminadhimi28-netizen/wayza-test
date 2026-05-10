@@ -20,7 +20,6 @@ function FloatingInput({
   suffix,
   autoComplete,
 }) {
-  const [focused, setFocused] = useState(false);
   return (
     <div className="au-field">
       <div className={`au-field-wrap${value ? ' au-active' : ''}`}>
@@ -31,8 +30,6 @@ function FloatingInput({
           required
           value={value}
           onChange={onChange}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
           className="au-input"
           placeholder=" "
           autoComplete={autoComplete || id}

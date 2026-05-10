@@ -125,7 +125,7 @@ export default function LandingPage() {
   return (
     <WayzzaLayout noPadding hideFooter>
       <SEO
-        title="Luxury Varkala Stays & Elite Mobility"
+        title="Escape the Ordinary"
         description="Handpicked clifftop villas, Royal Enfield rentals, and hidden local secrets curated for the modern explorer in Varkala."
         breadcrumb={[{ name: 'Home', url: 'https://wayzza.live' }]}
         schema={{
@@ -150,7 +150,7 @@ export default function LandingPage() {
         }}
       />
       <div className="bg-white font-sans text-slate-900 selection:bg-emerald-50 selection:text-emerald-900 leading-relaxed antialiased">
-        {/* ════ SECTION: ════ */}
+        {/* â•â•â•â• SECTION: â•â•â•â• */}
         <header className="relative h-[85vh] min-h-[620px] md:min-h-[700px] flex flex-col items-center justify-center overflow-hidden">
           <div className="absolute inset-0 z-0">
             <motion.div
@@ -303,7 +303,7 @@ export default function LandingPage() {
           </motion.div>
         </header>
 
-        {/* ════ MOBILE-LIKE PROMO + DESTINATIONS ════ */}
+        {/* â•â•â•â• MOBILE-LIKE PROMO + DESTINATIONS â•â•â•â• */}
         <section ref={moreListingsRef} className="px-6 max-w-7xl mx-auto space-y-8 pb-10">
           <div className="bg-white rounded-[32px] border border-slate-200 shadow-sm overflow-hidden">
             <div className="flex flex-col sm:flex-row items-stretch gap-4 p-5">
@@ -470,7 +470,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ════ DESTINATIONS MASONRY ════ */}
+        {/* â•â•â•â• DESTINATIONS MASONRY â•â•â•â• */}
         <section className="py-32 bg-slate-50 px-6 relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-white to-transparent" />
           <div className="max-w-7xl mx-auto">
@@ -528,7 +528,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ════ TRUST STRIP ════ */}
+        {/* â•â•â•â• TRUST STRIP â•â•â•â• */}
         <section className="py-32 px-6 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
@@ -573,7 +573,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ════ SECTION: ════ */}
+        {/* â•â•â•â• SECTION: â•â•â•â• */}
         <section className="py-24 px-4 sm:px-6 lg:px-8 bg-[#06110d] text-white overflow-hidden relative">
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-[-20%] left-[5%] w-[45%] h-[65%] bg-emerald-500/10 blur-[130px] rounded-full" />
@@ -660,8 +660,8 @@ export default function LandingPage() {
 
                     <div className="grid gap-4 sm:grid-cols-3">
                       {[
-                        { emoji: 'ðŸ¡', title: 'Sea Cliff Retreat', detail: '₹12,500 / night' },
-                        { emoji: 'ðŸï¸', title: 'Royal Enfield 350', detail: '₹850 / day' },
+                        { emoji: '🏠', title: 'Sea Cliff Retreat', detail: '₹12,500 / night' },
+                        { emoji: '🏍️', title: 'Royal Enfield 350', detail: '₹850 / day' },
                         { emoji: '☕', title: 'Secret Café Trail', detail: '6 stops' },
                       ].map((item) => (
                         <div
@@ -727,8 +727,8 @@ export default function LandingPage() {
           <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-emerald-900/5 blur-[100px] rounded-full pointer-events-none" />
 
           {/* Massive Background Watermark */}
-          <div className="absolute -bottom-10 -right-20 text-[18vw] font-black text-white/[0.02] select-none pointer-events-none uppercase tracking-tighter leading-none">
-            Varkala
+          <div className="absolute -bottom-10 -right-20 text-[18vw] font-black text-white/[0.01] select-none pointer-events-none uppercase tracking-tighter leading-none">
+            Wayzza
           </div>
 
           <div className="max-w-7xl mx-auto relative z-10">
@@ -736,9 +736,13 @@ export default function LandingPage() {
               {/* Brand Column */}
               <div className="md:col-span-5 space-y-10">
                 <div className="space-y-6">
-                  <h2 className="text-4xl font-black tracking-tighter text-white uppercase">
-                    Wayzza<span className="text-emerald-500">.</span>
-                  </h2>
+                  <Link to="/" className="flex items-center justify-center md:justify-start group">
+                    <img
+                      src="/images/logo-dark.svg"
+                      alt="Wayzza Logo"
+                      className="h-12 md:h-16 w-auto object-contain transition-all"
+                    />
+                  </Link>
                   <p className="text-white/40 text-lg font-medium leading-relaxed max-w-sm">
                     Curating verified sanctuaries and high-performance mobility for the modern
                     explorer.
@@ -878,10 +882,15 @@ export default function LandingPage() {
                     Made with <span className="text-rose-500 animate-pulse">❤️</span> in Varkala
                   </span>
                 </motion.div>
-                <div className="hidden md:flex items-center gap-4 text-white/20 text-[11px] font-black uppercase tracking-widest">
-                  <Globe size={14} className="text-emerald-500/50" />
+                <motion.button
+                  whileHover={{ scale: 1.05, color: '#fff' }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                  className="flex items-center gap-4 text-white/40 text-[11px] font-black uppercase tracking-widest transition-all bg-white/5 px-4 py-2 rounded-xl border border-white/5 hover:border-emerald-500/30"
+                >
+                  <Globe size={14} className="text-emerald-500" />
                   <span>Global Gateway</span>
-                </div>
+                </motion.button>
               </div>
             </div>
           </div>
