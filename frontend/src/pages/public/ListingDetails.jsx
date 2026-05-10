@@ -149,6 +149,7 @@ export default function ListingDetails() {
   if (!listing)
     return (
       <WayzzaLayout noPadding>
+        <SEO title="Loading property..." />
         <div className="max-w-[1200px] mx-auto py-8 px-4 sm:px-6 space-y-6">
           <WayzzaSkeleton className="h-8 w-2/3" />
           <WayzzaSkeleton className="h-[420px] w-full rounded-2xl" />
@@ -190,8 +191,7 @@ export default function ListingDetails() {
   const total = basePrice * nights + gst + serviceFee;
 
   const today = new Date().toISOString().split('T')[0];
-  const currentUrl =
-    typeof window !== 'undefined' ? window.location.href : 'https://wayzza.live';
+  const canonicalUrl = `https://wayzza.live/listing/${id}`;
 
   return (
     <WayzzaLayout noPadding>
@@ -202,10 +202,18 @@ export default function ListingDetails() {
         type="product"
         schema={{
           '@context': 'https://schema.org',
-          '@type': 'Product',
+          '@type': listing.category === 'hotel' ? 'LodgingBusiness' : 'Vehicle',
           name: listing.title,
           description: listing.description,
           image: images.slice(0, 3),
+          url: canonicalUrl,
+          priceRange: `₹${basePrice.toLocaleString()}`,
+          address: {
+            '@type': 'PostalAddress',
+            addressLocality: listing.location || 'Varkala',
+            addressRegion: 'Kerala',
+            addressCountry: 'IN',
+          },
           brand: {
             '@type': 'Brand',
             name: 'Wayzza Verified',
@@ -216,7 +224,7 @@ export default function ListingDetails() {
             priceCurrency: 'INR',
             price: basePrice,
             availability: 'https://schema.org/InStock',
-            url: currentUrl,
+            url: canonicalUrl,
             priceValidUntil: new Date(Date.now() + 2592000000).toISOString().split('T')[0], // 30 days from now
           },
           aggregateRating:
@@ -231,10 +239,10 @@ export default function ListingDetails() {
         breadcrumb={[
           { name: 'Home', url: 'https://wayzza.live' },
           {
-            name: listing.category === 'villa' ? 'Stays' : 'Vehicles',
-            url: `https://wayzza.live/listings?type=${listing.category}`,
+            name: isVehicle ? 'Vehicles' : 'Stays',
+            url: `https://wayzza.live/listings?category=${listing.category}`,
           },
-          { name: listing.title, url: currentUrl },
+          { name: listing.title, url: canonicalUrl },
         ]}
       />
       <div className="bg-white min-h-screen font-sans selection:bg-emerald-100 selection:text-emerald-900 pb-24 lg:pb-0">
