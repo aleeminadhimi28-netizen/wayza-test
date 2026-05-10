@@ -126,13 +126,13 @@ export default function LandingPage() {
     <WayzzaLayout noPadding hideFooter>
       <SEO
         title="Luxury Varkala Stays & Elite Mobility"
-        breadcrumb={[{ name: 'Home', url: 'https://wayza-app.vercel.app' }]}
+        breadcrumb={[{ name: 'Home', url: 'https://wayzza.live' }]}
         schema={{
           '@context': 'https://schema.org',
           '@type': 'LocalBusiness',
           name: 'Wayzza',
           description: 'Curated sanctuaries and elite mobility for digital nomads in Varkala',
-          url: 'https://wayza-app.vercel.app',
+          url: 'https://wayzza.live',
           address: {
             '@type': 'PostalAddress',
             streetAddress: 'Varkala',

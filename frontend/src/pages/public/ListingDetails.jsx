@@ -191,7 +191,7 @@ export default function ListingDetails() {
 
   const today = new Date().toISOString().split('T')[0];
   const currentUrl =
-    typeof window !== 'undefined' ? window.location.href : 'https://wayza-app.vercel.app';
+    typeof window !== 'undefined' ? window.location.href : 'https://wayzza.live';
 
   return (
     <WayzzaLayout noPadding>
@@ -229,10 +229,10 @@ export default function ListingDetails() {
               : undefined,
         }}
         breadcrumb={[
-          { name: 'Home', url: 'https://wayza-app.vercel.app' },
+          { name: 'Home', url: 'https://wayzza.live' },
           {
             name: listing.category === 'villa' ? 'Stays' : 'Vehicles',
-            url: `https://wayza-app.vercel.app/listings?type=${listing.category}`,
+            url: `https://wayzza.live/listings?type=${listing.category}`,
           },
           { name: listing.title, url: currentUrl },
         ]}
