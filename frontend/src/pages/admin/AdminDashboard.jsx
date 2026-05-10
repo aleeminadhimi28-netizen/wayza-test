@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Users,
@@ -116,31 +116,31 @@ import AdminLogs from './AdminLogs.jsx';
         setLoadingData(false);
       });
     }
-  }, [activeTab]);
+  }, [activeTab, loadTickets, loadWithdrawals, showToast]);
 
-  async function loadTickets() {
-    setLoadingData(true);
-    try {
-      const d = await api.getSupportTickets();
-      if (d.ok) setTickets(d.data || []);
-    } catch (err) {
-      console.error('Failed to load support tickets:', err);
-      showToast('Failed to load support tickets.', 'error');
-    }
-    setLoadingData(false);
-  }
-
-  async function loadWithdrawals() {
-    setLoadingData(true);
-    try {
-      const d = await api.adminGetWithdrawals();
-      if (d.ok) setWithdrawals(d.data || []);
-    } catch (err) {
-      console.error('Failed to load withdrawals:', err);
-      showToast('Failed to load withdrawal requests.', 'error');
-    }
-    setLoadingData(false);
-  }
+  const loadTickets = useCallback(async () => {
+     setLoadingData(true);
+     try {
+       const d = await api.getSupportTickets();
+       if (d.ok) setTickets(d.data || []);
+     } catch (err) {
+       console.error('Failed to load support tickets:', err);
+       showToast('Failed to load support tickets.', 'error');
+     }
+     setLoadingData(false);
+   }, [showToast]);
+ 
+   const loadWithdrawals = useCallback(async () => {
+     setLoadingData(true);
+     try {
+       const d = await api.adminGetWithdrawals();
+       if (d.ok) setWithdrawals(d.data || []);
+     } catch (err) {
+       console.error('Failed to load withdrawals:', err);
+       showToast('Failed to load withdrawal requests.', 'error');
+     }
+     setLoadingData(false);
+   }, [showToast]);
 
   function handleLogout() {
     logout();
@@ -183,6 +183,10 @@ import AdminLogs from './AdminLogs.jsx';
   }
 
   async function handleApprovePartner(email) {
+    if (!email) {
+      showToast('Cannot approve partner without a valid email address.', 'error');
+      return;
+    }
     if (!window.confirm('Approve this partner and activate their account?')) return;
     try {
       const d = await api.adminApprovePartner(email);

@@ -20,7 +20,7 @@ export default function AdminSettings() {
         showToast('Failed to fetch platform config', 'error');
         setLoading(false);
       });
-  }, []);
+  }, [showToast]);
 
   const handleSave = async () => {
     if (!config) return;
