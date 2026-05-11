@@ -55,6 +55,7 @@ export default function ListingDetails() {
   const { formatPrice } = useCurrency();
 
   const [listing, setListing] = useState(null);
+  const [error, setError] = useState(null);
   const [saved, setSaved] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [canReview, setCanReview] = useState(false);
@@ -69,7 +70,16 @@ export default function ListingDetails() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    api.getListing(id).then((json) => setListing(json.data || json));
+    api
+      .getListing(id)
+      .then((json) => {
+        if (json.ok && json.data) {
+          setListing(json.data);
+        } else {
+          setError(json.message || 'Property not found');
+        }
+      })
+      .catch(() => setError('Connection anomaly detected'));
     loadReviews();
     if (user) {
       api.getWishlist().then((json) => {
@@ -144,6 +154,32 @@ export default function ListingDetails() {
       })
       .catch(() => {});
   }, []);
+
+  // Error state
+  if (error) {
+    return (
+      <WayzzaLayout noPadding>
+        <SEO title="Property Not Found" />
+        <div className="min-h-[70vh] flex flex-col items-center justify-center p-8 text-center">
+          <div className="bg-rose-50 p-6 rounded-3xl text-rose-500 mb-8">
+            <Sparkles size={48} />
+          </div>
+          <h1 className="text-4xl font-black text-slate-900 uppercase tracking-tighter mb-4">
+            {error}
+          </h1>
+          <p className="text-slate-400 font-bold uppercase text-[11px] tracking-[0.4em] mb-12 max-w-md">
+            The requested sanctuary could not be synchronized with the current network protocol.
+          </p>
+          <button
+            onClick={() => navigate('/listings')}
+            className="h-16 px-12 bg-slate-900 text-white rounded-2xl font-black uppercase text-[11px] tracking-widest hover:bg-emerald-600 transition-all active:scale-95"
+          >
+            Explore Available Stays
+          </button>
+        </div>
+      </WayzzaLayout>
+    );
+  }
 
   // Loading skeleton
   if (!listing)
