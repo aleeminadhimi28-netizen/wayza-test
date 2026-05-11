@@ -160,9 +160,9 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
             <div className="relative" ref={currRef}>
               <button
                 onClick={() => setShowCurr(!showCurr)}
-                className={`h-10 px-3 md:h-11 md:px-4 rounded-xl md:rounded-2xl flex items-center gap-2 transition-all font-bold text-[11px] md:text-[11px] uppercase tracking-widest ${scrolled || !isHomePage || mobileMenuOpen ? 'bg-slate-100 text-slate-700 hover:bg-slate-200' : 'bg-white/10 text-white hover:bg-white/20'}`}
+                className={`h-10 px-3 md:h-11 md:px-4 rounded-2xl md:rounded-2xl flex items-center gap-2 transition-all font-bold text-[11px] md:text-[11px] uppercase tracking-widest ${scrolled || !isHomePage || mobileMenuOpen ? 'bg-slate-100 text-slate-700 hover:bg-slate-200' : 'bg-white/10 text-white hover:bg-white/20 backdrop-blur-md'}`}
               >
-                <Globe size={13} className="text-emerald-500" />
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                 <span className="hidden xs:inline">{currency.code}</span>
                 <span className="xs:hidden">{currency.symbol}</span>
               </button>
@@ -202,7 +202,7 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
             {/* THEME TOGGLE */}
             <button
               onClick={toggleTheme}
-              className={`w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all ${scrolled || !isHomePage || mobileMenuOpen ? (isDarkMode ? 'bg-indigo-50 text-indigo-500 hover:bg-indigo-100' : 'bg-slate-50 text-slate-400 hover:bg-slate-100') : 'bg-white/10 text-white hover:bg-white/20'}`}
+              className={`w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all ${scrolled || !isHomePage || mobileMenuOpen ? (isDarkMode ? 'bg-indigo-50 text-indigo-500 hover:bg-indigo-100' : 'bg-slate-50 text-slate-400 hover:bg-slate-100') : 'bg-white/10 text-white hover:bg-white/20 backdrop-blur-md'}`}
               title="Toggle Theme"
             >
               {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
@@ -357,7 +357,7 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
             )}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`lg:hidden p-2 rounded-xl transition-all ${scrolled ? 'bg-slate-100 text-slate-900' : 'bg-white/10 text-white'}`}
+              className={`lg:hidden w-10 h-10 flex items-center justify-center rounded-2xl transition-all ${scrolled ? 'bg-slate-100 text-slate-900' : 'bg-white/10 text-white backdrop-blur-md'}`}
             >
               <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
