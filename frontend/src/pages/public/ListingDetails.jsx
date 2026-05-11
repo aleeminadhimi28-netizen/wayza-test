@@ -54,6 +54,7 @@ export default function ListingDetails() {
   const { showToast } = useToast();
   const { formatPrice } = useCurrency();
 
+  // 1. State definitions
   const [listing, setListing] = useState(null);
   const [error, setError] = useState(null);
   const [saved, setSaved] = useState(false);
@@ -67,43 +68,25 @@ export default function ListingDetails() {
   const [showAllAmenities, setShowAllAmenities] = useState(false);
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
+  const [platformConfig, setPlatformConfig] = useState(null);
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    api
-      .getListing(id)
-      .then((json) => {
-        if (json.ok && json.data) {
-          setListing(json.data);
-        } else {
-          setError(json.message || 'Property not found');
-        }
-      })
-      .catch(() => setError('Connection anomaly detected'));
-    loadReviews();
-    if (user) {
-      api.getWishlist().then((json) => {
-        const list = Array.isArray(json.data) ? json.data : [];
-        setSaved(list.some((x) => x.listingId === id));
-      });
-      api.getMyBookings().then((json) => {
-        const bookings = Array.isArray(json.data) ? json.data : [];
-        setCanReview(bookings.some((b) => b.listingId === id && b.status === 'paid'));
-      });
-    }
-  }, [id, user, loadReviews]);
-
+  // 2. Callback and function definitions
   const loadReviews = useCallback(async () => {
+    if (!id) return;
     try {
       const data = await api.getReviews(id);
       const rows = Array.isArray(data.data) ? data.data : [];
       setReviews(rows);
-      if (user?.email) setAlreadyReviewed(rows.some((r) => r.guestEmail === user.email));
-    } catch {}
+      if (user?.email) {
+        setAlreadyReviewed(rows.some((r) => r.guestEmail === user.email));
+      }
+    } catch {
+      // Fail silently for reviews load
+    }
   }, [id, user?.email]);
 
   async function submitReview() {
-    if (!rating) return;
+    if (!rating || !id) return;
     setSubmitting(true);
     try {
       const data = await api.postReview({ listingId: id, rating, comment });
@@ -144,7 +127,35 @@ export default function ListingDetails() {
     navigate(`/booking/${id}`, { state: { variantIndex: selectedVariant } });
   };
 
-  const [platformConfig, setPlatformConfig] = useState(null);
+  // 3. Effects
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    if (!id) return;
+
+    api
+      .getListing(id)
+      .then((json) => {
+        if (json.ok && json.data) {
+          setListing(json.data);
+        } else {
+          setError(json.message || 'Property not found');
+        }
+      })
+      .catch(() => setError('Connection anomaly detected'));
+
+    loadReviews();
+
+    if (user) {
+      api.getWishlist().then((json) => {
+        const list = Array.isArray(json.data) ? json.data : [];
+        setSaved(list.some((x) => x.listingId === id));
+      });
+      api.getMyBookings().then((json) => {
+        const bookings = Array.isArray(json.data) ? json.data : [];
+        setCanReview(bookings.some((b) => b.listingId === id && b.status === 'paid'));
+      });
+    }
+  }, [id, user, loadReviews]);
 
   useEffect(() => {
     api
@@ -155,7 +166,7 @@ export default function ListingDetails() {
       .catch(() => {});
   }, []);
 
-  // Error state
+  // 4. Early returns
   if (error) {
     return (
       <WayzzaLayout noPadding>
@@ -181,8 +192,7 @@ export default function ListingDetails() {
     );
   }
 
-  // Loading skeleton
-  if (!listing)
+  if (!listing) {
     return (
       <WayzzaLayout noPadding>
         <SEO title="Loading property..." />
@@ -199,7 +209,9 @@ export default function ListingDetails() {
         </div>
       </WayzzaLayout>
     );
+  }
 
+  // 5. Derived values (guaranteed to have listing here)
   const images = (listing.images || []).map(fixImg);
   if (images.length === 0) images.push(fixImg(listing.image));
   while (images.length < 5)
