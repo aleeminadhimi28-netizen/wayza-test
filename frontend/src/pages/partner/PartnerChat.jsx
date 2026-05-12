@@ -50,6 +50,14 @@ export default function PartnerChat() {
       .catch(() => setLoading(false));
   }, [user?.email]);
 
+  const loadMessages = useCallback(async () => {
+    if (!selected) return;
+    try {
+      const data = await api.getChat(selected._id);
+      if (data.ok) setMessages(data.data || []);
+    } catch (_) {}
+  }, [selected]);
+
   useEffect(() => {
     if (!selected) return;
     loadMessages();
@@ -59,14 +67,6 @@ export default function PartnerChat() {
       leaveBookingRoom(selected._id);
     };
   }, [selected?._id, loadMessages]);
-
-  const loadMessages = useCallback(async () => {
-    if (!selected) return;
-    try {
-      const data = await api.getChat(selected._id);
-      if (data.ok) setMessages(data.data || []);
-    } catch (_) {}
-  }, [selected]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });

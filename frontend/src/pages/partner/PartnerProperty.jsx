@@ -56,10 +56,6 @@ export default function PartnerProperty() {
 
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, onConfirm: () => {} });
 
-  useEffect(() => {
-    load();
-  }, [load]);
-
   const load = useCallback(async () => {
     try {
       const data = await api.getListing(id);
@@ -78,6 +74,10 @@ export default function PartnerProperty() {
       showToast('Protocol failure: Data retrieval interrupted.', 'error');
     }
   }, [id, editIndex, showToast]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
 
   function resetForm() {
     setType(listing?.category === 'bike' || listing?.category === 'car' ? 'Vehicle' : 'Room');
