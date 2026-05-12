@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../../AuthContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -322,7 +322,7 @@ export default function PartnerCalendar() {
               <MessageSquare size={80} />
             </div>
             <div className="relative z-10">
-              <h3 className="text-lg font-bold mb-1 flex items-center gap-2">
+              <h3 className="text-lg font-bold mb-1 flex items-center gap-2 text-white">
                 <Zap className="text-emerald-400" size={18} />
                 WhatsApp Notifications
               </h3>
