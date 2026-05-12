@@ -78,16 +78,16 @@ body {
 }
 
 /* Instant Cinematic Dark Mode */
-html.wayza-dark {
+html.wayzza-dark {
   filter: invert(1) hue-rotate(180deg);
   background-color: #020617;
   /* Very dark slate */
 }
 
-html.wayza-dark img,
-html.wayza-dark video,
-html.wayza-dark .leaflet-container,
-html.wayza-dark .recharts-wrapper {
+html.wayzza-dark img,
+html.wayzza-dark video,
+html.wayzza-dark .leaflet-container,
+html.wayzza-dark .recharts-wrapper {
   filter: invert(1) hue-rotate(180deg);
 }
 
