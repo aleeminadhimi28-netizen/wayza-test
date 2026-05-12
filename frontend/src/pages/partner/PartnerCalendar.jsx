@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../AuthContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -88,6 +89,7 @@ function sameDay(a, b) {
 
 export default function PartnerCalendar() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const today = toDateOnly(new Date());
@@ -344,7 +346,10 @@ export default function PartnerCalendar() {
                     </span>
                   </p>
                 </div>
-                <button className="w-full h-11 bg-emerald-500 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-emerald-400 transition-colors shadow-lg shadow-emerald-500/20">
+                <button
+                  onClick={() => navigate('/profile')}
+                  className="w-full h-11 bg-emerald-500 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-emerald-400 transition-colors shadow-lg shadow-emerald-500/20"
+                >
                   Configure Alerts
                 </button>
               </div>
