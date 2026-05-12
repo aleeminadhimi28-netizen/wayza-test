@@ -31,10 +31,6 @@ export default function PartnerListings() {
   const [deleting, setDeleting] = useState(null);
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, onConfirm: () => {} });
 
-  useEffect(() => {
-    load();
-  }, [load]);
-
   const load = useCallback(async () => {
     if (!user?.email) return;
     try {
@@ -44,12 +40,9 @@ export default function PartnerListings() {
     setLoading(false);
   }, [user?.email]);
 
-  const handleDelete = (id) => {
-    setConfirmModal({
-      isOpen: true,
-      onConfirm: () => executeDelete(id),
-    });
-  };
+  useEffect(() => {
+    load();
+  }, [load]);
 
   async function executeDelete(id) {
     setDeleting(id);
@@ -66,6 +59,13 @@ export default function PartnerListings() {
     }
     setDeleting(null);
   }
+
+  const handleDelete = (id) => {
+    setConfirmModal({
+      isOpen: true,
+      onConfirm: () => executeDelete(id),
+    });
+  };
 
   if (loading)
     return (
