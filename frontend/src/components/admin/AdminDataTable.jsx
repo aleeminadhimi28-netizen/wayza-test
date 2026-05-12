@@ -214,7 +214,7 @@ export default function AdminDataTable({
                             <p className="text-xs text-slate-400">
                               {item.ownerEmail ||
                                 item.email ||
-                                `#${item._id?.slice(-8).toUpperCase()}`}
+                                `#${item._id?.slice(-8)?.toUpperCase()}`}
                             </p>
                           </div>
                         </div>
@@ -267,7 +267,7 @@ export default function AdminDataTable({
                                 onClick={() =>
                                   triggerConfirm({
                                     title: 'Settle Payout',
-                                    message: `Mark payout for booking #${item._id?.slice(-8).toUpperCase()} as settled?`,
+                                    message: `Mark payout for booking #${item._id?.slice(-8)?.toUpperCase()} as settled?`,
                                     confirmText: 'Mark as Settled',
                                     confirmVariant: 'emerald',
                                     onConfirm: () => handleUpdatePayout(item._id, 'paid_out'),
