@@ -9,7 +9,7 @@ export default function ListingReviews({ reviews, avgRating }) {
     <section className="space-y-12">
       <header className="flex items-center justify-between">
         <h2 className="text-[11px] font-black uppercase tracking-[0.5em] text-slate-300">
-          Guest Audit
+          Guest Reviews
         </h2>
         <div className="flex items-center gap-4">
           <span className="text-5xl font-black text-slate-900 tabular-nums">
@@ -17,7 +17,7 @@ export default function ListingReviews({ reviews, avgRating }) {
           </span>
           <div className="h-10 w-px bg-slate-200" />
           <span className="text-[11px] font-black uppercase tracking-widest text-slate-400">
-            {reviews.length} Audits
+            {reviews.length} {reviews.length === 1 ? 'Review' : 'Reviews'}
           </span>
         </div>
       </header>

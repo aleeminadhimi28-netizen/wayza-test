@@ -348,7 +348,7 @@ export default function ListingDetails() {
                         : 'New'}
                     </p>
                     <p className="text-[11px] lg:text-[11px] font-bold text-slate-300 uppercase tracking-widest">
-                      {reviews.length} Audits
+                      {reviews.length > 0 ? `${reviews.length} Reviews` : 'New Stay'}
                     </p>
                   </div>
                 </div>
@@ -412,12 +412,12 @@ export default function ListingDetails() {
                 className={`flex-1 lg:flex-none h-14 lg:h-16 px-6 lg:px-10 rounded-xl lg:rounded-2xl font-black uppercase text-[11px] lg:text-[11px] tracking-[0.4em] transition-all border flex items-center justify-center gap-3 lg:gap-4 ${saved ? 'bg-rose-50 border-rose-100 text-rose-600' : 'bg-white border-slate-100 text-slate-900 hover:border-rose-200'}`}
               >
                 <Heart size={18} className={saved ? 'fill-rose-600' : ''} />
-                {saved ? 'Retained' : 'Archive'}
+                {saved ? 'Saved' : 'Save'}
               </button>
               <button
                 onClick={() => {
                   navigator.clipboard.writeText(window.location.href);
-                  showToast('Listing encrypted & shared.', 'success');
+                  showToast('Link copied to clipboard!', 'success');
                 }}
                 className="w-14 h-14 lg:w-16 lg:h-16 bg-white border border-slate-100 rounded-xl lg:rounded-2xl flex items-center justify-center text-slate-900 hover:border-emerald-200 transition-all shadow-sm"
               >
