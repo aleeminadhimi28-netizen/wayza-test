@@ -348,6 +348,13 @@ export const api = {
     customFetch(`${API_URL}/partner/wallet/requests`, {
       headers: getAuthHeaders(),
     }).then((r) => r.json()),
+
+  // Alias used by PartnerWallet
+  getWithdrawalRequests: () =>
+    customFetch(`${API_URL}/partner/wallet/requests`, {
+      headers: getAuthHeaders(),
+    }).then((r) => r.json()),
+
   getCalendarSettings: () =>
     customFetch(`${API_URL}/partner/calendar-settings`, {
       headers: getAuthHeaders(),
