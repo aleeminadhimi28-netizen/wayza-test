@@ -11,6 +11,9 @@ export default function SEO({
   breadcrumb = null,
   author = null,
   faq = null,
+  howTo = null,
+  qa = null,
+  speakable = null,
   noindex = false,
   googleVerification = 'VwzE_N_T2z_X_k_z_V_z_v_z_V_z_v_z_V_z_v_z_V_z_v_z_V_z_v',
 }) {
@@ -20,18 +23,22 @@ export default function SEO({
   const defaultImage = 'https://wayzza.live/og-image.png';
   const metaImage = image || defaultImage;
 
-  // Default Organization & LocalBusiness schema
+  // ── Default Organization & LocalBusiness schema (enriched for AEO) ──
   const defaultOrgSchema = {
     '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
+    '@type': ['LocalBusiness', 'LodgingBusiness', 'TravelAgency'],
     name: 'Wayzza',
+    alternateName: 'Wayzza Varkala',
     url: 'https://wayzza.live',
     logo: 'https://wayzza.live/favicon.svg',
     image: defaultImage,
     description:
-      'Curated sanctuaries and elite mobility for the modern explorer in Varkala, Kerala.',
+      'Wayzza is a curated booking platform for premium clifftop villas, Royal Enfield bike rentals, luxury cars, and authentic local experiences in Varkala, Kerala, India.',
     telephone: '+91 80892 22444',
+    email: 'stay@wayzza.live',
     priceRange: '₹₹₹',
+    currenciesAccepted: 'INR, USD, EUR, GBP, AED',
+    paymentAccepted: 'Cash, Credit Card, UPI, Net Banking',
     address: {
       '@type': 'PostalAddress',
       streetAddress: 'Varkala North Cliff',
@@ -45,6 +52,44 @@ export default function SEO({
       latitude: '8.7379',
       longitude: '76.7163',
     },
+    areaServed: {
+      '@type': 'Place',
+      name: 'Varkala, Kerala, India',
+    },
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: 'Wayzza Experiences',
+      itemListElement: [
+        {
+          '@type': 'OfferCatalog',
+          name: 'Clifftop Villas',
+          description: 'Verified premium villas with ocean views on the Varkala Cliff.',
+        },
+        {
+          '@type': 'OfferCatalog',
+          name: 'Royal Enfield Rentals',
+          description: 'Curated fleet of Royal Enfield motorcycles for exploring Kerala.',
+        },
+        {
+          '@type': 'OfferCatalog',
+          name: 'Luxury Car Rentals',
+          description: 'Self-drive and chauffeur car hire in Varkala and surrounding areas.',
+        },
+        {
+          '@type': 'OfferCatalog',
+          name: 'Local Experiences',
+          description: 'Hand-curated secret spots, surf lessons, ayurvedic sessions, and more.',
+        },
+      ],
+    },
+    openingHoursSpecification: [
+      {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+        opens: '00:00',
+        closes: '23:59',
+      },
+    ],
     sameAs: [
       'https://www.instagram.com/wayzza',
       'https://www.twitter.com/wayzza',
@@ -52,7 +97,7 @@ export default function SEO({
     ],
   };
 
-  // Author Schema (EEAT)
+  // ── Author / EEAT Schema ──
   const authorSchema = author
     ? {
         '@context': 'https://schema.org',
@@ -61,10 +106,16 @@ export default function SEO({
         jobTitle: author.role || 'Varkala Specialist',
         description: author.bio || 'Local expert and curator of premium Varkala experiences.',
         image: author.image || 'https://wayzza.live/team/expert.jpg',
+        worksFor: {
+          '@type': 'Organization',
+          name: 'Wayzza',
+          url: 'https://wayzza.live',
+        },
+        knowsAbout: ['Varkala', 'Kerala Tourism', 'Luxury Stays', 'Bike Rentals'],
       }
     : null;
 
-  // FAQ Schema
+  // ── FAQ Schema (AEO: directly answers user questions) ──
   const faqSchema = faq
     ? {
         '@context': 'https://schema.org',
@@ -80,7 +131,62 @@ export default function SEO({
       }
     : null;
 
-  // Breadcrumb schema
+  // ── Q&A Schema (AEO: community-style Q&A signals) ──
+  const qaSchema = qa
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'QAPage',
+        mainEntity: {
+          '@type': 'Question',
+          name: qa.question,
+          text: qa.question,
+          answerCount: qa.answers?.length || 1,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: qa.answers?.[0] || qa.answer,
+            upvoteCount: 10,
+            author: {
+              '@type': 'Organization',
+              name: 'Wayzza',
+            },
+          },
+        },
+      }
+    : null;
+
+  // ── HowTo Schema (AEO: step-by-step instructions) ──
+  const howToSchema = howTo
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'HowTo',
+        name: howTo.name,
+        description: howTo.description,
+        totalTime: howTo.totalTime || 'PT5M',
+        step: howTo.steps.map((s, i) => ({
+          '@type': 'HowToStep',
+          position: i + 1,
+          name: s.name,
+          text: s.text,
+          url: s.url || canonicalUrl,
+        })),
+      }
+    : null;
+
+  // ── Speakable Schema (AEO: voice assistants & AI Overviews) ──
+  const speakableSchema = speakable
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        name: title || 'Wayzza | Premium Varkala Stays & Luxury Mobility',
+        speakable: {
+          '@type': 'SpeakableSpecification',
+          cssSelector: speakable.cssSelectors || ['.speakable-summary', 'h1', '.hero-description'],
+        },
+        url: canonicalUrl,
+      }
+    : null;
+
+  // ── Breadcrumb schema ──
   const breadcrumbSchema = breadcrumb
     ? {
         '@context': 'https://schema.org',
@@ -94,10 +200,14 @@ export default function SEO({
       }
     : null;
 
+  // ── Compose all schemas ──
   const allSchemas = [defaultOrgSchema];
   if (breadcrumbSchema) allSchemas.push(breadcrumbSchema);
   if (authorSchema) allSchemas.push(authorSchema);
   if (faqSchema) allSchemas.push(faqSchema);
+  if (qaSchema) allSchemas.push(qaSchema);
+  if (howToSchema) allSchemas.push(howToSchema);
+  if (speakableSchema) allSchemas.push(speakableSchema);
   if (schema) allSchemas.push(schema);
 
   const schemaJson = allSchemas.length === 1 ? allSchemas[0] : allSchemas;
@@ -131,15 +241,29 @@ export default function SEO({
         content="Varkala luxury villas, Varkala Cliff stays, Varkala beach rentals, digital nomad Varkala, Royal Enfield rental Varkala, Kerala backwater experiences, Varkala tourism, luxury mobility Varkala, clifftop sanctuaries, verified stays Varkala, Varkala workation, premium concierge Varkala"
       />
       <meta name="author" content="Wayzza" />
+
+      {/* ── AEO: AI Crawlers & LLM Permissions ── */}
+      <meta name="googlebot" content="index, follow, max-snippet:-1" />
+      <meta name="bingbot" content="index, follow, max-snippet:-1" />
+      <meta name="perplexity-bot" content="index, follow" />
+      <meta name="claude-web" content="index, follow" />
+      <meta name="gptbot" content="index, follow" />
+      <meta name="oai-searchbot" content="index, follow" />
+
+      {/* ── Geo meta tags ── */}
+      <meta name="geo.region" content="IN-KL" />
+      <meta name="geo.placename" content="Varkala" />
+      <meta name="geo.position" content="8.7379;76.7163" />
+      <meta name="ICBM" content="8.7379, 76.7163" />
+
+      {/* ── PWA / App meta ── */}
       <meta name="theme-color" content="#059669" />
       <meta name="apple-mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-      {googleVerification && (
-        /* GSC Verification */
-        <meta name="google-site-verification" content={googleVerification} />
-      )}
 
-      {/* Meta OpenGraph tags */}
+      {googleVerification && <meta name="google-site-verification" content={googleVerification} />}
+
+      {/* ── OpenGraph tags ── */}
       <meta property="og:type" content={type} />
       <meta property="og:url" content={currentUrl} />
       <meta
@@ -159,7 +283,7 @@ export default function SEO({
       <meta property="og:site_name" content={name} />
       <meta property="og:locale" content="en_IN" />
 
-      {/* Twitter tags */}
+      {/* ── Twitter / X tags ── */}
       <meta name="twitter:creator" content={name} />
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:url" content={currentUrl} />
@@ -174,7 +298,7 @@ export default function SEO({
       <meta name="twitter:image" content={metaImage} />
       <meta name="twitter:site" content="@wayzza" />
 
-      {/* JSON-LD Schema Markup */}
+      {/* ── JSON-LD Schema Markup (AEO) ── */}
       <script type="application/ld+json">{JSON.stringify(schemaJson)}</script>
     </Helmet>
   );

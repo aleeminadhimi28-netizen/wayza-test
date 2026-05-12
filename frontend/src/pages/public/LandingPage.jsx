@@ -135,28 +135,91 @@ export default function LandingPage() {
     <WayzzaLayout noPadding hideFooter>
       <SEO
         title="Escape the Ordinary"
-        description="Handpicked clifftop villas, Royal Enfield rentals, and hidden local secrets curated for the modern explorer in Varkala."
+        description="Handpicked clifftop villas, Royal Enfield rentals, and hidden local secrets curated for the modern explorer in Varkala, Kerala."
         breadcrumb={[{ name: 'Home', url: 'https://wayzza.live' }]}
-        schema={{
-          '@context': 'https://schema.org',
-          '@type': 'LocalBusiness',
-          name: 'Wayzza',
-          description: 'Curated sanctuaries and elite mobility for digital nomads in Varkala',
-          url: 'https://wayzza.live',
-          address: {
-            '@type': 'PostalAddress',
-            streetAddress: 'Varkala',
-            addressLocality: 'Varkala',
-            addressRegion: 'Kerala',
-            postalCode: '695141',
-            addressCountry: 'IN',
-          },
-          geo: {
-            '@type': 'GeoCoordinates',
-            latitude: '8.7379',
-            longitude: '76.7269',
-          },
+        speakable={{ cssSelectors: ['.speakable-summary', 'h1', '.hero-description'] }}
+        howTo={{
+          name: 'How to Book a Varkala Stay on Wayzza',
+          description:
+            'Book premium clifftop villas, bike rentals, and local experiences in Varkala in under 5 minutes on Wayzza.',
+          totalTime: 'PT5M',
+          steps: [
+            {
+              name: 'Search your dates',
+              text: 'Use the search bar on the homepage to enter your destination, check-in and check-out dates, and number of guests.',
+              url: 'https://wayzza.live/#search',
+            },
+            {
+              name: 'Browse verified listings',
+              text: 'Explore curated villas, bike rentals, cars, and local experiences — all verified by the Wayzza team.',
+              url: 'https://wayzza.live/listings',
+            },
+            {
+              name: 'Review pricing and availability',
+              text: 'Check nightly rates, amenities, host details, and real guest reviews before reserving.',
+            },
+            {
+              name: 'Reserve instantly',
+              text: "Click 'Reserve' on the listing page, confirm your dates and guest count, and complete secure payment via UPI, card, or net banking.",
+            },
+            {
+              name: 'Receive confirmation',
+              text: 'Get instant booking confirmation via email with check-in details and a direct line to your Wayzza Concierge.',
+            },
+          ],
         }}
+        faq={[
+          {
+            question: 'What is Wayzza?',
+            answer:
+              'Wayzza is a premium travel booking platform based in Varkala, Kerala. It offers verified clifftop villas, luxury bike and car rentals, and curated local experiences for digital nomads, solo travellers, and couples exploring Varkala.',
+          },
+          {
+            question: 'Where is Wayzza located?',
+            answer:
+              'Wayzza operates in Varkala, Kerala, India — specifically serving the Varkala North Cliff, Edava, and Odayam areas. Our physical address is Varkala North Cliff, Varkala, Kerala 695141.',
+          },
+          {
+            question: 'What types of stays does Wayzza offer?',
+            answer:
+              'Wayzza offers a curated selection of clifftop villas with ocean views, boutique hotels, and private homestays in Varkala. All properties are verified by the Wayzza team for quality and authenticity.',
+          },
+          {
+            question: 'Can I rent a Royal Enfield in Varkala through Wayzza?',
+            answer:
+              'Yes. Wayzza offers a curated fleet of Royal Enfield motorcycles and other bikes available for daily or multi-day rental in Varkala. You can browse and book bikes directly on the platform.',
+          },
+          {
+            question: 'Does Wayzza offer car rentals in Varkala?',
+            answer:
+              'Yes. Wayzza lists self-drive and chauffeur-driven car rentals available in Varkala and surrounding Kerala regions, including transfers to Trivandrum airport.',
+          },
+          {
+            question: 'How much does it cost to stay in a villa in Varkala?',
+            answer:
+              'Varkala villas on Wayzza start from approximately ₹2,500 per night for budget options and go up to ₹15,000+ per night for premium clifftop properties with ocean views. Prices vary by season and availability.',
+          },
+          {
+            question: 'Is Varkala good for digital nomads?',
+            answer:
+              "Yes. Varkala is one of Kerala's top digital nomad destinations, offering reliable WiFi, a laid-back café culture, co-working spots, and stunning ocean views. Wayzza curates long-stay villa options specifically suited to remote workers.",
+          },
+          {
+            question: 'What is the best time to visit Varkala?',
+            answer:
+              'The best time to visit Varkala is between October and March, when the weather is dry, sunny, and ideal for beach activities and exploration. Wayzza properties are available year-round, including the monsoon season for a lush, quieter experience.',
+          },
+          {
+            question: 'How do I contact Wayzza support?',
+            answer:
+              'You can reach Wayzza support by email at stay@wayzza.live or by phone at +91 80892 22444. Support is available 24/7 for all booking-related enquiries.',
+          },
+          {
+            question: 'Are Wayzza listings verified?',
+            answer:
+              'Yes. Every property, vehicle, and experience listed on Wayzza is manually verified by the Wayzza team to ensure it meets quality, safety, and authenticity standards before being published on the platform.',
+          },
+        ]}
       />
 
       <div className="bg-white font-sans text-slate-900 selection:bg-emerald-50 selection:text-emerald-900 leading-relaxed antialiased overflow-x-hidden">
@@ -195,12 +258,12 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold tracking-tighter text-white leading-[0.95] drop-shadow-2xl">
+              <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold tracking-tighter text-white leading-[0.95] drop-shadow-2xl speakable-summary">
                 Escape the ordinary <br />
                 <span className="text-emerald-400 italic">gracefully.</span>
               </h1>
 
-              <p className="text-sm md:text-xl font-medium text-white/90 max-w-2xl mx-auto drop-shadow-lg leading-relaxed px-2 md:px-0">
+              <p className="text-sm md:text-xl font-medium text-white/90 max-w-2xl mx-auto drop-shadow-lg leading-relaxed px-2 md:px-0 hero-description">
                 Handpicked sanctuaries and high-performance mobility curated for the modern explorer
                 in Varkala.
               </p>
