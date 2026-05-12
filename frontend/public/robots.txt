@@ -3,4 +3,38 @@ Allow: /
 Disallow: /admin/
 Disallow: /partner/
 
+# ── AI & LLM Crawlers ──
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: YouBot
+Allow: /
+
+# ── Site maps & LLM files ──
 Sitemap: https://wayzza.live/sitemap.xml
+LLMs: https://wayzza.live/llms.txt
+LLMs-Full: https://wayzza.live/llms-full.txt

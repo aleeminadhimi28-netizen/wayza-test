@@ -23,12 +23,41 @@ export default function SEO({
   const defaultImage = 'https://wayzza.live/og-image.png';
   const metaImage = image || defaultImage;
 
-  // ── Default Organization & LocalBusiness schema (enriched for AEO) ──
+  // ── GEO: WebSite schema (Sitelinks Searchbox + entity anchor) ──
+  const webSiteSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': 'https://wayzza.live/#website',
+    name: 'Wayzza',
+    alternateName: 'Wayzza Varkala',
+    url: 'https://wayzza.live',
+    description:
+      'Wayzza is a premium curated booking platform for clifftop villas, Royal Enfield rentals, car hire, and authentic local experiences in Varkala, Kerala, India.',
+    inLanguage: 'en-IN',
+    publisher: {
+      '@type': 'Organization',
+      '@id': 'https://wayzza.live/#organization',
+      name: 'Wayzza',
+    },
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: 'https://wayzza.live/listings?location={search_term_string}',
+      },
+      'query-input': 'required name=search_term_string',
+    },
+  };
+
+  // ── Default Organization & LocalBusiness schema (enriched for GEO) ──
   const defaultOrgSchema = {
     '@context': 'https://schema.org',
     '@type': ['LocalBusiness', 'LodgingBusiness', 'TravelAgency'],
+    '@id': 'https://wayzza.live/#organization',
     name: 'Wayzza',
     alternateName: 'Wayzza Varkala',
+    foundingDate: '2024',
+    slogan: 'Escape the ordinary. Gracefully.',
     url: 'https://wayzza.live',
     logo: 'https://wayzza.live/favicon.svg',
     image: defaultImage,
@@ -52,10 +81,20 @@ export default function SEO({
       latitude: '8.7379',
       longitude: '76.7163',
     },
-    areaServed: {
-      '@type': 'Place',
-      name: 'Varkala, Kerala, India',
-    },
+    areaServed: [
+      { '@type': 'Place', name: 'Varkala, Kerala, India' },
+      { '@type': 'Place', name: 'Edava, Kerala, India' },
+      { '@type': 'Place', name: 'Odayam, Kerala, India' },
+    ],
+    knowsAbout: [
+      'Varkala',
+      'Varkala Cliff',
+      'Kerala Tourism',
+      'Luxury Clifftop Villas',
+      'Royal Enfield Motorcycle Rentals',
+      'Digital Nomad Travel',
+      'Premium Stays in India',
+    ],
     hasOfferCatalog: {
       '@type': 'OfferCatalog',
       name: 'Wayzza Experiences',
@@ -201,7 +240,7 @@ export default function SEO({
     : null;
 
   // ── Compose all schemas ──
-  const allSchemas = [defaultOrgSchema];
+  const allSchemas = [webSiteSchema, defaultOrgSchema];
   if (breadcrumbSchema) allSchemas.push(breadcrumbSchema);
   if (authorSchema) allSchemas.push(authorSchema);
   if (faqSchema) allSchemas.push(faqSchema);
