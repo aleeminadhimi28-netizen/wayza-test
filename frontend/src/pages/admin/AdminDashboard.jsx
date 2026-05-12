@@ -370,7 +370,9 @@ export default function AdminDashboard() {
               {activeTab !== 'overview' &&
                 activeTab !== 'support' &&
                 activeTab !== 'withdrawals' &&
-                activeTab !== 'settings' && (
+                activeTab !== 'settings' &&
+                activeTab !== 'coupons' &&
+                activeTab !== 'logs' && (
                   <div className="relative hidden md:block w-72">
                     <Search
                       className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
