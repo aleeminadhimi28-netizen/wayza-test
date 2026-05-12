@@ -192,7 +192,7 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
                     initial={{ opacity: 0, y: 10, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    className="absolute right-0 mt-4 w-56 bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden z-50 p-2"
+                    className="absolute right-0 mt-4 w-[240px] bg-white rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-slate-100 overflow-hidden z-[110] p-2"
                   >
                     <div className="px-4 py-3 border-b border-slate-50 mb-1">
                       <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
@@ -279,7 +279,7 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
                         initial={{ opacity: 0, scale: 0.95, y: 10 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                        className="absolute right-0 mt-4 w-80 bg-white rounded-3xl shadow-[0_30px_60px_rgba(0,0,0,0.12)] border border-slate-100 overflow-hidden z-50 flex flex-col max-h-[400px]"
+                        className="absolute right-0 mt-4 w-[320px] bg-white rounded-3xl shadow-[0_30px_60px_rgba(0,0,0,0.12)] border border-slate-100 overflow-hidden z-[110] flex flex-col max-h-[420px]"
                       >
                         <div className="p-5 border-b border-slate-50 bg-slate-50/50 flex justify-between items-center">
                           <span className="font-bold text-xs text-slate-900 uppercase tracking-widest">
@@ -335,7 +335,7 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
                         initial={{ opacity: 0, y: 15, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 15, scale: 0.95 }}
-                        className="absolute right-0 mt-4 w-72 bg-white rounded-[32px] shadow-[0_30px_60px_rgba(0,0,0,0.12)] border border-slate-100 z-50 overflow-hidden"
+                        className="absolute right-0 mt-4 w-[280px] bg-white rounded-[32px] shadow-[0_30px_60px_rgba(0,0,0,0.12)] border border-slate-100 z-[110] overflow-hidden"
                       >
                         <div className="p-6 border-b border-slate-50 bg-slate-50/50">
                           <p className="text-[11px] font-bold text-emerald-600 tracking-widest uppercase">
