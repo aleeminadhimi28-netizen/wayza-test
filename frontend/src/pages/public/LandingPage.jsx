@@ -307,7 +307,8 @@ export default function LandingPage() {
                         type="date"
                         value={checkIn}
                         onChange={(e) => setCheckIn(e.target.value)}
-                        className={`bg-transparent border-none outline-none font-bold text-slate-900 text-sm p-0 w-full cursor-pointer [color-scheme:light] appearance-none h-6 ${!checkIn ? 'date-empty' : ''}`}
+                        className="bg-transparent border-none outline-none font-bold text-sm p-0 w-full cursor-pointer h-6"
+                        style={{ colorScheme: 'light', color: checkIn ? '#0f172a' : 'transparent' }}
                         aria-label="Check in date"
                       />
                       {!checkIn && (
@@ -321,7 +322,8 @@ export default function LandingPage() {
                         type="date"
                         value={checkOut}
                         onChange={(e) => setCheckOut(e.target.value)}
-                        className={`bg-transparent border-none outline-none font-bold text-slate-900 text-sm p-0 w-full cursor-pointer [color-scheme:light] appearance-none h-6 ${!checkOut ? 'date-empty' : ''}`}
+                        className="bg-transparent border-none outline-none font-bold text-sm p-0 w-full cursor-pointer h-6"
+                        style={{ colorScheme: 'light', color: checkOut ? '#0f172a' : 'transparent' }}
                         aria-label="Check out date"
                       />
                       {!checkOut && (
