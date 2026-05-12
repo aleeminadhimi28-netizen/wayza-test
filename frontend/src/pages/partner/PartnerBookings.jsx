@@ -70,11 +70,6 @@ export default function PartnerBookings() {
   const [scanResult, setScanResult] = useState(null); // { id, data, type: 'check-in' | 'check-out' }
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, onConfirm: () => {} });
 
-  useEffect(() => {
-    if (!user?.email) return;
-    refresh();
-  }, [user?.email, refresh]);
-
   const refresh = useCallback(() => {
     setLoading(true);
     api
@@ -85,6 +80,11 @@ export default function PartnerBookings() {
       })
       .catch(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (!user?.email) return;
+    refresh();
+  }, [user?.email, refresh]);
 
   const visible = bookings.filter((b) => {
     const matchStatus = filter === 'all' || b.status === filter;
