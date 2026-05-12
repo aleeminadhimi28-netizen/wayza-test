@@ -30,7 +30,10 @@ export default function AITripPlanner() {
         };
         setItinerary(formattedData);
       } else {
-        showToast(res.message || "Could not generate trip. Try a broader destination like 'Varkala'.", 'error');
+        showToast(
+          res.message || "Could not generate trip. Try a broader destination like 'Varkala'.",
+          'error'
+        );
       }
     } catch (err) {
       console.error(err);

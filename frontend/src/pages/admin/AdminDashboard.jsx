@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import {
   Users,
   Briefcase,
@@ -10,7 +10,6 @@ import {
   Bell,
   MessageSquare,
   Banknote,
-  X,
   Settings,
   Tag,
   Activity,
@@ -85,17 +84,27 @@ export default function AdminDashboard() {
   }, [showToast]);
 
   const loadTableData = useCallback(async () => {
-    if (['overview', 'support', 'withdrawals', 'settings', 'coupons', 'logs'].includes(activeTab)) return;
-    
+    if (['overview', 'support', 'withdrawals', 'settings', 'coupons', 'logs'].includes(activeTab))
+      return;
+
     setLoadingData(true);
     try {
       let promise;
       switch (activeTab) {
-        case 'users': promise = api.adminUsers(); break;
-        case 'partners': promise = api.adminPartners(); break;
-        case 'listings': promise = api.adminListings(); break;
-        case 'bookings': promise = api.adminBookings(); break;
-        default: break;
+        case 'users':
+          promise = api.adminUsers();
+          break;
+        case 'partners':
+          promise = api.adminPartners();
+          break;
+        case 'listings':
+          promise = api.adminListings();
+          break;
+        case 'bookings':
+          promise = api.adminBookings();
+          break;
+        default:
+          break;
       }
 
       if (promise) {
@@ -115,92 +124,110 @@ export default function AdminDashboard() {
   }, [activeTab, showToast]);
 
   // 4. ACTION HANDLERS
-  const handleDeleteItem = useCallback(async (type, idOrEmail) => {
-    try {
-      const apiMap = {
-        users: api.adminDeleteUser,
-        partners: api.adminDeletePartner,
-        listings: api.adminDeleteListing,
-      };
-      
-      const res = await apiMap[type]?.(idOrEmail);
+  const handleDeleteItem = useCallback(
+    async (type, idOrEmail) => {
+      try {
+        const apiMap = {
+          users: api.adminDeleteUser,
+          partners: api.adminDeletePartner,
+          listings: api.adminDeleteListing,
+        };
 
-      if (res?.ok) {
-        if (type === 'users' || type === 'partners')
-          setDataList((prev) => prev.filter((item) => item.email !== idOrEmail));
-        else setDataList((prev) => prev.filter((item) => item._id !== idOrEmail));
-        showToast(`Successfully deleted ${type.slice(0, -1)}.`, 'success');
+        const res = await apiMap[type]?.(idOrEmail);
+
+        if (res?.ok) {
+          if (type === 'users' || type === 'partners')
+            setDataList((prev) => prev.filter((item) => item.email !== idOrEmail));
+          else setDataList((prev) => prev.filter((item) => item._id !== idOrEmail));
+          showToast(`Successfully deleted ${type.slice(0, -1)}.`, 'success');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Action failed. Please try again.', 'error');
       }
-    } catch (err) {
-      console.error(err);
-      showToast('Action failed. Please try again.', 'error');
-    }
-  }, [showToast]);
+    },
+    [showToast]
+  );
 
-  const handleApproveProperty = useCallback(async (id) => {
-    try {
-      const d = await api.adminApproveListing(id, true);
-      if (d.ok) {
-        setDataList((prev) =>
-          prev.map((item) => (item._id === id ? { ...item, approved: true } : item))
-        );
-        showToast('Property approved successfully.', 'success');
+  const handleApproveProperty = useCallback(
+    async (id) => {
+      try {
+        const d = await api.adminApproveListing(id, true);
+        if (d.ok) {
+          setDataList((prev) =>
+            prev.map((item) => (item._id === id ? { ...item, approved: true } : item))
+          );
+          showToast('Property approved successfully.', 'success');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Failed to approve property.', 'error');
       }
-    } catch (err) {
-      console.error(err);
-      showToast('Failed to approve property.', 'error');
-    }
-  }, [showToast]);
+    },
+    [showToast]
+  );
 
-  const handleRejectProperty = useCallback(async (id) => {
-    await handleDeleteItem('listings', id);
-  }, [handleDeleteItem]);
+  const handleRejectProperty = useCallback(
+    async (id) => {
+      await handleDeleteItem('listings', id);
+    },
+    [handleDeleteItem]
+  );
 
-  const handleApprovePartner = useCallback(async (email) => {
-    if (!email) return;
-    try {
-      const d = await api.adminApprovePartner(email);
-      if (d.ok) {
-        setDataList((prev) =>
-          prev.map((item) => (item.email === email ? { ...item, onboarded: true } : item))
-        );
-        showToast('Partner approved successfully!', 'success');
+  const handleApprovePartner = useCallback(
+    async (email) => {
+      if (!email) return;
+      try {
+        const d = await api.adminApprovePartner(email);
+        if (d.ok) {
+          setDataList((prev) =>
+            prev.map((item) => (item.email === email ? { ...item, onboarded: true } : item))
+          );
+          showToast('Partner approved successfully!', 'success');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Failed to approve partner.', 'error');
       }
-    } catch (err) {
-      console.error(err);
-      showToast('Failed to approve partner.', 'error');
-    }
-  }, [showToast]);
+    },
+    [showToast]
+  );
 
-  const handleMuteUser = useCallback(async (email, muted) => {
-    try {
-      const d = await api.adminMuteUser(email, muted);
-      if (d.ok) {
-        setDataList((prev) =>
-          prev.map((item) => (item.email === email ? { ...item, muted } : item))
-        );
-        showToast(muted ? 'User muted.' : 'User unmuted.', 'success');
+  const handleMuteUser = useCallback(
+    async (email, muted) => {
+      try {
+        const d = await api.adminMuteUser(email, muted);
+        if (d.ok) {
+          setDataList((prev) =>
+            prev.map((item) => (item.email === email ? { ...item, muted } : item))
+          );
+          showToast(muted ? 'User muted.' : 'User unmuted.', 'success');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Action failed.', 'error');
       }
-    } catch (err) {
-      console.error(err);
-      showToast('Action failed.', 'error');
-    }
-  }, [showToast]);
+    },
+    [showToast]
+  );
 
-  const handleUpdatePayout = useCallback(async (id, status) => {
-    try {
-      const d = await api.adminUpdatePayoutStatus(id, status);
-      if (d.ok) {
-        setDataList((prev) =>
-          prev.map((item) => (item._id === id ? { ...item, payoutStatus: status } : item))
-        );
-        showToast('Payout status updated.', 'success');
+  const handleUpdatePayout = useCallback(
+    async (id, status) => {
+      try {
+        const d = await api.adminUpdatePayoutStatus(id, status);
+        if (d.ok) {
+          setDataList((prev) =>
+            prev.map((item) => (item._id === id ? { ...item, payoutStatus: status } : item))
+          );
+          showToast('Payout status updated.', 'success');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Failed to update payout.', 'error');
       }
-    } catch (err) {
-      console.error(err);
-      showToast('Failed to update payout.', 'error');
-    }
-  }, [showToast]);
+    },
+    [showToast]
+  );
 
   const handleLogout = useCallback(() => {
     logout();
@@ -217,21 +244,20 @@ export default function AdminDashboard() {
         item.businessName,
         item.guestEmail,
         item.guestName,
-        item.phone
-      ].filter(Boolean).map(f => String(f).toLowerCase());
-      return searchFields.some(f => f.includes(query));
+        item.phone,
+      ]
+        .filter(Boolean)
+        .map((f) => String(f).toLowerCase());
+      return searchFields.some((f) => f.includes(query));
     });
   }, [dataList, searchQuery]);
 
-  const pendingWithdrawals = useMemo(() => 
-    withdrawals.filter((w) => w.status === 'pending').length,
+  const pendingWithdrawals = useMemo(
+    () => withdrawals.filter((w) => w.status === 'pending').length,
     [withdrawals]
   );
-  
-  const openTickets = useMemo(() => 
-    tickets.filter((t) => t.status === 'open').length,
-    [tickets]
-  );
+
+  const openTickets = useMemo(() => tickets.filter((t) => t.status === 'open').length, [tickets]);
 
   // 6. EFFECTS
   useEffect(() => {
@@ -380,10 +406,13 @@ export default function AdminDashboard() {
               </button>
               <div>
                 <h2 className="text-xl font-bold text-slate-900">
-                  {activeTab === 'overview' ? 'Dashboard Overview' 
-                    : activeTab === 'support' ? 'Customer Support'
-                    : activeTab === 'withdrawals' ? 'Financial Operations'
-                    : `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Management`}
+                  {activeTab === 'overview'
+                    ? 'Dashboard Overview'
+                    : activeTab === 'support'
+                      ? 'Customer Support'
+                      : activeTab === 'withdrawals'
+                        ? 'Financial Operations'
+                        : `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Management`}
                 </h2>
                 <p className="text-xs text-slate-500 mt-0.5">Wayzza Admin Panel</p>
               </div>
@@ -447,7 +476,7 @@ export default function AdminDashboard() {
                   handleUpdatePayout,
                   handleMuteUser,
                   handleApprovePartner,
-                  handleDeleteItem
+                  handleDeleteItem,
                 }}
               />
             )}

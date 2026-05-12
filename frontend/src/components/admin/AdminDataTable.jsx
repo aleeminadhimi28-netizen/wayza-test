@@ -1,14 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-  Search,
-  CheckCircle,
-  Clock,
-  Trash2,
-  Volume2,
-  VolumeX,
-  X
-} from 'lucide-react';
+import { Search, CheckCircle, Clock, Trash2, Volume2, VolumeX, X } from 'lucide-react';
 import ConfirmModal from '../ui/ConfirmModal.jsx';
 
 export default function AdminDataTable({
@@ -18,7 +10,7 @@ export default function AdminDataTable({
   setSearchQuery,
   filteredData,
   dataList,
-  handlers
+  handlers,
 }) {
   const {
     handleApproveProperty,
@@ -26,7 +18,7 @@ export default function AdminDataTable({
     handleUpdatePayout,
     handleMuteUser,
     handleApprovePartner,
-    handleDeleteItem
+    handleDeleteItem,
   } = handlers;
 
   const [confirmState, setConfirmState] = useState({
@@ -39,7 +31,8 @@ export default function AdminDataTable({
     isLoading: false,
   });
 
-  const closeConfirm = () => setConfirmState((prev) => ({ ...prev, isOpen: false, isLoading: false }));
+  const closeConfirm = () =>
+    setConfirmState((prev) => ({ ...prev, isOpen: false, isLoading: false }));
 
   const triggerConfirm = (config) => {
     setConfirmState({
@@ -51,13 +44,13 @@ export default function AdminDataTable({
 
   const handleConfirmAction = async () => {
     if (!confirmState.onConfirm) return;
-    setConfirmState(prev => ({ ...prev, isLoading: true }));
+    setConfirmState((prev) => ({ ...prev, isLoading: true }));
     try {
       await confirmState.onConfirm();
       closeConfirm();
     } catch (err) {
       console.error('Action failed:', err);
-      setConfirmState(prev => ({ ...prev, isLoading: false }));
+      setConfirmState((prev) => ({ ...prev, isLoading: false }));
     }
   };
 
@@ -76,9 +69,7 @@ export default function AdminDataTable({
               <Clock size={18} />
             </div>
             <div>
-              <h3 className="font-bold text-sm text-amber-900">
-                Pending Inventory Approvals
-              </h3>
+              <h3 className="font-bold text-sm text-amber-900">Pending Inventory Approvals</h3>
               <p className="text-xs text-amber-700">
                 {dataList.filter((i) => !i.approved).length} listings waiting for review
               </p>
@@ -98,9 +89,7 @@ export default function AdminDataTable({
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <p className="font-semibold text-sm text-slate-900">
-                          {item.title}
-                        </p>
+                        <p className="font-semibold text-sm text-slate-900">{item.title}</p>
                         <span className="text-[11px] bg-amber-200/50 text-amber-800 px-2 py-0.5 rounded-full uppercase font-bold">
                           {item.category === 'activity' ? 'Experience' : 'Property'}
                         </span>
@@ -113,25 +102,29 @@ export default function AdminDataTable({
                   </div>
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => triggerConfirm({
-                        title: 'Approve Property',
-                        message: `Are you sure you want to approve "${item.title}"?`,
-                        confirmText: 'Approve Now',
-                        confirmVariant: 'emerald',
-                        onConfirm: () => handleApproveProperty(item._id)
-                      })}
+                      onClick={() =>
+                        triggerConfirm({
+                          title: 'Approve Property',
+                          message: `Are you sure you want to approve "${item.title}"?`,
+                          confirmText: 'Approve Now',
+                          confirmVariant: 'emerald',
+                          onConfirm: () => handleApproveProperty(item._id),
+                        })
+                      }
                       className="h-8 px-4 bg-emerald-600 text-white rounded-lg font-semibold text-xs hover:bg-emerald-700 transition-colors flex items-center gap-1.5 shadow-sm"
                     >
                       <CheckCircle size={13} /> Approve
                     </button>
                     <button
-                      onClick={() => triggerConfirm({
-                        title: 'Reject Property',
-                        message: `Are you sure you want to reject "${item.title}"? This will delete the listing permanently.`,
-                        confirmText: 'Reject & Delete',
-                        confirmVariant: 'rose',
-                        onConfirm: () => handleRejectProperty(item._id)
-                      })}
+                      onClick={() =>
+                        triggerConfirm({
+                          title: 'Reject Property',
+                          message: `Are you sure you want to reject "${item.title}"? This will delete the listing permanently.`,
+                          confirmText: 'Reject & Delete',
+                          confirmVariant: 'rose',
+                          onConfirm: () => handleRejectProperty(item._id),
+                        })
+                      }
                       className="h-8 px-4 bg-rose-50 text-rose-600 border border-rose-200 rounded-lg font-semibold text-xs hover:bg-rose-500 hover:text-white transition-all flex items-center gap-1.5"
                     >
                       <X size={13} /> Reject
@@ -153,10 +146,7 @@ export default function AdminDataTable({
             <p className="text-sm text-slate-500">{filteredData.length} records found</p>
           </div>
           <div className="relative w-full sm:w-72">
-            <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-              size={15}
-            />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
             <input
               placeholder={`Search ${activeTab}...`}
               value={searchQuery}
@@ -194,7 +184,10 @@ export default function AdminDataTable({
                     </tr>
                   ))
                 : filteredData.map((item, i) => (
-                    <tr key={`${item._id || item.email}-${i}`} className="hover:bg-slate-50/50 transition-colors group">
+                    <tr
+                      key={`${item._id || item.email}-${i}`}
+                      className="hover:bg-slate-50/50 transition-colors group"
+                    >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <div
@@ -251,8 +244,7 @@ export default function AdminDataTable({
                             <span
                               className={`text-[11px] font-bold uppercase tracking-wide px-2 py-0.5 rounded ${item.payoutStatus === 'paid_out' ? 'text-emerald-600 bg-emerald-50' : 'text-amber-600 bg-amber-50'}`}
                             >
-                              Payout:{' '}
-                              {item.payoutStatus === 'paid_out' ? 'Settled' : 'Pending'}
+                              Payout: {item.payoutStatus === 'paid_out' ? 'Settled' : 'Pending'}
                             </span>
                           )}
                         </div>
@@ -272,13 +264,15 @@ export default function AdminDataTable({
                             item.status === 'paid' &&
                             item.payoutStatus !== 'paid_out' && (
                               <button
-                                onClick={() => triggerConfirm({
-                                  title: 'Settle Payout',
-                                  message: `Mark payout for booking #${item._id?.slice(-8).toUpperCase()} as settled?`,
-                                  confirmText: 'Mark as Settled',
-                                  confirmVariant: 'emerald',
-                                  onConfirm: () => handleUpdatePayout(item._id, 'paid_out')
-                                })}
+                                onClick={() =>
+                                  triggerConfirm({
+                                    title: 'Settle Payout',
+                                    message: `Mark payout for booking #${item._id?.slice(-8).toUpperCase()} as settled?`,
+                                    confirmText: 'Mark as Settled',
+                                    confirmVariant: 'emerald',
+                                    onConfirm: () => handleUpdatePayout(item._id, 'paid_out'),
+                                  })
+                                }
                                 className="h-8 px-4 bg-emerald-600 text-white rounded-lg font-semibold text-xs hover:bg-emerald-700 transition-colors flex items-center gap-1.5 shadow-sm"
                               >
                                 <CheckCircle size={13} /> Settle Payout
@@ -286,13 +280,15 @@ export default function AdminDataTable({
                             )}
                           {activeTab === 'listings' && !item.approved && (
                             <button
-                              onClick={() => triggerConfirm({
-                                title: 'Approve Listing',
-                                message: `Approve "${item.title}" and make it visible to guests?`,
-                                confirmText: 'Approve Now',
-                                confirmVariant: 'emerald',
-                                onConfirm: () => handleApproveProperty(item._id)
-                              })}
+                              onClick={() =>
+                                triggerConfirm({
+                                  title: 'Approve Listing',
+                                  message: `Approve "${item.title}" and make it visible to guests?`,
+                                  confirmText: 'Approve Now',
+                                  confirmVariant: 'emerald',
+                                  onConfirm: () => handleApproveProperty(item._id),
+                                })
+                              }
                               className="h-8 px-4 bg-emerald-600 text-white rounded-lg font-semibold text-xs hover:bg-emerald-700 transition-colors flex items-center gap-1.5 shadow-sm"
                             >
                               <CheckCircle size={13} /> Approve
@@ -300,13 +296,15 @@ export default function AdminDataTable({
                           )}
                           {activeTab === 'users' && (
                             <button
-                              onClick={() => triggerConfirm({
-                                title: item.muted ? 'Unmute User' : 'Mute User',
-                                message: `Are you sure you want to ${item.muted ? 'unmute' : 'mute'} ${item.email}?`,
-                                confirmText: item.muted ? 'Unmute' : 'Mute User',
-                                confirmVariant: item.muted ? 'emerald' : 'rose',
-                                onConfirm: () => handleMuteUser(item.email, !item.muted)
-                              })}
+                              onClick={() =>
+                                triggerConfirm({
+                                  title: item.muted ? 'Unmute User' : 'Mute User',
+                                  message: `Are you sure you want to ${item.muted ? 'unmute' : 'mute'} ${item.email}?`,
+                                  confirmText: item.muted ? 'Unmute' : 'Mute User',
+                                  confirmVariant: item.muted ? 'emerald' : 'rose',
+                                  onConfirm: () => handleMuteUser(item.email, !item.muted),
+                                })
+                              }
                               className={`h-8 px-3 rounded-lg font-semibold text-xs flex items-center gap-1.5 transition-all border ${
                                 item.muted
                                   ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-600 hover:text-white'
@@ -328,13 +326,15 @@ export default function AdminDataTable({
                             !item.onboarded &&
                             item.onboardingCompleted && (
                               <button
-                                onClick={() => triggerConfirm({
-                                  title: 'Approve Partner',
-                                  message: `Approve ${item.businessName || item.email} as an active partner?`,
-                                  confirmText: 'Approve Partner',
-                                  confirmVariant: 'emerald',
-                                  onConfirm: () => handleApprovePartner(item.email)
-                                })}
+                                onClick={() =>
+                                  triggerConfirm({
+                                    title: 'Approve Partner',
+                                    message: `Approve ${item.businessName || item.email} as an active partner?`,
+                                    confirmText: 'Approve Partner',
+                                    confirmVariant: 'emerald',
+                                    onConfirm: () => handleApprovePartner(item.email),
+                                  })
+                                }
                                 className="h-8 px-4 bg-emerald-600 text-white rounded-lg font-semibold text-xs hover:bg-emerald-700 transition-colors flex items-center gap-1.5 shadow-sm"
                               >
                                 <CheckCircle size={13} /> Approve
@@ -348,13 +348,16 @@ export default function AdminDataTable({
                               </span>
                             )}
                           <button
-                            onClick={() => triggerConfirm({
-                              title: `Delete ${activeTab.slice(0, -1)}`,
-                              message: `Are you sure you want to delete this ${activeTab.slice(0, -1)}? This action cannot be undone.`,
-                              confirmText: 'Delete Permanently',
-                              confirmVariant: 'rose',
-                              onConfirm: () => handleDeleteItem(activeTab, item.email || item._id)
-                            })}
+                            onClick={() =>
+                              triggerConfirm({
+                                title: `Delete ${activeTab.slice(0, -1)}`,
+                                message: `Are you sure you want to delete this ${activeTab.slice(0, -1)}? This action cannot be undone.`,
+                                confirmText: 'Delete Permanently',
+                                confirmVariant: 'rose',
+                                onConfirm: () =>
+                                  handleDeleteItem(activeTab, item.email || item._id),
+                              })
+                            }
                             className="w-8 h-8 bg-rose-50 text-rose-500 border border-rose-100 rounded-lg flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all"
                           >
                             <Trash2 size={14} />

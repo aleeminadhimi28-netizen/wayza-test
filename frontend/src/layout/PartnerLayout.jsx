@@ -20,12 +20,10 @@ import {
   Navigation,
   Banknote,
   Bell,
-  X,
   Moon,
   Sun,
   Menu,
 } from 'lucide-react';
-import { api } from '../utils/api.js';
 import { useNotifications } from '../hooks/useNotifications.jsx';
 import { NotificationDropdown } from '../components/ui/NotificationDropdown.jsx';
 
@@ -299,7 +297,11 @@ export default function PartnerLayout() {
                 )}
               </button>
 
-              <NotificationDropdown showNotifs={showNotifs} setShowNotifs={setShowNotifs} notifs={notifs} />
+              <NotificationDropdown
+                showNotifs={showNotifs}
+                setShowNotifs={setShowNotifs}
+                notifs={notifs}
+              />
             </div>
 
             {/* Avatar */}

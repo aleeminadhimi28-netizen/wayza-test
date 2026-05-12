@@ -8,23 +8,24 @@ export default function AdminSupport({ tickets, setTickets, loadTickets, loading
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [replyText, setReplyText] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
-  const [confirmModal, setConfirmModal] = useState({ 
-    isOpen: false, 
+  const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
     onConfirm: null,
-    isLoading: false 
+    isLoading: false,
   });
 
-  const closeConfirm = () => setConfirmModal(prev => ({ ...prev, isOpen: false, isLoading: false }));
+  const closeConfirm = () =>
+    setConfirmModal((prev) => ({ ...prev, isOpen: false, isLoading: false }));
 
   const handleConfirmAction = async () => {
     if (!confirmModal.onConfirm) return;
-    setConfirmModal(prev => ({ ...prev, isLoading: true }));
+    setConfirmModal((prev) => ({ ...prev, isLoading: true }));
     try {
       await confirmModal.onConfirm();
       closeConfirm();
     } catch (err) {
       console.error('Action failed:', err);
-      setConfirmModal(prev => ({ ...prev, isLoading: false }));
+      setConfirmModal((prev) => ({ ...prev, isLoading: false }));
     }
   };
 

@@ -4,7 +4,6 @@ import { useAuth } from '../../AuthContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PageTransition } from './PageTransition.jsx';
 import { Bell, X, Moon, Sun, Sparkles, ArrowRight } from 'lucide-react';
-import { api } from '../../utils/api.js';
 import { useCurrency, CURRENCIES } from '../../CurrencyContext.jsx';
 import { useNotifications } from '../../hooks/useNotifications.jsx';
 import { NotificationDropdown } from './NotificationDropdown.jsx';
@@ -241,7 +240,11 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
                     )}
                   </button>
 
-                  <NotificationDropdown notifs={notifs} showNotifs={showNotifs} setShowNotifs={setShowNotifs} />
+                  <NotificationDropdown
+                    notifs={notifs}
+                    showNotifs={showNotifs}
+                    setShowNotifs={setShowNotifs}
+                  />
                 </div>
 
                 {/* USER AVATAR */}
