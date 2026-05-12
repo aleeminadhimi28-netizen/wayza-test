@@ -172,7 +172,11 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
             {/* FIX: removed h-10/h-11 split — now always h-10, px-3, rounded-2xl */}
             <div className="relative" ref={currRef}>
               <button
-                onClick={() => setShowCurr(!showCurr)}
+                onClick={() => {
+                  setShowCurr(!showCurr);
+                  setShowNotifs(false);
+                  setOpen(false);
+                }}
                 className={`h-10 px-3 rounded-2xl flex items-center gap-2 transition-all font-bold text-[11px] uppercase tracking-widest ${
                   isTransparent
                     ? 'bg-white/10 text-white hover:bg-white/20 backdrop-blur-md border border-white/20'
@@ -192,7 +196,7 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
                     initial={{ opacity: 0, y: 10, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    className="absolute right-0 mt-4 w-[240px] bg-white rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-slate-100 overflow-hidden z-[110] p-2"
+                    className="absolute right-0 mt-4 w-[240px] min-w-[240px] bg-white rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-slate-100 overflow-hidden z-[120] p-2"
                   >
                     <div className="px-4 py-3 border-b border-slate-50 mb-1">
                       <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
@@ -263,7 +267,11 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
                 {/* FIX: was w-10 h-10 md:w-12 md:h-12 — now w-10 h-10 everywhere */}
                 <div className="relative">
                   <button
-                    onClick={openNotifs}
+                    onClick={() => {
+                      setShowNotifs(!showNotifs);
+                      setShowCurr(false);
+                      setOpen(false);
+                    }}
                     className={`${iconBtn} relative`}
                     aria-label="Notifications"
                   >
@@ -279,7 +287,7 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
                         initial={{ opacity: 0, scale: 0.95, y: 10 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                        className="absolute right-0 mt-4 w-[320px] bg-white rounded-3xl shadow-[0_30px_60px_rgba(0,0,0,0.12)] border border-slate-100 overflow-hidden z-[110] flex flex-col max-h-[420px]"
+                        className="absolute right-0 mt-4 w-[320px] min-w-[320px] bg-white rounded-3xl shadow-[0_30px_60px_rgba(0,0,0,0.12)] border border-slate-100 overflow-hidden z-[120] flex flex-col max-h-[420px]"
                       >
                         <div className="p-5 border-b border-slate-50 bg-slate-50/50 flex justify-between items-center">
                           <span className="font-bold text-xs text-slate-900 uppercase tracking-widest">
@@ -324,7 +332,11 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
                 {/* FIX: was w-10 h-10 md:w-12 md:h-12 — now w-10 h-10 everywhere */}
                 <div ref={boxRef} className="relative">
                   <button
-                    onClick={() => setOpen(!open)}
+                    onClick={() => {
+                      setOpen(!open);
+                      setShowCurr(false);
+                      setShowNotifs(false);
+                    }}
                     className="w-10 h-10 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-bold text-sm shadow-lg hover:bg-emerald-600 transition-all active:scale-95 border border-white/10"
                   >
                     {user.email.charAt(0).toUpperCase()}
@@ -335,7 +347,7 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
                         initial={{ opacity: 0, y: 15, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 15, scale: 0.95 }}
-                        className="absolute right-0 mt-4 w-[280px] bg-white rounded-[32px] shadow-[0_30px_60px_rgba(0,0,0,0.12)] border border-slate-100 z-[110] overflow-hidden"
+                        className="absolute right-0 mt-4 w-[280px] min-w-[280px] bg-white rounded-[32px] shadow-[0_30px_60px_rgba(0,0,0,0.12)] border border-slate-100 z-[120] overflow-hidden"
                       >
                         <div className="p-6 border-b border-slate-50 bg-slate-50/50">
                           <p className="text-[11px] font-bold text-emerald-600 tracking-widest uppercase">
