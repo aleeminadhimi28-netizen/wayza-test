@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Users,
@@ -44,6 +44,11 @@ const TABS = [
 ];
 
 export default function AdminDashboard() {
+  // 1. STABLE HOOKS
+  const { showToast } = useToast();
+  const { logout } = useAuth();
+
+  // 2. STATE DECLARATIONS
   const [stats, setStats] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
@@ -51,16 +56,10 @@ export default function AdminDashboard() {
   const [dataList, setDataList] = useState([]);
   const [loadingData, setLoadingData] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-
-  // Support state
   const [tickets, setTickets] = useState([]);
-
-  // Withdrawal state
   const [withdrawals, setWithdrawals] = useState([]);
 
-  const { showToast } = useToast();
-  const { logout } = useAuth();
-
+  // 3. DATA LOADING HANDLERS
   const loadTickets = useCallback(async () => {
     setLoadingData(true);
     try {
@@ -115,30 +114,7 @@ export default function AdminDashboard() {
     }
   }, [activeTab, showToast]);
 
-  useEffect(() => {
-    api
-      .adminStats()
-      .then((d) => {
-        if (d.error) {
-          setErrorMsg('Unauthorized. Admin privileges required.');
-          return;
-        }
-        if (d) setStats(d);
-      })
-      .catch(() => setErrorMsg('Failed to load dashboard data. Is the backend running?'));
-  }, []);
-
-  useEffect(() => {
-    if (activeTab === 'support') loadTickets();
-    else if (activeTab === 'withdrawals') loadWithdrawals();
-    else loadTableData();
-  }, [activeTab, loadTickets, loadWithdrawals, loadTableData]);
-
-  function handleLogout() {
-    logout();
-    window.location.href = '/admin-login';
-  }
-
+  // 4. ACTION HANDLERS
   const handleDeleteItem = useCallback(async (type, idOrEmail) => {
     try {
       const apiMap = {
@@ -226,6 +202,58 @@ export default function AdminDashboard() {
     }
   }, [showToast]);
 
+  const handleLogout = useCallback(() => {
+    logout();
+    window.location.href = '/admin-login';
+  }, [logout]);
+
+  // 5. MEMOIZED VALUES
+  const filteredData = useMemo(() => {
+    const query = searchQuery.toLowerCase();
+    return dataList.filter((item) => {
+      const searchFields = [
+        item.email,
+        item.title,
+        item.businessName,
+        item.guestEmail,
+        item.guestName,
+        item.phone
+      ].filter(Boolean).map(f => String(f).toLowerCase());
+      return searchFields.some(f => f.includes(query));
+    });
+  }, [dataList, searchQuery]);
+
+  const pendingWithdrawals = useMemo(() => 
+    withdrawals.filter((w) => w.status === 'pending').length,
+    [withdrawals]
+  );
+  
+  const openTickets = useMemo(() => 
+    tickets.filter((t) => t.status === 'open').length,
+    [tickets]
+  );
+
+  // 6. EFFECTS
+  useEffect(() => {
+    api
+      .adminStats()
+      .then((d) => {
+        if (d.error) {
+          setErrorMsg('Unauthorized. Admin privileges required.');
+          return;
+        }
+        if (d) setStats(d);
+      })
+      .catch(() => setErrorMsg('Failed to load dashboard data. Is the backend running?'));
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === 'support') loadTickets();
+    else if (activeTab === 'withdrawals') loadWithdrawals();
+    else loadTableData();
+  }, [activeTab, loadTickets, loadWithdrawals, loadTableData]);
+
+  // 7. RENDER LOGIC
   if (errorMsg)
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 font-sans p-6">
@@ -256,31 +284,6 @@ export default function AdminDashboard() {
         </div>
       </div>
     );
-
-  const filteredData = useMemo(() => {
-    const query = searchQuery.toLowerCase();
-    return dataList.filter((item) => {
-      const searchFields = [
-        item.email,
-        item.title,
-        item.businessName,
-        item.guestEmail,
-        item.guestName,
-        item.phone
-      ].filter(Boolean).map(f => String(f).toLowerCase());
-      return searchFields.some(f => f.includes(query));
-    });
-  }, [dataList, searchQuery]);
-
-  const pendingWithdrawals = useMemo(() => 
-    withdrawals.filter((w) => w.status === 'pending').length,
-    [withdrawals]
-  );
-  
-  const openTickets = useMemo(() => 
-    tickets.filter((t) => t.status === 'open').length,
-    [tickets]
-  );
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex overflow-hidden">
@@ -322,6 +325,7 @@ export default function AdminDashboard() {
               onClick={() => {
                 setActiveTab(tab.id);
                 setSearchQuery('');
+                setMobileMenuOpen(false);
               }}
               className={`w-full flex items-center gap-3 py-2.5 px-3 rounded-xl font-semibold text-sm transition-all ${
                 activeTab === tab.id
