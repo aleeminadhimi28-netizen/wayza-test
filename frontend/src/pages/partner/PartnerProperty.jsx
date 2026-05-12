@@ -174,6 +174,7 @@ export default function PartnerProperty() {
   }
 
   async function executeRemove(i) {
+    try {
       const data = await api.deleteVariant(id, i);
       if (data.ok) {
         showToast('Data manifest terminated.', 'success');
