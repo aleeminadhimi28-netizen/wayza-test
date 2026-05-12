@@ -102,8 +102,6 @@ export default function PartnerChat() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-
-
   if (loading)
     return (
       <div className="flex items-center justify-center min-h-[400px]">

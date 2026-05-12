@@ -323,7 +323,10 @@ export default function LandingPage() {
                         value={checkOut}
                         onChange={(e) => setCheckOut(e.target.value)}
                         className="bg-transparent border-none outline-none font-bold text-sm p-0 w-full cursor-pointer h-6"
-                        style={{ colorScheme: 'light', color: checkOut ? '#0f172a' : 'transparent' }}
+                        style={{
+                          colorScheme: 'light',
+                          color: checkOut ? '#0f172a' : 'transparent',
+                        }}
                         aria-label="Check out date"
                       />
                       {!checkOut && (

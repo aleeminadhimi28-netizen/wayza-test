@@ -98,8 +98,6 @@ export default function GuestChat() {
     }
   }, [messages.length]);
 
-
-
   if (loading)
     return (
       <WayzzaLayout noPadding>
