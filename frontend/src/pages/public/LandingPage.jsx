@@ -19,6 +19,8 @@ import {
   Send,
   ChevronLeft,
   ChevronRight,
+  Plus,
+  Minus,
 } from 'lucide-react';
 
 import { api } from '../../utils/api.js';
@@ -123,7 +125,6 @@ export default function LandingPage() {
     navigate(`/listings?${params.toString()}`);
   }, [tab, search, checkIn, checkOut, guests, navigate]);
 
-  // Allow search on Enter key
   const handleSearchKeyDown = (e) => {
     if (e.key === 'Enter') handleSearch();
   };
@@ -180,15 +181,17 @@ export default function LandingPage() {
             <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/10 to-white" />
           </div>
 
-          <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-10 text-center pt-24 md:pt-0 space-y-6 md:space-y-12">
+          <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-10 text-center space-y-4 md:space-y-12">
+            {/* FIX #5: reduced space-y-6 → space-y-4 on mobile to avoid pushing card too low */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              className="space-y-6 md:space-y-8"
+              className="space-y-4 md:space-y-6"
             >
+              {/* FIX #2: badge — ensure perfect centering with mx-auto on inline-flex */}
               <div className="flex justify-center">
-                <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-[10px] md:text-[11px] uppercase tracking-[0.3em] text-white font-black shadow-2xl">
-                  <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <div className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-[10px] md:text-[11px] uppercase tracking-[0.4em] text-white font-black shadow-2xl mx-auto">
+                  <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
                   Varkala Exclusive
                 </div>
               </div>
@@ -209,11 +212,13 @@ export default function LandingPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
               className="w-full px-2 md:px-4"
+              /* FIX #6: px-0 → px-2 so card has breathing room from screen edges on mobile */
             >
-              <div className="bg-white/90 backdrop-blur-2xl rounded-2xl md:rounded-[40px] p-3 shadow-[0_40px_100px_rgba(0,0,0,0.15)] border border-white/50 flex flex-col md:flex-row items-stretch md:items-center gap-2 md:gap-1">
+              {/* FIX #1: rounded-2xl → rounded-[24px] for consistent top corner radius on mobile */}
+              <div className="bg-white/90 backdrop-blur-2xl rounded-[24px] md:rounded-[40px] p-3 shadow-[0_40px_100px_rgba(0,0,0,0.15)] border border-white/50 flex flex-col md:flex-row items-stretch md:items-center gap-2 md:gap-1">
 
                 {/* Location */}
-                <div className="flex-[1.5] px-4 py-3 rounded-xl md:rounded-[32px] hover:bg-slate-50/50 transition-all text-center md:text-left">
+                <div className="flex-[1.5] px-4 py-3 rounded-xl md:rounded-[32px] hover:bg-slate-50/50 transition-all text-left">
                   <p className="text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mb-1">
                     Destinations
                   </p>
@@ -222,44 +227,43 @@ export default function LandingPage() {
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     onKeyDown={handleSearchKeyDown}
-                    className="w-full bg-transparent border-none outline-none font-bold text-slate-900 text-base p-0 placeholder:text-slate-300 text-center md:text-left"
+                    className="w-full bg-transparent border-none outline-none font-bold text-slate-900 text-base p-0 placeholder:text-slate-300"
                     aria-label="Search destination"
                   />
                 </div>
 
                 <div className="hidden md:block w-px h-10 bg-slate-200/60 self-center" />
 
-                {/* Dates */}
-                <div className="flex-[1.2] px-4 py-3 rounded-xl md:rounded-[32px] hover:bg-slate-50/50 transition-all text-center md:text-left">
+                {/* Dates — FIX #3: use grid for equal-width Check In / Check Out */}
+                <div className="flex-[1.2] px-4 py-3 rounded-xl md:rounded-[32px] hover:bg-slate-50/50 transition-all text-left">
                   <p className="text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mb-1">
                     Timeframe
                   </p>
-                  <div className="flex items-center justify-center md:justify-start gap-2 flex-wrap">
+                  <div className="grid grid-cols-2 gap-2 w-full">
                     <div className="relative">
                       <input
                         type="date"
                         value={checkIn}
                         onChange={(e) => setCheckIn(e.target.value)}
-                        className={`bg-transparent border-none outline-none font-bold text-slate-900 text-sm p-0 w-28 cursor-pointer text-center md:text-left ${!checkIn ? 'date-empty' : ''}`}
+                        className={`bg-transparent border-none outline-none font-bold text-slate-900 text-sm p-0 w-full cursor-pointer ${!checkIn ? 'date-empty' : ''}`}
                         aria-label="Check in date"
                       />
                       {!checkIn && (
-                        <span className="absolute inset-0 font-bold text-slate-400 text-sm pointer-events-none flex items-center justify-center md:justify-start">
+                        <span className="absolute inset-0 font-bold text-slate-400 text-sm pointer-events-none flex items-center">
                           Check In
                         </span>
                       )}
                     </div>
-                    <span className="text-slate-300 text-sm">→</span>
                     <div className="relative">
                       <input
                         type="date"
                         value={checkOut}
                         onChange={(e) => setCheckOut(e.target.value)}
-                        className={`bg-transparent border-none outline-none font-bold text-slate-900 text-sm p-0 w-28 cursor-pointer text-center md:text-left ${!checkOut ? 'date-empty' : ''}`}
+                        className={`bg-transparent border-none outline-none font-bold text-slate-900 text-sm p-0 w-full cursor-pointer ${!checkOut ? 'date-empty' : ''}`}
                         aria-label="Check out date"
                       />
                       {!checkOut && (
-                        <span className="absolute inset-0 font-bold text-slate-400 text-sm pointer-events-none flex items-center justify-center md:justify-start">
+                        <span className="absolute inset-0 font-bold text-slate-400 text-sm pointer-events-none flex items-center">
                           Check Out
                         </span>
                       )}
@@ -269,29 +273,39 @@ export default function LandingPage() {
 
                 <div className="hidden md:block w-px h-10 bg-slate-200/60 self-center" />
 
-                {/* Guests */}
-                <div className="flex-[0.8] px-4 py-3 rounded-xl md:rounded-[32px] hover:bg-slate-50/50 transition-all text-center md:text-left">
+                {/* Guests — FIX #4: replaced raw number input with +/− stepper */}
+                <div className="flex-[0.8] px-4 py-3 rounded-xl md:rounded-[32px] hover:bg-slate-50/50 transition-all text-left">
                   <p className="text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mb-1">
                     Guests
                   </p>
-                  <div className="flex items-center justify-center md:justify-start gap-2">
+                  <div className="flex items-center gap-2">
                     <Users size={14} className="text-slate-400 shrink-0" />
-                    <input
-                      type="number"
-                      min="1"
-                      max="20"
-                      value={guests}
-                      onChange={(e) => setGuests(Math.max(1, parseInt(e.target.value) || 1))}
-                      className="w-16 bg-transparent border-none outline-none font-bold text-slate-900 text-base p-0 text-center md:text-left"
-                      aria-label="Number of guests"
-                    />
+                    <button
+                      type="button"
+                      onClick={() => setGuests((g) => Math.max(1, g - 1))}
+                      className="w-6 h-6 rounded-full border border-slate-200 flex items-center justify-center text-slate-500 hover:border-slate-400 hover:text-slate-900 transition-all shrink-0"
+                      aria-label="Decrease guests"
+                    >
+                      <Minus size={10} strokeWidth={3} />
+                    </button>
+                    <span className="font-bold text-slate-900 text-base w-5 text-center select-none">
+                      {guests}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setGuests((g) => Math.min(20, g + 1))}
+                      className="w-6 h-6 rounded-full border border-slate-200 flex items-center justify-center text-slate-500 hover:border-slate-400 hover:text-slate-900 transition-all shrink-0"
+                      aria-label="Increase guests"
+                    >
+                      <Plus size={10} strokeWidth={3} />
+                    </button>
                   </div>
                 </div>
 
-                {/* Search Button */}
+                {/* Search Button — FIX #7: gap-3 → gap-2, icon and text perfectly centered */}
                 <button
                   onClick={handleSearch}
-                  className="w-full md:w-auto bg-slate-900 text-white px-6 md:px-8 py-4 rounded-xl md:rounded-[32px] shadow-2xl shadow-slate-900/20 transition-all hover:bg-emerald-600 active:scale-95 flex items-center justify-center gap-3 min-h-[52px]"
+                  className="w-full md:w-auto bg-slate-900 text-white px-6 md:px-8 py-4 rounded-xl md:rounded-[32px] shadow-2xl shadow-slate-900/20 transition-all hover:bg-emerald-600 active:scale-95 flex items-center justify-center gap-2 min-h-[52px]"
                   aria-label="Search listings"
                 >
                   <Search size={18} strokeWidth={3} className="shrink-0" />
