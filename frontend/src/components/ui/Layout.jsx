@@ -127,14 +127,14 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
       <nav
         className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 py-3 ${headerBg}`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-2 sm:gap-4">
           {/* ── LOGO ── */}
           <Link
             to="/"
             className={`flex items-center shrink-0 transition-all duration-300 ${mobileMenuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
           >
             {/* FIX: fixed logo height so it doesn't affect nav row height */}
-            <div className="relative h-10 w-[160px] sm:w-[200px] md:w-[240px]">
+            <div className="relative h-10 w-[120px] sm:w-[160px] md:w-[240px]">
               <img
                 src="/images/logo-dark.svg"
                 alt="Wayzza"
@@ -167,7 +167,7 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
 
           {/* ── RIGHT SIDE ICONS ── */}
           {/* FIX: items-center on every wrapper, gap-2 consistent, no size variation between mobile/desktop */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             {/* CURRENCY SELECTOR */}
             {/* FIX: removed h-10/h-11 split — now always h-10, px-3, rounded-2xl */}
             <div className="relative" ref={currRef}>
