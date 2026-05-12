@@ -18,6 +18,8 @@ import {
 import { Html5Qrcode } from 'html5-qrcode';
 
 import { api } from '../../utils/api.js';
+import ConfirmModal from '../../components/ui/ConfirmModal.jsx';
+import { useToast } from '../../ToastContext.jsx';
 
 const STATUS_CONFIG = {
   paid: {
@@ -59,12 +61,14 @@ export default function PartnerBookings() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
+  const { showToast } = useToast();
 
   // Scanner State
   const [scannerActive, setScannerActive] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [manualCode, setManualCode] = useState('');
   const [scanResult, setScanResult] = useState(null); // { id, data, type: 'check-in' | 'check-out' }
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, onConfirm: () => {} });
 
   useEffect(() => {
     if (!user?.email) return;
@@ -140,7 +144,7 @@ export default function PartnerBookings() {
   const processScannedId = (id) => {
     const booking = bookings.find((b) => b._id === id);
     if (!booking) {
-      alert('Booking not found in your manifest.');
+      showToast('Booking not found in your manifest.', 'error');
       setScannerActive(false);
       return;
     }
@@ -152,7 +156,7 @@ export default function PartnerBookings() {
     // For manual we search all bookings for a matching passcode
     const booking = bookings.find((b) => b.checkInPasscode === manualCode);
     if (!booking) {
-      alert('Invalid passcode.');
+      showToast('Invalid passcode.', 'warning');
       return;
     }
     setScanResult(booking);
@@ -168,26 +172,32 @@ export default function PartnerBookings() {
         setScannerActive(false);
         refresh();
       } else {
-        alert(res.message || 'Failed to update stay status.');
+        showToast(res.message || 'Failed to update stay status.', 'error');
       }
     } catch {
-      alert('Connection error.');
+      showToast('Connection error.', 'error');
     }
   };
 
-  const handleManualCheckOut = async (id) => {
-    if (!window.confirm('Complete this stay and mark the guest as departed?')) return;
+  const handleManualCheckOut = (id) => {
+    setConfirmModal({
+      isOpen: true,
+      onConfirm: () => executeCheckOut(id),
+    });
+  };
+
+  async function executeCheckOut(id) {
     try {
       const res = await api.checkOut(id);
       if (res.ok) {
         refresh();
       } else {
-        alert(res.message || 'Failed to complete stay.');
+        showToast(res.message || 'Failed to complete stay.', 'error');
       }
     } catch {
-      alert('Connection error.');
+      showToast('Connection error.', 'error');
     }
-  };
+  }
 
   if (loading)
     return (
@@ -563,6 +573,16 @@ export default function PartnerBookings() {
           </div>
         )}
       </AnimatePresence>
+
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
+        onConfirm={confirmModal.onConfirm}
+        title="Complete Stay"
+        message="Mark this booking as completed? This will verify the guest has departed and update the reservation status."
+        confirmText="Complete Stay"
+        confirmVariant="emerald"
+      />
     </motion.div>
   );
 }

@@ -24,6 +24,7 @@ import { useToast } from '../../ToastContext.jsx';
 import { api, BASE_URL } from '../../utils/api.js';
 import { fixImg } from '../../utils/image.js';
 import { AMENITY_CATEGORIES } from '../../utils/amenities.js';
+import ConfirmModal from '../../components/ui/ConfirmModal.jsx';
 
 const AVAILABLE_AMENITIES = []; // Legacy constant for safety
 
@@ -52,6 +53,8 @@ export default function PartnerProperty() {
   const [mainAmenities, setMainAmenities] = useState([]);
   const [mainWifiSpeed, setMainWifiSpeed] = useState('');
   const [mainLoading, setMainLoading] = useState(false);
+
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, onConfirm: () => {} });
 
   useEffect(() => {
     load();
@@ -164,9 +167,13 @@ export default function PartnerProperty() {
   }
 
   async function remove(i) {
-    if (!confirm('Terminate this residence tier? This manifest entry will be shredded.')) return;
+    setConfirmModal({
+      isOpen: true,
+      onConfirm: () => executeRemove(i),
+    });
+  }
 
-    try {
+  async function executeRemove(i) {
       const data = await api.deleteVariant(id, i);
       if (data.ok) {
         showToast('Data manifest terminated.', 'success');
@@ -721,6 +728,15 @@ export default function PartnerProperty() {
           )}
         </div>
       </div>
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
+        onConfirm={confirmModal.onConfirm}
+        title="Terminate Tier"
+        message="Are you sure you want to terminate this residence tier? This manifest entry will be permanently shredded and cannot be recovered."
+        confirmText="Terminate Tier"
+        confirmVariant="rose"
+      />
     </motion.div>
   );
 }

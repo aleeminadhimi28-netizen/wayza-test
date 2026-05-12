@@ -26,12 +26,8 @@ import {
   Menu,
 } from 'lucide-react';
 import { api } from '../utils/api.js';
-import {
-  initiateSocketConnection,
-  joinUserRoom,
-  subscribeToNotifications,
-  disconnectSocket,
-} from '../utils/socket.js';
+import { useNotifications } from '../hooks/useNotifications.jsx';
+import { NotificationDropdown } from '../components/ui/NotificationDropdown.jsx';
 
 const NAV = [
   { to: '/partner', label: 'Dashboard', icon: LayoutDashboard, end: true, detail: 'Overview' },
@@ -52,8 +48,7 @@ export default function PartnerLayout() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [notifs, setNotifs] = useState([]);
-  const [showNotifs, setShowNotifs] = useState(false);
+  const { notifs, showNotifs, setShowNotifs, openNotifs } = useNotifications(user);
   const notifRef = useRef(null);
 
   // Close mobile menu on route change
@@ -70,10 +65,16 @@ export default function PartnerLayout() {
     }
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [setShowNotifs]);
 
   useEffect(() => {
-    setIsDarkMode(document.documentElement.classList.contains('wayzza-dark'));
+    const saved = localStorage.getItem('wayzza-theme');
+    if (saved === 'dark') {
+      document.documentElement.classList.add('wayzza-dark');
+      setIsDarkMode(true);
+    } else {
+      setIsDarkMode(document.documentElement.classList.contains('wayzza-dark'));
+    }
   }, []);
 
   const toggleTheme = () => {
@@ -81,45 +82,13 @@ export default function PartnerLayout() {
     if (root.classList.contains('wayzza-dark')) {
       root.classList.remove('wayzza-dark');
       setIsDarkMode(false);
+      localStorage.setItem('wayzza-theme', 'light');
     } else {
       root.classList.add('wayzza-dark');
       setIsDarkMode(true);
+      localStorage.setItem('wayzza-theme', 'dark');
     }
   };
-
-  useEffect(() => {
-    if (!user) return;
-    async function fetchNotifs() {
-      try {
-        const res = await api.getNotifications();
-        if (res.ok) setNotifs(res.data || []);
-      } catch (err) {
-        console.error('Failed to fetch notifications:', err);
-      }
-    }
-    fetchNotifs();
-    const int = setInterval(fetchNotifs, 30000);
-
-    initiateSocketConnection();
-    joinUserRoom(user.email);
-    const unsubscribe = subscribeToNotifications((notification) => {
-      setNotifs((prev) => [notification, ...prev].slice(0, 20));
-    });
-
-    return () => {
-      clearInterval(int);
-      unsubscribe();
-      disconnectSocket();
-    };
-  }, [user]);
-
-  async function openNotifs() {
-    setShowNotifs((prev) => !prev);
-    if (!showNotifs && notifs.some((n) => !n.read)) {
-      await api.markNotificationsRead();
-      setNotifs((prev) => prev.map((n) => ({ ...n, read: true })));
-    }
-  }
 
   function handleLogout() {
     logout();
@@ -218,6 +187,7 @@ export default function PartnerLayout() {
               key={item.to}
               to={item.to}
               end={item.end}
+              title={item.label}
               className={({ isActive }) =>
                 `flex items-center gap-3 p-3 rounded-xl transition-all relative group
                 ${
@@ -226,7 +196,6 @@ export default function PartnerLayout() {
                     : 'text-slate-400 hover:text-white hover:bg-slate-800'
                 }`
               }
-              title={collapsed ? item.label : undefined}
             >
               {({ isActive }) => (
                 <>
@@ -235,6 +204,11 @@ export default function PartnerLayout() {
                   )}
                   <item.icon size={20} className={collapsed ? 'mx-auto shrink-0' : 'shrink-0'} />
                   {!collapsed && <span className="text-sm truncate">{item.label}</span>}
+                  {collapsed && (
+                    <div className="absolute left-full ml-4 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 shadow-md">
+                      {item.label}
+                    </div>
+                  )}
                 </>
               )}
             </NavLink>
@@ -325,49 +299,7 @@ export default function PartnerLayout() {
                 )}
               </button>
 
-              <AnimatePresence>
-                {showNotifs && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95, y: 8 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95, y: 8 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50 flex flex-col max-h-[400px]"
-                  >
-                    <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-                      <span className="font-bold text-sm text-slate-900 uppercase tracking-widest">
-                        Notifications
-                      </span>
-                      <button
-                        onClick={() => setShowNotifs(false)}
-                        className="text-slate-400 hover:text-slate-900 transition-colors"
-                        aria-label="Close notifications"
-                      >
-                        <X size={16} />
-                      </button>
-                    </div>
-                    <div className="overflow-y-auto overflow-x-hidden p-2 flex-1">
-                      {notifs.length === 0 ? (
-                        <p className="text-center text-xs text-slate-400 py-8">
-                          No new notifications
-                        </p>
-                      ) : (
-                        notifs.map((n) => (
-                          <div
-                            key={n._id}
-                            className={`p-3 rounded-xl mb-1 flex flex-col gap-1 text-sm ${n.read ? 'bg-white text-slate-500' : 'bg-emerald-50 text-emerald-900 font-semibold'}`}
-                          >
-                            <span>{n.message}</span>
-                            <span className="text-[11px] uppercase tracking-widest opacity-50">
-                              {new Date(n.createdAt).toLocaleDateString()}
-                            </span>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              <NotificationDropdown showNotifs={showNotifs} setShowNotifs={setShowNotifs} notifs={notifs} />
             </div>
 
             {/* Avatar */}

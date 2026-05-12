@@ -92,7 +92,15 @@ export default function AdminSettings() {
               onChange={(e) => setConfig({ ...config, commissionRate: parseFloat(e.target.value) })}
               className="w-full accent-emerald-500"
             />
-            <p className="text-xs text-emerald-600 font-medium bg-emerald-50 border border-emerald-100 rounded-xl p-3">
+            <div className="flex justify-between text-[10px] font-bold text-slate-400 px-1 mt-1">
+              <span>0%</span>
+              <span>10%</span>
+              <span>25%</span>
+              <span>50%</span>
+              <span>75%</span>
+              <span>100%</span>
+            </div>
+            <p className="text-xs text-emerald-600 font-medium bg-emerald-50 border border-emerald-100 rounded-xl p-3 mt-2">
               Historical math is safely isolated from live rate updates.
             </p>
           </div>
@@ -165,7 +173,14 @@ export default function AdminSettings() {
               onChange={(e) => setConfig({ ...config, gstRate: parseFloat(e.target.value) })}
               className="w-full accent-amber-500"
             />
-            <div className="bg-amber-50 border border-amber-100 p-3 rounded-xl flex items-center gap-2 text-xs text-amber-700 font-medium">
+            <div className="flex justify-between text-[10px] font-bold text-slate-400 px-1 mt-1">
+              <span>0%</span>
+              <span>10%</span>
+              <span>25%</span>
+              <span>35%</span>
+              <span>50%</span>
+            </div>
+            <div className="bg-amber-50 border border-amber-100 p-3 rounded-xl flex items-center gap-2 text-xs text-amber-700 font-medium mt-2">
               <ShieldCheck size={14} /> Legally mandated. Auto-waived for vehicles.
             </div>
           </div>

@@ -19,6 +19,7 @@ import {
 
 import { api } from '../../utils/api.js';
 import { fixImg } from '../../utils/image.js';
+import ConfirmModal from '../../components/ui/ConfirmModal.jsx';
 
 export default function PartnerListings() {
   const { user } = useAuth();
@@ -28,6 +29,7 @@ export default function PartnerListings() {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(null);
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, onConfirm: () => {} });
 
   useEffect(() => {
     load();
@@ -42,9 +44,14 @@ export default function PartnerListings() {
     setLoading(false);
   }, [user?.email]);
 
-  async function handleDelete(id) {
-    if (!window.confirm('Are you sure you want to delete this property? This cannot be undone.'))
-      return;
+  const handleDelete = (id) => {
+    setConfirmModal({
+      isOpen: true,
+      onConfirm: () => executeDelete(id),
+    });
+  };
+
+  async function executeDelete(id) {
     setDeleting(id);
     try {
       const data = await api.deleteListing(id);
@@ -236,6 +243,16 @@ export default function PartnerListings() {
           </AnimatePresence>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
+        onConfirm={confirmModal.onConfirm}
+        title="Delete Property"
+        message="Are you sure you want to delete this property? This action cannot be undone and all associated room variants will be removed."
+        confirmText="Delete Portfolio Item"
+        confirmVariant="rose"
+      />
     </motion.div>
   );
 }

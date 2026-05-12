@@ -307,7 +307,7 @@ export default function LandingPage() {
                         type="date"
                         value={checkIn}
                         onChange={(e) => setCheckIn(e.target.value)}
-                        className={`bg-transparent border-none outline-none font-bold text-slate-900 text-sm p-0 w-full cursor-pointer ${!checkIn ? 'date-empty' : ''}`}
+                        className={`bg-transparent border-none outline-none font-bold text-slate-900 text-sm p-0 w-full cursor-pointer [color-scheme:light] appearance-none h-6 ${!checkIn ? 'date-empty' : ''}`}
                         aria-label="Check in date"
                       />
                       {!checkIn && (
@@ -321,7 +321,7 @@ export default function LandingPage() {
                         type="date"
                         value={checkOut}
                         onChange={(e) => setCheckOut(e.target.value)}
-                        className={`bg-transparent border-none outline-none font-bold text-slate-900 text-sm p-0 w-full cursor-pointer ${!checkOut ? 'date-empty' : ''}`}
+                        className={`bg-transparent border-none outline-none font-bold text-slate-900 text-sm p-0 w-full cursor-pointer [color-scheme:light] appearance-none h-6 ${!checkOut ? 'date-empty' : ''}`}
                         aria-label="Check out date"
                       />
                       {!checkOut && (

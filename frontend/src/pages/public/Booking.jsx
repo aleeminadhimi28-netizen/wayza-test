@@ -223,7 +223,7 @@ export default function Booking() {
                           setStartDate(ns);
                           if (endDate && ns >= endDate) setEndDate('');
                         }}
-                        className="w-full h-14 bg-white border border-slate-200 rounded-2xl pl-12 pr-4 font-bold text-slate-900 focus:border-emerald-500 outline-none transition-all"
+                        className="w-full h-14 bg-white border border-slate-200 rounded-2xl pl-12 pr-4 font-bold text-slate-900 focus:border-emerald-500 outline-none transition-all [color-scheme:light] appearance-none"
                       />
                     </div>
                   </div>
@@ -241,7 +241,7 @@ export default function Booking() {
                         min={startDate || todayStr}
                         value={endDate}
                         onChange={(e) => setEndDate(e.target.value)}
-                        className="w-full h-14 bg-white border border-slate-200 rounded-2xl pl-12 pr-4 font-bold text-slate-900 focus:border-emerald-500 outline-none transition-all"
+                        className="w-full h-14 bg-white border border-slate-200 rounded-2xl pl-12 pr-4 font-bold text-slate-900 focus:border-emerald-500 outline-none transition-all [color-scheme:light] appearance-none"
                       />
                     </div>
                   </div>

@@ -47,7 +47,7 @@ export default function BookingCard({
             value={checkIn}
             min={today}
             onChange={(e) => setCheckIn(e.target.value)}
-            className="w-full text-sm font-semibold text-slate-900 bg-transparent outline-none cursor-pointer"
+            className="w-full h-6 text-sm font-semibold text-slate-900 bg-transparent outline-none cursor-pointer [color-scheme:light] appearance-none"
           />
         </div>
         <div className="p-3 hover:bg-slate-50 transition-colors cursor-pointer">
@@ -59,7 +59,7 @@ export default function BookingCard({
             value={checkOut}
             min={checkIn || today}
             onChange={(e) => setCheckOut(e.target.value)}
-            className="w-full text-sm font-semibold text-slate-900 bg-transparent outline-none cursor-pointer"
+            className="w-full h-6 text-sm font-semibold text-slate-900 bg-transparent outline-none cursor-pointer [color-scheme:light] appearance-none"
           />
         </div>
       </div>

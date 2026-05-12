@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Activity, Clock, Server, Globe } from 'lucide-react';
 import { api } from '../../utils/api.js';
@@ -9,21 +9,22 @@ export default function AdminLogs() {
   const [loading, setLoading] = useState(true);
   const { showToast } = useToast();
 
-  useEffect(() => {
-    loadLogs();
-    const t = setInterval(loadLogs, 15000); // refresh every 15s
-    return () => clearInterval(t);
-  }, []);
-
-  const loadLogs = async () => {
+  const loadLogs = useCallback(async () => {
     try {
       const d = await api.adminGetLogs();
       if (d.ok) setLogs(d.data || []);
     } catch (err) {
       console.error(err);
+      showToast('Failed to load logs', 'error');
     }
     setLoading(false);
-  };
+  }, [showToast]);
+
+  useEffect(() => {
+    loadLogs();
+    const t = setInterval(loadLogs, 15000); // refresh every 15s
+    return () => clearInterval(t);
+  }, [loadLogs]);
 
   function translateAction(method, url) {
     method = method.toUpperCase();
@@ -43,6 +44,13 @@ export default function AdminLogs() {
       return { text: 'Submitted new listing', type: 'content' };
     if (url.includes('/admin/listings/') && url.includes('/approve'))
       return { text: 'Moderated a property', type: 'system' };
+    if (url.includes('/partner/withdraw') && method === 'POST')
+      return { text: 'Requested withdrawal', type: 'business' };
+    if (url.includes('/admin/users') && method === 'DELETE')
+      return { text: 'Deleted a user', type: 'system' };
+    if (url.includes('/admin/partners/') && url.includes('/approve'))
+      return { text: 'Approved a partner', type: 'system' };
+    if (url.includes('/support/tickets')) return { text: 'Managed support ticket', type: 'system' };
 
     return { text: `${method} ${url}`, type: 'other' };
   }

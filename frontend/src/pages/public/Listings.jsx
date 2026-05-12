@@ -231,7 +231,7 @@ export default function Listings() {
                     type="date"
                     value={checkInInput}
                     onChange={(e) => setCheckInInput(e.target.value)}
-                    className="w-full h-10 lg:h-12 pl-12 pr-2 bg-transparent text-xs font-bold text-slate-900 focus:outline-none appearance-none cursor-pointer"
+                    className="w-full h-10 lg:h-12 pl-12 pr-2 bg-transparent text-xs font-bold text-slate-900 focus:outline-none appearance-none cursor-pointer [color-scheme:light]"
                   />
                   <div className="absolute right-0 top-1/4 bottom-1/4 w-px bg-slate-200 hidden lg:block" />
                 </div>
@@ -244,7 +244,7 @@ export default function Listings() {
                     type="date"
                     value={checkOutInput}
                     onChange={(e) => setCheckOutInput(e.target.value)}
-                    className="w-full h-10 lg:h-12 pl-12 pr-2 bg-transparent text-xs font-bold text-slate-900 focus:outline-none appearance-none cursor-pointer"
+                    className="w-full h-10 lg:h-12 pl-12 pr-2 bg-transparent text-xs font-bold text-slate-900 focus:outline-none appearance-none cursor-pointer [color-scheme:light]"
                   />
                 </div>
               </div>

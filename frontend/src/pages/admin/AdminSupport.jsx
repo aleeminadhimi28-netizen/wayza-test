@@ -1,29 +1,51 @@
 import { motion } from 'framer-motion';
 import { MessageSquare, AlertCircle, CheckCircle, Mail, Trash2, Send } from 'lucide-react';
 import { useState } from 'react';
+import ConfirmModal from '../../components/ui/ConfirmModal.jsx';
 import { api } from '../../utils/api.js';
 
 export default function AdminSupport({ tickets, setTickets, loadTickets, loadingData }) {
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [replyText, setReplyText] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
+  const [confirmModal, setConfirmModal] = useState({ 
+    isOpen: false, 
+    onConfirm: null,
+    isLoading: false 
+  });
+
+  const closeConfirm = () => setConfirmModal(prev => ({ ...prev, isOpen: false, isLoading: false }));
+
+  const handleConfirmAction = async () => {
+    if (!confirmModal.onConfirm) return;
+    setConfirmModal(prev => ({ ...prev, isLoading: true }));
+    try {
+      await confirmModal.onConfirm();
+      closeConfirm();
+    } catch (err) {
+      console.error('Action failed:', err);
+      setConfirmModal(prev => ({ ...prev, isLoading: false }));
+    }
+  };
 
   async function handleReplyTicket() {
     if (!replyText.trim() || !selectedTicket) return;
+    const messageToPulse = replyText.trim();
     setSendingReply(true);
     try {
-      await api.replyToTicket(selectedTicket._id, { reply: replyText.trim() });
+      await api.replyToTicket(selectedTicket._id, { reply: messageToPulse });
       setReplyText('');
       await loadTickets();
-      const updated = tickets.find((t) => t._id === selectedTicket._id);
-      if (updated)
-        setSelectedTicket({
-          ...updated,
+      setSelectedTicket((prev) => {
+        if (!prev) return null;
+        return {
+          ...prev,
           replies: [
-            ...(updated.replies || []),
-            { message: replyText.trim(), from: 'admin', createdAt: new Date() },
+            ...(prev.replies || []),
+            { message: messageToPulse, from: 'admin', createdAt: new Date() },
           ],
-        });
+        };
+      });
     } catch (err) {
       console.error('Failed to send reply:', err);
     }
@@ -40,8 +62,14 @@ export default function AdminSupport({ tickets, setTickets, loadTickets, loading
     }
   }
 
-  async function handleDeleteTicket(id) {
-    if (!window.confirm('Delete this support ticket?')) return;
+  const handleDeleteTicket = (id) => {
+    setConfirmModal({
+      isOpen: true,
+      onConfirm: () => executeDeleteTicket(id),
+    });
+  };
+
+  async function executeDeleteTicket(id) {
     try {
       await api.deleteTicket(id);
       setTickets((prev) => prev.filter((t) => t._id !== id));
@@ -231,13 +259,19 @@ export default function AdminSupport({ tickets, setTickets, loadTickets, loading
               {/* Reply input */}
               {selectedTicket.status === 'open' && (
                 <div className="p-4 border-t border-slate-100 bg-white">
-                  <div className="flex gap-3 items-center">
-                    <input
+                  <div className="flex gap-3 items-end">
+                    <textarea
                       placeholder="Type your reply..."
                       value={replyText}
                       onChange={(e) => setReplyText(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && handleReplyTicket()}
-                      className="flex-1 h-10 bg-slate-50 border border-slate-200 rounded-xl px-4 text-sm font-medium focus:bg-white focus:border-emerald-500 transition-all outline-none"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          handleReplyTicket();
+                        }
+                      }}
+                      rows={2}
+                      className="flex-1 min-h-[40px] max-h-32 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm font-medium focus:bg-white focus:border-emerald-500 transition-all outline-none resize-y"
                     />
                     <button
                       onClick={handleReplyTicket}
@@ -257,6 +291,17 @@ export default function AdminSupport({ tickets, setTickets, loadTickets, loading
           )}
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        onClose={closeConfirm}
+        onConfirm={handleConfirmAction}
+        title="Delete Support Ticket"
+        message="Are you sure you want to delete this support ticket? This action cannot be undone."
+        confirmText="Delete Ticket"
+        confirmVariant="rose"
+        isLoading={confirmModal.isLoading}
+      />
     </motion.div>
   );
 }

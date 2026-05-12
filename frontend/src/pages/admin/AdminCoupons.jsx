@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Tag, Trash2, Plus, Percent } from 'lucide-react';
+import ConfirmModal from '../../components/ui/ConfirmModal.jsx';
 import { api } from '../../utils/api.js';
 import { useToast } from '../../ToastContext.jsx';
 
@@ -11,11 +12,12 @@ export default function AdminCoupons() {
   const [newDiscount, setNewDiscount] = useState('');
   const { showToast } = useToast();
 
-  useEffect(() => {
-    loadCoupons();
-  }, []);
+  const [confirmState, setConfirmState] = useState({
+    isOpen: false,
+    onConfirm: () => {},
+  });
 
-  const loadCoupons = async () => {
+  const loadCoupons = useCallback(async () => {
     setLoading(true);
     try {
       const d = await api.adminGetCoupons();
@@ -25,7 +27,11 @@ export default function AdminCoupons() {
       showToast('Failed to load coupons', 'error');
     }
     setLoading(false);
-  };
+  }, [showToast]);
+
+  useEffect(() => {
+    loadCoupons();
+  }, [loadCoupons]);
 
   const handleCreate = async (e) => {
     e.preventDefault();
@@ -57,8 +63,14 @@ export default function AdminCoupons() {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Delete this coupon? It will no longer be usable.')) return;
+  const handleDelete = (id) => {
+    setConfirmState({
+      isOpen: true,
+      onConfirm: () => executeDelete(id),
+    });
+  };
+
+  const executeDelete = async (id) => {
     try {
       const d = await api.adminDeleteCoupon(id);
       if (d.ok) {
@@ -182,6 +194,16 @@ export default function AdminCoupons() {
           </div>
         )}
       </div>
+
+      <ConfirmModal
+        isOpen={confirmState.isOpen}
+        onClose={() => setConfirmState((prev) => ({ ...prev, isOpen: false }))}
+        onConfirm={confirmState.onConfirm}
+        title="Revoke Coupon"
+        message="Are you sure you want to revoke this coupon code? It will no longer be usable by guests."
+        confirmText="Revoke Now"
+        confirmVariant="rose"
+      />
     </motion.div>
   );
 }

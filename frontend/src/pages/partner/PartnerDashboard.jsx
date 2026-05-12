@@ -43,21 +43,18 @@ export default function PartnerDashboard() {
   useEffect(() => {
     window.scrollTo(0, 0);
 
-    // Cinematic delay for system handshaking
-    setTimeout(() => {
-      Promise.all([
-        api.getPartnerBookings(),
-        api.getPartnerEarnings(),
-        api.getPartnerMonthlyRevenue(),
-      ])
-        .then(([b, e, m]) => {
-          setBookings(Array.isArray(b) ? b : []);
-          if (e.ok) setEarnings(e);
-          if (m.ok) setMonthly(m.data || []);
-        })
-        .catch((err) => console.error('Failed to load partner dashboard data:', err))
-        .finally(() => setLoading(false));
-    }, 800);
+    Promise.all([
+      api.getPartnerBookings(),
+      api.getPartnerEarnings(),
+      api.getPartnerMonthlyRevenue(),
+    ])
+      .then(([b, e, m]) => {
+        setBookings(Array.isArray(b) ? b : []);
+        if (e.ok) setEarnings(e);
+        if (m.ok) setMonthly(m.data || []);
+      })
+      .catch((err) => console.error('Failed to load partner dashboard data:', err))
+      .finally(() => setLoading(false));
   }, []);
 
   const total = bookings.length;
@@ -88,7 +85,7 @@ export default function PartnerDashboard() {
       icon: DollarSign,
       color: 'text-emerald-600',
       bg: 'bg-emerald-50',
-      trend: 'Ready to transfer',
+      trend: '+12.5%',
       up: true,
     },
     {
@@ -97,7 +94,7 @@ export default function PartnerDashboard() {
       icon: Clock,
       color: 'text-amber-600',
       bg: 'bg-amber-50',
-      trend: 'Upcoming stays',
+      trend: 'Awaiting stays',
       up: true,
     },
     {
@@ -106,7 +103,7 @@ export default function PartnerDashboard() {
       icon: CheckCircle,
       bg: 'bg-blue-50',
       color: 'text-blue-600',
-      trend: 'Settled',
+      trend: 'Fully settled',
       up: true,
     },
     {
@@ -115,7 +112,7 @@ export default function PartnerDashboard() {
       icon: Users,
       color: 'text-slate-900',
       bg: 'bg-slate-50',
-      trend: 'All time',
+      trend: '+4.2%',
       up: true,
     },
   ];
@@ -417,7 +414,7 @@ export default function PartnerDashboard() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <p className="font-bold text-slate-900">
-                      ₹{Math.round(b.netEarnings || b.totalPrice * 0.9).toLocaleString()}
+                      ₹{Math.round(b.netEarnings || 0).toLocaleString()}
                     </p>
                     <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
                       Partner Share

@@ -103,57 +103,56 @@ export default function AdminOverview({ stats, setActiveTab }) {
             </div>
           </div>
           <div className="h-[350px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart
-                data={
-                  stats.monthlyRevenue || [
-                    { name: 'JAN', rev: 400 },
-                    { name: 'FEB', rev: 800 },
-                    { name: 'MAR', rev: 1200 },
-                  ]
-                }
-              >
-                <defs>
-                  <linearGradient id="colorEmerald" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.15} />
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                <XAxis
-                  dataKey="name"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 600 }}
-                  dy={10}
-                />
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 600 }}
-                />
-                <RechartsTooltip
-                  contentStyle={{
-                    background: '#0f172a',
-                    border: 'none',
-                    borderRadius: '12px',
-                    fontWeight: 600,
-                    fontSize: '12px',
-                    padding: '12px 16px',
-                    color: '#fff',
-                  }}
-                  itemStyle={{ color: '#10b981' }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="rev"
-                  stroke="#10b981"
-                  strokeWidth={3}
-                  fillOpacity={1}
-                  fill="url(#colorEmerald)"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+            {!stats.monthlyRevenue || stats.monthlyRevenue.length === 0 ? (
+              <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50/50 rounded-xl border border-slate-100">
+                <TrendingUp size={32} className="text-slate-200 mb-3" />
+                <p className="text-sm font-bold text-slate-500">No revenue data yet</p>
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={stats.monthlyRevenue}>
+                  <defs>
+                    <linearGradient id="colorEmerald" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.15} />
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                  <XAxis
+                    dataKey="name"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 600 }}
+                    dy={10}
+                  />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 600 }}
+                  />
+                  <RechartsTooltip
+                    contentStyle={{
+                      background: '#0f172a',
+                      border: 'none',
+                      borderRadius: '12px',
+                      fontWeight: 600,
+                      fontSize: '12px',
+                      padding: '12px 16px',
+                      color: '#fff',
+                    }}
+                    itemStyle={{ color: '#10b981' }}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="rev"
+                    stroke="#10b981"
+                    strokeWidth={3}
+                    fillOpacity={1}
+                    fill="url(#colorEmerald)"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </div>
 

@@ -5,6 +5,7 @@ import { Sparkles, MapPin, Compass } from 'lucide-react';
 import { useCurrency } from '../../CurrencyContext.jsx';
 import { api } from '../../utils/api.js';
 import SEO from '../../components/SEO.jsx';
+import { useToast } from '../../ToastContext.jsx';
 
 export default function AITripPlanner() {
   const [destination, setDestination] = useState('');
@@ -12,6 +13,7 @@ export default function AITripPlanner() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [itinerary, setItinerary] = useState(null);
   const { formatPrice } = useCurrency();
+  const { showToast } = useToast();
 
   const generateTrip = async () => {
     if (!destination) return;
@@ -28,7 +30,7 @@ export default function AITripPlanner() {
         };
         setItinerary(formattedData);
       } else {
-        alert(res.message || "Could not generate trip. Try a broader destination like 'Varkala'.");
+        showToast(res.message || "Could not generate trip. Try a broader destination like 'Varkala'.", 'error');
       }
     } catch (err) {
       console.error(err);

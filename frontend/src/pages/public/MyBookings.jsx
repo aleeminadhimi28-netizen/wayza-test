@@ -20,6 +20,8 @@ import {
 import { api } from '../../utils/api.js';
 import { QRCodeCanvas } from 'qrcode.react';
 import { Scan, QrCode } from 'lucide-react';
+import ConfirmModal from '../../components/ui/ConfirmModal.jsx';
+import { useToast } from '../../ToastContext.jsx';
 
 const statusConfig = {
   paid: {
@@ -58,8 +60,10 @@ export default function MyBookings() {
 
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { showToast } = useToast();
   const [cancellingId, setCancellingId] = useState(null);
   const [filterStatus, setFilterStatus] = useState('all');
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, onConfirm: () => {} });
 
   const filtered = filterStatus === 'all' ? rows : rows.filter((b) => b.status === filterStatus);
 
@@ -84,23 +88,24 @@ export default function MyBookings() {
       .finally(() => setLoading(false));
   }, [user?.email]);
 
-  async function cancelBooking(id) {
-    if (
-      !window.confirm(
-        'Are you sure you want to cancel this reservation? This action cannot be undone.'
-      )
-    )
-      return;
+  const cancelBooking = (id) => {
+    setConfirmModal({
+      isOpen: true,
+      onConfirm: () => executeCancelBooking(id),
+    });
+  };
+
+  async function executeCancelBooking(id) {
     setCancellingId(id);
     try {
       const data = await api.cancelBooking({ bookingId: id });
       if (!data.ok) {
-        alert(data.message || 'Failed to cancel reservation.');
+        showToast(data.message || 'Failed to cancel reservation.', 'error');
         return;
       }
       setRows((prev) => prev.map((b) => (b._id === id ? { ...b, status: 'cancelled' } : b)));
     } catch {
-      alert('Connection error. Please try again.');
+      showToast('Connection error. Please try again.', 'error');
     } finally {
       setCancellingId(null);
     }
@@ -116,15 +121,15 @@ export default function MyBookings() {
         comment,
       });
       if (res.ok) {
-        alert('Thank you for your review!');
+        showToast('Thank you for your review!', 'success');
         setReviewModal(null);
         setComment('');
         setRating(5);
       } else {
-        alert(res.message || 'Failed to submit review');
+        showToast(res.message || 'Failed to submit review', 'error');
       }
     } catch (err) {
-      alert('Connection error. Please try again.');
+      showToast('Connection error. Please try again.', 'error');
     } finally {
       setSubmittingReview(false);
     }
@@ -576,6 +581,16 @@ export default function MyBookings() {
           </div>
         )}
       </AnimatePresence>
+
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
+        onConfirm={confirmModal.onConfirm}
+        title="Cancel Reservation"
+        message="Are you sure you want to cancel this reservation? This action cannot be undone and your travel plans will be removed."
+        confirmText="Confirm Cancellation"
+        confirmVariant="rose"
+      />
     </WayzzaLayout>
   );
 }
