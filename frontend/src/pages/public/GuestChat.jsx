@@ -149,7 +149,7 @@ export default function GuestChat() {
                     >
                       <div className="flex flex-col gap-1">
                         <span className="text-[11px] font-bold text-emerald-600 uppercase tracking-widest">
-                          Booking #{b._id?.slice(-6).toUpperCase()}
+                          Booking #{b._id?.slice(-6)?.toUpperCase()}
                         </span>
                         <h4
                           className={`font-bold text-base tracking-tight truncate ${selected?._id === b._id ? 'text-slate-900' : 'text-slate-400'}`}
@@ -171,7 +171,7 @@ export default function GuestChat() {
                 <header className="p-6 border-b border-slate-100 flex justify-between items-center bg-white z-10 shadow-sm">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center text-white text-base font-bold">
-                      {selected?.title?.charAt(0).toUpperCase()}
+                      {(selected?.title || 'B').charAt(0).toUpperCase()}
                     </div>
                     <div className="flex flex-col">
                       <h3 className="font-bold text-lg text-slate-900 leading-tight uppercase tracking-tight">

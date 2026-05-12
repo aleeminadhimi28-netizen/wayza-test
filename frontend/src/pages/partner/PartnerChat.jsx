@@ -174,7 +174,7 @@ export default function PartnerChat() {
             <header className="px-6 py-4 border-b border-slate-100 flex items-center gap-4 shrink-0 bg-white">
               <div className="relative">
                 <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-sm">
-                  {selected?.guestEmail?.charAt(0).toUpperCase()}
+                  {(selected?.guestEmail || 'G').charAt(0).toUpperCase()}
                 </div>
                 <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full" />
               </div>
