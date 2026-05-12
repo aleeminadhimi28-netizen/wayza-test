@@ -131,7 +131,6 @@ export default function PartnerLayout() {
 
   return (
     <div className="flex h-screen bg-slate-50 font-sans selection:bg-emerald-100 selection:text-emerald-900 overflow-hidden">
-
       {/* Mobile Overlay */}
       <AnimatePresence>
         {mobileMenuOpen && (
@@ -154,9 +153,14 @@ export default function PartnerLayout() {
         `}
       >
         {/* Branding */}
-        <div className={`h-20 flex items-center px-4 border-b border-slate-800 ${collapsed ? 'justify-center' : 'justify-between'}`}>
+        <div
+          className={`h-20 flex items-center px-4 border-b border-slate-800 ${collapsed ? 'justify-center' : 'justify-between'}`}
+        >
           {!collapsed && (
-            <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/partner')}>
+            <div
+              className="flex items-center gap-3 cursor-pointer"
+              onClick={() => navigate('/partner')}
+            >
               <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shrink-0">
                 W
               </div>
@@ -185,7 +189,9 @@ export default function PartnerLayout() {
         </div>
 
         {/* Theme toggle */}
-        <div className={`px-4 py-4 border-b border-slate-800 flex items-center ${collapsed ? 'justify-center' : 'justify-between'}`}>
+        <div
+          className={`px-4 py-4 border-b border-slate-800 flex items-center ${collapsed ? 'justify-center' : 'justify-between'}`}
+        >
           {!collapsed && (
             <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest leading-none">
               Appearance
@@ -214,9 +220,10 @@ export default function PartnerLayout() {
               end={item.end}
               className={({ isActive }) =>
                 `flex items-center gap-3 p-3 rounded-xl transition-all relative group
-                ${isActive
-                  ? 'bg-emerald-500/10 text-emerald-400 font-semibold'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                ${
+                  isActive
+                    ? 'bg-emerald-500/10 text-emerald-400 font-semibold'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
                 }`
               }
               title={collapsed ? item.label : undefined}
@@ -227,9 +234,7 @@ export default function PartnerLayout() {
                     <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-emerald-500 rounded-r-full" />
                   )}
                   <item.icon size={20} className={collapsed ? 'mx-auto shrink-0' : 'shrink-0'} />
-                  {!collapsed && (
-                    <span className="text-sm truncate">{item.label}</span>
-                  )}
+                  {!collapsed && <span className="text-sm truncate">{item.label}</span>}
                 </>
               )}
             </NavLink>
@@ -266,7 +271,6 @@ export default function PartnerLayout() {
 
       {/* ===== MAIN CONTENT ===== */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
-
         {/* Header */}
         <header className="bg-white border-b border-slate-200 h-16 md:h-20 px-4 md:px-8 flex items-center justify-between shrink-0 shadow-sm z-40">
           <div className="flex items-center gap-3">

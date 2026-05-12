@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../AuthContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PageTransition } from './PageTransition.jsx';
-import { Bell, X, Moon, Sun, Sparkles, Globe, ArrowRight } from 'lucide-react';
+import { Bell, X, Moon, Sun, Sparkles, ArrowRight } from 'lucide-react';
 import { api } from '../../utils/api.js';
 import {
   initiateSocketConnection,
@@ -124,9 +124,10 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
 
   return (
     <div className="bg-white min-h-screen font-sans selection:bg-emerald-100 selection:text-emerald-900">
-      <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 py-3 ${headerBg}`}>
+      <nav
+        className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 py-3 ${headerBg}`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex items-center justify-between gap-4">
-
           {/* ── LOGO ── */}
           <Link
             to="/"
@@ -148,7 +149,9 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
           </Link>
 
           {/* ── DESKTOP NAV LINKS ── */}
-          <div className={`hidden lg:flex gap-6 font-bold uppercase tracking-widest text-[11px] ${subTextColor}`}>
+          <div
+            className={`hidden lg:flex gap-6 font-bold uppercase tracking-widest text-[11px] ${subTextColor}`}
+          >
             {navLinks.map((link) => (
               <Link
                 key={link.name}
@@ -165,16 +168,16 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
           {/* ── RIGHT SIDE ICONS ── */}
           {/* FIX: items-center on every wrapper, gap-2 consistent, no size variation between mobile/desktop */}
           <div className="flex items-center gap-2">
-
             {/* CURRENCY SELECTOR */}
             {/* FIX: removed h-10/h-11 split — now always h-10, px-3, rounded-2xl */}
             <div className="relative" ref={currRef}>
               <button
                 onClick={() => setShowCurr(!showCurr)}
-                className={`h-10 px-3 rounded-2xl flex items-center gap-2 transition-all font-bold text-[11px] uppercase tracking-widest ${isTransparent
+                className={`h-10 px-3 rounded-2xl flex items-center gap-2 transition-all font-bold text-[11px] uppercase tracking-widest ${
+                  isTransparent
                     ? 'bg-white/10 text-white hover:bg-white/20 backdrop-blur-md border border-white/20'
                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                  }`}
+                }`}
                 aria-label="Select currency"
               >
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
@@ -199,14 +202,20 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
                     {CURRENCIES.map((c) => (
                       <button
                         key={c.code}
-                        onClick={() => { changeCurrency(c.code); setShowCurr(false); }}
-                        className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl transition-colors ${currency.code === c.code
+                        onClick={() => {
+                          changeCurrency(c.code);
+                          setShowCurr(false);
+                        }}
+                        className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl transition-colors ${
+                          currency.code === c.code
                             ? 'bg-emerald-50 text-emerald-700'
                             : 'hover:bg-slate-50 text-slate-600'
-                          }`}
+                        }`}
                       >
                         <span className="font-bold text-xs">{c.label}</span>
-                        <span className="font-bold text-[11px] text-slate-400">{c.symbol} {c.code}</span>
+                        <span className="font-bold text-[11px] text-slate-400">
+                          {c.symbol} {c.code}
+                        </span>
                       </button>
                     ))}
                   </motion.div>
@@ -218,8 +227,10 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
             {/* FIX: was w-9 h-9 md:w-10 md:h-10 rounded-full — now w-10 h-10 rounded-2xl everywhere */}
             <button
               onClick={toggleTheme}
-              className={`${iconBtn} ${!isTransparent && (isDarkMode ? 'bg-indigo-50 text-indigo-500 hover:bg-indigo-100' : '')
-                }`}
+              className={`${iconBtn} ${
+                !isTransparent &&
+                (isDarkMode ? 'bg-indigo-50 text-indigo-500 hover:bg-indigo-100' : '')
+              }`}
               aria-label="Toggle theme"
               title="Toggle Theme"
             >
@@ -231,8 +242,11 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
               <div className="hidden sm:flex items-center gap-3">
                 <Link
                   to="/login"
-                  className={`font-bold text-[11px] tracking-widest uppercase px-4 py-2 rounded-2xl transition-all ${isTransparent ? 'text-white hover:bg-white/10' : 'text-slate-900 hover:bg-slate-100'
-                    }`}
+                  className={`font-bold text-[11px] tracking-widest uppercase px-4 py-2 rounded-2xl transition-all ${
+                    isTransparent
+                      ? 'text-white hover:bg-white/10'
+                      : 'text-slate-900 hover:bg-slate-100'
+                  }`}
                 >
                   Sign In
                 </Link>
@@ -245,7 +259,6 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
               </div>
             ) : (
               <div className="flex items-center gap-2">
-
                 {/* NOTIFICATION BELL */}
                 {/* FIX: was w-10 h-10 md:w-12 md:h-12 — now w-10 h-10 everywhere */}
                 <div className="relative">
@@ -272,21 +285,27 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
                           <span className="font-bold text-xs text-slate-900 uppercase tracking-widest">
                             Notifications
                           </span>
-                          <button onClick={() => setShowNotifs(false)} className="text-slate-400 hover:text-slate-900">
+                          <button
+                            onClick={() => setShowNotifs(false)}
+                            className="text-slate-400 hover:text-slate-900"
+                          >
                             <X size={16} />
                           </button>
                         </div>
                         <div className="overflow-y-auto p-4 flex-1">
                           {notifs.length === 0 ? (
-                            <p className="text-center text-xs text-slate-400 py-6">No new notifications</p>
+                            <p className="text-center text-xs text-slate-400 py-6">
+                              No new notifications
+                            </p>
                           ) : (
                             notifs.map((n) => (
                               <div
                                 key={n._id}
-                                className={`p-4 rounded-2xl mb-2 flex flex-col gap-1.5 text-sm ${n.read
+                                className={`p-4 rounded-2xl mb-2 flex flex-col gap-1.5 text-sm ${
+                                  n.read
                                     ? 'bg-white text-slate-500 border border-slate-50'
                                     : 'bg-emerald-50 text-emerald-900 font-semibold border border-emerald-100/50'
-                                  }`}
+                                }`}
                               >
                                 <span className="leading-snug">{n.message}</span>
                                 <span className="text-[11px] uppercase tracking-widest opacity-40">
@@ -331,27 +350,43 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
                         </div>
                         <div className="p-2 space-y-1">
                           {user.role === 'partner' && (
-                            <Link to="/partner" onClick={() => setOpen(false)}
-                              className="flex items-center px-5 py-3.5 text-[11px] font-bold uppercase tracking-widest text-emerald-600 hover:bg-emerald-50 rounded-2xl">
+                            <Link
+                              to="/partner"
+                              onClick={() => setOpen(false)}
+                              className="flex items-center px-5 py-3.5 text-[11px] font-bold uppercase tracking-widest text-emerald-600 hover:bg-emerald-50 rounded-2xl"
+                            >
                               Provider Dashboard
                             </Link>
                           )}
                           {user.role === 'admin' && (
-                            <Link to="/admin" onClick={() => setOpen(false)}
-                              className="flex items-center px-5 py-3.5 text-[11px] font-bold uppercase tracking-widest text-indigo-600 hover:bg-indigo-50 rounded-2xl">
+                            <Link
+                              to="/admin"
+                              onClick={() => setOpen(false)}
+                              className="flex items-center px-5 py-3.5 text-[11px] font-bold uppercase tracking-widest text-indigo-600 hover:bg-indigo-50 rounded-2xl"
+                            >
                               Admin Dashboard
                             </Link>
                           )}
-                          <Link to="/my-bookings" onClick={() => setOpen(false)}
-                            className="flex items-center px-5 py-3.5 text-[11px] font-bold uppercase tracking-widest text-slate-900 hover:bg-slate-50 rounded-2xl">
+                          <Link
+                            to="/my-bookings"
+                            onClick={() => setOpen(false)}
+                            className="flex items-center px-5 py-3.5 text-[11px] font-bold uppercase tracking-widest text-slate-900 hover:bg-slate-50 rounded-2xl"
+                          >
                             My Bookings
                           </Link>
-                          <Link to="/profile" onClick={() => setOpen(false)}
-                            className="flex items-center px-5 py-3.5 text-[11px] font-bold uppercase tracking-widest text-slate-900 hover:bg-slate-50 rounded-2xl">
+                          <Link
+                            to="/profile"
+                            onClick={() => setOpen(false)}
+                            className="flex items-center px-5 py-3.5 text-[11px] font-bold uppercase tracking-widest text-slate-900 hover:bg-slate-50 rounded-2xl"
+                          >
                             Account Profile
                           </Link>
                           <button
-                            onClick={() => { logout(); setOpen(false); navigate('/'); }}
+                            onClick={() => {
+                              logout();
+                              setOpen(false);
+                              navigate('/');
+                            }}
                             className="w-full text-center py-3.5 rounded-xl text-[11px] font-bold uppercase tracking-widest text-white bg-slate-900 hover:bg-rose-500 transition-all mt-1"
                           >
                             Log Out
@@ -368,10 +403,11 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
             {/* FIX: added border border-white/20 on hero to match other glass buttons */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`lg:hidden w-10 h-10 flex items-center justify-center rounded-2xl transition-all ${isTransparent
+              className={`lg:hidden w-10 h-10 flex items-center justify-center rounded-2xl transition-all ${
+                isTransparent
                   ? 'bg-white/10 text-white backdrop-blur-md border border-white/20 hover:bg-white/20'
                   : 'bg-slate-100 text-slate-900 hover:bg-slate-200'
-                }`}
+              }`}
               aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -383,7 +419,6 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
                 />
               </svg>
             </button>
-
           </div>
         </div>
       </nav>
@@ -422,10 +457,11 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
                     key={link.name}
                     to={link.to}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center justify-between p-5 rounded-[20px] font-black text-lg uppercase tracking-tighter transition-all active:scale-95 ${link.icon
+                    className={`flex items-center justify-between p-5 rounded-[20px] font-black text-lg uppercase tracking-tighter transition-all active:scale-95 ${
+                      link.icon
                         ? 'bg-emerald-50 text-emerald-600 border border-emerald-100'
                         : 'bg-slate-50 text-slate-900 border border-slate-100'
-                      }`}
+                    }`}
                   >
                     <div className="flex items-center gap-3">
                       {link.icon && <link.icon size={18} />}
@@ -485,7 +521,11 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
                     </Link>
                   </div>
                   <button
-                    onClick={() => { logout(); setMobileMenuOpen(false); navigate('/'); }}
+                    onClick={() => {
+                      logout();
+                      setMobileMenuOpen(false);
+                      navigate('/');
+                    }}
                     className="w-full py-4 bg-slate-950 text-white rounded-[18px] font-black text-[11px] uppercase tracking-[0.3em] hover:bg-rose-500 transition-all"
                   >
                     Log Out
@@ -498,7 +538,9 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
       </AnimatePresence>
 
       <PageTransition>
-        <main className={`${!isHomePage && !noPadding ? 'pt-[72px]' : 'pt-0'} transition-all duration-500`}>
+        <main
+          className={`${!isHomePage && !noPadding ? 'pt-[72px]' : 'pt-0'} transition-all duration-500`}
+        >
           {children}
         </main>
       </PageTransition>
@@ -523,11 +565,23 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
                 Resources
               </h4>
               <ul className="space-y-4 text-[14px] font-bold">
-                <li><Link to="/support" className="text-emerald-400">Support Center</Link></li>
-                <li><Link to="/about">Our Story</Link></li>
-                <li><Link to="/privacy">Privacy Policy</Link></li>
-                <li><Link to="/terms">Terms of Service</Link></li>
-                <li><Link to="/compliance">Data Compliance</Link></li>
+                <li>
+                  <Link to="/support" className="text-emerald-400">
+                    Support Center
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/about">Our Story</Link>
+                </li>
+                <li>
+                  <Link to="/privacy">Privacy Policy</Link>
+                </li>
+                <li>
+                  <Link to="/terms">Terms of Service</Link>
+                </li>
+                <li>
+                  <Link to="/compliance">Data Compliance</Link>
+                </li>
               </ul>
             </div>
             <div className="text-center md:text-left">
@@ -535,9 +589,17 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
                 Partner with Us
               </h4>
               <ul className="space-y-4 text-[14px] font-bold">
-                <li><Link to="/partner-register" className="text-emerald-500">Become a Partner</Link></li>
-                <li><Link to="/partner-login">Partner Login</Link></li>
-                <li><Link to="/compliance">Verification Policy</Link></li>
+                <li>
+                  <Link to="/partner-register" className="text-emerald-500">
+                    Become a Partner
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/partner-login">Partner Login</Link>
+                </li>
+                <li>
+                  <Link to="/compliance">Verification Policy</Link>
+                </li>
               </ul>
             </div>
             <div className="text-center md:text-left">
@@ -545,9 +607,24 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
                 Community
               </h4>
               <ul className="space-y-4 text-[14px] font-bold text-white/60">
-                <li><a href="#" className="hover:text-white transition-colors">Instagram</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Twitter</a></li>
-                <li><a href="mailto:contact@wayzza.live" className="hover:text-white transition-colors">Contact Support</a></li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Instagram
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Twitter
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="mailto:contact@wayzza.live"
+                    className="hover:text-white transition-colors"
+                  >
+                    Contact Support
+                  </a>
+                </li>
               </ul>
             </div>
           </div>

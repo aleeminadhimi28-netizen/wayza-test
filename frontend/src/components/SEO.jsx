@@ -28,7 +28,8 @@ export default function SEO({
     url: 'https://wayzza.live',
     logo: 'https://wayzza.live/favicon.svg',
     image: defaultImage,
-    description: 'Curated sanctuaries and elite mobility for the modern explorer in Varkala, Kerala.',
+    description:
+      'Curated sanctuaries and elite mobility for the modern explorer in Varkala, Kerala.',
     telephone: '+91 80892 22444',
     priceRange: '₹₹₹',
     address: {
@@ -104,7 +105,9 @@ export default function SEO({
   return (
     <Helmet>
       {/* Standard metadata tags */}
-      <title>{title ? `Wayzza | ${title}` : 'Wayzza | Premium Varkala Stays & Luxury Mobility'}</title>
+      <title>
+        {title ? `Wayzza | ${title}` : 'Wayzza | Premium Varkala Stays & Luxury Mobility'}
+      </title>
       <meta
         name="description"
         content={

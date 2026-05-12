@@ -160,7 +160,6 @@ export default function LandingPage() {
       />
 
       <div className="bg-white font-sans text-slate-900 selection:bg-emerald-50 selection:text-emerald-900 leading-relaxed antialiased overflow-x-hidden">
-
         {/* ── HERO ── */}
         <header className="relative h-[90vh] min-h-[600px] md:min-h-[700px] flex flex-col items-center justify-center overflow-hidden">
           <div className="absolute inset-0 z-0">
@@ -202,7 +201,8 @@ export default function LandingPage() {
               </h1>
 
               <p className="text-sm md:text-xl font-medium text-white/90 max-w-2xl mx-auto drop-shadow-lg leading-relaxed px-2 md:px-0">
-                Handpicked sanctuaries and high-performance mobility curated for the modern explorer in Varkala.
+                Handpicked sanctuaries and high-performance mobility curated for the modern explorer
+                in Varkala.
               </p>
             </motion.div>
 
@@ -216,7 +216,6 @@ export default function LandingPage() {
             >
               {/* FIX #1: rounded-2xl → rounded-[24px] for consistent top corner radius on mobile */}
               <div className="bg-white/90 backdrop-blur-2xl rounded-[24px] md:rounded-[40px] p-3 shadow-[0_40px_100px_rgba(0,0,0,0.15)] border border-white/50 flex flex-col md:flex-row items-stretch md:items-center gap-2 md:gap-1">
-
                 {/* Location */}
                 <div className="flex-[1.5] px-4 py-3 rounded-xl md:rounded-[32px] hover:bg-slate-50/50 transition-all text-left">
                   <p className="text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mb-1">
@@ -309,9 +308,7 @@ export default function LandingPage() {
                   aria-label="Search listings"
                 >
                   <Search size={18} strokeWidth={3} className="shrink-0" />
-                  <span className="font-black uppercase tracking-[0.3em] text-[11px]">
-                    Explore
-                  </span>
+                  <span className="font-black uppercase tracking-[0.3em] text-[11px]">Explore</span>
                 </button>
               </div>
             </motion.div>
@@ -329,8 +326,10 @@ export default function LandingPage() {
         </header>
 
         {/* ── PROMO + LISTINGS ── */}
-        <section ref={moreListingsRef} className="px-4 sm:px-6 max-w-7xl mx-auto space-y-8 pb-10 pt-6">
-
+        <section
+          ref={moreListingsRef}
+          className="px-4 sm:px-6 max-w-7xl mx-auto space-y-8 pb-10 pt-6"
+        >
           {/* Promo card */}
           <div className="bg-white rounded-[24px] md:rounded-[32px] border border-slate-200 shadow-sm overflow-hidden">
             <div className="flex flex-col sm:flex-row items-stretch gap-4 p-5">
@@ -405,24 +404,24 @@ export default function LandingPage() {
             >
               {loading
                 ? [1, 2, 3].map((i) => (
-                  <div key={i} className="min-w-[280px] snap-start">
-                    <WayzzaSkeleton className="h-[360px] rounded-[32px]" />
-                  </div>
-                ))
+                    <div key={i} className="min-w-[280px] snap-start">
+                      <WayzzaSkeleton className="h-[360px] rounded-[32px]" />
+                    </div>
+                  ))
                 : trendingList.map((listing) => (
-                  <div key={listing._id} className="min-w-[280px] snap-start">
-                    <WayzzaHotelItem
-                      hotel={{
-                        id: listing._id,
-                        name: listing.title,
-                        location: listing.location || 'Premium stay',
-                        price: listing.price,
-                        image: fixImg(listing.image),
-                        wifiSpeed: listing.wifiSpeed || 0,
-                      }}
-                    />
-                  </div>
-                ))}
+                    <div key={listing._id} className="min-w-[280px] snap-start">
+                      <WayzzaHotelItem
+                        hotel={{
+                          id: listing._id,
+                          name: listing.title,
+                          location: listing.location || 'Premium stay',
+                          price: listing.price,
+                          image: fixImg(listing.image),
+                          wifiSpeed: listing.wifiSpeed || 0,
+                        }}
+                      />
+                    </div>
+                  ))}
             </div>
           </div>
 
@@ -430,7 +429,9 @@ export default function LandingPage() {
           <div className="space-y-6">
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <div>
-                <h3 className="text-xl md:text-2xl font-black tracking-tight text-slate-950">More listings</h3>
+                <h3 className="text-xl md:text-2xl font-black tracking-tight text-slate-950">
+                  More listings
+                </h3>
                 <p className="text-sm text-slate-500 font-medium">
                   Browse more curated stays for your next trip.
                 </p>
@@ -464,24 +465,24 @@ export default function LandingPage() {
             >
               {loading
                 ? [1, 2, 3].map((i) => (
-                  <div key={i} className="min-w-[280px] snap-start">
-                    <WayzzaSkeleton className="h-[360px] rounded-[32px]" />
-                  </div>
-                ))
+                    <div key={i} className="min-w-[280px] snap-start">
+                      <WayzzaSkeleton className="h-[360px] rounded-[32px]" />
+                    </div>
+                  ))
                 : trendingList.slice(0, 6).map((listing) => (
-                  <div key={listing._id} className="min-w-[280px] snap-start">
-                    <WayzzaHotelItem
-                      hotel={{
-                        id: listing._id,
-                        name: listing.title,
-                        location: listing.location || 'Premium stay',
-                        price: listing.price,
-                        image: fixImg(listing.image),
-                        wifiSpeed: listing.wifiSpeed || 0,
-                      }}
-                    />
-                  </div>
-                ))}
+                    <div key={listing._id} className="min-w-[280px] snap-start">
+                      <WayzzaHotelItem
+                        hotel={{
+                          id: listing._id,
+                          name: listing.title,
+                          location: listing.location || 'Premium stay',
+                          price: listing.price,
+                          image: fixImg(listing.image),
+                          wifiSpeed: listing.wifiSpeed || 0,
+                        }}
+                      />
+                    </div>
+                  ))}
             </div>
           </div>
         </section>
@@ -528,10 +529,15 @@ export default function LandingPage() {
                       <p className="text-[11px] uppercase font-black tracking-[0.3em] text-emerald-400">
                         {d.properties}
                       </p>
-                      <h3 className="font-bold text-2xl md:text-4xl text-white tracking-tight">{d.name}</h3>
+                      <h3 className="font-bold text-2xl md:text-4xl text-white tracking-tight">
+                        {d.name}
+                      </h3>
                     </div>
                     <div className="w-12 h-12 md:w-16 md:h-16 rounded-[20px] md:rounded-[24px] bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center group-hover:bg-emerald-500 transition-all duration-500 shrink-0">
-                      <ArrowRight size={20} className="text-white group-hover:translate-x-1 transition-transform" />
+                      <ArrowRight
+                        size={20}
+                        className="text-white group-hover:translate-x-1 transition-transform"
+                      />
                     </div>
                   </div>
                 </motion.div>
@@ -613,11 +619,16 @@ export default function LandingPage() {
                     { title: 'Verified results', value: '98%' },
                     { title: 'Trips planned', value: '500+' },
                   ].map((stat) => (
-                    <div key={stat.title} className="rounded-3xl border border-white/10 bg-white/5 p-4 md:p-5">
+                    <div
+                      key={stat.title}
+                      className="rounded-3xl border border-white/10 bg-white/5 p-4 md:p-5"
+                    >
                       <p className="text-[10px] md:text-sm uppercase tracking-[0.35em] text-slate-400 font-semibold">
                         {stat.title}
                       </p>
-                      <p className="mt-2 md:mt-3 text-2xl md:text-3xl font-black text-emerald-300">{stat.value}</p>
+                      <p className="mt-2 md:mt-3 text-2xl md:text-3xl font-black text-emerald-300">
+                        {stat.value}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -668,7 +679,10 @@ export default function LandingPage() {
                         { emoji: '🏍️', title: 'Royal Enfield 350', detail: '₹850 / day' },
                         { emoji: '☕', title: 'Secret Café Trail', detail: '6 stops' },
                       ].map((item) => (
-                        <div key={item.title} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                        <div
+                          key={item.title}
+                          className="rounded-2xl border border-white/10 bg-white/5 p-4"
+                        >
                           <div className="flex items-center justify-between text-sm text-slate-300 mb-3">
                             <span>{item.emoji}</span>
                             <span className="rounded-full bg-emerald-500/15 px-2 py-1 text-[10px] uppercase tracking-[0.3em] text-emerald-300">
@@ -685,7 +699,12 @@ export default function LandingPage() {
 
                 <div className="mt-4 rounded-[24px] border border-white/10 bg-white/5 p-4">
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {['Beachfront villa', 'Budget under ₹5k', 'Couples getaway', 'Solo adventure'].map((label) => (
+                    {[
+                      'Beachfront villa',
+                      'Budget under ₹5k',
+                      'Couples getaway',
+                      'Solo adventure',
+                    ].map((label) => (
                       <span
                         key={label}
                         className="rounded-full border border-white/10 bg-slate-950/50 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.3em] text-slate-200"
@@ -711,13 +730,15 @@ export default function LandingPage() {
         <footer className="bg-slate-950 pt-20 md:pt-32 pb-12 px-4 sm:px-6 overflow-hidden relative border-t border-white/5">
           <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-emerald-500/5 blur-[120px] rounded-full pointer-events-none" />
           <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-emerald-900/5 blur-[100px] rounded-full pointer-events-none" />
-          <div className="absolute -bottom-10 -right-20 text-[18vw] font-black text-white/[0.01] select-none pointer-events-none uppercase tracking-tighter leading-none" aria-hidden="true">
+          <div
+            className="absolute -bottom-10 -right-20 text-[18vw] font-black text-white/[0.01] select-none pointer-events-none uppercase tracking-tighter leading-none"
+            aria-hidden="true"
+          >
             Wayzza
           </div>
 
           <div className="max-w-7xl mx-auto relative z-10">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16 mb-16 md:mb-32">
-
               {/* Brand column */}
               <div className="md:col-span-5 space-y-8">
                 <div className="space-y-4">
@@ -730,7 +751,8 @@ export default function LandingPage() {
                     />
                   </Link>
                   <p className="text-white/40 text-base font-medium leading-relaxed max-w-sm text-center md:text-left">
-                    Curating verified sanctuaries and high-performance mobility for the modern explorer.
+                    Curating verified sanctuaries and high-performance mobility for the modern
+                    explorer.
                   </p>
                 </div>
 
@@ -740,7 +762,9 @@ export default function LandingPage() {
                     <p className="text-[11px] font-black uppercase tracking-[0.3em] text-emerald-400">
                       The Insider List
                     </p>
-                    <h4 className="text-lg md:text-xl font-bold text-white">Join the Wayzza circle.</h4>
+                    <h4 className="text-lg md:text-xl font-bold text-white">
+                      Join the Wayzza circle.
+                    </h4>
                   </div>
                   <form onSubmit={handleNewsletterSubmit} className="flex gap-2">
                     <input
@@ -821,7 +845,11 @@ export default function LandingPage() {
                   </h5>
                   <div className="flex gap-3">
                     {[
-                      { Icon: Instagram, url: 'https://www.instagram.com/wayzza', label: 'Instagram' },
+                      {
+                        Icon: Instagram,
+                        url: 'https://www.instagram.com/wayzza',
+                        label: 'Instagram',
+                      },
                       { Icon: Twitter, url: 'https://www.twitter.com/wayzza', label: 'Twitter' },
                       { Icon: Facebook, url: 'https://www.facebook.com/wayzza', label: 'Facebook' },
                     ].map(({ Icon, url, label }) => (
@@ -856,8 +884,12 @@ export default function LandingPage() {
             <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
               <div className="flex flex-wrap justify-center gap-6 text-[11px] font-black uppercase tracking-[0.3em] text-white/20">
                 <span>Wayzza © 2026</span>
-                <Link to="/privacy" className="hover:text-white transition-colors">Privacy</Link>
-                <Link to="/terms" className="hover:text-white transition-colors">Terms</Link>
+                <Link to="/privacy" className="hover:text-white transition-colors">
+                  Privacy
+                </Link>
+                <Link to="/terms" className="hover:text-white transition-colors">
+                  Terms
+                </Link>
               </div>
               <div className="flex items-center gap-4 flex-wrap justify-center">
                 <motion.div
