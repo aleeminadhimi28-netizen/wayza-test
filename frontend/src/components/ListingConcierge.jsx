@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare, Send, Sparkles, X, User, Bot, Loader2 } from 'lucide-react';
 import { BASE_URL } from '../utils/api.js';
@@ -62,7 +62,7 @@ export default function ListingConcierge({ listingId, listingTitle }) {
   };
 
   return (
-    <div className="fixed bottom-8 right-8 z-[999]">
+    <div className="fixed bottom-24 lg:bottom-8 right-6 lg:right-8 z-[999]">
       <AnimatePresence>
         {isOpen && (
           <motion.div
