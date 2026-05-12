@@ -102,16 +102,16 @@ export default function PartnerChat() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="flex flex-col h-[calc(100vh-140px)] min-h-[600px] font-sans pb-4"
+      className="flex flex-col h-[calc(100vh-140px)] min-h-[600px] font-sans pb-4 px-2"
     >
       {/* HEADER */}
-      <div className="mb-6">
+      <div className="mb-6 pl-1">
         <div className="flex items-center gap-2 text-emerald-600 font-bold text-xs uppercase tracking-wide mb-1">
-          <MessageSquare size={14} /> Guest Chat
+          <MessageSquare size={14} /> Guest Concierge
         </div>
-        <h1 className="text-2xl font-bold text-slate-900">Messages</h1>
+        <h1 className="text-2xl font-bold text-slate-900">Guest Messages</h1>
         <p className="text-sm text-slate-500 mt-1">
-          Chat directly with your guests who have confirmed bookings.
+          Direct communication channel with your confirmed guests.
         </p>
       </div>
 
