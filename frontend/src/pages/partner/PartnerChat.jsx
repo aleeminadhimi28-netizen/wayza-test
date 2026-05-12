@@ -32,10 +32,23 @@ export default function PartnerChat() {
 
   async function send() {
     if (!text.trim() || !selected) return;
+    const messageText = text.trim();
     setSending(true);
     try {
-      await api.sendChat(selected._id, text.trim());
-      setText('');
+      const res = await api.sendChat(selected._id, messageText);
+      if (res.ok) {
+        // Manually add message to state for immediate feedback
+        // The socket listener's deduplication logic will prevent duplicates
+        const tempMsg = {
+          _id: Date.now().toString(), // Temporary ID for list key
+          bookingId: selected._id,
+          senderEmail: user.email,
+          message: messageText,
+          createdAt: new Date().toISOString(),
+        };
+        setMessages((prev) => [...prev, tempMsg]);
+        setText('');
+      }
     } catch (_) {}
     setSending(false);
   }

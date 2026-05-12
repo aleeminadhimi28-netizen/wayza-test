@@ -34,10 +34,22 @@ export default function GuestChat() {
 
   async function send() {
     if (!text.trim() || !selected) return;
+    const messageText = text.trim();
     setSending(true);
     try {
-      await api.sendChat(selected._id, text.trim());
-      setText('');
+      const res = await api.sendChat(selected._id, messageText);
+      if (res.ok) {
+        // Manually add message to state for immediate feedback
+        const tempMsg = {
+          _id: Date.now().toString(),
+          bookingId: selected._id,
+          senderEmail: user.email,
+          message: messageText,
+          createdAt: new Date().toISOString(),
+        };
+        setMessages((prev) => [...prev, tempMsg]);
+        setText('');
+      }
     } catch (_) {}
     setSending(false);
   }
