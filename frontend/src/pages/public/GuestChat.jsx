@@ -24,6 +24,24 @@ export default function GuestChat() {
   const [sending, setSending] = useState(false);
   const bottomRef = useRef(null);
 
+  const loadMessages = useCallback(async () => {
+    if (!selected) return;
+    try {
+      const data = await api.getChat(selected._id);
+      if (data.ok) setMessages(data.data || []);
+    } catch (_) {}
+  }, [selected]);
+
+  async function send() {
+    if (!text.trim() || !selected) return;
+    setSending(true);
+    try {
+      await api.sendChat(selected._id, text.trim());
+      setText('');
+    } catch (_) {}
+    setSending(false);
+  }
+
   useEffect(() => {
     initiateSocketConnection();
     subscribeToMessages((err, msg) => {
@@ -52,14 +70,6 @@ export default function GuestChat() {
       .catch(() => setLoading(false));
   }, [user?.email]);
 
-  const loadMessages = useCallback(async () => {
-    if (!selected) return;
-    try {
-      const data = await api.getChat(selected._id);
-      if (data.ok) setMessages(data.data || []);
-    } catch (_) {}
-  }, [selected]);
-
   useEffect(() => {
     if (!selected) return;
     loadMessages();
@@ -76,17 +86,7 @@ export default function GuestChat() {
     }
   }, [messages.length]);
 
-  async function send() {
-    if (!text.trim() || !selected) return;
-    setSending(true);
-    try {
-      // Note: Socket.io handles the broadcast, so we just send to API
-      await api.sendChat(selected._id, text.trim());
-      setText('');
-      // We don't need to manually load messages, socket will deliver it
-    } catch (_) {}
-    setSending(false);
-  }
+
 
   if (loading)
     return (

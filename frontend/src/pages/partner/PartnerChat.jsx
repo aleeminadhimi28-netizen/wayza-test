@@ -22,6 +22,31 @@ export default function PartnerChat() {
   const [sending, setSending] = useState(false);
   const bottomRef = useRef(null);
 
+  const loadMessages = useCallback(async () => {
+    if (!selected) return;
+    try {
+      const data = await api.getChat(selected._id);
+      if (data.ok) setMessages(data.data || []);
+    } catch (_) {}
+  }, [selected]);
+
+  async function send() {
+    if (!text.trim() || !selected) return;
+    setSending(true);
+    try {
+      await api.sendChat(selected._id, text.trim());
+      setText('');
+    } catch (_) {}
+    setSending(false);
+  }
+
+  function onKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      send();
+    }
+  }
+
   useEffect(() => {
     initiateSocketConnection();
     subscribeToMessages((err, msg) => {
@@ -50,14 +75,6 @@ export default function PartnerChat() {
       .catch(() => setLoading(false));
   }, [user?.email]);
 
-  const loadMessages = useCallback(async () => {
-    if (!selected) return;
-    try {
-      const data = await api.getChat(selected._id);
-      if (data.ok) setMessages(data.data || []);
-    } catch (_) {}
-  }, [selected]);
-
   useEffect(() => {
     if (!selected) return;
     loadMessages();
@@ -72,22 +89,7 @@ export default function PartnerChat() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  async function send() {
-    if (!text.trim() || !selected) return;
-    setSending(true);
-    try {
-      await api.sendChat(selected._id, text.trim());
-      setText('');
-    } catch (_) {}
-    setSending(false);
-  }
 
-  function onKey(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      send();
-    }
-  }
 
   if (loading)
     return (
