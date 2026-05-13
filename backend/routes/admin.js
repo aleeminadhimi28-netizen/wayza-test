@@ -78,7 +78,7 @@ router.get("/stats", requireAuth, requireRole(["admin"]), async (req, res, next)
 
         const paid = await bookings.find({ status: "paid" }).toArray();
         const totalRevenue = paid.reduce((s, b) => s + (b.totalPrice || 0), 0);
-        const platformCommission = paid.reduce((s, b) => s + (b.commissionAmount || Math.round((b.totalPrice || 0) * 0.10)), 0);
+        const platformCommission = paid.reduce((s, b) => s + (b.commissionAmount || (99 + Math.round((b.baseAmount || (b.totalPrice / 1.12)) * 0.10))), 0);
 
         const revenueMap = {};
         paid.forEach(b => {

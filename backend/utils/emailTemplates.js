@@ -103,7 +103,7 @@ export const ownerBookingEmail = (data) => {
     <tr style='border-bottom:1px solid #f3f4f6;'><td style='padding:12px 0;color:#6b7280;font-size:14px;'>Check-out</td><td style='padding:12px 0;font-weight:600;text-align:right;'>${checkOut}</td></tr>
     <tr style='border-bottom:1px solid #f3f4f6;'><td style='padding:12px 0;color:#6b7280;font-size:14px;'>Duration</td><td style='padding:12px 0;font-weight:600;text-align:right;'>${nights} ${nightsText}</td></tr>
     <tr style='border-bottom:1px solid #f3f4f6;'><td style='padding:12px 0;color:#6b7280;font-size:14px;'>Total Value</td><td style='padding:12px 0;font-weight:700;text-align:right;'>Rs.${totalPrice}</td></tr>
-    <tr><td style='padding:14px 0 0;color:#059669;font-weight:700;font-size:16px;'>Your Payout (90%)</td><td style='padding:14px 0 0;font-weight:800;color:#059669;font-size:20px;text-align:right;'>Rs.${ownerPayout}</td></tr>
+    <tr><td style='padding:14px 0 0;color:#059669;font-weight:700;font-size:16px;'>Estimated Payout</td><td style='padding:14px 0 0;font-weight:800;color:#059669;font-size:20px;text-align:right;'>Rs.${ownerPayout}</td></tr>
     </table></div>
     <div style='text-align:center;margin-bottom:28px;'>
     <a href='${frontendUrl}/partner' style='display:inline-block;padding:14px 32px;background:#059669;color:white;text-decoration:none;border-radius:12px;font-weight:700;font-size:15px;'>View Dashboard</a>

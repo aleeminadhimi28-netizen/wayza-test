@@ -157,7 +157,7 @@ router.get("/earnings", requireAuth, requireRole(["partner", "admin"]), async (r
         const now = new Date();
 
         allPaid.forEach(b => {
-            const fee = b.commissionAmount !== undefined ? b.commissionAmount : Math.round((b.totalPrice || 0) * 0.10);
+            const fee = b.commissionAmount !== undefined ? b.commissionAmount : (99 + Math.round((b.baseAmount || (b.totalPrice / 1.12)) * 0.10));
             const earnings = b.netEarnings !== undefined ? b.netEarnings : (b.totalPrice || 0) - fee;
 
             totalRevenue += b.totalPrice || 0;
@@ -272,7 +272,7 @@ router.post("/wallet/request", requireAuth, requireRole(["partner"]), async (req
         const available = allPaid.reduce((sum, b) => {
             if (b.payoutStatus === "paid_out") return sum;
             if (new Date(b.checkIn) <= now) {
-                const fee = b.commissionAmount !== undefined ? b.commissionAmount : Math.round((b.totalPrice || 0) * 0.10);
+                const fee = b.commissionAmount !== undefined ? b.commissionAmount : (99 + Math.round((b.baseAmount || (b.totalPrice / 1.12)) * 0.10));
                 const earnings = b.netEarnings !== undefined ? b.netEarnings : (b.totalPrice || 0) - fee;
                 return sum + earnings;
             }

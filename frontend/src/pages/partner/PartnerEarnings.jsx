@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../../AuthContext.jsx';
 import { motion } from 'framer-motion';
 import {
@@ -250,45 +250,65 @@ export default function PartnerEarnings() {
             <tbody className="divide-y divide-slate-50">
               {bookings
                 .filter((b) => b.status === 'paid' || b.status === 'confirmed')
-                .map((b, i) => (
-                  <tr key={b._id || i} className="hover:bg-slate-50/50 transition-colors group">
-                    <td className="px-6 py-4">
-                      <p className="font-semibold text-sm text-slate-900 truncate max-w-[200px]">
-                        {b.title}
-                      </p>
-                      <p className="text-[11px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">
-                        #{b._id.slice(-8).toUpperCase()}
-                      </p>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="text-xs font-medium text-slate-600">
-                        {b.checkIn} → {b.checkOut}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider border ${
-                          b.payoutStatus === 'paid_out'
-                            ? 'bg-blue-50 text-blue-700 border-blue-100'
+                .map((b, i) => {
+                  const base = b.baseAmount || Math.round(b.totalPrice / 1.12);
+                  const platformFee = b.serviceFee || 99;
+                  const commission = Math.round(base * 0.1);
+                  const isSettled = b.payoutStatus === 'paid_out';
+
+                  return (
+                    <tr key={b._id || i} className="hover:bg-slate-50/50 transition-colors group">
+                      <td className="px-6 py-4">
+                        <p className="font-semibold text-sm text-slate-900 truncate max-w-[200px]">
+                          {b.title}
+                        </p>
+                        <p className="text-[11px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">
+                          #{b._id.slice(-8).toUpperCase()}
+                        </p>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="space-y-1">
+                           <span className="text-xs font-medium text-slate-600">
+                            {b.checkIn} → {b.checkOut}
+                          </span>
+                          <div className="flex items-center gap-2 text-[10px] text-slate-400 font-semibold">
+                             <span>Paid: ₹{(b.totalPrice || 0).toLocaleString()}</span>
+                             <span className="w-1 h-1 bg-slate-200 rounded-full" />
+                             <span>Tax: ₹{(b.gst || 0).toLocaleString()}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span
+                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider border ${
+                            isSettled
+                              ? 'bg-blue-50 text-blue-700 border-blue-100'
+                              : new Date(b.checkIn) <= new Date()
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
+                                : 'bg-amber-50 text-amber-700 border-amber-100'
+                          }`}
+                        >
+                          {isSettled
+                            ? 'Settled'
                             : new Date(b.checkIn) <= new Date()
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
-                              : 'bg-amber-50 text-amber-700 border-amber-100'
-                        }`}
-                      >
-                        {b.payoutStatus === 'paid_out'
-                          ? 'Settled'
-                          : new Date(b.checkIn) <= new Date()
-                            ? 'Cleared for Payout'
-                            : 'Pending Stay'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <p className="font-bold text-sm text-slate-900">
-                        ₹{Math.round(b.netEarnings || b.totalPrice * 0.9).toLocaleString()}
-                      </p>
-                    </td>
-                  </tr>
-                ))}
+                              ? 'Cleared for Payout'
+                              : 'Pending Stay'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex flex-col items-end">
+                          <p className="font-bold text-sm text-slate-900">
+                            ₹{Math.round(b.netEarnings || b.totalPrice - platformFee - commission).toLocaleString()}
+                          </p>
+                          <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-tighter text-slate-400 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span>Fee: -₹{platformFee}</span>
+                            <span>Comm: -₹{commission}</span>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               {bookings.length === 0 && (
                 <tr className="py-20 text-center">
                   <td colSpan={4} className="py-20 text-center">

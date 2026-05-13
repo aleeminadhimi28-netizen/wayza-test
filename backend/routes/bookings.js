@@ -95,10 +95,8 @@ router.post("/book", requireAuth, async (req, res, next) => {
         const unadjustedGst = isVehicle ? 0 : Math.round(baseAmount * config.gstRate);
         const unadjustedTotalPrice = baseAmount + unadjustedGst + serviceFee;
         
-        // Freeze platform commission amount
-        // Using unadjusted base amount or unadjusted total price depending on the old logic.
-        // The old code in /confirm used: Math.round(totalPrice * config.commissionRate)
-        const platformCommissionAmount = Math.round(unadjustedTotalPrice * config.commissionRate);
+        // Freeze platform commission amount: Service Fee + (Base Room Price * Commission Rate)
+        const platformCommissionAmount = config.serviceFee + Math.round(baseAmount * config.commissionRate);
 
         // RACE CONDITION FIX: Pessimistic lock on the specific variant
         const lockId = `${listingId}_${variantIndex || 0}`;
@@ -196,7 +194,7 @@ router.post("/confirm", requireAuth, async (req, res, next) => {
         
         let commissionAmount = booking.platformCommissionAmount !== undefined 
             ? booking.platformCommissionAmount 
-            : Math.round((totalPrice + (booking.discountAmount || 0)) * config.commissionRate);
+            : config.serviceFee + Math.round((totalPrice - (booking.gst || 0) - config.serviceFee + (booking.discountAmount || 0)) * config.commissionRate);
             
         // Platform absorbs the discount
         commissionAmount = commissionAmount - (booking.discountAmount || 0);

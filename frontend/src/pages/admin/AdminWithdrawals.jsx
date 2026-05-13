@@ -74,7 +74,7 @@ export default function AdminWithdrawals({ withdrawals, setWithdrawals, stats, l
           <div className="flex items-center gap-4">
             <div className="text-right border-r border-slate-100 pr-6 hidden md:block">
               <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                Platform Earned (10%)
+                Platform Revenue
               </p>
               <p className="text-xl font-bold text-emerald-600">
                 ₹{(stats.platformCommission || 0).toLocaleString()}
