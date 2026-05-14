@@ -435,21 +435,41 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
                       </p>
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <Link
-                      to="/profile"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="py-3.5 bg-white border border-slate-200 rounded-xl text-center text-[11px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all"
-                    >
-                      Account
-                    </Link>
-                    <Link
-                      to="/my-bookings"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="py-3.5 bg-white border border-slate-200 rounded-xl text-center text-[11px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all"
-                    >
-                      Bookings
-                    </Link>
+                  <div className="grid gap-2">
+                    {user.role === 'admin' && (
+                      <Link
+                        to="/admin"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="py-3.5 bg-indigo-50 text-indigo-600 rounded-xl text-center text-[11px] font-black uppercase tracking-widest hover:bg-indigo-100 transition-all"
+                      >
+                        Admin Dashboard
+                      </Link>
+                    )}
+                    {user.role === 'partner' && (
+                      <Link
+                        to="/partner"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="py-3.5 bg-emerald-50 text-emerald-600 rounded-xl text-center text-[11px] font-black uppercase tracking-widest hover:bg-emerald-100 transition-all"
+                      >
+                        Provider Dashboard
+                      </Link>
+                    )}
+                    <div className="grid grid-cols-2 gap-2 mt-2">
+                      <Link
+                        to="/profile"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="py-3.5 bg-white border border-slate-200 rounded-xl text-center text-[11px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all"
+                      >
+                        Account
+                      </Link>
+                      <Link
+                        to="/my-bookings"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="py-3.5 bg-white border border-slate-200 rounded-xl text-center text-[11px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all"
+                      >
+                        Bookings
+                      </Link>
+                    </div>
                   </div>
                   <button
                     onClick={() => {
