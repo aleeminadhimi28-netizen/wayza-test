@@ -23,6 +23,7 @@ import {
   Moon,
   Sun,
   Menu,
+  DollarSign,
 } from 'lucide-react';
 import { useNotifications } from '../hooks/useNotifications.jsx';
 import { NotificationDropdown } from '../components/ui/NotificationDropdown.jsx';

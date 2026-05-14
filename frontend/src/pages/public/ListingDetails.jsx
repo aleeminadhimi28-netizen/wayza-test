@@ -272,7 +272,7 @@ export default function ListingDetails() {
   const gstRate = platformConfig?.gstRate ?? 0.12;
   const serviceFeeRate = platformConfig?.serviceFee ?? 99;
 
-  const gst = (!isVehicle && listing.ownerGstEnabled) ? Math.round(basePrice * nights * gstRate) : 0;
+  const gst = !isVehicle && listing.ownerGstEnabled ? Math.round(basePrice * nights * gstRate) : 0;
   const serviceFee = nights > 0 ? serviceFeeRate : 0;
   const total = basePrice * nights + gst + serviceFee;
 

@@ -291,7 +291,9 @@ export default function AdminDataTable({
                                 MSME: {item.msmeNumber}
                               </span>
                             ) : (
-                              <span className="text-[11px] text-slate-300 font-medium">No MSME</span>
+                              <span className="text-[11px] text-slate-300 font-medium">
+                                No MSME
+                              </span>
                             )}
                             {item.gstNumber ? (
                               <span className="inline-flex items-center gap-1 text-[11px] font-bold bg-purple-50 text-purple-700 border border-purple-100 rounded px-2 py-0.5">

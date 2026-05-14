@@ -2,9 +2,22 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Zap, Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft,
-  Activity, Globe, Sparkles, Building, Phone, Home, Car,
-  CheckCircle, ShieldCheck,
+  Zap,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  ArrowLeft,
+  Activity,
+  Globe,
+  Sparkles,
+  Building,
+  Phone,
+  Home,
+  Car,
+  CheckCircle,
+  ShieldCheck,
 } from 'lucide-react';
 import { useToast } from '../../ToastContext.jsx';
 import { api } from '../../utils/api.js';
@@ -24,7 +37,7 @@ function OtpInput({ value, onChange }) {
   };
   return (
     <div className="flex gap-3 justify-center">
-      {[0,1,2,3,4,5].map(i => (
+      {[0, 1, 2, 3, 4, 5].map((i) => (
         <input
           key={i}
           id={`otp-${i}`}
@@ -32,8 +45,8 @@ function OtpInput({ value, onChange }) {
           inputMode="numeric"
           maxLength={1}
           value={digits[i] || ''}
-          onChange={e => handle(i, e.target.value)}
-          onKeyDown={e => handleKey(i, e)}
+          onChange={(e) => handle(i, e.target.value)}
+          onKeyDown={(e) => handleKey(i, e)}
           className="w-12 h-14 text-center text-xl font-black text-slate-900 border-2 border-slate-100 rounded-2xl bg-slate-50/50 focus:bg-white focus:border-emerald-500 outline-none transition-all"
         />
       ))}
@@ -46,25 +59,45 @@ function TermsModal({ onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-950/60 backdrop-blur-sm">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
         className="bg-white rounded-[32px] p-10 max-w-lg w-full shadow-2xl space-y-6 max-h-[80vh] overflow-y-auto"
       >
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center">
             <ShieldCheck size={22} className="text-emerald-600" />
           </div>
-          <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">Partner Terms</h2>
+          <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">
+            Partner Terms
+          </h2>
         </div>
         <div className="space-y-5 text-sm text-slate-600 leading-relaxed">
           {[
-            ['Commission & Financials', 'I agree to Wayzza\'s platform commission fee as displayed on my dashboard during listing creation. Payouts are processed to my registered bank account after successful guest checkout.'],
-            ['Accuracy & Fraud', 'I certify that all documents (KYC, RC Books, Tax receipts) and photos I upload are 100% genuine. Falsification results in permanent account termination and legal reporting.'],
-            ['Overbooking & Cancellations', 'I agree to keep my Wayzza calendar updated. Cancelling a confirmed booking makes me subject to financial penalties and responsible for alternate guest accommodation.'],
-            ['Legal Liability', 'I understand that Wayzza is a technology platform, not an insurance provider. I am solely responsible for guest safety, vehicle insurance validity, and compliance with all local laws.'],
-            ['Code of Conduct', 'I agree to treat all guests with respect, maintain high standards of cleanliness, and honor the cancellation policy selected for my listings.'],
+            [
+              'Commission & Financials',
+              "I agree to Wayzza's platform commission fee as displayed on my dashboard during listing creation. Payouts are processed to my registered bank account after successful guest checkout.",
+            ],
+            [
+              'Accuracy & Fraud',
+              'I certify that all documents (KYC, RC Books, Tax receipts) and photos I upload are 100% genuine. Falsification results in permanent account termination and legal reporting.',
+            ],
+            [
+              'Overbooking & Cancellations',
+              'I agree to keep my Wayzza calendar updated. Cancelling a confirmed booking makes me subject to financial penalties and responsible for alternate guest accommodation.',
+            ],
+            [
+              'Legal Liability',
+              'I understand that Wayzza is a technology platform, not an insurance provider. I am solely responsible for guest safety, vehicle insurance validity, and compliance with all local laws.',
+            ],
+            [
+              'Code of Conduct',
+              'I agree to treat all guests with respect, maintain high standards of cleanliness, and honor the cancellation policy selected for my listings.',
+            ],
           ].map(([title, body]) => (
             <div key={title}>
-              <p className="font-black text-slate-900 uppercase tracking-widest text-[11px] mb-1">{title}</p>
+              <p className="font-black text-slate-900 uppercase tracking-widest text-[11px] mb-1">
+                {title}
+              </p>
               <p>{body}</p>
             </div>
           ))}
@@ -101,11 +134,26 @@ export default function PartnerRegister() {
   // ── Step 1: Send OTP & validate fields ──
   async function handleSendOtp(e) {
     if (e) e.preventDefault();
-    if (!businessName.trim()) { showToast('Please enter your business name.', 'error'); return; }
-    if (!phone.trim() || phone.length < 10) { showToast('Please enter a valid 10-digit mobile number.', 'error'); return; }
-    if (!email.trim()) { showToast('Please enter your email.', 'error'); return; }
-    if (!password || password.length < 6) { showToast('Password must be at least 6 characters.', 'error'); return; }
-    if (!agreed) { showToast('Please accept the Partner Terms to continue.', 'error'); return; }
+    if (!businessName.trim()) {
+      showToast('Please enter your business name.', 'error');
+      return;
+    }
+    if (!phone.trim() || phone.length < 10) {
+      showToast('Please enter a valid 10-digit mobile number.', 'error');
+      return;
+    }
+    if (!email.trim()) {
+      showToast('Please enter your email.', 'error');
+      return;
+    }
+    if (!password || password.length < 6) {
+      showToast('Password must be at least 6 characters.', 'error');
+      return;
+    }
+    if (!agreed) {
+      showToast('Please accept the Partner Terms to continue.', 'error');
+      return;
+    }
 
     setLoading(true);
     try {
@@ -125,15 +173,28 @@ export default function PartnerRegister() {
 
   // ── Step 2: Verify OTP & Register ──
   async function handleVerifyAndRegister() {
-    if (otp.length < 6) { showToast('Please enter the complete 6-digit OTP.', 'error'); return; }
+    if (otp.length < 6) {
+      showToast('Please enter the complete 6-digit OTP.', 'error');
+      return;
+    }
     setLoading(true);
     try {
       // Verify OTP first
       const otpRes = await api.verifyOTP({ email, otp });
-      if (!otpRes.ok) { showToast(otpRes.message || 'Invalid OTP. Please try again.', 'error'); setLoading(false); return; }
+      if (!otpRes.ok) {
+        showToast(otpRes.message || 'Invalid OTP. Please try again.', 'error');
+        setLoading(false);
+        return;
+      }
 
       // Register partner account
-      const regRes = await api.partnerRegister({ businessName, email, password, phone, type: mainSector });
+      const regRes = await api.partnerRegister({
+        businessName,
+        email,
+        password,
+        phone,
+        type: mainSector,
+      });
       if (regRes.ok) {
         showToast('Account established. Welcome to Wayzza Pro!', 'success');
         navigate('/partner-login');
@@ -150,7 +211,6 @@ export default function PartnerRegister() {
 
   return (
     <div className="min-h-screen bg-white font-sans flex flex-col md:flex-row overflow-hidden selection:bg-emerald-100 selection:text-emerald-900">
-
       {showTerms && <TermsModal onClose={() => setShowTerms(false)} />}
 
       {/* LEFT PANEL */}
@@ -165,7 +225,9 @@ export default function PartnerRegister() {
             <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:scale-110 transition-transform">
               <Sparkles size={20} className="text-white" />
             </div>
-            <span className="text-3xl font-black tracking-tighter uppercase">Wayzza<span className="text-emerald-500">Pro.</span></span>
+            <span className="text-3xl font-black tracking-tighter uppercase">
+              Wayzza<span className="text-emerald-500">Pro.</span>
+            </span>
           </Link>
         </div>
         <div className="relative z-10 space-y-12">
@@ -175,17 +237,25 @@ export default function PartnerRegister() {
             </div>
             <h1 className="text-7xl md:text-9xl font-black tracking-tighter uppercase leading-[0.8] mb-12">
               Partner <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-600 lowercase pr-4">network.</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-600 lowercase pr-4">
+                network.
+              </span>
             </h1>
             <p className="text-white/40 text-2xl font-medium leading-relaxed max-w-lg border-l-2 border-emerald-500/30 pl-8">
               "Integrate your world-class stays into the Wayzza ecosystem."
             </p>
           </div>
           <div className="flex gap-12 opacity-30 pointer-events-none">
-            {[{ icon: Globe, label: 'Global Audience' }, { icon: Zap, label: 'Direct Channel' }, { icon: Activity, label: 'Verified Net' }].map(({ icon: Icon, label }) => (
+            {[
+              { icon: Globe, label: 'Global Audience' },
+              { icon: Zap, label: 'Direct Channel' },
+              { icon: Activity, label: 'Verified Net' },
+            ].map(({ icon: Icon, label }) => (
               <div key={label} className="flex flex-col items-center gap-3">
                 <Icon size={24} />
-                <span className="text-[11px] font-black uppercase tracking-[0.3em] text-center">{label}</span>
+                <span className="text-[11px] font-black uppercase tracking-[0.3em] text-center">
+                  {label}
+                </span>
               </div>
             ))}
           </div>
@@ -200,18 +270,21 @@ export default function PartnerRegister() {
         <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-50/50 blur-[100px] rounded-full pointer-events-none" />
         <div className="max-w-xl w-full relative z-10 pt-16 pb-20">
           <AnimatePresence mode="wait">
-
             {/* ── STEP 1: REGISTRATION DETAILS ── */}
             {step === 1 && (
               <motion.div
                 key="step1"
-                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
                 className="space-y-10"
               >
                 <header className="space-y-6">
                   <div className="flex items-center gap-4">
                     <span className="h-px w-12 bg-emerald-500/20" />
-                    <span className="text-[11px] font-black uppercase tracking-[0.5em] text-emerald-600">Partner Sign Up</span>
+                    <span className="text-[11px] font-black uppercase tracking-[0.5em] text-emerald-600">
+                      Partner Sign Up
+                    </span>
                   </div>
                   <h2 className="text-6xl md:text-8xl font-black tracking-tighter text-slate-900 uppercase leading-[0.85]">
                     Partner <br />
@@ -220,7 +293,6 @@ export default function PartnerRegister() {
                 </header>
 
                 <form onSubmit={handleSendOtp} className="space-y-8">
-
                   {/* Business Name */}
                   <div className="space-y-3 group/field">
                     <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] ml-2 group-focus-within/field:text-emerald-600 transition-colors">
@@ -228,11 +300,16 @@ export default function PartnerRegister() {
                     </label>
                     <div className="relative">
                       <div className="absolute left-5 top-1/2 -translate-y-1/2 w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center group-focus-within/field:bg-emerald-50 transition-colors">
-                        <Building className="text-slate-300 group-focus-within/field:text-emerald-500 transition-colors" size={16} />
+                        <Building
+                          className="text-slate-300 group-focus-within/field:text-emerald-500 transition-colors"
+                          size={16}
+                        />
                       </div>
                       <input
-                        type="text" required value={businessName}
-                        onChange={e => setBusinessName(e.target.value)}
+                        type="text"
+                        required
+                        value={businessName}
+                        onChange={(e) => setBusinessName(e.target.value)}
                         placeholder="AZURE CLIFF ESTATE"
                         className="w-full h-16 bg-slate-50/50 border border-slate-100 rounded-2xl pl-16 pr-4 font-bold text-base tracking-tighter text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200 uppercase"
                       />
@@ -246,12 +323,19 @@ export default function PartnerRegister() {
                     </label>
                     <div className="relative">
                       <div className="absolute left-5 top-1/2 -translate-y-1/2 w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center group-focus-within/field:bg-emerald-50 transition-colors">
-                        <Phone className="text-slate-300 group-focus-within/field:text-emerald-500 transition-colors" size={16} />
+                        <Phone
+                          className="text-slate-300 group-focus-within/field:text-emerald-500 transition-colors"
+                          size={16}
+                        />
                       </div>
-                      <div className="absolute left-16 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm select-none">+91</div>
+                      <div className="absolute left-16 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm select-none">
+                        +91
+                      </div>
                       <input
-                        type="tel" required value={phone}
-                        onChange={e => setPhone(e.target.value.replace(/\D/, '').slice(0, 10))}
+                        type="tel"
+                        required
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value.replace(/\D/, '').slice(0, 10))}
                         placeholder="9876543210"
                         className="w-full h-16 bg-slate-50/50 border border-slate-100 rounded-2xl pl-24 pr-4 font-bold text-base tracking-widest text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200"
                       />
@@ -265,11 +349,16 @@ export default function PartnerRegister() {
                     </label>
                     <div className="relative">
                       <div className="absolute left-5 top-1/2 -translate-y-1/2 w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center group-focus-within/field:bg-emerald-50 transition-colors">
-                        <Mail className="text-slate-300 group-focus-within/field:text-emerald-500 transition-colors" size={16} />
+                        <Mail
+                          className="text-slate-300 group-focus-within/field:text-emerald-500 transition-colors"
+                          size={16}
+                        />
                       </div>
                       <input
-                        type="email" required value={email}
-                        onChange={e => setEmail(e.target.value)}
+                        type="email"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         placeholder="partner@wayzza.com"
                         className="w-full h-16 bg-slate-50/50 border border-slate-100 rounded-2xl pl-16 pr-4 font-bold text-base tracking-tighter text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200"
                       />
@@ -283,15 +372,24 @@ export default function PartnerRegister() {
                     </label>
                     <div className="relative">
                       <div className="absolute left-5 top-1/2 -translate-y-1/2 w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center group-focus-within/field:bg-emerald-50 transition-colors">
-                        <Lock className="text-slate-300 group-focus-within/field:text-emerald-500 transition-colors" size={16} />
+                        <Lock
+                          className="text-slate-300 group-focus-within/field:text-emerald-500 transition-colors"
+                          size={16}
+                        />
                       </div>
                       <input
-                        type={show ? 'text' : 'password'} required value={password}
-                        onChange={e => setPassword(e.target.value)}
+                        type={show ? 'text' : 'password'}
+                        required
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         placeholder="••••••••••••"
                         className="w-full h-16 bg-slate-50/50 border border-slate-100 rounded-2xl pl-16 pr-12 font-bold text-base tracking-widest text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200"
                       />
-                      <button type="button" onClick={() => setShow(!show)} className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-emerald-600 transition-colors">
+                      <button
+                        type="button"
+                        onClick={() => setShow(!show)}
+                        className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-emerald-600 transition-colors"
+                      >
                         {show ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
                     </div>
@@ -304,20 +402,40 @@ export default function PartnerRegister() {
                     </label>
                     <div className="grid grid-cols-2 gap-4">
                       {[
-                        { value: 'stays', label: 'Stays', desc: 'Hotels, Villas, Hostels', icon: Home },
-                        { value: 'vehicles', label: 'Vehicles', desc: 'Cars, Bikes, Scooters', icon: Car },
+                        {
+                          value: 'stays',
+                          label: 'Stays',
+                          desc: 'Hotels, Villas, Hostels',
+                          icon: Home,
+                        },
+                        {
+                          value: 'vehicles',
+                          label: 'Vehicles',
+                          desc: 'Cars, Bikes, Scooters',
+                          icon: Car,
+                        },
                       ].map(({ value, label, desc, icon: Icon }) => (
                         <button
-                          key={value} type="button"
+                          key={value}
+                          type="button"
                           onClick={() => setMainSector(value)}
                           className={`p-5 rounded-[24px] border-2 text-left flex items-center gap-4 transition-all ${mainSector === value ? 'bg-emerald-600 border-emerald-600 text-white shadow-xl shadow-emerald-600/20' : 'bg-slate-50/50 border-slate-100 hover:border-emerald-200 text-slate-900'}`}
                         >
-                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${mainSector === value ? 'bg-white/20' : 'bg-slate-100'}`}>
-                            <Icon size={18} className={mainSector === value ? 'text-white' : 'text-slate-400'} />
+                          <div
+                            className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${mainSector === value ? 'bg-white/20' : 'bg-slate-100'}`}
+                          >
+                            <Icon
+                              size={18}
+                              className={mainSector === value ? 'text-white' : 'text-slate-400'}
+                            />
                           </div>
                           <div>
                             <p className="font-black uppercase tracking-widest text-xs">{label}</p>
-                            <p className={`text-[10px] font-bold uppercase tracking-widest mt-0.5 ${mainSector === value ? 'text-white/60' : 'text-slate-400'}`}>{desc}</p>
+                            <p
+                              className={`text-[10px] font-bold uppercase tracking-widest mt-0.5 ${mainSector === value ? 'text-white/60' : 'text-slate-400'}`}
+                            >
+                              {desc}
+                            </p>
                           </div>
                         </button>
                       ))}
@@ -326,34 +444,58 @@ export default function PartnerRegister() {
 
                   {/* Digital Agreement */}
                   <label className="flex items-start gap-4 cursor-pointer group p-5 rounded-[20px] border border-slate-100 hover:border-emerald-200 transition-all bg-slate-50/30 hover:bg-emerald-50/20">
-                    <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center shrink-0 mt-0.5 transition-all ${agreed ? 'bg-emerald-500 border-emerald-500' : 'border-slate-200 bg-white'}`}>
+                    <div
+                      className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center shrink-0 mt-0.5 transition-all ${agreed ? 'bg-emerald-500 border-emerald-500' : 'border-slate-200 bg-white'}`}
+                    >
                       {agreed && <CheckCircle size={14} className="text-white" strokeWidth={3} />}
                     </div>
-                    <input type="checkbox" className="sr-only" checked={agreed} onChange={e => setAgreed(e.target.checked)} />
+                    <input
+                      type="checkbox"
+                      className="sr-only"
+                      checked={agreed}
+                      onChange={(e) => setAgreed(e.target.checked)}
+                    />
                     <span className="text-sm font-semibold text-slate-600 leading-relaxed">
                       I agree to Wayzza's{' '}
-                      <button type="button" onClick={e => { e.preventDefault(); setShowTerms(true); }} className="text-emerald-600 font-black hover:underline">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setShowTerms(true);
+                        }}
+                        className="text-emerald-600 font-black hover:underline"
+                      >
                         Partner Terms & Conditions
-                      </button>
-                      {' '}including the platform commission structure and operational standards.
+                      </button>{' '}
+                      including the platform commission structure and operational standards.
                     </span>
                   </label>
 
                   <button
-                    type="submit" disabled={loading}
+                    type="submit"
+                    disabled={loading}
                     className="w-full h-16 bg-slate-950 text-white rounded-[28px] font-black uppercase text-xs tracking-[0.5em] transition-all hover:bg-emerald-600 shadow-xl shadow-slate-900/20 active:scale-[0.98] flex items-center justify-center gap-6 disabled:opacity-30"
                   >
                     {loading ? (
                       <div className="w-5 h-5 border-4 border-white/20 border-t-white rounded-full animate-spin" />
                     ) : (
-                      <><span>Continue</span><ArrowRight size={18} /></>
+                      <>
+                        <span>Continue</span>
+                        <ArrowRight size={18} />
+                      </>
                     )}
                   </button>
                 </form>
 
                 <div className="pt-10 flex flex-col items-center gap-6 text-center border-t border-slate-100">
-                  <Link to="/partner-login" className="inline-flex items-center gap-3 text-emerald-600 font-black text-[11px] uppercase tracking-[0.5em] hover:text-emerald-700 transition-all group">
-                    <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+                  <Link
+                    to="/partner-login"
+                    className="inline-flex items-center gap-3 text-emerald-600 font-black text-[11px] uppercase tracking-[0.5em] hover:text-emerald-700 transition-all group"
+                  >
+                    <ArrowLeft
+                      size={14}
+                      className="group-hover:-translate-x-1 transition-transform"
+                    />
                     Already a Partner? Sign in
                   </Link>
                 </div>
@@ -364,7 +506,9 @@ export default function PartnerRegister() {
             {step === 2 && (
               <motion.div
                 key="step2"
-                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
                 className="space-y-10 text-center"
               >
                 <div className="w-20 h-20 bg-emerald-50 rounded-[28px] border border-emerald-100 flex items-center justify-center mx-auto">
@@ -383,20 +527,27 @@ export default function PartnerRegister() {
                 <OtpInput value={otp} onChange={setOtp} />
 
                 <button
-                  onClick={handleVerifyAndRegister} disabled={loading || otp.length < 6}
+                  onClick={handleVerifyAndRegister}
+                  disabled={loading || otp.length < 6}
                   className="w-full h-16 bg-slate-950 text-white rounded-[28px] font-black uppercase text-xs tracking-[0.5em] transition-all hover:bg-emerald-600 active:scale-[0.98] flex items-center justify-center gap-6 disabled:opacity-30"
                 >
                   {loading ? (
                     <div className="w-5 h-5 border-4 border-white/20 border-t-white rounded-full animate-spin" />
                   ) : (
-                    <><CheckCircle size={18} /><span>Verify & Create Account</span></>
+                    <>
+                      <CheckCircle size={18} />
+                      <span>Verify & Create Account</span>
+                    </>
                   )}
                 </button>
 
                 <div className="flex flex-col items-center gap-4">
                   <button
                     type="button"
-                    onClick={() => { setStep(1); setOtp(''); }}
+                    onClick={() => {
+                      setStep(1);
+                      setOtp('');
+                    }}
                     className="inline-flex items-center gap-2 text-slate-400 font-bold text-[11px] uppercase tracking-widest hover:text-slate-700 transition-colors"
                   >
                     <ArrowLeft size={13} /> Back
@@ -411,7 +562,6 @@ export default function PartnerRegister() {
                 </div>
               </motion.div>
             )}
-
           </AnimatePresence>
         </div>
       </div>
