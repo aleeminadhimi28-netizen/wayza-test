@@ -36,6 +36,8 @@ export default function PartnerOnboarding() {
   const [location, setLocation] = useState('');
   const [listingName, setListingName] = useState('');
   const [price, setPrice] = useState('');
+  const [msmeNumber, setMsmeNumber] = useState('');
+  const [gstNumber, setGstNumber] = useState('');
 
   // ensure logged in partner
   useEffect(() => {
@@ -62,6 +64,8 @@ export default function PartnerOnboarding() {
         category,
         brandVision,
         location,
+        msmeNumber,
+        gstNumber,
         firstListing: listingName
           ? {
               title: listingName,
@@ -165,6 +169,45 @@ export default function PartnerOnboarding() {
                   placeholder="E.G. AZURE CLIFF ESTATE"
                   icon={<Building size={24} />}
                 />
+
+                {/* MSME & GST */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-4 group">
+                    <label className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 group-focus-within:text-emerald-600 transition-colors">
+                      MSME Number <span className="text-slate-200">(optional)</span>
+                    </label>
+                    <div className="relative">
+                      <div className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-emerald-500 transition-colors">
+                        <Briefcase size={20} />
+                      </div>
+                      <input
+                        value={msmeNumber}
+                        onChange={(e) => setMsmeNumber(e.target.value.toUpperCase())}
+                        placeholder="UDYAM-XX-00-XXXXXXX"
+                        maxLength={20}
+                        className="w-full h-16 bg-white/50 border border-slate-100 rounded-[24px] pl-16 pr-6 font-bold text-sm tracking-widest text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-100 shadow-sm uppercase"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-4 group">
+                    <label className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 group-focus-within:text-emerald-600 transition-colors">
+                      GST Number <span className="text-slate-200">(optional)</span>
+                    </label>
+                    <div className="relative">
+                      <div className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-emerald-500 transition-colors">
+                        <Wallet size={20} />
+                      </div>
+                      <input
+                        value={gstNumber}
+                        onChange={(e) => setGstNumber(e.target.value.toUpperCase())}
+                        placeholder="29XXXXX0000X1ZX"
+                        maxLength={15}
+                        className="w-full h-16 bg-white/50 border border-slate-100 rounded-[24px] pl-16 pr-6 font-bold text-sm tracking-widest text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-100 shadow-sm uppercase"
+                      />
+                    </div>
+                  </div>
+                </div>
 
                 <div className="space-y-6">
                   <label className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2">

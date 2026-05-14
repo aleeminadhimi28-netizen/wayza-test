@@ -24,6 +24,8 @@ const onboardSchema = z.object({
     businessName: z.string().min(1),
     category: z.string().min(1),
     location: z.string().min(1),
+    msmeNumber: z.string().optional(),
+    gstNumber: z.string().optional(),
     firstListing: z.object({
         title: z.string().min(1),
         price: z.number().optional(),
@@ -114,12 +116,12 @@ router.post("/onboard", requireAuth, requireRole(["partner"]), async (req, res, 
         const db = getDB();
         const partners = db.collection("partners");
         const listings = db.collection("listings");
-        const { businessName, category, location, firstListing } = parsed.data;
+        const { businessName, category, location, msmeNumber, gstNumber, firstListing } = parsed.data;
         const email = req.user.email;
 
         await partners.updateOne(
             { email },
-            { $set: { businessName, category, location, onboardingCompleted: true, updatedAt: new Date() } },
+            { $set: { businessName, category, location, msmeNumber: msmeNumber || '', gstNumber: gstNumber || '', onboardingCompleted: true, updatedAt: new Date() } },
             { upsert: true }
         );
 

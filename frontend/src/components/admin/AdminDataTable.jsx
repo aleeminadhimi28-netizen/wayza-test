@@ -284,13 +284,32 @@ export default function AdminDataTable({
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="text-sm font-medium text-slate-700">
-                          {activeTab === 'bookings'
-                            ? item.guestEmail
-                            : item.price
-                              ? `₹${item.price.toLocaleString()}`
-                              : item.role || item.checkIn || '—'}
-                        </span>
+                        {activeTab === 'partners' ? (
+                          <div className="flex flex-col gap-1">
+                            {item.msmeNumber ? (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-100 rounded px-2 py-0.5">
+                                MSME: {item.msmeNumber}
+                              </span>
+                            ) : (
+                              <span className="text-[11px] text-slate-300 font-medium">No MSME</span>
+                            )}
+                            {item.gstNumber ? (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-bold bg-purple-50 text-purple-700 border border-purple-100 rounded px-2 py-0.5">
+                                GST: {item.gstNumber}
+                              </span>
+                            ) : (
+                              <span className="text-[11px] text-slate-300 font-medium">No GST</span>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-sm font-medium text-slate-700">
+                            {activeTab === 'bookings'
+                              ? item.guestEmail
+                              : item.price
+                                ? `₹${item.price.toLocaleString()}`
+                                : item.role || item.checkIn || '—'}
+                          </span>
+                        )}
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex justify-end gap-2 opacity-100 lg:opacity-60 lg:group-hover:opacity-100 transition-all">
