@@ -176,7 +176,10 @@ export default function AdminDataTable({
               </button>
             )}
             <div className="relative w-full sm:w-72">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                size={15}
+              />
               <input
                 placeholder={`Search ${activeTab}...`}
                 value={searchQuery}

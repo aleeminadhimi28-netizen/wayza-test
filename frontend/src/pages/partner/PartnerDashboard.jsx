@@ -104,7 +104,10 @@ export default function PartnerDashboard() {
 
   // ─── TREND ADJUSTER: update a single listing price ───────────────────────
   const setPriceField = (id, value) =>
-    setPriceEdits((prev) => ({ ...prev, [id]: { ...prev[id], value, error: null, success: false } }));
+    setPriceEdits((prev) => ({
+      ...prev,
+      [id]: { ...prev[id], value, error: null, success: false },
+    }));
 
   const updatePrice = async (listing) => {
     const edit = priceEdits[listing._id];
@@ -115,23 +118,55 @@ export default function PartnerDashboard() {
     if (newPrice < floor) {
       setPriceEdits((prev) => ({
         ...prev,
-        [listing._id]: { ...prev[listing._id], error: `Cannot go below floor price ₹${floor.toLocaleString()}` },
+        [listing._id]: {
+          ...prev[listing._id],
+          error: `Cannot go below floor price ₹${floor.toLocaleString()}`,
+        },
       }));
       return;
     }
 
-    setPriceEdits((prev) => ({ ...prev, [listing._id]: { ...prev[listing._id], saving: true, error: null } }));
+    setPriceEdits((prev) => ({
+      ...prev,
+      [listing._id]: { ...prev[listing._id], saving: true, error: null },
+    }));
     try {
       const res = await api.updateListing(listing._id, { price: newPrice });
       if (res.ok) {
-        setListings((prev) => prev.map((l) => l._id === listing._id ? { ...l, price: newPrice } : l));
-        setPriceEdits((prev) => ({ ...prev, [listing._id]: { value: newPrice, saving: false, error: null, success: true } }));
-        setTimeout(() => setPriceEdits((prev) => ({ ...prev, [listing._id]: { ...prev[listing._id], success: false } })), 3000);
+        setListings((prev) =>
+          prev.map((l) => (l._id === listing._id ? { ...l, price: newPrice } : l))
+        );
+        setPriceEdits((prev) => ({
+          ...prev,
+          [listing._id]: { value: newPrice, saving: false, error: null, success: true },
+        }));
+        setTimeout(
+          () =>
+            setPriceEdits((prev) => ({
+              ...prev,
+              [listing._id]: { ...prev[listing._id], success: false },
+            })),
+          3000
+        );
       } else {
-        setPriceEdits((prev) => ({ ...prev, [listing._id]: { ...prev[listing._id], saving: false, error: res.message || 'Update failed' } }));
+        setPriceEdits((prev) => ({
+          ...prev,
+          [listing._id]: {
+            ...prev[listing._id],
+            saving: false,
+            error: res.message || 'Update failed',
+          },
+        }));
       }
     } catch {
-      setPriceEdits((prev) => ({ ...prev, [listing._id]: { ...prev[listing._id], saving: false, error: 'Connection error. Please try again.' } }));
+      setPriceEdits((prev) => ({
+        ...prev,
+        [listing._id]: {
+          ...prev[listing._id],
+          saving: false,
+          error: 'Connection error. Please try again.',
+        },
+      }));
     }
   };
   // ─────────────────────────────────────────────────────────────────────────
@@ -146,12 +181,11 @@ export default function PartnerDashboard() {
   // Month-over-month revenue trend
   const currRev = monthly.length >= 1 ? monthly[monthly.length - 1]?.revenue || 0 : 0;
   const prevRev = monthly.length >= 2 ? monthly[monthly.length - 2]?.revenue || 0 : 0;
-  const revTrendPct = prevRev > 0
-    ? ((currRev - prevRev) / prevRev * 100).toFixed(1)
-    : null;
-  const revTrendLabel = revTrendPct !== null
-    ? `${revTrendPct > 0 ? '+' : ''}${revTrendPct}% vs last month`
-    : 'No prior data';
+  const revTrendPct = prevRev > 0 ? (((currRev - prevRev) / prevRev) * 100).toFixed(1) : null;
+  const revTrendLabel =
+    revTrendPct !== null
+      ? `${revTrendPct > 0 ? '+' : ''}${revTrendPct}% vs last month`
+      : 'No prior data';
   const revTrendUp = revTrendPct === null || Number(revTrendPct) >= 0;
 
   // Booking count trend
@@ -166,12 +200,14 @@ export default function PartnerDashboard() {
     prev.setMonth(prev.getMonth() - 1);
     return d.getMonth() === prev.getMonth() && d.getFullYear() === prev.getFullYear();
   }).length;
-  const bookingTrendPct = prevBookings > 0
-    ? ((currBookings - prevBookings) / prevBookings * 100).toFixed(1)
-    : null;
-  const bookingTrendLabel = bookingTrendPct !== null
-    ? `${bookingTrendPct > 0 ? '+' : ''}${bookingTrendPct}% vs last month`
-    : currBookings > 0 ? `${currBookings} this month` : 'No data yet';
+  const bookingTrendPct =
+    prevBookings > 0 ? (((currBookings - prevBookings) / prevBookings) * 100).toFixed(1) : null;
+  const bookingTrendLabel =
+    bookingTrendPct !== null
+      ? `${bookingTrendPct > 0 ? '+' : ''}${bookingTrendPct}% vs last month`
+      : currBookings > 0
+        ? `${currBookings} this month`
+        : 'No data yet';
   // ─────────────────────────────────────────────────────────────────────────
 
   const kpis = [
@@ -227,19 +263,23 @@ export default function PartnerDashboard() {
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-bold text-amber-900 text-sm">
-              {listings.filter((l) => !l.approved).length} listing{listings.filter((l) => !l.approved).length > 1 ? 's' : ''} pending admin approval
+              {listings.filter((l) => !l.approved).length} listing
+              {listings.filter((l) => !l.approved).length > 1 ? 's' : ''} pending admin approval
             </p>
             <p className="text-amber-700 text-xs mt-0.5">
               Properties must be approved before guests can book them.
-              {listings.filter((l) => !l.approved).slice(0, 2).map((l) => (
-                <a
-                  key={l._id}
-                  href={`/partner/property/${l._id}`}
-                  className="ml-1 underline font-semibold hover:text-amber-900"
-                >
-                  {l.title}
-                </a>
-              ))}
+              {listings
+                .filter((l) => !l.approved)
+                .slice(0, 2)
+                .map((l) => (
+                  <a
+                    key={l._id}
+                    href={`/partner/property/${l._id}`}
+                    className="ml-1 underline font-semibold hover:text-amber-900"
+                  >
+                    {l.title}
+                  </a>
+                ))}
             </p>
           </div>
           <button
@@ -458,24 +498,32 @@ export default function PartnerDashboard() {
               </div>
               <h3 className="text-lg font-bold text-slate-900">Price Manager</h3>
               <p className="text-sm text-slate-500 mt-0.5">
-                Adjust your listing prices based on demand trends. Cannot go below the floor price set at creation.
+                Adjust your listing prices based on demand trends. Cannot go below the floor price
+                set at creation.
               </p>
             </div>
           </div>
 
           <div className="divide-y divide-slate-100">
             {listings.map((lst) => {
-              const edit = priceEdits[lst._id] || { value: lst.price || 0, saving: false, error: null, success: false };
+              const edit = priceEdits[lst._id] || {
+                value: lst.price || 0,
+                saving: false,
+                error: null,
+                success: false,
+              };
               const floor = lst.baseFloorPrice || 0;
               const sliderMax = Math.max(floor * 3, (lst.price || 0) * 3, 5000);
-              const pct = sliderMax > floor ? Math.min(100, ((Number(edit.value) - floor) / (sliderMax - floor)) * 100) : 0;
+              const pct =
+                sliderMax > floor
+                  ? Math.min(100, ((Number(edit.value) - floor) / (sliderMax - floor)) * 100)
+                  : 0;
               const isDirty = Number(edit.value) !== lst.price;
               const isBelowFloor = Number(edit.value) < floor;
 
               return (
                 <div key={lst._id} className="p-6 hover:bg-slate-50/50 transition-colors">
                   <div className="flex flex-col md:flex-row md:items-center gap-6">
-
                     {/* Property Info */}
                     <div className="flex items-center gap-4 min-w-0 md:w-64 shrink-0">
                       <div className="w-12 h-12 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-lg shadow-sm shrink-0">
@@ -489,10 +537,16 @@ export default function PartnerDashboard() {
                             Floor: ₹{floor.toLocaleString()}/night
                           </span>
                         </div>
-                        <span className={`inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded text-[11px] font-bold ${
-                          lst.approved ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'
-                        }`}>
-                          <div className={`w-1.5 h-1.5 rounded-full ${lst.approved ? 'bg-emerald-500' : 'bg-amber-400'}`} />
+                        <span
+                          className={`inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded text-[11px] font-bold ${
+                            lst.approved
+                              ? 'bg-emerald-50 text-emerald-700'
+                              : 'bg-amber-50 text-amber-700'
+                          }`}
+                        >
+                          <div
+                            className={`w-1.5 h-1.5 rounded-full ${lst.approved ? 'bg-emerald-500' : 'bg-amber-400'}`}
+                          />
                           {lst.approved ? 'Live' : 'Pending Approval'}
                         </span>
                       </div>
@@ -501,7 +555,10 @@ export default function PartnerDashboard() {
                     {/* Slider */}
                     <div className="flex-1 space-y-2">
                       <div className="flex justify-between items-center text-xs font-semibold text-slate-500">
-                        <span>₹{floor.toLocaleString()} <span className="text-slate-300 font-normal">(floor)</span></span>
+                        <span>
+                          ₹{floor.toLocaleString()}{' '}
+                          <span className="text-slate-300 font-normal">(floor)</span>
+                        </span>
                         <span>₹{sliderMax.toLocaleString()}</span>
                       </div>
                       <div className="relative h-2">
@@ -524,10 +581,16 @@ export default function PartnerDashboard() {
                       </div>
                       <div className="flex justify-between text-[11px] font-bold">
                         <span className={isBelowFloor ? 'text-rose-500' : 'text-slate-400'}>
-                          {isBelowFloor ? '⚠ Below floor price' : isDirty ? '● Price changed' : 'Current price'}
+                          {isBelowFloor
+                            ? '⚠ Below floor price'
+                            : isDirty
+                              ? '● Price changed'
+                              : 'Current price'}
                         </span>
                         <span className={isDirty ? 'text-emerald-600' : 'text-slate-400'}>
-                          {isDirty ? `Was ₹${(lst.price || 0).toLocaleString()}` : `₹${(lst.price || 0).toLocaleString()}/night`}
+                          {isDirty
+                            ? `Was ₹${(lst.price || 0).toLocaleString()}`
+                            : `₹${(lst.price || 0).toLocaleString()}/night`}
                         </span>
                       </div>
                     </div>
@@ -535,7 +598,9 @@ export default function PartnerDashboard() {
                     {/* Input + Save */}
                     <div className="flex items-center gap-3 shrink-0">
                       <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">₹</span>
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">
+                          ₹
+                        </span>
                         <input
                           type="number"
                           min={floor}
@@ -575,7 +640,9 @@ export default function PartnerDashboard() {
                   )}
                   {edit.success && (
                     <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2">
-                      <CheckCircle size={13} /> Price updated to ₹{Number(edit.value).toLocaleString()}/night. Guests will now see the new price.
+                      <CheckCircle size={13} /> Price updated to ₹
+                      {Number(edit.value).toLocaleString()}/night. Guests will now see the new
+                      price.
                     </div>
                   )}
                 </div>
@@ -713,7 +780,8 @@ export default function PartnerDashboard() {
         {bookings.length > 8 && (
           <div className="px-6 py-4 border-t border-slate-100 flex justify-between items-center">
             <p className="text-xs text-slate-500">
-              Showing 8 of <span className="font-bold text-slate-700">{bookings.length}</span> bookings
+              Showing 8 of <span className="font-bold text-slate-700">{bookings.length}</span>{' '}
+              bookings
             </p>
             <button
               onClick={() => navigate('/partner/bookings')}

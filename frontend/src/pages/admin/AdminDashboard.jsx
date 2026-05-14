@@ -32,9 +32,7 @@ import AdminDataTable from '../../components/admin/AdminDataTable.jsx';
 const TAB_GROUPS = [
   {
     label: 'Overview',
-    tabs: [
-      { id: 'overview', icon: LayoutDashboard, label: 'Overview' },
-    ],
+    tabs: [{ id: 'overview', icon: LayoutDashboard, label: 'Overview' }],
   },
   {
     label: 'Data',
@@ -71,9 +69,7 @@ export default function AdminDashboard() {
   const { logout, user } = useAuth();
 
   // Derive real admin initials from email
-  const adminInitials = user?.email
-    ? user.email.split('@')[0].slice(0, 2).toUpperCase()
-    : 'AD';
+  const adminInitials = user?.email ? user.email.split('@')[0].slice(0, 2).toUpperCase() : 'AD';
 
   // 2. STATE DECLARATIONS
   const [stats, setStats] = useState(null);
@@ -413,7 +409,10 @@ export default function AdminDashboard() {
                         : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'
                     }`}
                   >
-                    <tab.icon size={17} className={activeTab === tab.id ? 'text-emerald-400' : ''} />
+                    <tab.icon
+                      size={17}
+                      className={activeTab === tab.id ? 'text-emerald-400' : ''}
+                    />
                     {tab.label}
                     {tab.id === 'support' && openTickets > 0 && (
                       <span className="ml-auto bg-rose-500 text-white text-[11px] font-bold px-1.5 py-0.5 rounded-md">

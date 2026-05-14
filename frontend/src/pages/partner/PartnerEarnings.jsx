@@ -238,7 +238,13 @@ export default function PartnerEarnings() {
                     ₹{(m.revenue || 0).toLocaleString()}
                   </td>
                   <td className="px-6 py-4 text-right font-bold text-sm text-emerald-600">
-                    ₹{Math.round((m.revenue || 0) * (earnings?.totalRevenue > 0 ? earnings.ownerPayout / earnings.totalRevenue : 0.9)).toLocaleString()}
+                    ₹
+                    {Math.round(
+                      (m.revenue || 0) *
+                        (earnings?.totalRevenue > 0
+                          ? earnings.ownerPayout / earnings.totalRevenue
+                          : 0.9)
+                    ).toLocaleString()}
                   </td>
                 </tr>
               ))}
@@ -297,13 +303,13 @@ export default function PartnerEarnings() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="space-y-1">
-                           <span className="text-xs font-medium text-slate-600">
+                          <span className="text-xs font-medium text-slate-600">
                             {b.checkIn} → {b.checkOut}
                           </span>
                           <div className="flex items-center gap-2 text-[10px] text-slate-400 font-semibold">
-                             <span>Paid: ₹{(b.totalPrice || 0).toLocaleString()}</span>
-                             <span className="w-1 h-1 bg-slate-200 rounded-full" />
-                             <span>Tax: ₹{(b.gst || 0).toLocaleString()}</span>
+                            <span>Paid: ₹{(b.totalPrice || 0).toLocaleString()}</span>
+                            <span className="w-1 h-1 bg-slate-200 rounded-full" />
+                            <span>Tax: ₹{(b.gst || 0).toLocaleString()}</span>
                           </div>
                         </div>
                       </td>
@@ -327,7 +333,10 @@ export default function PartnerEarnings() {
                       <td className="px-6 py-4 text-right">
                         <div className="flex flex-col items-end">
                           <p className="font-bold text-sm text-slate-900">
-                            ₹{Math.round(b.netEarnings || b.totalPrice - platformFee - commission).toLocaleString()}
+                            ₹
+                            {Math.round(
+                              b.netEarnings || b.totalPrice - platformFee - commission
+                            ).toLocaleString()}
                           </p>
                           <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-tighter text-slate-400 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                             <span>Fee: -₹{platformFee}</span>
@@ -338,7 +347,8 @@ export default function PartnerEarnings() {
                     </tr>
                   );
                 })}
-              {bookings.filter((b) => b.status === 'paid' || b.status === 'confirmed').length === 0 && (
+              {bookings.filter((b) => b.status === 'paid' || b.status === 'confirmed').length ===
+                0 && (
                 <tr className="py-20 text-center">
                   <td colSpan={4} className="py-20 text-center">
                     <BarChart3 size={32} className="text-slate-200 mx-auto mb-3" />

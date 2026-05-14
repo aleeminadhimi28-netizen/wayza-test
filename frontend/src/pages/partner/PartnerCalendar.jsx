@@ -100,7 +100,6 @@ export default function PartnerCalendar() {
   const [copied, setCopied] = useState(false);
   const [partnerPhone, setPartnerPhone] = useState('');
 
-
   useEffect(() => {
     if (!user?.email) return;
     api
@@ -453,7 +452,10 @@ export default function PartnerCalendar() {
                   <div className="flex justify-between text-xs font-medium">
                     <span className="text-slate-500">Net Earnings</span>
                     <span className="text-slate-900 font-bold">
-                      ₹{(selected.netEarnings || Math.round(selected.totalPrice * 0.9)).toLocaleString()}
+                      ₹
+                      {(
+                        selected.netEarnings || Math.round(selected.totalPrice * 0.9)
+                      ).toLocaleString()}
                     </span>
                   </div>
                 </div>
