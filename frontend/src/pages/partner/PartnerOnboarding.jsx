@@ -2,24 +2,58 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Briefcase,
-  MapPin,
-  PlusCircle,
-  CheckCircle,
-  ArrowRight,
-  ArrowLeft,
-  Building,
-  Wallet,
-  Home,
-  Bike,
-  Car,
-  Sparkles,
-  Zap,
+  Briefcase, MapPin, PlusCircle, CheckCircle, ArrowRight, ArrowLeft,
+  Building, Wallet, Home, Bike, Car, Sparkles, Zap, ShieldCheck
 } from 'lucide-react';
 import { useAuth } from '../../AuthContext.jsx';
 import { useToast } from '../../ToastContext.jsx';
-
 import { api } from '../../utils/api.js';
+
+function FormInput({ label, value, onChange, placeholder, icon, type = "text", maxLength, required = false }) {
+  return (
+    <div className="space-y-4 group">
+      <label className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 group-focus-within:text-emerald-600 transition-colors">
+        {label} {required && <span className="text-rose-500">*</span>}
+      </label>
+      <div className="relative">
+        <div className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-emerald-500 transition-colors">
+          {icon}
+        </div>
+        <input
+          type={type}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          maxLength={maxLength}
+          className="w-full h-16 bg-white/50 border border-slate-100 rounded-[24px] pl-16 pr-6 font-bold text-sm tracking-widest text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-100 shadow-sm uppercase"
+        />
+      </div>
+    </div>
+  );
+}
+
+function Nav({ back, next }) {
+  return (
+    <div className="flex items-center justify-between pt-8 border-t border-slate-100">
+      {back ? (
+        <button
+          onClick={back}
+          className="w-14 h-14 rounded-full border-2 border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-200 transition-all active:scale-95"
+        >
+          <ArrowLeft size={20} />
+        </button>
+      ) : <div />}
+      {next && (
+        <button
+          onClick={next}
+          className="h-14 px-8 bg-slate-950 text-white rounded-full font-black uppercase text-[10px] tracking-[0.4em] flex items-center gap-4 hover:bg-emerald-600 transition-all shadow-xl shadow-slate-900/10 active:scale-95"
+        >
+          Continue <ArrowRight size={16} />
+        </button>
+      )}
+    </div>
+  );
+}
 
 export default function PartnerOnboarding() {
   const navigate = useNavigate();
@@ -29,24 +63,40 @@ export default function PartnerOnboarding() {
   const [email, setEmail] = useState(null);
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [mainSector, setMainSector] = useState('stays');
 
   const [businessName, setBusinessName] = useState('');
-  const [category, setCategory] = useState('hotel');
+  const [subCategory, setSubCategory] = useState('');
   const [brandVision, setBrandVision] = useState('');
   const [location, setLocation] = useState('');
-  const [listingName, setListingName] = useState('');
-  const [price, setPrice] = useState('');
+  
+  // MSME / GST
   const [msmeNumber, setMsmeNumber] = useState('');
   const [gstNumber, setGstNumber] = useState('');
   const [gstEnabled, setGstEnabled] = useState(false);
 
-  // ensure logged in partner
+  // Listing fields
+  const [listingName, setListingName] = useState('');
+  const [price, setPrice] = useState('');
+  const [cancellationPolicy, setCancellationPolicy] = useState('moderate');
+
+  // Stays listing
+  const [roomType, setRoomType] = useState('');
+  // Vehicles listing
+  const [vehicleType, setVehicleType] = useState('');
+  const [registrationCategory, setRegistrationCategory] = useState('');
+
   useEffect(() => {
     if (authLoading) return;
     if (!user || user.role !== 'partner') {
       navigate('/partner-login', { replace: true });
     } else {
       setEmail(user.email);
+      api.partnerStatus().then(res => {
+        if(res.mainSector) setMainSector(res.mainSector);
+        if(res.mainSector === 'stays') setSubCategory('Resort / Hotel');
+        else if(res.mainSector === 'vehicles') setSubCategory('Individual / Peer-to-Peer Host');
+      });
     }
   }, [user, authLoading, navigate]);
 
@@ -60,25 +110,33 @@ export default function PartnerOnboarding() {
       showToast('MSME number is required.', 'error');
       return;
     }
+    if (mainSector === 'vehicles' && !registrationCategory) {
+      showToast('Please select a registration category for your vehicle.', 'error');
+      return;
+    }
 
     setLoading(true);
     try {
-      const data = await api.partnerOnboard({
+      const payload = {
         email,
         businessName,
-        category,
+        subCategory,
         brandVision,
         location,
         msmeNumber,
         gstNumber,
         gstEnabled,
-        firstListing: listingName
-          ? {
-              title: listingName,
-              price: Number(price),
-            }
-          : null,
-      });
+        firstListing: listingName ? {
+          title: listingName,
+          price: Number(price),
+          roomType: mainSector === 'stays' ? roomType : undefined,
+          vehicleType: mainSector === 'vehicles' ? vehicleType : undefined,
+          registrationCategory: mainSector === 'vehicles' ? registrationCategory : undefined,
+          cancellationPolicy
+        } : null,
+      };
+
+      const data = await api.partnerOnboard(payload);
 
       if (!data.ok) throw new Error();
       showToast('Onboarding submitted! Your account is pending admin approval.', 'success');
@@ -96,13 +154,25 @@ export default function PartnerOnboarding() {
   const steps = [
     { id: 1, title: 'Identity', icon: <Briefcase /> },
     { id: 2, title: 'Location', icon: <MapPin /> },
-    { id: 3, title: 'Listing', icon: <PlusCircle /> },
+    { id: 3, title: 'Inventory', icon: <PlusCircle /> },
     { id: 4, title: 'Finalize', icon: <CheckCircle /> },
   ];
 
+  const staySubCategories = ['Resort / Hotel', 'Homestay / Guesthouse', 'Backpacker Hostel', 'Private Villa / Independent House'];
+  const vehiclePartnerTypes = ['Individual / Peer-to-Peer Host', 'Registered Rental Agency', 'Hotel / Homestay Partner'];
+  
+  const stayRoomTypes = ['Standard Room', 'Deluxe Room', 'Premium / Suite', 'Dormitory Bed', 'Bamboo Hut / Cottage', 'Tent / Glamping'];
+  const vehicleTypes = ['Car', 'Scooter or Bike', 'Both'];
+  const registrationCategories = [
+    'Commercial Self-Drive (Black Plate / Yellow Text)',
+    'Private Vehicle (White Plate)',
+    'Commercial EV (Green Plate / Yellow Text)',
+    'Commercial Chauffeur/Taxi (Yellow Plate / Black Text)'
+  ];
+  const cancellationPolicies = ['Flexible', 'Moderate', 'Strict'];
+
   return (
     <div className="min-h-screen bg-white font-sans flex items-center justify-center p-6 relative overflow-hidden selection:bg-emerald-100 selection:text-emerald-900">
-      {/* ─── PREMIUM MESH BACKGROUND ─── */}
       <div className="absolute inset-0 z-0">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-100/40 blur-[120px] rounded-full animate-pulse" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-slate-100/60 blur-[120px] rounded-full" />
@@ -110,57 +180,36 @@ export default function PartnerOnboarding() {
       </div>
 
       <motion.div
-        initial={{ opacity: 0, scale: 0.98, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
+        initial={{ opacity: 0, scale: 0.98, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }}
         className="w-full max-w-4xl bg-white/40 backdrop-blur-3xl rounded-[64px] p-12 md:p-20 shadow-[0_32px_128px_-16px_rgba(0,0,0,0.08)] border border-white/40 relative z-10 overflow-hidden"
       >
-        {/* PRO BRANDING */}
         <div className="absolute top-12 right-12 flex items-center gap-3">
-          <span className="text-[11px] font-black uppercase tracking-[0.6em] text-slate-300">
-            Wayzza
-          </span>
-          <div className="px-3 py-1 bg-slate-950 text-white text-[11px] font-black uppercase tracking-[0.4em] rounded-md">
-            Pro
-          </div>
+          <span className="text-[11px] font-black uppercase tracking-[0.6em] text-slate-300">Wayzza</span>
+          <div className="px-3 py-1 bg-slate-950 text-white text-[11px] font-black uppercase tracking-[0.4em] rounded-md">Pro</div>
         </div>
 
-        {/* PROGRESS TRACKER */}
         <div className="flex items-center gap-6 mb-24">
           {steps.map((s, _i) => (
             <div key={s.id} className="flex-1 space-y-4">
-              <div
-                className={`h-1.5 rounded-full transition-all duration-1000 ${step >= s.id ? 'bg-emerald-500 shadow-lg shadow-emerald-500/20' : 'bg-slate-100'}`}
-              />
-              <div
-                className={`flex items-center gap-3 transition-opacity duration-500 ${step === s.id ? 'opacity-100' : 'opacity-20'}`}
-              >
-                <span className="text-[11px] font-black uppercase tracking-[0.5em] text-slate-900">
-                  {s.title}
-                </span>
+              <div className={`h-1.5 rounded-full transition-all duration-1000 ${step >= s.id ? 'bg-emerald-500 shadow-lg shadow-emerald-500/20' : 'bg-slate-100'}`} />
+              <div className={`flex items-center gap-3 transition-opacity duration-500 ${step === s.id ? 'opacity-100' : 'opacity-20'}`}>
+                <span className="text-[11px] font-black uppercase tracking-[0.5em] text-slate-900">{s.title}</span>
               </div>
             </div>
           ))}
         </div>
 
         <AnimatePresence mode="wait">
+          {/* ── PHASE 01: IDENTITY ── */}
           {step === 1 && (
-            <motion.div
-              key="step1"
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -40 }}
-              className="space-y-16"
-            >
+            <motion.div key="step1" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} className="space-y-16">
               <div className="space-y-8">
                 <div className="flex items-center gap-4">
                   <span className="h-px w-12 bg-emerald-500" />
-                  <span className="text-[11px] font-black uppercase tracking-[0.5em] text-emerald-600">
-                    Phase 01: Onboarding
-                  </span>
+                  <span className="text-[11px] font-black uppercase tracking-[0.5em] text-emerald-600">Phase 01: Onboarding</span>
                 </div>
                 <h2 className="text-6xl md:text-8xl font-black tracking-tighter text-slate-900 uppercase leading-[0.8]">
-                  Partner <br />
-                  <span className="lowercase">Identity.</span>
+                  Partner <br /><span className="lowercase">Identity.</span>
                 </h2>
                 <p className="text-slate-400 font-bold uppercase text-[11px] tracking-widest leading-relaxed max-w-sm">
                   "Define your presence within the Wayzza luxury network architecture."
@@ -169,33 +218,36 @@ export default function PartnerOnboarding() {
 
               <div className="space-y-12">
                 <FormInput
-                  label="Official Asset Name"
-                  value={businessName}
-                  onChange={setBusinessName}
-                  placeholder="E.G. AZURE CLIFF ESTATE"
-                  icon={<Building size={24} />}
+                  label="Official Asset Name" value={businessName} onChange={setBusinessName} required
+                  placeholder="E.G. AZURE CLIFF ESTATE" icon={<Building size={24} />}
                 />
+
+                {/* Sub-Category / Partner Type based on mainSector */}
+                <div className="space-y-6">
+                  <label className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2">
+                    {mainSector === 'stays' ? 'Property Sub-Category' : 'Partner Type (Compliance)'}
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {(mainSector === 'stays' ? staySubCategories : vehiclePartnerTypes).map((item) => (
+                      <button
+                        key={item} onClick={() => setSubCategory(item)}
+                        className={`p-6 rounded-[32px] border-2 transition-all text-left flex items-center gap-6 group/btn ${subCategory === item ? 'bg-emerald-600 border-emerald-600 text-white shadow-xl shadow-emerald-600/20' : 'bg-white/50 border-slate-100 text-slate-900 hover:border-emerald-200'}`}
+                      >
+                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors ${subCategory === item ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-400 group-hover/btn:text-emerald-500'}`}>
+                          {mainSector === 'stays' ? <Home size={20} /> : <ShieldCheck size={20} />}
+                        </div>
+                        <p className="font-black uppercase tracking-widest text-[10px] leading-relaxed">{item}</p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
                 {/* MSME & GST */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-4 group">
-                    <label className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 group-focus-within:text-emerald-600 transition-colors">
-                      MSME Number <span className="text-rose-500">*</span>
-                    </label>
-                    <div className="relative">
-                      <div className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-emerald-500 transition-colors">
-                        <Briefcase size={20} />
-                      </div>
-                      <input
-                        value={msmeNumber}
-                        onChange={(e) => setMsmeNumber(e.target.value.toUpperCase())}
-                        placeholder="UDYAM-XX-00-XXXXXXX"
-                        maxLength={20}
-                        className="w-full h-16 bg-white/50 border border-slate-100 rounded-[24px] pl-16 pr-6 font-bold text-sm tracking-widest text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-100 shadow-sm uppercase"
-                      />
-                    </div>
-                  </div>
-
+                  <FormInput
+                    label="MSME Number" required value={msmeNumber} onChange={v => setMsmeNumber(v.toUpperCase())}
+                    placeholder="UDYAM-XX-00-XXXXXXX" maxLength={20} icon={<Briefcase size={20} />}
+                  />
                   <div className="space-y-4 group">
                     <label className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 group-focus-within:text-emerald-600 transition-colors">
                       GST Number <span className="text-slate-200">(optional)</span>
@@ -205,133 +257,55 @@ export default function PartnerOnboarding() {
                         <Wallet size={20} />
                       </div>
                       <input
-                        value={gstNumber}
-                        onChange={(e) => {
+                        value={gstNumber} onChange={(e) => {
                           const val = e.target.value.toUpperCase();
                           setGstNumber(val);
                           if (!val) setGstEnabled(false);
                         }}
-                        placeholder="29XXXXX0000X1ZX"
-                        maxLength={15}
+                        placeholder="29XXXXX0000X1ZX" maxLength={15}
                         className="w-full h-16 bg-white/50 border border-slate-100 rounded-[24px] pl-16 pr-6 font-bold text-sm tracking-widest text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-100 shadow-sm uppercase"
                       />
                     </div>
                     {gstNumber.trim() !== '' && (
                       <label className="flex items-center gap-3 cursor-pointer pl-2 mt-2">
                         <input
-                          type="checkbox"
-                          checked={gstEnabled}
-                          onChange={(e) => setGstEnabled(e.target.checked)}
+                          type="checkbox" checked={gstEnabled} onChange={(e) => setGstEnabled(e.target.checked)}
                           className="w-5 h-5 accent-emerald-500 rounded bg-white border-slate-200 cursor-pointer"
                         />
-                        <span className="text-sm font-semibold text-slate-700">
-                          Include GST on my guest invoices
-                        </span>
+                        <span className="text-sm font-semibold text-slate-700">Include GST on guest invoices</span>
                       </label>
                     )}
                   </div>
                 </div>
 
-                <div className="space-y-6">
-                  <label className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2">
-                    Operation Category
-                  </label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {[
-                      {
-                        value: 'hotel',
-                        label: 'Hospitality',
-                        icon: Home,
-                        desc: 'Stays & Villas',
-                      },
-                      {
-                        value: 'bike',
-                        label: 'Mobility',
-                        icon: Bike,
-                        desc: 'Two-Wheelers',
-                      },
-                      {
-                        value: 'car',
-                        label: 'Luxury',
-                        icon: Car,
-                        desc: 'Four-Wheelers',
-                      },
-                      {
-                        value: 'activity',
-                        label: 'Experiences',
-                        icon: Sparkles,
-                        desc: 'Curated Events',
-                      },
-                    ].map((item) => (
-                      <button
-                        key={item.value}
-                        onClick={() => setCategory(item.value)}
-                        className={`p-6 rounded-[32px] border-2 transition-all text-left flex items-center gap-6 group/btn ${category === item.value ? 'bg-emerald-600 border-emerald-600 text-white shadow-xl shadow-emerald-600/20' : 'bg-white/50 border-slate-100 text-slate-900 hover:border-emerald-200'}`}
-                      >
-                        <div
-                          className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-colors ${category === item.value ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-400 group-hover/btn:text-emerald-500'}`}
-                        >
-                          <item.icon size={24} />
-                        </div>
-                        <div>
-                          <p className="font-black uppercase tracking-widest text-xs">
-                            {item.label}
-                          </p>
-                          <p
-                            className={`text-[10px] font-bold uppercase tracking-widest mt-0.5 ${category === item.value ? 'text-white/60' : 'text-slate-400'}`}
-                          >
-                            {item.desc}
-                          </p>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
                 <div className="space-y-4 group">
-                  <label className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 group-focus-within:text-emerald-600 transition-colors">
-                    Brand Vision Signature
-                  </label>
+                  <label className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 group-focus-within:text-emerald-600 transition-colors">Brand Vision Signature</label>
                   <textarea
-                    value={brandVision}
-                    onChange={(e) => setBrandVision(e.target.value)}
-                    placeholder="Briefly describe your property's soul..."
+                    value={brandVision} onChange={(e) => setBrandVision(e.target.value)}
+                    placeholder="Briefly describe your property/fleet's soul..."
                     className="w-full h-32 bg-white/50 border border-slate-100 rounded-[32px] p-8 font-bold text-lg tracking-tight text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-100 shadow-sm resize-none"
                   />
                 </div>
               </div>
               <Nav next={() => {
-                if (!businessName.trim()) {
-                  showToast('Please enter your business name.', 'error');
-                  return;
-                }
-                if (!msmeNumber.trim()) {
-                  showToast('MSME number is required to continue.', 'error');
-                  return;
-                }
+                if (!businessName.trim()) { showToast('Please enter your business name.', 'error'); return; }
+                if (!subCategory) { showToast('Please select your category.', 'error'); return; }
+                if (!msmeNumber.trim()) { showToast('MSME number is required to continue.', 'error'); return; }
                 setStep(2);
               }} />
             </motion.div>
           )}
 
+          {/* ── PHASE 02: LOCATION ── */}
           {step === 2 && (
-            <motion.div
-              key="step2"
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -40 }}
-              className="space-y-16"
-            >
+            <motion.div key="step2" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} className="space-y-16">
               <div className="space-y-8">
                 <div className="flex items-center gap-4">
                   <span className="h-px w-12 bg-emerald-500" />
-                  <span className="text-[11px] font-black uppercase tracking-[0.5em] text-emerald-600">
-                    Phase 02: Deployment
-                  </span>
+                  <span className="text-[11px] font-black uppercase tracking-[0.5em] text-emerald-600">Phase 02: Deployment</span>
                 </div>
                 <h2 className="text-6xl md:text-8xl font-black tracking-tighter text-slate-900 uppercase leading-[0.8]">
-                  Operational <br />
-                  <span className="lowercase">Location.</span>
+                  Operational <br /><span className="lowercase">Location.</span>
                 </h2>
                 <p className="text-slate-400 font-bold uppercase text-[11px] tracking-widest leading-relaxed max-w-sm">
                   "Specify your geographic focus for guest discovery and route optimization."
@@ -340,27 +314,15 @@ export default function PartnerOnboarding() {
 
               <div className="space-y-12">
                 <FormInput
-                  label="Primary Operation Hub"
-                  value={location}
-                  onChange={setLocation}
-                  placeholder="E.G. VARKALA CLIFF, KERALA"
-                  icon={<MapPin size={24} />}
+                  label="Primary Operation Hub" required value={location} onChange={setLocation}
+                  placeholder="E.G. VARKALA CLIFF, KERALA" icon={<MapPin size={24} />}
                 />
-
                 <div className="space-y-4">
-                  <label className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2">
-                    Suggested Premium Hubs
-                  </label>
+                  <label className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2">Suggested Premium Hubs</label>
                   <div className="flex flex-wrap gap-3">
-                    {[
-                      'Varkala North Cliff',
-                      'South Cliff Shore',
-                      'Black Beach District',
-                      'Edava Lakefront',
-                    ].map((h) => (
+                    {['Varkala North Cliff', 'South Cliff Shore', 'Black Beach District', 'Edava Lakefront'].map((h) => (
                       <button
-                        key={h}
-                        onClick={() => setLocation(h)}
+                        key={h} onClick={() => setLocation(h)}
                         className={`px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${location === h ? 'bg-emerald-600 text-white shadow-lg' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
                       >
                         {h}
@@ -368,180 +330,148 @@ export default function PartnerOnboarding() {
                     ))}
                   </div>
                 </div>
-
-                <div className="p-10 bg-emerald-50 rounded-[40px] border border-emerald-100/50 flex gap-6 items-start">
-                  <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shrink-0 shadow-sm">
-                    <Zap size={20} className="text-emerald-500" />
-                  </div>
-                  <p className="text-[11px] font-black text-emerald-900/60 uppercase tracking-widest leading-relaxed">
-                    "Accuracy in location indexing ensures your assets are presented to the correct
-                    guest tier based on proximity and travel intent."
-                  </p>
-                </div>
               </div>
-              <Nav back={() => setStep(1)} next={() => setStep(3)} />
+              <Nav back={() => setStep(1)} next={() => {
+                if(!location) { showToast("Please specify an operational location", "error"); return; }
+                setStep(3);
+              }} />
             </motion.div>
           )}
 
+          {/* ── PHASE 03: INVENTORY ── */}
           {step === 3 && (
-            <motion.div
-              key="step3"
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -40 }}
-              className="space-y-16"
-            >
+            <motion.div key="step3" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} className="space-y-16">
               <div className="space-y-8">
                 <div className="flex items-center gap-4">
                   <span className="h-px w-12 bg-emerald-500" />
-                  <span className="text-[11px] font-black uppercase tracking-[0.5em] text-emerald-600">
-                    Phase 03: Inventory
-                  </span>
+                  <span className="text-[11px] font-black uppercase tracking-[0.5em] text-emerald-600">Phase 03: Inventory</span>
                 </div>
                 <h2 className="text-6xl md:text-8xl font-black tracking-tighter text-slate-900 uppercase leading-[0.8]">
-                  Primary <br />
-                  <span className="lowercase">Listing.</span>
+                  Primary <br /><span className="lowercase">Listing.</span>
                 </h2>
                 <p className="text-slate-400 font-bold uppercase text-[11px] tracking-widest leading-relaxed max-w-sm">
-                  "Initial asset configuration. Granular details and variance controls can be
-                  audited later."
+                  "Initial asset configuration. Complete asset-specific legal KYC logic."
                 </p>
               </div>
 
-              <div className="space-y-12">
+              <div className="space-y-10">
                 <FormInput
-                  label="Listing Descriptor"
-                  value={listingName}
-                  onChange={setListingName}
-                  placeholder="E.G. OCEAN FRONT SANCTUARY"
-                  icon={<Building size={24} />}
+                  label="Listing Descriptor" required value={listingName} onChange={setListingName}
+                  placeholder={mainSector === 'stays' ? "E.G. OCEAN FRONT SANCTUARY" : "E.G. ROYAL ENFIELD CLASSIC 350"}
+                  icon={mainSector === 'stays' ? <Building size={24} /> : <Bike size={24} />}
                 />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                {/* Dynamic Asset selection */}
+                <div className="space-y-4">
+                  <label className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2">
+                    {mainSector === 'stays' ? 'Room Type' : 'Vehicle Type'}
+                  </label>
+                  <div className="flex flex-wrap gap-3">
+                    {(mainSector === 'stays' ? stayRoomTypes : vehicleTypes).map((item) => {
+                      const isActive = mainSector === 'stays' ? roomType === item : vehicleType === item;
+                      const setter = mainSector === 'stays' ? setRoomType : setVehicleType;
+                      return (
+                        <button
+                          key={item} onClick={() => setter(item)}
+                          className={`px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${isActive ? 'bg-emerald-600 text-white shadow-lg' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
+                        >
+                          {item}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Legal Registration Category for Vehicles */}
+                {mainSector === 'vehicles' && (
+                  <div className="space-y-4 p-6 bg-rose-50/50 rounded-3xl border border-rose-100">
+                    <label className="text-[11px] font-black text-rose-500 uppercase tracking-[0.5em] ml-2">Registration Category (Liability)</label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {registrationCategories.map((item) => (
+                        <button
+                          key={item} onClick={() => setRegistrationCategory(item)}
+                          className={`p-4 rounded-[20px] border-2 transition-all text-left flex items-center gap-4 ${registrationCategory === item ? 'bg-rose-500 border-rose-500 text-white shadow-xl shadow-rose-500/20' : 'bg-white border-rose-100 text-slate-700 hover:border-rose-300'}`}
+                        >
+                          <ShieldCheck size={16} className={registrationCategory === item ? 'text-white/60' : 'text-rose-400'} />
+                          <p className="font-black uppercase tracking-widest text-[9px] leading-relaxed">{item}</p>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Pricing & Net Payout */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-end">
                   <FormInput
-                    label="Base Access Rate (INR)"
-                    value={price}
-                    onChange={setPrice}
-                    placeholder="7500"
-                    icon={<Wallet size={24} />}
+                    label="Base Access Rate (INR)" value={price} onChange={setPrice} required type="number"
+                    placeholder="2500" icon={<Wallet size={24} />}
                   />
-                  <div className="h-24 bg-slate-900 rounded-[32px] p-8 flex flex-col justify-center">
-                    <p className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">
-                      Estimated Net Payout
-                    </p>
-                    <p className="text-2xl font-black text-white tracking-tighter">
-                      ₹{price ? (parseInt(price) * 0.88).toLocaleString() : '0'}{' '}
-                      <span className="text-[10px] text-white/30 uppercase tracking-widest ml-2">
-                        / Nightly
-                      </span>
+                  <div className="h-16 bg-slate-900 rounded-[24px] px-6 flex items-center justify-between">
+                    <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Est. Net Payout (88%)</p>
+                    <p className="text-xl font-black text-white tracking-tighter">
+                      ₹{price ? (parseInt(price) * 0.88).toLocaleString() : '0'}
                     </p>
                   </div>
                 </div>
-                <div className="p-8 bg-slate-50 rounded-[32px] border border-slate-100">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-relaxed">
-                    "Platform commission (12%) covers verification, global marketing, and clifftop
-                    concierge support."
-                  </p>
+
+                {/* Cancellation Policy */}
+                <div className="space-y-4">
+                  <label className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2">Cancellation Policy</label>
+                  <div className="flex flex-wrap gap-3">
+                    {cancellationPolicies.map((item) => (
+                      <button
+                        key={item} onClick={() => setCancellationPolicy(item.toLowerCase())}
+                        className={`px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${cancellationPolicy === item.toLowerCase() ? 'bg-slate-900 text-white shadow-lg' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
+                      >
+                        {item}
+                      </button>
+                    ))}
+                  </div>
                 </div>
+
               </div>
-              <Nav back={() => setStep(2)} next={() => setStep(4)} />
+              <Nav back={() => setStep(2)} next={() => {
+                if(!listingName) { showToast("Please define the listing name", "error"); return; }
+                if(!price) { showToast("Base rate is required", "error"); return; }
+                setStep(4);
+              }} />
             </motion.div>
           )}
 
+          {/* ── PHASE 04: FINALIZE ── */}
           {step === 4 && (
-            <motion.div
-              key="step4"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="text-center space-y-20"
-            >
-              <div className="flex justify-center relative">
-                <div className="absolute inset-0 bg-emerald-500/20 blur-[60px] rounded-full scale-50" />
-                <div className="w-56 h-56 bg-white border border-slate-100 text-emerald-500 rounded-[72px] flex items-center justify-center shadow-2xl relative group overflow-hidden">
-                  <div className="absolute inset-0 bg-emerald-500 text-white scale-0 group-hover:scale-100 transition-transform duration-700 rounded-[72px] flex items-center justify-center">
-                    <CheckCircle size={80} strokeWidth={1} />
-                  </div>
-                  <CheckCircle
-                    size={80}
-                    strokeWidth={1}
-                    className="relative z-10 transition-transform duration-700"
-                  />
-                </div>
+            <motion.div key="step4" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-16 text-center py-10">
+              <div className="w-24 h-24 bg-emerald-500 rounded-[40px] shadow-2xl shadow-emerald-500/30 flex items-center justify-center mx-auto mb-12">
+                <CheckCircle size={48} className="text-white" />
               </div>
-              <div className="space-y-8">
-                <h2 className="text-7xl font-black tracking-tighter text-slate-900 uppercase leading-[0.8]">
-                  Protocol <br />
-                  <span className="text-emerald-500">Initialized.</span>
+              <div className="space-y-6">
+                <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-100 text-[11px] font-black uppercase tracking-[0.3em] text-emerald-600 mb-4">
+                  Protocol Initialized
+                </div>
+                <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-slate-900 uppercase leading-[0.85]">
+                  Verification <br /><span className="lowercase text-emerald-500">Pending.</span>
                 </h2>
-                <p className="text-slate-400 font-bold uppercase text-[11px] tracking-[0.5em] max-w-xs mx-auto">
-                  Your partner signature is ready for audit and network activation.
+                <p className="text-slate-500 font-bold uppercase text-[11px] tracking-widest leading-relaxed max-w-sm mx-auto">
+                  "Your partner profile and primary asset are configured. Wayzza Admin will review your KYC and compliance documents."
                 </p>
               </div>
-
-              <button
-                onClick={finishOnboarding}
-                disabled={loading}
-                className="w-full h-24 bg-slate-950 text-white rounded-[40px] font-black uppercase text-[11px] tracking-[0.5em] hover:bg-emerald-500 transition-all shadow-3xl shadow-slate-950/30 active:scale-[0.98] flex items-center justify-center gap-8 group"
-              >
-                {loading ? (
-                  <div className="w-8 h-8 border-4 border-white/20 border-t-white rounded-full animate-spin" />
-                ) : (
-                  <>
-                    <span>Authorize Final Configuration</span>
-                    <ArrowRight
-                      size={24}
-                      className="group-hover:translate-x-2 transition-transform"
-                    />
-                  </>
-                )}
-              </button>
+              <div className="pt-8">
+                <button
+                  onClick={finishOnboarding} disabled={loading}
+                  className="w-full h-20 bg-slate-950 text-white rounded-[40px] font-black uppercase text-xs tracking-[0.4em] hover:bg-emerald-600 transition-all shadow-2xl shadow-slate-900/20 active:scale-[0.98] flex items-center justify-center gap-6 disabled:opacity-50"
+                >
+                  {loading ? <div className="w-6 h-6 border-4 border-white/20 border-t-white rounded-full animate-spin" /> : <><span>Authorize Final Configuration</span><ArrowRight size={20} /></>}
+                </button>
+              </div>
+              <div className="pt-4">
+                <button onClick={() => setStep(3)} className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-slate-900 transition-colors">
+                  Go Back to Edit
+                </button>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
       </motion.div>
-    </div>
-  );
-}
-
-function FormInput({ label, value, onChange, placeholder, icon }) {
-  return (
-    <div className="space-y-4 group">
-      <label className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 group-focus-within:text-emerald-600 transition-colors">
-        {label}
-      </label>
-      <div className="relative">
-        <div className="absolute left-10 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-emerald-500 transition-colors">
-          {icon}
-        </div>
-        <input
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          className="w-full h-24 bg-white/50 border border-slate-100 rounded-[32px] pl-24 pr-10 font-bold text-2xl tracking-tighter text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-100 shadow-sm"
-        />
-      </div>
-    </div>
-  );
-}
-
-function Nav({ back, next }) {
-  return (
-    <div className="flex gap-6 mt-16 pt-16 border-t border-slate-100">
-      {back && (
-        <button
-          onClick={back}
-          className="h-20 flex-1 bg-white text-slate-400 rounded-[28px] font-black uppercase text-[11px] tracking-[0.4em] hover:bg-slate-50 hover:text-slate-900 transition-all flex items-center justify-center gap-4 border border-slate-100"
-        >
-          <ArrowLeft size={18} /> Prev
-        </button>
-      )}
-      {next && (
-        <button
-          onClick={next}
-          className="h-20 flex-[2] bg-slate-950 text-white rounded-[28px] font-black uppercase text-[11px] tracking-[0.5em] hover:bg-emerald-600 transition-all flex items-center justify-center gap-4 shadow-xl shadow-slate-950/10 active:scale-[0.98]"
-        >
-          Continue <ArrowRight size={18} />
-        </button>
-      )}
     </div>
   );
 }

@@ -23,15 +23,20 @@ const loginSchema = z.object({
 
 const onboardSchema = z.object({
     businessName: z.string().min(1),
-    category: z.string().min(1),
+    subCategory: z.string().min(1),
     location: z.string().min(1),
     msmeNumber: z.string().min(1, 'MSME number is required'),
     gstNumber: z.string().optional(),
+    gstEnabled: z.boolean().optional(),
     firstListing: z.object({
         title: z.string().min(1),
         price: z.number().optional(),
         latitude: z.number().optional(),
-        longitude: z.number().optional()
+        longitude: z.number().optional(),
+        roomType: z.string().optional(),
+        vehicleType: z.string().optional(),
+        registrationCategory: z.string().optional(),
+        cancellationPolicy: z.string().optional()
     }).optional()
 });
 
@@ -104,7 +109,8 @@ router.get("/status", requireAuth, async (req, res, next) => {
         const partner = await partners.findOne({ email: req.user.email });
         res.json({
             onboarded: partner?.onboarded === true,
-            onboardingCompleted: partner?.onboardingCompleted === true
+            onboardingCompleted: partner?.onboardingCompleted === true,
+            mainSector: partner?.mainSector || 'stays'
         });
     } catch (err) { next(err); }
 });
@@ -117,12 +123,16 @@ router.post("/onboard", requireAuth, requireRole(["partner"]), async (req, res, 
         const db = getDB();
         const partners = db.collection("partners");
         const listings = db.collection("listings");
-        const { businessName, category, location, msmeNumber, gstNumber, gstEnabled, firstListing } = parsed.data;
+        const { businessName, subCategory, location, msmeNumber, gstNumber, gstEnabled, firstListing } = parsed.data;
         const email = req.user.email;
+
+        // Fetch partner to get mainSector
+        const partner = await partners.findOne({ email });
+        const mainSector = partner?.mainSector || 'stays';
 
         await partners.updateOne(
             { email },
-            { $set: { businessName, category, location, msmeNumber: msmeNumber || '', gstNumber: gstNumber || '', gstEnabled: gstEnabled || false, onboardingCompleted: true, updatedAt: new Date() } },
+            { $set: { businessName, subCategory, category: subCategory, location, msmeNumber: msmeNumber || '', gstNumber: gstNumber || '', gstEnabled: gstEnabled || false, onboardingCompleted: true, updatedAt: new Date() } },
             { upsert: true }
         );
 
@@ -130,12 +140,16 @@ router.post("/onboard", requireAuth, requireRole(["partner"]), async (req, res, 
             await listings.insertOne({
                 title: firstListing.title,
                 price: firstListing.price || 0,
-                location, category,
+                location, subCategory, category: subCategory, mainSector,
                 ownerEmail: email,
                 variants: [],
                 approved: false,
                 latitude: firstListing.latitude ? Number(firstListing.latitude) : null,
                 longitude: firstListing.longitude ? Number(firstListing.longitude) : null,
+                roomType: firstListing.roomType || null,
+                vehicleType: firstListing.vehicleType || null,
+                registrationCategory: firstListing.registrationCategory || null,
+                cancellationPolicy: firstListing.cancellationPolicy || 'moderate',
                 createdAt: new Date()
             });
         }
