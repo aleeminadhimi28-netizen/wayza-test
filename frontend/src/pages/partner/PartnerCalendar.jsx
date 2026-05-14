@@ -98,6 +98,8 @@ export default function PartnerCalendar() {
   const [selected, setSelected] = useState(null);
   const [feedUrl, setFeedUrl] = useState('');
   const [copied, setCopied] = useState(false);
+  const [partnerPhone, setPartnerPhone] = useState('');
+
 
   useEffect(() => {
     if (!user?.email) return;
@@ -111,6 +113,10 @@ export default function PartnerCalendar() {
 
     api.getCalendarSettings().then((d) => {
       if (d.ok) setFeedUrl(d.feedUrl);
+    });
+
+    api.getProfile().then((d) => {
+      if (d.ok && d.data?.phone) setPartnerPhone(d.data.phone);
     });
   }, [user?.email]);
 
@@ -342,7 +348,7 @@ export default function PartnerCalendar() {
                   <p className="text-xs text-white/80 font-medium">
                     Primary Number: <br />
                     <span className="text-white font-bold text-sm tracking-wide">
-                      +91 ********89
+                      {partnerPhone || 'Not configured'}
                     </span>
                   </p>
                 </div>
@@ -447,7 +453,7 @@ export default function PartnerCalendar() {
                   <div className="flex justify-between text-xs font-medium">
                     <span className="text-slate-500">Net Earnings</span>
                     <span className="text-slate-900 font-bold">
-                      ₹{Math.round(selected.totalPrice * 0.9).toLocaleString()}
+                      ₹{(selected.netEarnings || Math.round(selected.totalPrice * 0.9)).toLocaleString()}
                     </span>
                   </div>
                 </div>

@@ -1,4 +1,5 @@
-import { Star, Shield, CheckCircle, CreditCard } from 'lucide-react';
+import { useState } from 'react';
+import { Star, Shield, CheckCircle, CreditCard, Minus, Plus } from 'lucide-react';
 
 export default function BookingCard({
   basePrice,
@@ -16,7 +17,10 @@ export default function BookingCard({
   isVehicle,
   serviceFee,
   total,
+  reserving = false, // PART 4: true while stale-price check is in-flight
 }) {
+  const [guests, setGuests] = useState(1);
+
   return (
     <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-xl shadow-slate-900/8">
       {/* Price */}
@@ -32,7 +36,7 @@ export default function BookingCard({
         <Star size={13} className="fill-amber-400 text-amber-400" />
         <span>
           {avgRating || 'New'} · {reviewsCount} review{reviewsCount !== 1 ? 's' : ''}
-          {avgRating && avgRating >= 9 ? ' · Exceptional' : ''}
+          {avgRating && parseFloat(avgRating) >= 9 ? ' · Exceptional' : ''}
         </span>
       </div>
 
@@ -65,19 +69,48 @@ export default function BookingCard({
       </div>
 
       {/* Guests */}
-      <div className="border border-slate-200 rounded-xl p-3 mb-5 hover:bg-slate-50 transition-colors cursor-pointer">
+      <div className="border border-slate-200 rounded-xl p-3 mb-5">
         <label className="block text-[11px] font-black uppercase tracking-widest text-slate-400 mb-1">
           Guests
         </label>
-        <span className="text-sm font-semibold text-slate-900">1 guest</span>
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-semibold text-slate-900">
+            {guests} guest{guests > 1 ? 's' : ''}
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setGuests((g) => Math.max(1, g - 1))}
+              disabled={guests <= 1}
+              className="w-7 h-7 rounded-full border border-slate-200 flex items-center justify-center text-slate-600 hover:border-slate-400 disabled:opacity-30 transition-all"
+            >
+              <Minus size={12} />
+            </button>
+            <span className="w-5 text-center text-sm font-bold text-slate-900">{guests}</span>
+            <button
+              onClick={() => setGuests((g) => Math.min(16, g + 1))}
+              disabled={guests >= 16}
+              className="w-7 h-7 rounded-full border border-slate-200 flex items-center justify-center text-slate-600 hover:border-slate-400 disabled:opacity-30 transition-all"
+            >
+              <Plus size={12} />
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Reserve Button */}
       <button
         onClick={handleReserve}
-        className="w-full py-4 bg-slate-950 hover:bg-slate-800 text-white font-black uppercase text-xs tracking-[0.3em] rounded-xl transition-all active:scale-[0.98] shadow-sm"
+        disabled={reserving}
+        className="w-full py-4 bg-slate-950 hover:bg-slate-800 text-white font-black uppercase text-xs tracking-[0.3em] rounded-xl transition-all active:scale-[0.98] shadow-sm disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
-        Reserve Now
+        {reserving ? (
+          <>
+            <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            Verifying Price...
+          </>
+        ) : (
+          'Reserve Now'
+        )}
       </button>
 
       {/* Price Breakdown */}

@@ -383,6 +383,13 @@ export const api = {
       headers: getAuthHeaders(),
     }).then((r) => r.json()),
 
+  adminCreatePartner: (data) =>
+    customFetch(`${API_URL}/admin/partners`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+      body: JSON.stringify(data),
+    }).then((r) => r.json()),
+
   adminDeleteUser: (email) =>
     customFetch(`${API_URL}/admin/users/${email}`, {
       method: 'DELETE',

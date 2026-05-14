@@ -15,7 +15,8 @@ const bookSchema = z.object({
     checkOut: z.string().min(1),
     title: z.string().optional(),
     ownerEmail: z.string().email().optional(),
-    couponCode: z.string().optional()
+    couponCode: z.string().optional(),
+    expectedPricePerNight: z.number().min(0).optional() // PART 4: Stale price guard — frontend sends the price it displayed
 });
 
 const confirmSchema = z.object({
@@ -69,6 +70,19 @@ router.post("/book", requireAuth, async (req, res, next) => {
         const variant = listing.variants?.[variantIndex || 0];
         const nights = Math.ceil((new Date(checkOut) - new Date(checkIn)) / 86400000);
         const pricePerNight = Number(variant?.price || listing.price || 0);
+
+        // ─── PART 4: STALE DATA PREVENTION ────────────────────────────────────────────
+        const { expectedPricePerNight } = parsed.data;
+        if (expectedPricePerNight !== undefined && Math.abs(expectedPricePerNight - pricePerNight) > 0.01) {
+            return res.status(409).json({
+                ok: false,
+                code: "PRICE_CHANGED",
+                message: `The price has been updated since you viewed this listing. It is now ₹${pricePerNight.toLocaleString()}/night. Please review the new pricing before reserving.`,
+                newPrice: pricePerNight
+            });
+        }
+        // ───────────────────────────────────────────────────────────────────────────
+
         const baseAmount = pricePerNight * nights;
         const isVehicle = listing.category === "bike" || listing.category === "car";
         
@@ -100,6 +114,13 @@ router.post("/book", requireAuth, async (req, res, next) => {
 
         // RACE CONDITION FIX: Pessimistic lock on the specific variant
         const lockId = `${listingId}_${variantIndex || 0}`;
+
+        // Clean up stale locks older than 30s (handles server crash scenarios)
+        await db.collection("booking_locks").deleteOne({
+            _id: lockId,
+            lockedAt: { $lt: new Date(Date.now() - 30000) }
+        });
+
         try {
             // This relies on the _id being unique. If it already exists, insertOne throws 11000.
             await db.collection("booking_locks").insertOne({
@@ -191,15 +212,24 @@ router.post("/confirm", requireAuth, async (req, res, next) => {
 
         const totalPrice = booking.totalPrice || 0;
         const config = await db.collection("settings").findOne({ type: "financials" }) || { commissionRate: 0.10 };
-        
-        let commissionAmount = booking.platformCommissionAmount !== undefined 
-            ? booking.platformCommissionAmount 
-            : config.serviceFee + Math.round((totalPrice - (booking.gst || 0) - config.serviceFee + (booking.discountAmount || 0)) * config.commissionRate);
-            
-        // Platform absorbs the discount
-        commissionAmount = commissionAmount - (booking.discountAmount || 0);
 
+        // ─── PART 2 & 3: IMMUTABLE SNAPSHOT — Use frozen values only, never re-calculate ───────
+        let commissionAmount;
+        if (booking.platformCommissionAmount !== undefined) {
+            // Standard path: use the frozen snapshot stored at booking initiation
+            commissionAmount = booking.platformCommissionAmount;
+        } else {
+            // LEGACY BOOKING FALLBACK: Log a financial integrity warning
+            // This only triggers for bookings created before the snapshot system.
+            // Do NOT silently recalculate without logging.
+            console.warn(`[FINANCIAL INTEGRITY] Booking ${bookingId} is missing frozen commission snapshot. Falling back to live calculation. This booking was created before the snapshot system.`);
+            commissionAmount = (config.serviceFee || 99) + Math.round((booking.baseAmount || 0) * (config.commissionRate || 0.10));
+        }
+
+        // Platform absorbs the guest discount — partner receives full pre-discount amount minus commission
+        commissionAmount = commissionAmount - (booking.discountAmount || 0);
         const netEarnings = totalPrice - commissionAmount;
+        // ─────────────────────────────────────────────────────────────────────────
 
         const passcode = Math.floor(100000 + Math.random() * 900000).toString();
 
@@ -274,8 +304,10 @@ router.post("/cancel", requireAuth, async (req, res, next) => {
         const allowed = booking.guestEmail === req.user.email || booking.ownerEmail === req.user.email;
         if (!allowed) return res.status(403).json({ ok: false, message: "Not authorized to cancel this booking" });
 
-        if (new Date(booking.checkIn) <= new Date())
-            return res.status(400).json({ ok: false, message: "Cannot cancel past bookings" });
+        // Block cancellations within 24 hours of check-in
+        const hoursUntilCheckIn = (new Date(booking.checkIn) - new Date()) / (1000 * 60 * 60);
+        if (hoursUntilCheckIn <= 24)
+            return res.status(400).json({ ok: false, message: "Cancellations are not allowed within 24 hours of check-in." });
 
         const updates = { status: "cancelled", cancelledAt: new Date() };
         if (booking.status === "paid") {

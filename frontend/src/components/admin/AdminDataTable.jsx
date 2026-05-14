@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, CheckCircle, Clock, Trash2, Volume2, VolumeX, X } from 'lucide-react';
+import { Search, CheckCircle, Clock, Trash2, Volume2, VolumeX, X, Plus } from 'lucide-react';
 import ConfirmModal from '../ui/ConfirmModal.jsx';
 
 export default function AdminDataTable({
@@ -19,6 +19,7 @@ export default function AdminDataTable({
     handleMuteUser,
     handleApprovePartner,
     handleDeleteItem,
+    handleCreatePartner,
   } = handlers;
 
   const [confirmState, setConfirmState] = useState({
@@ -51,6 +52,26 @@ export default function AdminDataTable({
     } catch (err) {
       console.error('Action failed:', err);
       setConfirmState((prev) => ({ ...prev, isLoading: false }));
+    }
+  };
+
+  const [createPartnerModal, setCreatePartnerModal] = useState(false);
+  const [partnerForm, setPartnerForm] = useState({
+    email: '',
+    password: '',
+    businessName: '',
+    phone: '',
+  });
+  const [isCreatingPartner, setIsCreatingPartner] = useState(false);
+
+  const submitCreatePartner = async (e) => {
+    e.preventDefault();
+    setIsCreatingPartner(true);
+    const success = await handleCreatePartner(partnerForm);
+    setIsCreatingPartner(false);
+    if (success) {
+      setCreatePartnerModal(false);
+      setPartnerForm({ email: '', password: '', businessName: '', phone: '' });
     }
   };
 
@@ -145,14 +166,24 @@ export default function AdminDataTable({
             </h3>
             <p className="text-sm text-slate-500">{filteredData.length} records found</p>
           </div>
-          <div className="relative w-full sm:w-72">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
-            <input
-              placeholder={`Search ${activeTab}...`}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-10 w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 text-sm font-medium focus:bg-white focus:border-emerald-500 transition-all outline-none"
-            />
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            {activeTab === 'partners' && (
+              <button
+                onClick={() => setCreatePartnerModal(true)}
+                className="h-10 px-4 bg-emerald-600 text-white rounded-xl font-semibold text-sm hover:bg-emerald-700 transition-colors flex items-center gap-2 shadow-sm whitespace-nowrap"
+              >
+                <Plus size={16} /> Onboard Partner
+              </button>
+            )}
+            <div className="relative w-full sm:w-72">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
+              <input
+                placeholder={`Search ${activeTab}...`}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="h-10 w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 text-sm font-medium focus:bg-white focus:border-emerald-500 transition-all outline-none"
+              />
+            </div>
           </div>
         </div>
 
@@ -389,6 +420,107 @@ export default function AdminDataTable({
         confirmVariant={confirmState.confirmVariant}
         isLoading={confirmState.isLoading}
       />
+
+      {/* Onboard Partner Modal */}
+      {createPartnerModal && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden"
+          >
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+              <div>
+                <h3 className="text-xl font-bold text-slate-900">Onboard Partner</h3>
+                <p className="text-sm text-slate-500">Create a new partner account directly</p>
+              </div>
+              <button
+                onClick={() => setCreatePartnerModal(false)}
+                className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-50 text-slate-500 hover:bg-slate-100 transition-colors"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <form onSubmit={submitCreatePartner} className="p-6 space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">
+                  Business Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={partnerForm.businessName}
+                  onChange={(e) => setPartnerForm({ ...partnerForm, businessName: e.target.value })}
+                  className="w-full h-11 bg-slate-50 border border-slate-200 rounded-xl px-4 text-sm font-medium focus:bg-white focus:border-emerald-500 transition-all outline-none"
+                  placeholder="e.g. Sunset Villas"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">
+                  Email Address *
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={partnerForm.email}
+                  onChange={(e) => setPartnerForm({ ...partnerForm, email: e.target.value })}
+                  className="w-full h-11 bg-slate-50 border border-slate-200 rounded-xl px-4 text-sm font-medium focus:bg-white focus:border-emerald-500 transition-all outline-none"
+                  placeholder="partner@example.com"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  value={partnerForm.phone}
+                  onChange={(e) => setPartnerForm({ ...partnerForm, phone: e.target.value })}
+                  className="w-full h-11 bg-slate-50 border border-slate-200 rounded-xl px-4 text-sm font-medium focus:bg-white focus:border-emerald-500 transition-all outline-none"
+                  placeholder="+1 234 567 8900"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">
+                  Temporary Password *
+                </label>
+                <input
+                  type="password"
+                  required
+                  minLength={6}
+                  value={partnerForm.password}
+                  onChange={(e) => setPartnerForm({ ...partnerForm, password: e.target.value })}
+                  className="w-full h-11 bg-slate-50 border border-slate-200 rounded-xl px-4 text-sm font-medium focus:bg-white focus:border-emerald-500 transition-all outline-none"
+                  placeholder="Minimum 6 characters"
+                />
+                <p className="text-xs text-slate-400 mt-1.5">
+                  Provide this password to the partner securely.
+                </p>
+              </div>
+
+              <div className="pt-4 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setCreatePartnerModal(false)}
+                  className="px-5 py-2.5 rounded-xl font-semibold text-sm text-slate-600 hover:bg-slate-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isCreatingPartner}
+                  className="px-5 py-2.5 bg-emerald-600 text-white rounded-xl font-semibold text-sm hover:bg-emerald-700 transition-colors shadow-sm disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  {isCreatingPartner && (
+                    <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                  )}
+                  {isCreatingPartner ? 'Creating...' : 'Create Account'}
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
     </motion.div>
   );
 }

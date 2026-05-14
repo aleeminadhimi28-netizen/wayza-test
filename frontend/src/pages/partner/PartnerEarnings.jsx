@@ -92,7 +92,36 @@ export default function PartnerEarnings() {
           <h1 className="text-2xl font-bold text-slate-900">Revenue Overview</h1>
           <p className="text-sm text-slate-500 mt-1">Track your property earnings and payouts.</p>
         </div>
-        <button className="h-10 px-5 bg-white border border-slate-200 rounded-xl text-slate-700 font-semibold text-sm flex items-center gap-2 hover:bg-slate-50 transition-colors shadow-sm">
+        <button
+          onClick={() => {
+            const rows = bookings
+              .filter((b) => b.status === 'paid' || b.status === 'confirmed')
+              .map((b) => ({
+                'Booking ID': b._id,
+                Property: b.title || '',
+                'Check In': b.checkIn || '',
+                'Check Out': b.checkOut || '',
+                Nights: b.nights || '',
+                'Total Paid (₹)': b.totalPrice || '',
+                'Your Earnings (₹)': b.netEarnings || '',
+                'Payout Status': b.payoutStatus || 'pending',
+              }));
+            if (!rows.length) return;
+            const headers = Object.keys(rows[0]);
+            const csv = [
+              headers.join(','),
+              ...rows.map((r) => headers.map((h) => `"${r[h]}"`).join(',')),
+            ].join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `wayzza-earnings-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+          }}
+          className="h-10 px-5 bg-white border border-slate-200 rounded-xl text-slate-700 font-semibold text-sm flex items-center gap-2 hover:bg-slate-50 transition-colors shadow-sm"
+        >
           <Download size={15} /> Export Report
         </button>
       </div>
@@ -209,7 +238,7 @@ export default function PartnerEarnings() {
                     ₹{(m.revenue || 0).toLocaleString()}
                   </td>
                   <td className="px-6 py-4 text-right font-bold text-sm text-emerald-600">
-                    ₹{Math.round((m.revenue || 0) * 0.9).toLocaleString()}
+                    ₹{Math.round((m.revenue || 0) * (earnings?.totalRevenue > 0 ? earnings.ownerPayout / earnings.totalRevenue : 0.9)).toLocaleString()}
                   </td>
                 </tr>
               ))}
@@ -309,7 +338,7 @@ export default function PartnerEarnings() {
                     </tr>
                   );
                 })}
-              {bookings.length === 0 && (
+              {bookings.filter((b) => b.status === 'paid' || b.status === 'confirmed').length === 0 && (
                 <tr className="py-20 text-center">
                   <td colSpan={4} className="py-20 text-center">
                     <BarChart3 size={32} className="text-slate-200 mx-auto mb-3" />

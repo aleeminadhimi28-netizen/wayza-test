@@ -13,6 +13,7 @@ import {
   Wifi,
   MessageSquare,
   Sparkles,
+  CheckCircle,
 } from 'lucide-react';
 import SEO from '../../components/SEO.jsx';
 import ListingConcierge from '../../components/ListingConcierge.jsx';
@@ -69,6 +70,7 @@ export default function ListingDetails() {
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
   const [platformConfig, setPlatformConfig] = useState(null);
+  const [reserving, setReserving] = useState(false); // PART 4: loading state during price check
 
   // 2. Callback and function definitions
   const loadReviews = useCallback(async () => {
@@ -119,12 +121,48 @@ export default function ListingDetails() {
     }
   };
 
-  const handleReserve = () => {
+  // ─── PART 4: STALE DATA PREVENTION ───────────────────────────────────────
+  const handleReserve = async () => {
     if (!user) {
       navigate('/login', { state: { from: location } });
       return;
     }
-    navigate(`/booking/${id}`, { state: { variantIndex: selectedVariant } });
+    setReserving(true);
+    try {
+      // Re-fetch the live listing price from the server before navigating
+      const fresh = await api.getListing(id);
+      if (fresh.ok && fresh.data) {
+        const freshVariant = fresh.data.variants?.[selectedVariant];
+        const freshPrice = Number(freshVariant?.price || fresh.data.price || 0);
+        if (freshPrice !== basePrice) {
+          // Partner changed the price while the user was browsing — refresh and notify
+          setListing(fresh.data);
+          showToast(
+            `Price updated to ₹${freshPrice.toLocaleString()}/night. Please review before reserving.`,
+            'error'
+          );
+          setReserving(false);
+          return;
+        }
+      }
+    } catch {
+      // Non-critical — if check fails, proceed. Backend has a second layer of validation.
+    }
+    // Pass the confirmed price as expectedPricePerNight for the backend's final snapshot guard
+    navigate(`/booking/${id}`, {
+      state: { variantIndex: selectedVariant, expectedPricePerNight: basePrice },
+    });
+    setReserving(false);
+  };
+  // ─────────────────────────────────────────────────────────────────────────
+
+  const handleMobileReserve = () => {
+    if (!checkIn || !checkOut) {
+      showToast('Please select your check-in and check-out dates first', 'error');
+      document.getElementById('reservation-console')?.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+    handleReserve();
   };
 
   // 3. Effects
@@ -301,7 +339,7 @@ export default function ListingDetails() {
               onClick={() => navigate('/')}
               className="hover:text-emerald-600 transition-colors"
             >
-              Protocol
+              Home
             </button>
             <ChevronRight size={10} />
             <button
@@ -557,11 +595,66 @@ export default function ListingDetails() {
 
               {/* Audit (Reviews) */}
               <ListingReviews reviews={reviews} avgRating={avgRating} />
+
+              {/* ─── REVIEW SUBMISSION ─── */}
+              {canReview && !alreadyReviewed && (
+                <section className="space-y-8">
+                  <div className="flex items-center gap-4">
+                    <span className="h-px w-12 bg-slate-200" />
+                    <span className="text-[11px] font-black uppercase tracking-[0.5em] text-slate-300">
+                      Share Your Experience
+                    </span>
+                  </div>
+                  <div className="bg-amber-50 border border-amber-100 rounded-[32px] p-8 md:p-10 space-y-8">
+                    <div>
+                      <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">
+                        Rate your stay
+                      </h3>
+                      <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+                        Your feedback helps the Wayzza community
+                      </p>
+                    </div>
+                    <StarRow rating={rating} size={28} interactive onSet={setRating} />
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">
+                        Your feedback (optional)
+                      </label>
+                      <textarea
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        placeholder="Share details about your stay..."
+                        rows={4}
+                        className="w-full bg-white border border-amber-200 p-4 rounded-2xl outline-none focus:border-amber-400 focus:ring-4 focus:ring-amber-400/10 transition-all text-sm resize-none"
+                      />
+                    </div>
+                    <button
+                      onClick={submitReview}
+                      disabled={submitting}
+                      className="h-14 px-10 bg-slate-950 hover:bg-amber-500 text-white rounded-xl font-black uppercase text-[11px] tracking-[0.3em] transition-all active:scale-95 disabled:opacity-50 flex items-center gap-3"
+                    >
+                      {submitting ? (
+                        <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      ) : (
+                        <Star size={14} className="fill-white" />
+                      )}
+                      Submit Review
+                    </button>
+                  </div>
+                </section>
+              )}
+              {alreadyReviewed && (
+                <div className="flex items-center gap-3 text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-2xl px-6 py-4">
+                  <CheckCircle size={16} />
+                  <span className="text-[11px] font-black uppercase tracking-widest">
+                    You&apos;ve reviewed this stay — thank you!
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* RIGHT: RESERVATION CONSOLE */}
             <div className="lg:col-span-5 relative">
-              <div className="sticky top-32 space-y-6">
+              <div className="sticky top-32 space-y-6" id="reservation-console">
                 {/* ─── White Airbnb-style Booking Card ─── */}
                 <BookingCard
                   basePrice={basePrice}
@@ -579,6 +672,7 @@ export default function ListingDetails() {
                   isVehicle={isVehicle}
                   serviceFee={serviceFee}
                   total={total}
+                  reserving={reserving}
                 />
 
                 {/* Direct Inquiries */}
@@ -619,7 +713,7 @@ export default function ListingDetails() {
             </button>
           </div>
           <button
-            onClick={handleReserve}
+            onClick={handleMobileReserve}
             className="px-8 py-4 bg-slate-950 text-white font-black uppercase text-[11px] tracking-[0.2em] rounded-xl shadow-lg active:scale-95"
           >
             Reserve

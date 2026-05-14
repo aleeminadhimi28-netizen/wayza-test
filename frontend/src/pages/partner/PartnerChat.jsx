@@ -18,9 +18,17 @@ export default function PartnerChat() {
   const [selected, setSelected] = useState(null);
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
+  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const bottomRef = useRef(null);
+
+  const filteredBookings = bookings.filter(
+    (b) =>
+      !search ||
+      b.guestEmail?.toLowerCase().includes(search.toLowerCase()) ||
+      b.title?.toLowerCase().includes(search.toLowerCase())
+  );
 
   const loadMessages = useCallback(async () => {
     if (!selected) return;
@@ -147,6 +155,8 @@ export default function PartnerChat() {
                   className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
                 />
                 <input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search guests..."
                   className="w-full h-9 bg-slate-50 rounded-lg pl-8 pr-3 text-sm outline-none border border-transparent focus:border-emerald-500 focus:bg-white transition-all"
                 />
@@ -154,7 +164,7 @@ export default function PartnerChat() {
             </div>
 
             <div className="flex-1 overflow-y-auto py-1">
-              {bookings.map((b) => (
+              {filteredBookings.map((b) => (
                 <button
                   key={b._id}
                   onClick={() => setSelected(b)}

@@ -11,6 +11,7 @@ const registerSchema = z.object({
     email: z.string().email(),
     password: z.string().min(6),
     businessName: z.string().min(1).optional(),
+    phone: z.string().optional(),
     type: z.string().optional()
 });
 
@@ -54,14 +55,14 @@ router.post("/register", async (req, res, next) => {
         const db = getDB();
         const users = db.collection("users");
         const partners = db.collection("partners");
-        const { email, password, businessName, type } = parsed.data;
+        const { email, password, businessName, phone, type } = parsed.data;
 
         const exists = await users.findOne({ email });
         if (exists) return res.status(400).json({ ok: false, message: "Email already registered" });
 
         const hash = await bcrypt.hash(password, BCRYPT_ROUNDS);
-        await users.insertOne({ email, password: hash, role: "partner", createdAt: new Date() });
-        await partners.insertOne({ email, businessName, type, onboarded: false, createdAt: new Date() });
+        await users.insertOne({ email, password: hash, role: "partner", phone: phone || "", createdAt: new Date() });
+        await partners.insertOne({ email, businessName, type, phone: phone || "", onboarded: false, createdAt: new Date() });
 
         res.json({ ok: true });
     } catch (err) { next(err); }

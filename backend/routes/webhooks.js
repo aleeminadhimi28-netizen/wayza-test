@@ -45,40 +45,55 @@ router.post("/razorpay", async (req, res, next) => {
 
             if (booking) {
                 console.log(`[Webhook] Confirming booking ${booking._id} via webhook`);
-                
-                // Logic identical to manual confirm
+
+                // ─── FINANCIAL SNAPSHOT (mirrors /confirm route — must stay in sync) ───
+                const config = await db.collection("settings").findOne({ type: "financials" }) || { commissionRate: 0.10, serviceFee: 99 };
+                let commissionAmount;
+                if (booking.platformCommissionAmount !== undefined) {
+                    commissionAmount = booking.platformCommissionAmount;
+                } else {
+                    console.warn(`[FINANCIAL INTEGRITY] Webhook: Booking ${booking._id} missing frozen commission snapshot. Falling back to live calculation.`);
+                    commissionAmount = (config.serviceFee || 99) + Math.round((booking.baseAmount || 0) * (config.commissionRate || 0.10));
+                }
+                // Platform absorbs the guest discount — partner earns pre-discount amount minus commission
+                commissionAmount = commissionAmount - (booking.discountAmount || 0);
+                const netEarnings = (booking.totalPrice || 0) - commissionAmount;
+                // ─────────────────────────────────────────────────────────────────────
+
                 const passcode = Math.floor(100000 + Math.random() * 900000).toString();
                 await bookings.updateOne(
                     { _id: booking._id },
-                    { 
-                        $set: { 
-                            status: "paid", 
+                    {
+                        $set: {
+                            status: "paid",
                             paymentId: payment_id,
-                            passcode,
-                            paidAt: new Date() 
-                        } 
+                            paidAt: new Date(),
+                            checkInPasscode: passcode,
+                            commissionAmount,
+                            netEarnings,
+                            payoutStatus: "pending"
+                        }
                     }
                 );
 
                 // Send Emails
                 const transporter = await getTransporter();
                 if (transporter) {
-                    transporter.sendMail(guestBookingEmail({
+                    const emailData = {
                         guestEmail: booking.guestEmail,
+                        ownerEmail: booking.ownerEmail,
                         bookingId: booking._id,
                         title: booking.title,
                         checkIn: booking.checkIn,
                         checkOut: booking.checkOut,
+                        nights: booking.nights || 1,
+                        totalPrice: booking.totalPrice || 0,
+                        ownerPayout: netEarnings,
                         passcode
-                    })).catch(e => console.error("Webhook Guest Email Error:", e));
-
+                    };
+                    transporter.sendMail(guestBookingEmail(emailData)).catch(e => console.error("Webhook Guest Email Error:", e));
                     if (booking.ownerEmail) {
-                        transporter.sendMail(ownerBookingEmail({
-                            ownerEmail: booking.ownerEmail,
-                            bookingId: booking._id,
-                            title: booking.title,
-                            guestEmail: booking.guestEmail
-                        })).catch(e => console.error("Webhook Owner Email Error:", e));
+                        transporter.sendMail(ownerBookingEmail(emailData)).catch(e => console.error("Webhook Owner Email Error:", e));
                     }
                 }
             }

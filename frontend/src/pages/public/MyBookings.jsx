@@ -403,8 +403,20 @@ export default function MyBookings() {
                           )}
 
                           {b.status === 'cancelled' && (
-                            <div className="h-12 flex items-center justify-center gap-2 font-bold text-[11px] uppercase tracking-widest text-rose-500 bg-rose-50 rounded-xl border border-rose-100">
-                              <AlertCircle size={14} /> Reservation cancelled
+                            <div className="space-y-2">
+                              <div className="h-12 flex items-center justify-center gap-2 font-bold text-[11px] uppercase tracking-widest text-rose-500 bg-rose-50 rounded-xl border border-rose-100">
+                                <AlertCircle size={14} /> Reservation cancelled
+                              </div>
+                              {b.refundStatus === 'pending' && (
+                                <div className="h-10 flex items-center justify-center gap-2 font-bold text-[11px] uppercase tracking-widest text-amber-600 bg-amber-50 rounded-xl border border-amber-100">
+                                  <Clock size={12} /> Refund processing
+                                </div>
+                              )}
+                              {b.refundStatus && b.refundStatus !== 'pending' && (
+                                <div className="h-10 flex items-center justify-center gap-2 font-bold text-[11px] uppercase tracking-widest text-emerald-600 bg-emerald-50 rounded-xl border border-emerald-100">
+                                  <CheckCircle size={12} /> Refund issued
+                                </div>
+                              )}
                             </div>
                           )}
 

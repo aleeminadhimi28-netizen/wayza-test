@@ -86,7 +86,7 @@ app.use(helmet({
 
 // 4. PERFORMANCE & LOGGING
 app.use(compression());
-app.use(morgan("dev"));
+app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 
 // 5. SECURITY GUARDS
 app.use(securityGuards);

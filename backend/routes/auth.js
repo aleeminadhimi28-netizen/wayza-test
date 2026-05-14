@@ -61,7 +61,7 @@ router.post("/login", async (req, res, next) => {
         const db = getDB();
         const users = db.collection("users");
         const email = parsed.data.email.toLowerCase().trim();
-        const password = parsed.data.password.trim();
+        const password = parsed.data.password; // Do NOT trim — passwords are hashed as-is
 
         const user = await users.findOne({ email });
 
@@ -181,12 +181,10 @@ router.post("/google", async (req, res, next) => {
         });
     } catch (err) {
         console.error("Google Auth Error:", err);
-        // Provide more context if it's a verification error
-        const status = (err.message && err.message.includes("token")) ? 401 : 401; // Standardize on 401 for auth errors
-        res.status(status).json({ 
-            ok: false, 
+        res.status(401).json({
+            ok: false,
             message: err.message || "Google authentication failed",
-            stack: process.env.NODE_ENV === "development" ? err.stack : undefined 
+            stack: process.env.NODE_ENV === "development" ? err.stack : undefined
         });
     }
 });

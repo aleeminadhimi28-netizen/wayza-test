@@ -29,23 +29,51 @@ import AdminCoupons from './AdminCoupons.jsx';
 import AdminLogs from './AdminLogs.jsx';
 import AdminDataTable from '../../components/admin/AdminDataTable.jsx';
 
-const TABS = [
-  { id: 'overview', icon: LayoutDashboard, label: 'Overview' },
-  { id: 'users', icon: Users, label: 'Users' },
-  { id: 'partners', icon: Briefcase, label: 'Partners' },
-  { id: 'listings', icon: Home, label: 'Inventory' },
-  { id: 'bookings', icon: CalendarCheck, label: 'Bookings' },
-  { id: 'withdrawals', icon: Banknote, label: 'Finance' },
-  { id: 'support', icon: MessageSquare, label: 'Support' },
-  { id: 'coupons', icon: Tag, label: 'Promotions' },
-  { id: 'logs', icon: Activity, label: 'Activity Logs' },
-  { id: 'settings', icon: Settings, label: 'Settings' },
+const TAB_GROUPS = [
+  {
+    label: 'Overview',
+    tabs: [
+      { id: 'overview', icon: LayoutDashboard, label: 'Overview' },
+    ],
+  },
+  {
+    label: 'Data',
+    tabs: [
+      { id: 'users', icon: Users, label: 'Users' },
+      { id: 'partners', icon: Briefcase, label: 'Partners' },
+      { id: 'listings', icon: Home, label: 'Inventory' },
+      { id: 'bookings', icon: CalendarCheck, label: 'Bookings' },
+    ],
+  },
+  {
+    label: 'Operations',
+    tabs: [
+      { id: 'withdrawals', icon: Banknote, label: 'Finance' },
+      { id: 'support', icon: MessageSquare, label: 'Support' },
+      { id: 'coupons', icon: Tag, label: 'Promotions' },
+    ],
+  },
+  {
+    label: 'System',
+    tabs: [
+      { id: 'logs', icon: Activity, label: 'Activity Logs' },
+      { id: 'settings', icon: Settings, label: 'Settings' },
+    ],
+  },
 ];
+
+// Flat list for any logic that needs it
+const TABS = TAB_GROUPS.flatMap((g) => g.tabs);
 
 export default function AdminDashboard() {
   // 1. STABLE HOOKS
   const { showToast } = useToast();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
+
+  // Derive real admin initials from email
+  const adminInitials = user?.email
+    ? user.email.split('@')[0].slice(0, 2).toUpperCase()
+    : 'AD';
 
   // 2. STATE DECLARATIONS
   const [stats, setStats] = useState(null);
@@ -229,6 +257,27 @@ export default function AdminDashboard() {
     [showToast]
   );
 
+  const handleCreatePartner = useCallback(
+    async (partnerData) => {
+      try {
+        const d = await api.adminCreatePartner(partnerData);
+        if (d.ok) {
+          setDataList((prev) => [d.data, ...prev]);
+          showToast('Partner created and onboarded successfully.', 'success');
+          return true;
+        } else {
+          showToast(`Failed: ${d.message}`, 'error');
+          return false;
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Failed to create partner.', 'error');
+        return false;
+      }
+    },
+    [showToast]
+  );
+
   const handleLogout = useCallback(() => {
     logout();
     window.location.href = '/admin-login';
@@ -341,37 +390,45 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <nav className="flex-1 px-3 space-y-1">
-          <p className="px-3 mb-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">
-            Navigation
-          </p>
-          {TABS.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => {
-                setActiveTab(tab.id);
-                setSearchQuery('');
-                setMobileMenuOpen(false);
-              }}
-              className={`w-full flex items-center gap-3 py-2.5 px-3 rounded-xl font-semibold text-sm transition-all ${
-                activeTab === tab.id
-                  ? 'bg-white/10 text-white'
-                  : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'
-              }`}
-            >
-              <tab.icon size={17} className={activeTab === tab.id ? 'text-emerald-400' : ''} />
-              {tab.label}
-              {tab.id === 'support' && openTickets > 0 && (
-                <span className="ml-auto bg-rose-500 text-white text-[11px] font-bold px-1.5 py-0.5 rounded-md">
-                  {openTickets}
-                </span>
+        <nav className="flex-1 px-3 overflow-y-auto space-y-4">
+          {TAB_GROUPS.map((group) => (
+            <div key={group.label}>
+              {group.label !== 'Overview' && (
+                <p className="px-3 mb-1.5 text-[10px] font-bold text-slate-600 uppercase tracking-widest">
+                  {group.label}
+                </p>
               )}
-              {tab.id === 'withdrawals' && pendingWithdrawals > 0 && (
-                <span className="ml-auto bg-amber-500 text-white text-[11px] font-bold px-1.5 py-0.5 rounded-md">
-                  {pendingWithdrawals}
-                </span>
-              )}
-            </button>
+              <div className="space-y-0.5">
+                {group.tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => {
+                      setActiveTab(tab.id);
+                      setSearchQuery('');
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`w-full flex items-center gap-3 py-2.5 px-3 rounded-xl font-semibold text-sm transition-all ${
+                      activeTab === tab.id
+                        ? 'bg-white/10 text-white'
+                        : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'
+                    }`}
+                  >
+                    <tab.icon size={17} className={activeTab === tab.id ? 'text-emerald-400' : ''} />
+                    {tab.label}
+                    {tab.id === 'support' && openTickets > 0 && (
+                      <span className="ml-auto bg-rose-500 text-white text-[11px] font-bold px-1.5 py-0.5 rounded-md">
+                        {openTickets}
+                      </span>
+                    )}
+                    {tab.id === 'withdrawals' && pendingWithdrawals > 0 && (
+                      <span className="ml-auto bg-amber-500 text-white text-[11px] font-bold px-1.5 py-0.5 rounded-md">
+                        {pendingWithdrawals}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
           ))}
         </nav>
 
@@ -418,14 +475,21 @@ export default function AdminDashboard() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <button className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 text-slate-500 flex items-center justify-center hover:bg-slate-900 hover:text-white transition-all relative">
+              <button
+                onClick={() => setActiveTab('support')}
+                title="View support tickets"
+                className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 text-slate-500 flex items-center justify-center hover:bg-slate-900 hover:text-white transition-all relative"
+              >
                 <Bell size={16} />
                 {openTickets > 0 && (
-                  <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white" />
+                  <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border-2 border-white" />
                 )}
               </button>
-              <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-bold text-xs shadow-md">
-                AD
+              <div
+                title={user?.email || 'Admin'}
+                className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-bold text-xs shadow-md cursor-default"
+              >
+                {adminInitials}
               </div>
             </div>
           </div>
@@ -477,6 +541,7 @@ export default function AdminDashboard() {
                   handleMuteUser,
                   handleApprovePartner,
                   handleDeleteItem,
+                  handleCreatePartner,
                 }}
               />
             )}

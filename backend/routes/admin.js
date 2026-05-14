@@ -7,7 +7,7 @@ import { requireAuth, requireRole } from "../middleware/auth.js";
 import { getTransporter, payoutSettledEmail, withdrawalStatusEmail } from "../utils/emailTemplates.js";
 import { sendWhatsAppAlert, formatWhatsAppListingApproved, formatWhatsAppPartnerOnboarded } from "../utils/whatsapp.js";
 import { z } from "zod";
-import { JWT_EXPIRY } from "../config/constants.js";
+import { JWT_EXPIRY, BCRYPT_ROUNDS } from "../config/constants.js";
 
 const loginSchema = z.object({
     email: z.string().email(),
@@ -120,6 +120,42 @@ router.get("/partners", requireAuth, requireRole(["admin"]), async (req, res, ne
         const partners = db.collection("partners");
         const list = await partners.find({}).sort({ createdAt: -1 }).toArray();
         res.json({ ok: true, data: list });
+    } catch (err) { next(err); }
+});
+
+const adminCreatePartnerSchema = z.object({
+    email: z.string().email(),
+    password: z.string().min(6),
+    businessName: z.string().min(1),
+    phone: z.string().optional()
+});
+
+router.post("/partners", requireAuth, requireRole(["admin"]), async (req, res, next) => {
+    try {
+        const parsed = adminCreatePartnerSchema.safeParse(req.body);
+        if (!parsed.success) return res.status(400).json({ ok: false, message: "Invalid input", errors: parsed.error.flatten() });
+
+        const db = getDB();
+        const users = db.collection("users");
+        const partners = db.collection("partners");
+        const { email, password, businessName, phone } = parsed.data;
+
+        const exists = await users.findOne({ email });
+        if (exists) return res.status(400).json({ ok: false, message: "Email already exists" });
+
+        const hash = await bcrypt.hash(password, BCRYPT_ROUNDS);
+        await users.insertOne({ email, password: hash, role: "partner", phone: phone || "", createdAt: new Date() });
+        await partners.insertOne({ 
+            email, 
+            businessName, 
+            phone: phone || "", 
+            onboarded: true, // Directly approve them
+            onboardingCompleted: true, 
+            createdAt: new Date() 
+        });
+
+        const newPartner = await partners.findOne({ email });
+        res.json({ ok: true, data: newPartner });
     } catch (err) { next(err); }
 });
 

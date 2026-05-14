@@ -22,7 +22,7 @@ export function useNotifications(user) {
       }
     }
     fetchNotifs();
-    const int = setInterval(fetchNotifs, 30000);
+    const int = setInterval(fetchNotifs, 300000); // 5-min fallback — socket handles real-time
 
     initiateSocketConnection();
     joinUserRoom(user.email);

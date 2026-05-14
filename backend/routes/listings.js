@@ -135,6 +135,7 @@ router.post("/", requireAuth, async (req, res, next) => {
         const result = await listings.insertOne({
             title, location,
             price: Number(price) || 0,
+            baseFloorPrice: Number(price) || 0, // IMMUTABLE floor — set once at creation, never overridden
             description, image,
             images: images || [],
             category: category || "hotel",
@@ -185,7 +186,39 @@ router.put("/:id", requireAuth, async (req, res, next) => {
             }
         });
 
-        if (req.body.price !== undefined) updates.price = Number(req.body.price);
+        // ─── PART 1: ATOMIC PRICE FLOOR GUARD ───────────────────────────────────
+        if (req.body.price !== undefined) {
+            const newPrice = Number(req.body.price);
+
+            // For legacy listings without a baseFloorPrice, initialize it to their current price first
+            await listings.updateOne(
+                { _id: new ObjectId(req.params.id), baseFloorPrice: { $exists: false } },
+                { $set: { baseFloorPrice: listing.price || 0 } }
+            );
+
+            // ATOMIC GUARD: Only proceed if newPrice >= baseFloorPrice
+            const atomicResult = await listings.updateOne(
+                {
+                    _id: new ObjectId(req.params.id),
+                    $or: [
+                        { baseFloorPrice: { $lte: newPrice } },  // Standard: price is above floor
+                        { baseFloorPrice: { $exists: false } }   // Legacy fallback (shouldn't happen after above)
+                    ]
+                },
+                { $set: { ...updates, price: newPrice, priceUpdatedAt: new Date() } }
+            );
+
+            if (atomicResult.matchedCount === 0) {
+                // Re-fetch to get the real floor price for the error message
+                const fresh = await listings.findOne({ _id: new ObjectId(req.params.id) });
+                return res.status(400).json({
+                    ok: false,
+                    message: `Price ₹${newPrice.toLocaleString()} is below the minimum floor price of ₹${fresh?.baseFloorPrice?.toLocaleString() || 0} for this listing.`
+                });
+            }
+            return res.json({ ok: true });
+        }
+        // ────────────────────────────────────────────────────────────────────────
 
         await listings.updateOne({ _id: new ObjectId(req.params.id) }, { $set: updates });
         res.json({ ok: true });
