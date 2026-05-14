@@ -88,6 +88,9 @@ router.post("/book", requireAuth, async (req, res, next) => {
         
         const config = await db.collection("settings").findOne({ type: "financials" }) || { gstRate: 0.12, serviceFee: 99, commissionRate: 0.10 };
         
+        const partner = await db.collection("partners").findOne({ email: listing.ownerEmail });
+        const isGstEnabled = partner?.gstEnabled === true;
+
         let discountAmount = 0;
         let appliedCouponCode = null;
         if (couponCode) {
@@ -101,12 +104,12 @@ router.post("/book", requireAuth, async (req, res, next) => {
         }
 
         const discountedBaseAmount = baseAmount - discountAmount;
-        const gst = isVehicle ? 0 : Math.round(discountedBaseAmount * config.gstRate);
+        const gst = (!isVehicle && isGstEnabled) ? Math.round(discountedBaseAmount * config.gstRate) : 0;
         const serviceFee = config.serviceFee;
         const totalPrice = discountedBaseAmount + gst + serviceFee;
 
         // Old total price for commission calculation
-        const unadjustedGst = isVehicle ? 0 : Math.round(baseAmount * config.gstRate);
+        const unadjustedGst = (!isVehicle && isGstEnabled) ? Math.round(baseAmount * config.gstRate) : 0;
         const unadjustedTotalPrice = baseAmount + unadjustedGst + serviceFee;
         
         // Freeze platform commission amount: Service Fee + (Base Room Price * Commission Rate)

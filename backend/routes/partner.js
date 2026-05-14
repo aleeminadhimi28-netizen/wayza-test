@@ -116,12 +116,12 @@ router.post("/onboard", requireAuth, requireRole(["partner"]), async (req, res, 
         const db = getDB();
         const partners = db.collection("partners");
         const listings = db.collection("listings");
-        const { businessName, category, location, msmeNumber, gstNumber, firstListing } = parsed.data;
+        const { businessName, category, location, msmeNumber, gstNumber, gstEnabled, firstListing } = parsed.data;
         const email = req.user.email;
 
         await partners.updateOne(
             { email },
-            { $set: { businessName, category, location, msmeNumber: msmeNumber || '', gstNumber: gstNumber || '', onboardingCompleted: true, updatedAt: new Date() } },
+            { $set: { businessName, category, location, msmeNumber: msmeNumber || '', gstNumber: gstNumber || '', gstEnabled: gstEnabled || false, onboardingCompleted: true, updatedAt: new Date() } },
             { upsert: true }
         );
 

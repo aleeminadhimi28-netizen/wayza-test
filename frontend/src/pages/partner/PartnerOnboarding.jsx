@@ -38,6 +38,7 @@ export default function PartnerOnboarding() {
   const [price, setPrice] = useState('');
   const [msmeNumber, setMsmeNumber] = useState('');
   const [gstNumber, setGstNumber] = useState('');
+  const [gstEnabled, setGstEnabled] = useState(false);
 
   // ensure logged in partner
   useEffect(() => {
@@ -70,6 +71,7 @@ export default function PartnerOnboarding() {
         location,
         msmeNumber,
         gstNumber,
+        gstEnabled,
         firstListing: listingName
           ? {
               title: listingName,
@@ -204,12 +206,29 @@ export default function PartnerOnboarding() {
                       </div>
                       <input
                         value={gstNumber}
-                        onChange={(e) => setGstNumber(e.target.value.toUpperCase())}
+                        onChange={(e) => {
+                          const val = e.target.value.toUpperCase();
+                          setGstNumber(val);
+                          if (!val) setGstEnabled(false);
+                        }}
                         placeholder="29XXXXX0000X1ZX"
                         maxLength={15}
                         className="w-full h-16 bg-white/50 border border-slate-100 rounded-[24px] pl-16 pr-6 font-bold text-sm tracking-widest text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-100 shadow-sm uppercase"
                       />
                     </div>
+                    {gstNumber.trim() !== '' && (
+                      <label className="flex items-center gap-3 cursor-pointer pl-2 mt-2">
+                        <input
+                          type="checkbox"
+                          checked={gstEnabled}
+                          onChange={(e) => setGstEnabled(e.target.checked)}
+                          className="w-5 h-5 accent-emerald-500 rounded bg-white border-slate-200 cursor-pointer"
+                        />
+                        <span className="text-sm font-semibold text-slate-700">
+                          Include GST on my guest invoices
+                        </span>
+                      </label>
+                    )}
                   </div>
                 </div>
 

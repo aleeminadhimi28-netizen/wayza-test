@@ -119,6 +119,9 @@ router.get("/:id", async (req, res, next) => {
             }
         }
 
+        const partner = await db.collection("partners").findOne({ email: listing.ownerEmail });
+        listing.ownerGstEnabled = partner?.gstEnabled === true;
+
         res.json({ ok: true, data: listing });
     } catch (err) { next(err); }
 });
