@@ -24,7 +24,7 @@ const onboardSchema = z.object({
     businessName: z.string().min(1),
     category: z.string().min(1),
     location: z.string().min(1),
-    msmeNumber: z.string().optional(),
+    msmeNumber: z.string().min(1, 'MSME number is required'),
     gstNumber: z.string().optional(),
     firstListing: z.object({
         title: z.string().min(1),

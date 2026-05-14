@@ -55,6 +55,10 @@ export default function PartnerOnboarding() {
       showToast('Please provide all required business details.', 'error');
       return;
     }
+    if (!msmeNumber.trim()) {
+      showToast('MSME number is required.', 'error');
+      return;
+    }
 
     setLoading(true);
     try {
@@ -174,7 +178,7 @@ export default function PartnerOnboarding() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-4 group">
                     <label className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 group-focus-within:text-emerald-600 transition-colors">
-                      MSME Number <span className="text-slate-200">(optional)</span>
+                      MSME Number <span className="text-rose-500">*</span>
                     </label>
                     <div className="relative">
                       <div className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-emerald-500 transition-colors">
@@ -277,7 +281,17 @@ export default function PartnerOnboarding() {
                   />
                 </div>
               </div>
-              <Nav next={() => setStep(2)} />
+              <Nav next={() => {
+                if (!businessName.trim()) {
+                  showToast('Please enter your business name.', 'error');
+                  return;
+                }
+                if (!msmeNumber.trim()) {
+                  showToast('MSME number is required to continue.', 'error');
+                  return;
+                }
+                setStep(2);
+              }} />
             </motion.div>
           )}
 
