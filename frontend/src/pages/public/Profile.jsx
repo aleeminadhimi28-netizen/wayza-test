@@ -198,7 +198,7 @@ export default function Profile() {
     { id: 'security', label: 'Security', icon: Shield },
   ];
 
-  const displayName = name?.split(' ')[0] || email?.split('@')[0] || 'Guest';
+  const displayName = name?.split(' ')[0] || email?.split('@')?.[0] || 'Guest';
   const initials = displayName.charAt(0).toUpperCase();
 
   return (

@@ -179,7 +179,7 @@ export default function PartnerChat() {
                     <h4
                       className={`font-semibold text-sm truncate ${selected?._id === b._id ? 'text-slate-900' : 'text-slate-600'}`}
                     >
-                      {b.guestEmail?.split('@')[0]}
+                      {b.guestEmail?.split('@')?.[0]}
                     </h4>
                     <p className="text-xs text-slate-400 truncate">{b.title}</p>
                   </div>
@@ -203,7 +203,7 @@ export default function PartnerChat() {
               </div>
               <div>
                 <h3 className="font-bold text-sm text-slate-900">
-                  {selected?.guestEmail?.split('@')[0]}
+                  {selected?.guestEmail?.split('@')?.[0]}
                 </h3>
                 <p className="text-xs text-slate-500">{selected?.title} · Online</p>
               </div>

@@ -274,7 +274,7 @@ export default function PartnerCalendar() {
                                   <span
                                     className={`text-[11px] font-bold truncate ${b.theme.label}`}
                                   >
-                                    {b.guestEmail?.split('@')[0]}
+                                    {b.guestEmail?.split('@')?.[0]}
                                   </span>
                                 )}
                               </button>
@@ -384,7 +384,7 @@ export default function PartnerCalendar() {
                       <div className={`w-1 h-10 rounded-full ${b.theme.bar}`} />
                       <div className="flex-1 min-w-0">
                         <p className="font-bold text-sm text-slate-900 truncate">
-                          {b.guestEmail?.split('@')[0]}
+                          {b.guestEmail?.split('@')?.[0]}
                         </p>
                         <p className="text-[11px] text-slate-500 font-medium truncate mb-1">
                           {b.title}

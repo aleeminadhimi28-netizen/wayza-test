@@ -222,7 +222,7 @@ export default function PartnerLayout() {
               </div>
               <div className="min-w-0">
                 <div className="text-sm font-semibold text-white truncate">
-                  {user?.email?.split('@')[0]}
+                  {user?.email?.split('@')?.[0]}
                 </div>
                 <div className="text-[11px] text-emerald-500 flex items-center gap-1 font-medium mt-0.5">
                   <ShieldCheck size={12} /> Verified Partner

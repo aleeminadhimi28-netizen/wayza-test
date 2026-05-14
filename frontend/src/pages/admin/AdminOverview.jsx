@@ -180,7 +180,7 @@ export default function AdminOverview({ stats, setActiveTab }) {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-sm text-slate-900 truncate">{b.title}</p>
-                  <p className="text-xs text-slate-400 truncate">{b.guestEmail?.split('@')[0]}</p>
+                  <p className="text-xs text-slate-400 truncate">{b.guestEmail?.split('@')?.[0]}</p>
                 </div>
                 <div className="text-right">
                   <p className="font-bold text-sm text-slate-900">

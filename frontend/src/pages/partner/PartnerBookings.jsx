@@ -362,7 +362,7 @@ export default function PartnerBookings() {
                               {(b.guestEmail || 'G').charAt(0).toUpperCase()}
                             </div>
                             <span className="text-sm font-medium text-slate-700 truncate max-w-[120px]">
-                              {b.guestEmail?.split('@')[0]}
+                              {b.guestEmail?.split('@')?.[0]}
                             </span>
                           </div>
                         </td>

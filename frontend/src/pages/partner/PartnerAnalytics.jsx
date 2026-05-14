@@ -501,7 +501,7 @@ export default function PartnerAnalytics() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-sm text-slate-900 truncate">
-                    {b.guestEmail?.split('@')[0]}
+                    {b.guestEmail?.split('@')?.[0]}
                   </p>
                   <p className="text-xs text-slate-400">{b.checkIn}</p>
                 </div>

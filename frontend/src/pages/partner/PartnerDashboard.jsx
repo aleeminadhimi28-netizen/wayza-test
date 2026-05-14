@@ -258,7 +258,7 @@ export default function PartnerDashboard() {
             <Sparkles size={14} /> Partner Dashboard
           </div>
           <h1 className="text-3xl font-bold text-slate-900">
-            Welcome back, {user?.email?.split('@')[0]}
+            Welcome back, {user?.email?.split('@')?.[0]}
           </h1>
           <p className="text-slate-500 text-sm">
             Here's what's happening with your properties today.
@@ -647,7 +647,7 @@ export default function PartnerDashboard() {
                         <p className="font-semibold text-slate-900 text-sm truncate max-w-[200px]">
                           {b.title || 'Untitled Property'}
                         </p>
-                        <p className="text-xs text-slate-500">{b.guestEmail?.split('@')[0]}</p>
+                        <p className="text-xs text-slate-500">{b.guestEmail?.split('@')?.[0]}</p>
                       </div>
                     </div>
                   </td>

@@ -35,7 +35,7 @@ export default function ListingReviews({ reviews, avgRating }) {
                 </div>
                 <div>
                   <p className="text-sm font-black uppercase tracking-widest text-slate-900">
-                    {r.guestEmail?.split('@')[0]}
+                    {r.guestEmail?.split('@')?.[0]}
                   </p>
                   <p className="text-[11px] text-emerald-600 font-bold uppercase tracking-widest leading-none mt-1">
                     Verified Stay

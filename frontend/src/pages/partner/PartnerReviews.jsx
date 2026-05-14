@@ -142,7 +142,7 @@ export default function PartnerReviews() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-3 flex-wrap">
                         <h4 className="font-bold text-sm text-slate-900">
-                          {r.guestEmail?.split('@')[0]}
+                          {r.guestEmail?.split('@')?.[0]}
                         </h4>
                         <span className="text-xs text-slate-400 bg-slate-50 px-2 py-0.5 rounded-md">
                           {r.listingTitle}
