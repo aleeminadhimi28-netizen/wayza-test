@@ -79,6 +79,7 @@ const PartnerCalendar = lazy(() => import('./pages/partner/PartnerCalendar.jsx')
 const PartnerEarnings = lazy(() => import('./pages/partner/PartnerEarnings.jsx'));
 const PartnerWallet = lazy(() => import('./pages/partner/PartnerWallet.jsx'));
 const PartnerRegister = lazy(() => import('./pages/partner/PartnerRegister.jsx'));
+const PartnerPricing = lazy(() => import('./pages/partner/PartnerPricing.jsx'));
 
 /* ================= ADMIN ================= */
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard.jsx'));
@@ -178,6 +179,7 @@ function AppContent() {
             <Route path="bookings" element={<PartnerBookings />} />
             <Route path="create" element={<PartnerCreateProperty />} />
             <Route path="calendar" element={<PartnerCalendar />} />
+            <Route path="pricing" element={<PartnerPricing />} />
             <Route path="earnings" element={<PartnerEarnings />} />
             <Route path="reviews" element={<PartnerReviews />} />
             <Route path="analytics" element={<PartnerAnalytics />} />

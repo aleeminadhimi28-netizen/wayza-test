@@ -30,6 +30,7 @@ import { NotificationDropdown } from '../components/ui/NotificationDropdown.jsx'
 const NAV = [
   { to: '/partner', label: 'Dashboard', icon: LayoutDashboard, end: true, detail: 'Overview' },
   { to: '/partner/properties', label: 'My Stays', icon: Home, detail: 'Property Control' },
+  { to: '/partner/pricing', label: 'Pricing', icon: DollarSign, detail: 'Dynamic Pricing' },
   { to: '/partner/bookings', label: 'Reservations', icon: CalendarCheck, detail: 'Guest Logs' },
   { to: '/partner/calendar', label: 'Live Calendar', icon: Calendar, detail: 'Timeline' },
   { to: '/partner/earnings', label: 'Earnings', icon: Wallet, detail: 'Revenue' },
