@@ -723,6 +723,7 @@ export default function PartnerDashboard() {
             </button>
           </div>
         )}
+      </div>
     </motion.div>
   );
 }
