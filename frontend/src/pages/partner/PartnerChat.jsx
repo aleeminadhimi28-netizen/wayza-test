@@ -120,8 +120,14 @@ export default function PartnerChat() {
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-emerald-500/5 blur-[120px] rounded-full" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-700/5 blur-[100px] rounded-full" />
-        <div className="absolute inset-0 opacity-[0.015]"
-          style={{ backgroundImage: 'linear-gradient(rgba(52,211,153,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(52,211,153,0.6) 1px, transparent 1px)', backgroundSize: '48px 48px' }} />
+        <div
+          className="absolute inset-0 opacity-[0.015]"
+          style={{
+            backgroundImage:
+              'linear-gradient(rgba(52,211,153,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(52,211,153,0.6) 1px, transparent 1px)',
+            backgroundSize: '48px 48px',
+          }}
+        />
       </div>
 
       <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 py-10 flex flex-col h-[calc(100vh-40px)] min-h-[600px]">
@@ -130,7 +136,9 @@ export default function PartnerChat() {
           <div className="flex items-center gap-2 text-emerald-400 font-black text-[10px] uppercase tracking-[0.4em] mb-1">
             <Sparkles size={12} /> Guest Concierge
           </div>
-          <h1 className="text-3xl font-black text-white tracking-tight uppercase">Guest Messages</h1>
+          <h1 className="text-3xl font-black text-white tracking-tight uppercase">
+            Guest Messages
+          </h1>
           <p className="text-sm text-white/30 font-medium mt-1">
             Direct communication channel with your confirmed guests.
           </p>
@@ -141,7 +149,9 @@ export default function PartnerChat() {
             <div className="w-14 h-14 bg-white/[0.05] border border-white/[0.1] rounded-2xl flex items-center justify-center text-white/20 mb-4">
               <MessageSquare size={24} />
             </div>
-            <h3 className="text-lg font-black text-white uppercase tracking-tight mb-1">No active chats</h3>
+            <h3 className="text-lg font-black text-white uppercase tracking-tight mb-1">
+              No active chats
+            </h3>
             <p className="text-sm text-white/30 font-medium max-w-xs">
               Messaging is available for guests with confirmed bookings.
             </p>
@@ -183,7 +193,9 @@ export default function PartnerChat() {
                       >
                         {b.guestEmail?.split('@')?.[0]}
                       </h4>
-                      <p className="text-[10px] font-bold text-white/30 uppercase tracking-wide truncate">{b.title}</p>
+                      <p className="text-[10px] font-bold text-white/30 uppercase tracking-wide truncate">
+                        {b.title}
+                      </p>
                     </div>
                     {selected?._id === b._id && (
                       <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full shrink-0 animate-pulse" />
@@ -207,7 +219,9 @@ export default function PartnerChat() {
                   <h3 className="font-bold text-sm text-white">
                     {selected?.guestEmail?.split('@')?.[0]}
                   </h3>
-                  <p className="text-[10px] font-bold text-white/30 uppercase tracking-wider">{selected?.title} · Connected</p>
+                  <p className="text-[10px] font-bold text-white/30 uppercase tracking-wider">
+                    {selected?.title} · Connected
+                  </p>
                 </div>
               </header>
 
@@ -218,7 +232,9 @@ export default function PartnerChat() {
                     <div className="w-12 h-12 rounded-xl bg-white/[0.03] border border-white/[0.05] flex items-center justify-center text-white/20">
                       <MessageSquare size={20} />
                     </div>
-                    <p className="text-xs font-bold text-white/30 uppercase tracking-widest">Start conversation</p>
+                    <p className="text-xs font-bold text-white/30 uppercase tracking-widest">
+                      Start conversation
+                    </p>
                   </div>
                 ) : (
                   messages.map((m, i) => {

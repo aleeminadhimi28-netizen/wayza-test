@@ -60,7 +60,9 @@ export default function PartnerReviews() {
             <div className="flex items-center gap-2 text-emerald-400 font-black text-[10px] uppercase tracking-[0.4em] mb-1">
               <Sparkles size={12} /> Feedback
             </div>
-            <h1 className="text-3xl font-black text-white uppercase tracking-tight">Guest Feedback</h1>
+            <h1 className="text-3xl font-black text-white uppercase tracking-tight">
+              Guest Feedback
+            </h1>
             <p className="text-sm text-white/30 font-medium mt-1">
               Read and manage reviews from your property guests.
             </p>
@@ -107,7 +109,9 @@ export default function PartnerReviews() {
               >
                 <c.icon size={18} strokeWidth={2.5} />
               </div>
-              <p className="text-[10px] font-black text-white/20 uppercase tracking-wide mb-0.5">{c.label}</p>
+              <p className="text-[10px] font-black text-white/20 uppercase tracking-wide mb-0.5">
+                {c.label}
+              </p>
               <p className="text-2xl font-black text-white">{c.value}</p>
             </motion.div>
           ))}
@@ -116,7 +120,9 @@ export default function PartnerReviews() {
         {/* REVIEWS LIST */}
         <div className="bg-white/[0.03] border border-white/[0.08] rounded-3xl overflow-hidden backdrop-blur-xl">
           <div className="p-6 border-b border-white/[0.05] bg-white/[0.02]">
-            <h3 className="text-sm font-black text-white uppercase tracking-[0.2em]">All Reviews</h3>
+            <h3 className="text-sm font-black text-white uppercase tracking-[0.2em]">
+              All Reviews
+            </h3>
             <p className="text-xs text-white/30 font-medium mt-0.5">
               {reviews.length} reviews across {listings.length} properties
             </p>
@@ -127,7 +133,9 @@ export default function PartnerReviews() {
               <div className="w-14 h-14 bg-white/[0.02] rounded-2xl flex items-center justify-center text-white/10 mx-auto mb-4 border border-white/[0.05]">
                 <Star size={28} />
               </div>
-              <h4 className="text-sm font-bold text-white/30 uppercase tracking-widest mb-1">No reviews yet</h4>
+              <h4 className="text-sm font-bold text-white/30 uppercase tracking-widest mb-1">
+                No reviews yet
+              </h4>
               <p className="text-xs text-white/20 font-medium max-w-xs mx-auto">
                 Guest reviews will appear here once visitors share their experience.
               </p>

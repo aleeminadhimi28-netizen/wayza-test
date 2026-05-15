@@ -82,20 +82,29 @@ export default function PartnerEarnings() {
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-emerald-500/5 blur-[120px] rounded-full" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-700/5 blur-[100px] rounded-full" />
-        <div className="absolute inset-0 opacity-[0.015]"
-          style={{ backgroundImage: 'linear-gradient(rgba(52,211,153,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(52,211,153,0.6) 1px, transparent 1px)', backgroundSize: '48px 48px' }} />
+        <div
+          className="absolute inset-0 opacity-[0.015]"
+          style={{
+            backgroundImage:
+              'linear-gradient(rgba(52,211,153,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(52,211,153,0.6) 1px, transparent 1px)',
+            backgroundSize: '48px 48px',
+          }}
+        />
       </div>
 
       <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 py-10 space-y-8">
-        
         {/* HEADER */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-white/[0.03] border border-white/[0.08] p-8 rounded-3xl backdrop-blur-xl">
           <div>
             <div className="flex items-center gap-2 text-emerald-400 font-black text-[10px] uppercase tracking-[0.4em] mb-1">
               <TrendingUp size={12} /> Earnings
             </div>
-            <h1 className="text-3xl font-black text-white tracking-tight uppercase">Revenue Overview</h1>
-            <p className="text-sm text-white/30 font-medium">Track your property earnings and payouts.</p>
+            <h1 className="text-3xl font-black text-white tracking-tight uppercase">
+              Revenue Overview
+            </h1>
+            <p className="text-sm text-white/30 font-medium">
+              Track your property earnings and payouts.
+            </p>
           </div>
           <button
             onClick={() => {
@@ -141,10 +150,14 @@ export default function PartnerEarnings() {
               transition={{ delay: i * 0.08 }}
               className="bg-white/[0.03] border border-white/[0.08] p-6 rounded-2xl backdrop-blur-xl hover:bg-white/[0.05] transition-colors"
             >
-              <div className={`w-11 h-11 rounded-xl ${c.bg} ${c.color} flex items-center justify-center mb-4`}>
+              <div
+                className={`w-11 h-11 rounded-xl ${c.bg} ${c.color} flex items-center justify-center mb-4`}
+              >
                 <c.icon size={20} />
               </div>
-              <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-1">{c.label}</p>
+              <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-1">
+                {c.label}
+              </p>
               <p className="text-2xl font-black text-white tracking-tight">{c.value}</p>
             </motion.div>
           ))}
@@ -154,7 +167,9 @@ export default function PartnerEarnings() {
         <div className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6 backdrop-blur-xl">
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h3 className="text-lg font-black text-white uppercase tracking-tight">Monthly Revenue</h3>
+              <h3 className="text-lg font-black text-white uppercase tracking-tight">
+                Monthly Revenue
+              </h3>
               <p className="text-xs text-white/30 font-medium">Earnings breakdown by month</p>
             </div>
           </div>
@@ -163,7 +178,11 @@ export default function PartnerEarnings() {
             <div className="h-[350px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={monthly}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="rgba(255,255,255,0.05)"
+                  />
                   <XAxis
                     dataKey="month"
                     tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.3)', fontWeight: 'bold' }}
@@ -203,7 +222,9 @@ export default function PartnerEarnings() {
           ) : (
             <div className="py-20 text-center">
               <BarChart3 size={28} className="text-white/10 mx-auto mb-3" />
-              <h4 className="text-sm font-bold text-white/30 uppercase tracking-widest mb-1">No revenue data yet</h4>
+              <h4 className="text-sm font-bold text-white/30 uppercase tracking-widest mb-1">
+                No revenue data yet
+              </h4>
               <p className="text-xs text-white/20 font-medium">
                 Revenue data will appear once bookings are confirmed.
               </p>
@@ -216,8 +237,12 @@ export default function PartnerEarnings() {
           <div className="bg-white/[0.03] border border-white/[0.08] rounded-2xl backdrop-blur-xl overflow-hidden">
             <div className="p-6 border-b border-white/[0.05] flex justify-between items-center">
               <div>
-                <h3 className="text-lg font-black text-white uppercase tracking-tight">Monthly Performance</h3>
-                <p className="text-xs text-white/30 font-medium">Consolidated monthly revenue logs.</p>
+                <h3 className="text-lg font-black text-white uppercase tracking-tight">
+                  Monthly Performance
+                </h3>
+                <p className="text-xs text-white/30 font-medium">
+                  Consolidated monthly revenue logs.
+                </p>
               </div>
             </div>
             <table className="w-full text-left">
@@ -261,8 +286,12 @@ export default function PartnerEarnings() {
         <div className="bg-white/[0.03] border border-white/[0.08] rounded-2xl backdrop-blur-xl overflow-hidden">
           <div className="p-6 border-b border-white/[0.05] flex justify-between items-center">
             <div>
-              <h3 className="text-lg font-black text-white uppercase tracking-tight">Settlement Ledger</h3>
-              <p className="text-xs text-white/30 font-medium">Detailed breakdown of individual stay payouts.</p>
+              <h3 className="text-lg font-black text-white uppercase tracking-tight">
+                Settlement Ledger
+              </h3>
+              <p className="text-xs text-white/30 font-medium">
+                Detailed breakdown of individual stay payouts.
+              </p>
             </div>
             <span className="text-[10px] font-black text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20 uppercase tracking-widest leading-none flex items-center gap-1.5 shadow-sm">
               <CheckCircle size={10} /> Merchant Sync Active
@@ -296,7 +325,10 @@ export default function PartnerEarnings() {
                     const isSettled = b.payoutStatus === 'paid_out';
 
                     return (
-                      <tr key={b._id || i} className="hover:bg-white/[0.01] transition-colors group">
+                      <tr
+                        key={b._id || i}
+                        className="hover:bg-white/[0.01] transition-colors group"
+                      >
                         <td className="px-6 py-4">
                           <p className="font-bold text-white text-sm truncate max-w-[200px]">
                             {b.title}

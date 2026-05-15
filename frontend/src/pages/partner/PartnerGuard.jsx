@@ -12,7 +12,9 @@ const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 function isCacheValid() {
   const ts = sessionStorage.getItem('partner_onboarded_at');
   if (!ts) return false;
-  return sessionStorage.getItem('partner_onboarded') === 'true' && Date.now() - Number(ts) < CACHE_TTL_MS;
+  return (
+    sessionStorage.getItem('partner_onboarded') === 'true' && Date.now() - Number(ts) < CACHE_TTL_MS
+  );
 }
 
 export default function PartnerGuard({ children }) {
@@ -171,11 +173,11 @@ export default function PartnerGuard({ children }) {
               </button>
               <button
                 onClick={() => {
-                    sessionStorage.removeItem('partner_onboarded');
-                    sessionStorage.removeItem('partner_onboarded_at');
-                    logout();
-                    navigate('/partner-login');
-                  }}
+                  sessionStorage.removeItem('partner_onboarded');
+                  sessionStorage.removeItem('partner_onboarded_at');
+                  logout();
+                  navigate('/partner-login');
+                }}
                 className="flex-1 h-12 bg-rose-50 text-rose-600 border border-rose-100 rounded-xl font-semibold text-xs uppercase tracking-wider hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center gap-2"
               >
                 <LogOut size={14} />

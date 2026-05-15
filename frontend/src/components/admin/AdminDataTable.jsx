@@ -1,6 +1,16 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, CheckCircle, Clock, Trash2, Volume2, VolumeX, X, Plus, Shield } from 'lucide-react';
+import {
+  Search,
+  CheckCircle,
+  Clock,
+  Trash2,
+  Volume2,
+  VolumeX,
+  X,
+  Plus,
+  Shield,
+} from 'lucide-react';
 import ConfirmModal from '../ui/ConfirmModal.jsx';
 
 export default function AdminDataTable({
@@ -90,7 +100,9 @@ export default function AdminDataTable({
               <Clock size={18} />
             </div>
             <div>
-              <h3 className="font-black text-sm text-white uppercase tracking-tight">Pending Inventory Approvals</h3>
+              <h3 className="font-black text-sm text-white uppercase tracking-tight">
+                Pending Inventory Approvals
+              </h3>
               <p className="text-xs text-white/40 font-medium">
                 {dataList.filter((i) => !i.approved).length} listings waiting for review
               </p>
@@ -164,7 +176,9 @@ export default function AdminDataTable({
             <h3 className="text-lg font-black text-white uppercase tracking-tight">
               {activeTab === 'listings' ? 'All Inventory' : activeTab}
             </h3>
-            <p className="text-xs text-white/30 font-medium mt-0.5">{filteredData.length} records found</p>
+            <p className="text-xs text-white/30 font-medium mt-0.5">
+              {filteredData.length} records found
+            </p>
           </div>
           <div className="flex items-center gap-3 w-full sm:w-auto">
             {activeTab === 'partners' && (
@@ -300,7 +314,9 @@ export default function AdminDataTable({
                                 GST: {item.gstNumber}
                               </span>
                             ) : (
-                              <span className="text-[10px] text-white/20 font-bold uppercase tracking-wide">No GST</span>
+                              <span className="text-[10px] text-white/20 font-bold uppercase tracking-wide">
+                                No GST
+                              </span>
                             )}
                           </div>
                         ) : (
@@ -427,7 +443,9 @@ export default function AdminDataTable({
           {filteredData.length === 0 && (
             <div className="py-20 text-center">
               <Search size={24} className="text-white/10 mx-auto mb-2" />
-              <h3 className="text-sm font-bold text-white/30 uppercase tracking-widest mb-1">No records found</h3>
+              <h3 className="text-sm font-bold text-white/30 uppercase tracking-widest mb-1">
+                No records found
+              </h3>
               <p className="text-xs text-white/20 font-medium">Try adjusting your search query.</p>
             </div>
           )}
@@ -455,8 +473,12 @@ export default function AdminDataTable({
           >
             <div className="p-6 border-b border-white/[0.05] flex justify-between items-center bg-white/[0.02]">
               <div>
-                <h3 className="text-lg font-black text-white uppercase tracking-tight">Onboard Partner</h3>
-                <p className="text-xs text-white/30 font-medium mt-0.5">Create a new partner account directly</p>
+                <h3 className="text-lg font-black text-white uppercase tracking-tight">
+                  Onboard Partner
+                </h3>
+                <p className="text-xs text-white/30 font-medium mt-0.5">
+                  Create a new partner account directly
+                </p>
               </div>
               <button
                 onClick={() => setCreatePartnerModal(false)}

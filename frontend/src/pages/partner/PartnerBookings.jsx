@@ -205,7 +205,9 @@ export default function PartnerBookings() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 bg-[#050a08]">
         <div className="w-10 h-10 border-2 border-white/10 border-t-emerald-500 rounded-full animate-spin" />
-        <p className="text-sm font-bold text-white/30 uppercase tracking-widest">Loading reservations...</p>
+        <p className="text-sm font-bold text-white/30 uppercase tracking-widest">
+          Loading reservations...
+        </p>
       </div>
     );
 
@@ -240,8 +242,8 @@ export default function PartnerBookings() {
               Booking <span className="text-emerald-400">Register</span>
             </h1>
             <p className="text-white/30 text-sm font-medium">
-              {bookings.length} total {bookings.length === 1 ? 'reservation' : 'reservations'} across
-              your properties.
+              {bookings.length} total {bookings.length === 1 ? 'reservation' : 'reservations'}{' '}
+              across your properties.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-3">
@@ -303,7 +305,9 @@ export default function PartnerBookings() {
               <div className="w-14 h-14 bg-white/[0.02] rounded-2xl flex items-center justify-center text-white/10">
                 <CalendarCheck size={28} />
               </div>
-              <h3 className="text-sm font-bold text-white/30 uppercase tracking-widest">No reservations found</h3>
+              <h3 className="text-sm font-bold text-white/30 uppercase tracking-widest">
+                No reservations found
+              </h3>
               <p className="text-white/20 text-xs font-medium max-w-xs">
                 {search || filter !== 'all'
                   ? 'Try adjusting your search or filter.'
@@ -375,11 +379,15 @@ export default function PartnerBookings() {
                           <td className="px-6 py-4">
                             <div className="text-xs font-bold text-white/70 space-y-1">
                               <div className="flex items-center gap-1.5">
-                                <span className="text-[10px] text-white/20 font-black uppercase tracking-wide">In:</span>
+                                <span className="text-[10px] text-white/20 font-black uppercase tracking-wide">
+                                  In:
+                                </span>
                                 <span>{b.checkIn}</span>
                               </div>
                               <div className="flex items-center gap-1.5">
-                                <span className="text-[10px] text-white/20 font-black uppercase tracking-wide">Out:</span>
+                                <span className="text-[10px] text-white/20 font-black uppercase tracking-wide">
+                                  Out:
+                                </span>
                                 <span>{b.checkOut}</span>
                               </div>
                             </div>
@@ -422,7 +430,9 @@ export default function PartnerBookings() {
                   Showing {visible.length} of {bookings.length} reservations
                 </p>
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold text-white/20 uppercase tracking-wide">Confirmed Revenue:</span>
+                  <span className="text-[10px] font-bold text-white/20 uppercase tracking-wide">
+                    Confirmed Revenue:
+                  </span>
                   <span className="text-lg font-black text-emerald-400">
                     ₹{totalRevenue.toLocaleString()}
                   </span>
@@ -459,7 +469,9 @@ export default function PartnerBookings() {
                     <p className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-400">
                       Verification Hub
                     </p>
-                    <h3 className="text-xl font-black text-white uppercase tracking-tight">Check-in QR Code</h3>
+                    <h3 className="text-xl font-black text-white uppercase tracking-tight">
+                      Check-in QR Code
+                    </h3>
                   </div>
 
                   {!scanResult ? (
@@ -480,7 +492,9 @@ export default function PartnerBookings() {
                         {!scanning && !manualCode && (
                           <div className="absolute inset-0 flex flex-col items-center justify-center text-white bg-black/80 p-8 text-center gap-4">
                             <Camera size={32} className="text-white/20" />
-                            <p className="text-xs font-bold text-white/70">Camera access required</p>
+                            <p className="text-xs font-bold text-white/70">
+                              Camera access required
+                            </p>
                             <button
                               onClick={startScanner}
                               className="px-4 py-2 bg-emerald-500 text-[#050a08] rounded-lg text-[10px] font-black uppercase tracking-wide"

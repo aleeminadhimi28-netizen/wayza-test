@@ -64,7 +64,7 @@ export default function PartnerDashboard() {
         if (m.ok) setMonthly(m.data || []);
         const listingArr = Array.isArray(l) ? l : [];
         setListings(listingArr);
-        
+
         const initEdits = {};
         listingArr.forEach((lst) => {
           initEdits[lst._id] = {
@@ -248,15 +248,20 @@ export default function PartnerDashboard() {
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-emerald-500/5 blur-[120px] rounded-full" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-700/5 blur-[100px] rounded-full" />
-        <div className="absolute inset-0 opacity-[0.015]"
-          style={{ backgroundImage: 'linear-gradient(rgba(52,211,153,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(52,211,153,0.6) 1px, transparent 1px)', backgroundSize: '48px 48px' }} />
+        <div
+          className="absolute inset-0 opacity-[0.015]"
+          style={{
+            backgroundImage:
+              'linear-gradient(rgba(52,211,153,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(52,211,153,0.6) 1px, transparent 1px)',
+            backgroundSize: '48px 48px',
+          }}
+        />
       </div>
 
       <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 py-10 space-y-8">
-        
         {/* ─── PENDING APPROVAL ALERT ─── */}
         {!dismissedAlert && listings.some((l) => !l.approved) && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             className="flex items-start gap-4 bg-amber-500/5 border border-amber-500/20 rounded-2xl px-6 py-4 backdrop-blur-sm"
@@ -328,7 +333,9 @@ export default function PartnerDashboard() {
               className="bg-white/[0.03] border border-white/[0.08] p-6 rounded-2xl backdrop-blur-xl hover:bg-white/[0.05] transition-colors flex flex-col justify-between h-36"
             >
               <div className="flex justify-between items-start">
-                <div className={`w-10 h-10 rounded-xl ${c.bg} ${c.color} flex items-center justify-center`}>
+                <div
+                  className={`w-10 h-10 rounded-xl ${c.bg} ${c.color} flex items-center justify-center`}
+                >
                   <c.icon size={20} />
                 </div>
                 <div
@@ -344,7 +351,9 @@ export default function PartnerDashboard() {
               </div>
               <div>
                 <p className="text-2xl font-black text-white tracking-tight">{c.value}</p>
-                <h3 className="text-white/30 font-bold text-[10px] uppercase tracking-[0.2em] mt-1">{c.label}</h3>
+                <h3 className="text-white/30 font-bold text-[10px] uppercase tracking-[0.2em] mt-1">
+                  {c.label}
+                </h3>
               </div>
             </motion.div>
           ))}
@@ -355,7 +364,9 @@ export default function PartnerDashboard() {
           <div className="xl:col-span-2 bg-white/[0.03] border border-white/[0.08] rounded-3xl p-8 backdrop-blur-xl">
             <div className="flex justify-between items-center mb-8">
               <div>
-                <h3 className="text-lg font-black text-white uppercase tracking-tight">Revenue Overview</h3>
+                <h3 className="text-lg font-black text-white uppercase tracking-tight">
+                  Revenue Overview
+                </h3>
                 <p className="text-sm text-white/30 font-medium">Your total earnings over time</p>
               </div>
               <select
@@ -378,7 +389,11 @@ export default function PartnerDashboard() {
                       <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="rgba(255,255,255,0.05)"
+                  />
                   <XAxis
                     dataKey="month"
                     tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.3)', fontWeight: 'bold' }}
@@ -425,7 +440,9 @@ export default function PartnerDashboard() {
               <div className="absolute -top-10 -right-10 w-32 h-32 bg-emerald-500/10 blur-2xl group-hover:bg-emerald-500/20 transition-colors duration-1000" />
               <div className="relative z-10 space-y-4">
                 <div>
-                  <h3 className="text-lg font-black uppercase tracking-tight mb-1">Increase Visibility</h3>
+                  <h3 className="text-lg font-black uppercase tracking-tight mb-1">
+                    Increase Visibility
+                  </h3>
                   <p className="text-white/40 text-xs leading-relaxed font-medium">
                     Join the Premium Partner Program to boost your search rankings by up to 45% and
                     access exclusive insights.
@@ -443,24 +460,54 @@ export default function PartnerDashboard() {
             {/* Quick Links */}
             <div className="bg-white/[0.03] border border-white/[0.08] rounded-3xl p-8 backdrop-blur-xl">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-sm font-black uppercase tracking-[0.2em] text-white">Quick Links</h3>
+                <h3 className="text-sm font-black uppercase tracking-[0.2em] text-white">
+                  Quick Links
+                </h3>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 {[
-                  { label: 'Properties', icon: Home, color: 'text-blue-400', bg: 'bg-blue-500/10', path: '/partner/properties' },
-                  { label: 'Earnings', icon: DollarSign, color: 'text-emerald-400', bg: 'bg-emerald-500/10', path: '/partner/earnings' },
-                  { label: 'Reviews', icon: Star, color: 'text-amber-400', bg: 'bg-amber-500/10', path: '/partner/reviews' },
-                  { label: 'Calendar', icon: Calendar, color: 'text-purple-400', bg: 'bg-purple-500/10', path: '/partner/calendar' },
+                  {
+                    label: 'Properties',
+                    icon: Home,
+                    color: 'text-blue-400',
+                    bg: 'bg-blue-500/10',
+                    path: '/partner/properties',
+                  },
+                  {
+                    label: 'Earnings',
+                    icon: DollarSign,
+                    color: 'text-emerald-400',
+                    bg: 'bg-emerald-500/10',
+                    path: '/partner/earnings',
+                  },
+                  {
+                    label: 'Reviews',
+                    icon: Star,
+                    color: 'text-amber-400',
+                    bg: 'bg-amber-500/10',
+                    path: '/partner/reviews',
+                  },
+                  {
+                    label: 'Calendar',
+                    icon: Calendar,
+                    color: 'text-purple-400',
+                    bg: 'bg-purple-500/10',
+                    path: '/partner/calendar',
+                  },
                 ].map((a) => (
                   <button
                     key={a.label}
                     onClick={() => navigate(a.path)}
                     className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.04] hover:border-white/[0.1] transition-all text-left"
                   >
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${a.bg} ${a.color}`}>
+                    <div
+                      className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${a.bg} ${a.color}`}
+                    >
                       <a.icon size={14} />
                     </div>
-                    <span className="text-[11px] font-bold text-white/70 uppercase tracking-wide">{a.label}</span>
+                    <span className="text-[11px] font-bold text-white/70 uppercase tracking-wide">
+                      {a.label}
+                    </span>
                   </button>
                 ))}
               </div>
@@ -476,7 +523,9 @@ export default function PartnerDashboard() {
                 <div className="flex items-center gap-2 text-emerald-400 font-black text-[10px] uppercase tracking-[0.3em] mb-1">
                   <TrendingUp size={12} /> Trend Adjuster
                 </div>
-                <h3 className="text-lg font-black text-white uppercase tracking-tight">Price Manager</h3>
+                <h3 className="text-lg font-black text-white uppercase tracking-tight">
+                  Price Manager
+                </h3>
                 <p className="text-xs text-white/30 font-medium mt-0.5">
                   Adjust your listing prices based on demand trends. Cannot go below floor price.
                 </p>
@@ -493,7 +542,10 @@ export default function PartnerDashboard() {
                 };
                 const floor = lst.baseFloorPrice || 0;
                 const sliderMax = Math.max(floor * 3, (lst.price || 0) * 3, 5000);
-                const pct = sliderMax > floor ? Math.min(100, ((Number(edit.value) - floor) / (sliderMax - floor)) * 100) : 0;
+                const pct =
+                  sliderMax > floor
+                    ? Math.min(100, ((Number(edit.value) - floor) / (sliderMax - floor)) * 100)
+                    : 0;
                 const isDirty = Number(edit.value) !== lst.price;
                 const isBelowFloor = Number(edit.value) < floor;
 
@@ -513,8 +565,12 @@ export default function PartnerDashboard() {
                               Floor: ₹{floor.toLocaleString()}
                             </span>
                           </div>
-                          <span className={`inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ${lst.approved ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}`}>
-                            <div className={`w-1.5 h-1.5 rounded-full ${lst.approved ? 'bg-emerald-400' : 'bg-amber-400'}`} />
+                          <span
+                            className={`inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ${lst.approved ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}`}
+                          >
+                            <div
+                              className={`w-1.5 h-1.5 rounded-full ${lst.approved ? 'bg-emerald-400' : 'bg-amber-400'}`}
+                            />
                             {lst.approved ? 'Live' : 'Pending'}
                           </span>
                         </div>
@@ -544,10 +600,16 @@ export default function PartnerDashboard() {
                         </div>
                         <div className="flex justify-between text-[10px] font-bold uppercase tracking-wide">
                           <span className={isBelowFloor ? 'text-rose-400' : 'text-white/20'}>
-                            {isBelowFloor ? '⚠ Below floor price' : isDirty ? '● Price changed' : 'Current price'}
+                            {isBelowFloor
+                              ? '⚠ Below floor price'
+                              : isDirty
+                                ? '● Price changed'
+                                : 'Current price'}
                           </span>
                           <span className={isDirty ? 'text-emerald-400' : 'text-white/30'}>
-                            {isDirty ? `Was ₹${(lst.price || 0).toLocaleString()}` : `₹${(lst.price || 0).toLocaleString()}/night`}
+                            {isDirty
+                              ? `Was ₹${(lst.price || 0).toLocaleString()}`
+                              : `₹${(lst.price || 0).toLocaleString()}/night`}
                           </span>
                         </div>
                       </div>
@@ -555,7 +617,9 @@ export default function PartnerDashboard() {
                       {/* Input + Save */}
                       <div className="flex items-center gap-3 shrink-0">
                         <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20 font-bold text-sm">₹</span>
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20 font-bold text-sm">
+                            ₹
+                          </span>
                           <input
                             type="number"
                             min={floor}
@@ -603,13 +667,20 @@ export default function PartnerDashboard() {
         <div className="bg-white/[0.03] border border-white/[0.08] rounded-3xl backdrop-blur-xl overflow-hidden">
           <div className="p-6 border-b border-white/[0.05] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h3 className="text-lg font-black text-white uppercase tracking-tight">Recent Bookings</h3>
-              <p className="text-sm text-white/30 font-medium">Monitor your latest guest reservations.</p>
+              <h3 className="text-lg font-black text-white uppercase tracking-tight">
+                Recent Bookings
+              </h3>
+              <p className="text-sm text-white/30 font-medium">
+                Monitor your latest guest reservations.
+              </p>
             </div>
 
             <div className="flex gap-3 w-full sm:w-auto">
               <div className="relative flex-1 sm:w-64">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20" size={14} />
+                <Search
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20"
+                  size={14}
+                />
                 <input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
@@ -658,7 +729,9 @@ export default function PartnerDashboard() {
                           <p className="font-bold text-white text-sm truncate max-w-[200px]">
                             {b.title || 'Untitled Property'}
                           </p>
-                          <p className="text-xs text-white/30 font-medium">{b.guestEmail?.split('@')?.[0]}</p>
+                          <p className="text-xs text-white/30 font-medium">
+                            {b.guestEmail?.split('@')?.[0]}
+                          </p>
                         </div>
                       </div>
                     </td>
@@ -669,12 +742,22 @@ export default function PartnerDashboard() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-1.5">
-                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wide w-fit ${b.status === 'paid' ? 'bg-emerald-500/10 text-emerald-400' : b.status === 'cancelled' ? 'bg-rose-500/10 text-rose-400' : 'bg-amber-500/10 text-amber-400'}`}>
-                          <div className={`w-1.5 h-1.5 rounded-full ${b.status === 'paid' ? 'bg-emerald-400' : b.status === 'cancelled' ? 'bg-rose-400' : 'bg-amber-400'}`} />
-                          {b.status === 'paid' ? 'Confirmed' : b.status === 'cancelled' ? 'Cancelled' : 'Pending'}
+                        <span
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wide w-fit ${b.status === 'paid' ? 'bg-emerald-500/10 text-emerald-400' : b.status === 'cancelled' ? 'bg-rose-500/10 text-rose-400' : 'bg-amber-500/10 text-amber-400'}`}
+                        >
+                          <div
+                            className={`w-1.5 h-1.5 rounded-full ${b.status === 'paid' ? 'bg-emerald-400' : b.status === 'cancelled' ? 'bg-rose-400' : 'bg-amber-400'}`}
+                          />
+                          {b.status === 'paid'
+                            ? 'Confirmed'
+                            : b.status === 'cancelled'
+                              ? 'Cancelled'
+                              : 'Pending'}
                         </span>
                         {b.status === 'paid' && (
-                          <span className={`text-[9px] font-black uppercase tracking-wider ${b.payoutStatus === 'paid_out' ? 'text-blue-400' : 'text-amber-400'}`}>
+                          <span
+                            className={`text-[9px] font-black uppercase tracking-wider ${b.payoutStatus === 'paid_out' ? 'text-blue-400' : 'text-amber-400'}`}
+                          >
                             Payout: {b.payoutStatus === 'paid_out' ? 'Settled' : 'Pending'}
                           </span>
                         )}
@@ -695,7 +778,9 @@ export default function PartnerDashboard() {
                   <tr>
                     <td colSpan={4} className="py-16 text-center">
                       <Activity size={24} className="mx-auto text-white/10 mb-3" />
-                      <p className="text-xs font-bold text-white/30 uppercase tracking-widest">No bookings found</p>
+                      <p className="text-xs font-bold text-white/30 uppercase tracking-widest">
+                        No bookings found
+                      </p>
                     </td>
                   </tr>
                 )}
@@ -707,7 +792,8 @@ export default function PartnerDashboard() {
           {bookings.length > 8 && (
             <div className="px-6 py-4 border-t border-white/[0.05] flex justify-between items-center">
               <p className="text-xs text-white/30 font-medium">
-                Showing 8 of <span className="font-bold text-white/50">{bookings.length}</span> bookings
+                Showing 8 of <span className="font-bold text-white/50">{bookings.length}</span>{' '}
+                bookings
               </p>
               <button
                 onClick={() => navigate('/partner/bookings')}

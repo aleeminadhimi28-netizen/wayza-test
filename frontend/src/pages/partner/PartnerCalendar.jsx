@@ -189,8 +189,14 @@ export default function PartnerCalendar() {
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-emerald-500/5 blur-[120px] rounded-full" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-700/5 blur-[100px] rounded-full" />
-        <div className="absolute inset-0 opacity-[0.015]"
-          style={{ backgroundImage: 'linear-gradient(rgba(52,211,153,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(52,211,153,0.6) 1px, transparent 1px)', backgroundSize: '48px 48px' }} />
+        <div
+          className="absolute inset-0 opacity-[0.015]"
+          style={{
+            backgroundImage:
+              'linear-gradient(rgba(52,211,153,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(52,211,153,0.6) 1px, transparent 1px)',
+            backgroundSize: '48px 48px',
+          }}
+        />
       </div>
 
       <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 py-10 space-y-8">
@@ -200,7 +206,9 @@ export default function PartnerCalendar() {
             <div className="flex items-center gap-2 text-emerald-400 font-black text-[10px] uppercase tracking-[0.4em] mb-1">
               <Sparkles size={12} /> Schedule
             </div>
-            <h1 className="text-3xl font-black text-white tracking-tight uppercase">Booking Calendar</h1>
+            <h1 className="text-3xl font-black text-white tracking-tight uppercase">
+              Booking Calendar
+            </h1>
             <p className="text-sm text-white/30 font-medium mt-1">
               Manage occupancy and configure external notifications.
             </p>
@@ -225,8 +233,12 @@ export default function PartnerCalendar() {
                   <ChevronLeft size={16} />
                 </button>
                 <div className="text-center">
-                  <h2 className="text-lg font-black text-white uppercase tracking-tight">{MONTH_NAMES[viewMonth]}</h2>
-                  <p className="text-[10px] text-white/30 font-black uppercase tracking-widest">{viewYear}</p>
+                  <h2 className="text-lg font-black text-white uppercase tracking-tight">
+                    {MONTH_NAMES[viewMonth]}
+                  </h2>
+                  <p className="text-[10px] text-white/30 font-black uppercase tracking-widest">
+                    {viewYear}
+                  </p>
                 </div>
                 <button
                   onClick={nextMonth}
@@ -301,7 +313,9 @@ export default function PartnerCalendar() {
                   <Share2 size={20} />
                 </div>
                 <div>
-                  <h3 className="text-lg font-black text-white uppercase tracking-tight">Native Calendar Sync</h3>
+                  <h3 className="text-lg font-black text-white uppercase tracking-tight">
+                    Native Calendar Sync
+                  </h3>
                   <p className="text-xs text-white/30 font-medium mt-0.5">
                     Add your Wayzza schedule to Google or Apple Calendar.
                   </p>
@@ -368,13 +382,17 @@ export default function PartnerCalendar() {
             {/* UPCOMING LIST */}
             <div className="bg-white/[0.03] border border-white/[0.08] rounded-3xl backdrop-blur-xl overflow-hidden">
               <div className="px-6 py-4 border-b border-white/[0.05] bg-white/[0.02]">
-                <h3 className="text-sm font-black text-white uppercase tracking-[0.2em]">Upcoming Arrivals</h3>
+                <h3 className="text-sm font-black text-white uppercase tracking-[0.2em]">
+                  Upcoming Arrivals
+                </h3>
               </div>
               <div className="divide-y divide-white/[0.02] max-h-[400px] overflow-y-auto">
                 {upcoming.length === 0 ? (
                   <div className="py-12 text-center px-6">
                     <Calendar size={24} className="text-white/10 mx-auto mb-2" />
-                    <p className="text-xs font-bold text-white/30 uppercase tracking-widest">No upcoming stays</p>
+                    <p className="text-xs font-bold text-white/30 uppercase tracking-widest">
+                      No upcoming stays
+                    </p>
                   </div>
                 ) : (
                   upcoming.map((b) => (
@@ -425,7 +443,9 @@ export default function PartnerCalendar() {
               <div className={`h-1.5 w-full ${selected.theme.bar}`} />
               <div className="px-6 py-5 border-b border-white/[0.05] flex items-start justify-between bg-white/[0.02]">
                 <div>
-                  <h3 className="text-lg font-black text-white uppercase tracking-tight">{selected.title}</h3>
+                  <h3 className="text-lg font-black text-white uppercase tracking-tight">
+                    {selected.title}
+                  </h3>
                   <p className="text-xs text-white/30 font-medium mt-0.5">{selected.guestEmail}</p>
                 </div>
                 <button
@@ -438,11 +458,15 @@ export default function PartnerCalendar() {
               <div className="p-6 space-y-6">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-3 bg-white/[0.02] rounded-xl border border-white/[0.05]">
-                    <p className="text-[10px] font-black text-white/20 uppercase tracking-wider mb-1">Check-In</p>
+                    <p className="text-[10px] font-black text-white/20 uppercase tracking-wider mb-1">
+                      Check-In
+                    </p>
                     <p className="font-bold text-sm text-white">{selected.checkIn}</p>
                   </div>
                   <div className="p-3 bg-white/[0.02] rounded-xl border border-white/[0.05]">
-                    <p className="text-[10px] font-black text-white/20 uppercase tracking-wider mb-1">Check-Out</p>
+                    <p className="text-[10px] font-black text-white/20 uppercase tracking-wider mb-1">
+                      Check-Out
+                    </p>
                     <p className="font-bold text-sm text-white">{selected.checkOut}</p>
                   </div>
                 </div>

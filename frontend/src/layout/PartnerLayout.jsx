@@ -163,7 +163,11 @@ export default function PartnerLayout() {
               {({ isActive }) => (
                 <>
                   <item.icon size={16} className={collapsed ? 'mx-auto shrink-0' : 'shrink-0'} />
-                  {!collapsed && <span className="text-[11px] font-bold uppercase tracking-wider truncate">{item.label}</span>}
+                  {!collapsed && (
+                    <span className="text-[11px] font-bold uppercase tracking-wider truncate">
+                      {item.label}
+                    </span>
+                  )}
                   {collapsed && (
                     <div className="absolute left-full ml-4 px-2 py-1 bg-[#050a08] border border-white/[0.1] text-white text-[10px] font-bold uppercase tracking-wide rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 shadow-lg">
                       {item.label}
@@ -232,7 +236,9 @@ export default function PartnerLayout() {
               </h1>
               <div className="flex items-center gap-1.5 mt-0.5">
                 <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse shadow-sm shadow-emerald-400/60" />
-                <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Network Secure</span>
+                <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest">
+                  Network Secure
+                </span>
               </div>
             </div>
           </div>

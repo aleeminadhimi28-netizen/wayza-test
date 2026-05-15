@@ -138,14 +138,19 @@ export default function PartnerRegister() {
     if (countdownRef.current) clearInterval(countdownRef.current);
     countdownRef.current = setInterval(() => {
       setOtpCountdown((c) => {
-        if (c <= 1) { clearInterval(countdownRef.current); return 0; }
+        if (c <= 1) {
+          clearInterval(countdownRef.current);
+          return 0;
+        }
         return c - 1;
       });
     }, 1000);
   }
 
   function formatCountdown(secs) {
-    const m = Math.floor(secs / 60).toString().padStart(2, '0');
+    const m = Math.floor(secs / 60)
+      .toString()
+      .padStart(2, '0');
     const s = (secs % 60).toString().padStart(2, '0');
     return `${m}:${s}`;
   }
@@ -437,7 +442,10 @@ export default function PartnerRegister() {
                             style={{ width: pwStrength.width, background: pwStrength.color }}
                           />
                         </div>
-                        <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: pwStrength.color }}>
+                        <p
+                          className="text-[10px] font-black uppercase tracking-widest"
+                          style={{ color: pwStrength.color }}
+                        >
                           {pwStrength.label}
                         </p>
                       </div>
@@ -614,7 +622,9 @@ export default function PartnerRegister() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => { handleSendOtp(); }}
+                    onClick={() => {
+                      handleSendOtp();
+                    }}
                     disabled={otpCountdown > 0}
                     className="text-emerald-600 font-black text-[11px] uppercase tracking-widest hover:underline disabled:opacity-30 disabled:no-underline"
                   >

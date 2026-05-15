@@ -86,7 +86,9 @@ export default function AdminOverview({ stats, setActiveTab }) {
                 {card.trend}
               </span>
             </div>
-            <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-1">{card.title}</p>
+            <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-1">
+              {card.title}
+            </p>
             <p className="text-2xl font-black text-white tracking-tight">{card.value}</p>
           </div>
         ))}
@@ -98,7 +100,9 @@ export default function AdminOverview({ stats, setActiveTab }) {
         <div className="xl:col-span-2 bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6 backdrop-blur-xl">
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h3 className="text-lg font-black text-white uppercase tracking-tight">Revenue Overview</h3>
+              <h3 className="text-lg font-black text-white uppercase tracking-tight">
+                Revenue Overview
+              </h3>
               <p className="text-xs text-white/30 font-medium mt-0.5">Monthly platform earnings</p>
             </div>
           </div>
@@ -106,7 +110,9 @@ export default function AdminOverview({ stats, setActiveTab }) {
             {!stats.monthlyRevenue || stats.monthlyRevenue.length === 0 ? (
               <div className="w-full h-full flex flex-col items-center justify-center bg-white/[0.01] rounded-xl border border-white/[0.05]">
                 <TrendingUp size={32} className="text-white/10 mb-3" />
-                <p className="text-xs font-bold text-white/30 uppercase tracking-widest">No revenue data yet</p>
+                <p className="text-xs font-bold text-white/30 uppercase tracking-widest">
+                  No revenue data yet
+                </p>
               </div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
@@ -117,7 +123,11 @@ export default function AdminOverview({ stats, setActiveTab }) {
                       <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="rgba(255,255,255,0.05)"
+                  />
                   <XAxis
                     dataKey="name"
                     axisLine={false}
@@ -159,7 +169,9 @@ export default function AdminOverview({ stats, setActiveTab }) {
         {/* RECENT ACTIVITY */}
         <div className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6 backdrop-blur-xl flex flex-col">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-black text-white uppercase tracking-tight">Recent Activity</h3>
+            <h3 className="text-lg font-black text-white uppercase tracking-tight">
+              Recent Activity
+            </h3>
             <span
               className="text-xs font-bold text-indigo-400 hover:text-indigo-300 cursor-pointer transition-colors uppercase tracking-wider"
               onClick={() => setActiveTab('bookings')}
@@ -180,20 +192,24 @@ export default function AdminOverview({ stats, setActiveTab }) {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-bold text-white text-sm truncate">{b.title}</p>
-                  <p className="text-xs text-white/30 font-medium truncate">{b.guestEmail?.split('@')?.[0]}</p>
+                  <p className="text-xs text-white/30 font-medium truncate">
+                    {b.guestEmail?.split('@')?.[0]}
+                  </p>
                 </div>
                 <div className="text-right">
-                  <p className="font-black text-sm text-white">
-                    ₹{b.totalPrice?.toLocaleString()}
+                  <p className="font-black text-sm text-white">₹{b.totalPrice?.toLocaleString()}</p>
+                  <p className="text-[10px] font-bold text-white/20 uppercase tracking-wide capitalize">
+                    {b.status}
                   </p>
-                  <p className="text-[10px] font-bold text-white/20 uppercase tracking-wide capitalize">{b.status}</p>
                 </div>
               </div>
             ))}
             {(!stats.recentBookings || stats.recentBookings.length === 0) && (
               <div className="flex flex-col items-center justify-center py-12 text-center">
                 <CalendarCheck size={24} className="text-white/10 mb-2" />
-                <p className="text-xs font-bold text-white/30 uppercase tracking-widest">No recent bookings</p>
+                <p className="text-xs font-bold text-white/30 uppercase tracking-widest">
+                  No recent bookings
+                </p>
               </div>
             )}
           </div>

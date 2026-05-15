@@ -353,7 +353,9 @@ export default function AdminDashboard() {
       <div className="min-h-screen flex items-center justify-center bg-[#06070f] text-white">
         <div className="flex flex-col items-center gap-4">
           <div className="w-10 h-10 border-2 border-white/10 border-t-indigo-500 rounded-full animate-spin" />
-          <p className="text-xs font-bold text-white/30 uppercase tracking-widest">Loading Command Center...</p>
+          <p className="text-xs font-bold text-white/30 uppercase tracking-widest">
+            Loading Command Center...
+          </p>
         </div>
       </div>
     );
@@ -365,8 +367,13 @@ export default function AdminDashboard() {
         <div className="absolute top-0 left-[20%] w-[40%] h-[50%] bg-indigo-600/4 blur-[160px] rounded-full" />
         <div className="absolute bottom-0 right-[10%] w-[35%] h-[40%] bg-violet-600/3 blur-[140px] rounded-full" />
         {/* Dot grid */}
-        <div className="absolute inset-0 opacity-[0.03]"
-          style={{ backgroundImage: 'radial-gradient(circle, rgba(99,102,241,0.8) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: 'radial-gradient(circle, rgba(99,102,241,0.8) 1px, transparent 1px)',
+            backgroundSize: '32px 32px',
+          }}
+        />
       </div>
 
       {/* MOBILE OVERLAY */}
@@ -390,8 +397,12 @@ export default function AdminDashboard() {
               <Shield size={16} />
             </div>
             <div>
-              <span className="font-black text-white text-base uppercase tracking-tight">Wayzza</span>
-              <p className="text-indigo-400/40 text-[9px] font-bold uppercase tracking-[0.3em] mt-0.5">Control</p>
+              <span className="font-black text-white text-base uppercase tracking-tight">
+                Wayzza
+              </span>
+              <p className="text-indigo-400/40 text-[9px] font-bold uppercase tracking-[0.3em] mt-0.5">
+                Control
+              </p>
             </div>
           </div>
         </div>
@@ -445,7 +456,9 @@ export default function AdminDashboard() {
           <div className="bg-white/[0.02] rounded-xl p-4 border border-white/[0.04]">
             <div className="flex items-center gap-2 mb-1">
               <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse shadow-sm shadow-emerald-400/60" />
-              <span className="text-[10px] font-black text-white uppercase tracking-wide">Secure Link</span>
+              <span className="text-[10px] font-black text-white uppercase tracking-wide">
+                Secure Link
+              </span>
             </div>
             <p className="text-[10px] text-white/20 font-mono tracking-tight">NODE_OK // TLS_1.3</p>
           </div>
@@ -481,7 +494,9 @@ export default function AdminDashboard() {
                         : `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Management`}
                 </h2>
                 <div className="flex items-center gap-2 mt-0.5">
-                  <span className="text-[10px] font-bold text-indigo-400/60 uppercase tracking-widest">Secure Console</span>
+                  <span className="text-[10px] font-bold text-indigo-400/60 uppercase tracking-widest">
+                    Secure Console
+                  </span>
                   <span className="text-white/10 font-mono text-[10px]">|</span>
                   <span className="text-white/20 font-mono text-[10px]">{timeStr}</span>
                 </div>

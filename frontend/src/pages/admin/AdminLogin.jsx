@@ -4,8 +4,17 @@ import { useAuth } from '../../AuthContext.jsx';
 import { useToast } from '../../ToastContext.jsx';
 import { motion } from 'framer-motion';
 import {
-  Shield, Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft,
-  Activity, Server, Database, Globe,
+  Shield,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  ArrowLeft,
+  Activity,
+  Server,
+  Database,
+  Globe,
 } from 'lucide-react';
 import { api } from '../../utils/api.js';
 
@@ -49,7 +58,11 @@ export default function AdminLogin() {
 
   const now = new Date();
   const timeStr = now.toLocaleTimeString('en-GB', { hour12: false });
-  const dateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  const dateStr = now.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
 
   useEffect(() => {
     if (user && user.role === 'admin') navigate('/admin', { replace: true });
@@ -85,7 +98,8 @@ export default function AdminLogin() {
         <div
           className="absolute inset-0 opacity-[0.015]"
           style={{
-            backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(99,102,241,0.8) 2px, rgba(99,102,241,0.8) 3px)',
+            backgroundImage:
+              'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(99,102,241,0.8) 2px, rgba(99,102,241,0.8) 3px)',
           }}
         />
         {/* Dot grid */}
@@ -107,14 +121,22 @@ export default function AdminLogin() {
               <Shield size={18} className="text-white" />
             </div>
             <div>
-              <p className="text-white font-black text-sm tracking-tight uppercase leading-none">Wayzza Admin</p>
-              <p className="text-indigo-400/40 text-[9px] font-bold uppercase tracking-[0.3em] mt-0.5">Command Center</p>
+              <p className="text-white font-black text-sm tracking-tight uppercase leading-none">
+                Wayzza Admin
+              </p>
+              <p className="text-indigo-400/40 text-[9px] font-bold uppercase tracking-[0.3em] mt-0.5">
+                Command Center
+              </p>
             </div>
           </Link>
           {/* Live clock */}
           <div className="text-right">
-            <p className="text-white font-mono text-lg font-bold tracking-tight tabular-nums">{timeStr}</p>
-            <p className="text-white/20 font-mono text-[10px] uppercase tracking-widest">{dateStr}</p>
+            <p className="text-white font-mono text-lg font-bold tracking-tight tabular-nums">
+              {timeStr}
+            </p>
+            <p className="text-white/20 font-mono text-[10px] uppercase tracking-widest">
+              {dateStr}
+            </p>
           </div>
         </div>
 
@@ -126,20 +148,25 @@ export default function AdminLogin() {
               System Operational
             </div>
             <h1 className="text-[64px] font-black text-white tracking-[-0.04em] leading-[0.85] uppercase">
-              Admin<br />
+              Admin
+              <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-300 to-indigo-500">
                 Control
-              </span><br />
+              </span>
+              <br />
               Panel.
             </h1>
           </div>
           <p className="text-white/25 text-base font-medium leading-relaxed max-w-sm">
-            Manage users, listings, bookings, financials, and platform configuration from a secure unified interface.
+            Manage users, listings, bookings, financials, and platform configuration from a secure
+            unified interface.
           </p>
 
           {/* System nodes */}
           <div className="space-y-3">
-            <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em] mb-4">System Status</p>
+            <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em] mb-4">
+              System Status
+            </p>
             {SYSTEM_NODES.map(({ label, icon: Icon, status }, i) => (
               <motion.div
                 key={label}
@@ -151,10 +178,14 @@ export default function AdminLogin() {
                 <div className="w-8 h-8 rounded-lg bg-indigo-600/15 flex items-center justify-center">
                   <Icon size={14} className="text-indigo-400" />
                 </div>
-                <span className="text-white/50 text-xs font-bold uppercase tracking-widest flex-1">{label}</span>
+                <span className="text-white/50 text-xs font-bold uppercase tracking-widest flex-1">
+                  {label}
+                </span>
                 <div className="flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400/60 animate-pulse" />
-                  <span className="text-emerald-400 text-[10px] font-black uppercase tracking-wider">{status}</span>
+                  <span className="text-emerald-400 text-[10px] font-black uppercase tracking-wider">
+                    {status}
+                  </span>
                 </div>
               </motion.div>
             ))}
@@ -164,7 +195,11 @@ export default function AdminLogin() {
           <div className="p-5 rounded-2xl bg-black/40 border border-white/[0.05]">
             <div className="flex gap-1.5 mb-4">
               {['#ef4444', '#f59e0b', '#22c55e'].map((c) => (
-                <div key={c} className="w-2.5 h-2.5 rounded-full" style={{ background: c, opacity: 0.6 }} />
+                <div
+                  key={c}
+                  className="w-2.5 h-2.5 rounded-full"
+                  style={{ background: c, opacity: 0.6 }}
+                />
               ))}
             </div>
             <TerminalLine text="$ wayzza-admin --connect secure" delay={0} />
@@ -197,7 +232,13 @@ export default function AdminLogin() {
           {/* Security badge */}
           <div className="flex items-center justify-center mb-8">
             <motion.div
-              animate={{ boxShadow: ['0 0 0px rgba(99,102,241,0)', '0 0 32px rgba(99,102,241,0.25)', '0 0 0px rgba(99,102,241,0)'] }}
+              animate={{
+                boxShadow: [
+                  '0 0 0px rgba(99,102,241,0)',
+                  '0 0 32px rgba(99,102,241,0.25)',
+                  '0 0 0px rgba(99,102,241,0)',
+                ],
+              }}
               transition={{ repeat: Infinity, duration: 3 }}
               className="w-20 h-20 rounded-[28px] bg-indigo-600/15 border border-indigo-500/20 flex items-center justify-center"
             >
@@ -212,21 +253,27 @@ export default function AdminLogin() {
               <div className="w-8 h-8 bg-indigo-600 rounded-xl flex items-center justify-center">
                 <Shield size={14} className="text-white" />
               </div>
-              <span className="text-white font-black tracking-tight text-sm uppercase">Wayzza Admin</span>
+              <span className="text-white font-black tracking-tight text-sm uppercase">
+                Wayzza Admin
+              </span>
             </Link>
 
             {/* Header */}
             <div className="mb-8">
               <div className="flex items-center gap-2 mb-3">
                 <span className="h-px w-6 bg-indigo-500/60" />
-                <span className="text-[10px] font-black text-indigo-400/60 uppercase tracking-[0.5em]">Restricted Access</span>
+                <span className="text-[10px] font-black text-indigo-400/60 uppercase tracking-[0.5em]">
+                  Restricted Access
+                </span>
               </div>
               <h2 className="text-3xl font-black text-white tracking-tight leading-none uppercase">
-                Administrator<br />
+                Administrator
+                <br />
                 <span className="text-indigo-400">Authentication.</span>
               </h2>
               <p className="text-white/20 text-xs font-medium mt-3 leading-relaxed">
-                This area is restricted to authorized personnel only. All access attempts are logged and monitored.
+                This area is restricted to authorized personnel only. All access attempts are logged
+                and monitored.
               </p>
             </div>
 
@@ -236,7 +283,9 @@ export default function AdminLogin() {
                 <label className="text-[10px] font-black text-white/25 uppercase tracking-[0.4em]">
                   Admin Email
                 </label>
-                <div className={`relative rounded-xl transition-all duration-200 ${focused === 'email' ? 'ring-1 ring-indigo-500/40 shadow-[0_0_20px_rgba(99,102,241,0.08)]' : ''}`}>
+                <div
+                  className={`relative rounded-xl transition-all duration-200 ${focused === 'email' ? 'ring-1 ring-indigo-500/40 shadow-[0_0_20px_rgba(99,102,241,0.08)]' : ''}`}
+                >
                   <Mail
                     size={15}
                     className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${focused === 'email' ? 'text-indigo-400' : 'text-white/15'}`}
@@ -260,7 +309,9 @@ export default function AdminLogin() {
                 <label className="text-[10px] font-black text-white/25 uppercase tracking-[0.4em]">
                   Password
                 </label>
-                <div className={`relative rounded-xl transition-all duration-200 ${focused === 'pw' ? 'ring-1 ring-indigo-500/40 shadow-[0_0_20px_rgba(99,102,241,0.08)]' : ''}`}>
+                <div
+                  className={`relative rounded-xl transition-all duration-200 ${focused === 'pw' ? 'ring-1 ring-indigo-500/40 shadow-[0_0_20px_rgba(99,102,241,0.08)]' : ''}`}
+                >
                   <Lock
                     size={15}
                     className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${focused === 'pw' ? 'text-indigo-400' : 'text-white/15'}`}
@@ -290,7 +341,8 @@ export default function AdminLogin() {
               <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-500/5 border border-amber-500/10">
                 <Shield size={13} className="text-amber-400/60 shrink-0 mt-0.5" />
                 <p className="text-[10px] text-amber-400/40 font-medium leading-relaxed">
-                  Unauthorized access is a criminal offence. All sessions are recorded and may be reviewed.
+                  Unauthorized access is a criminal offence. All sessions are recorded and may be
+                  reviewed.
                 </p>
               </div>
 
@@ -311,7 +363,10 @@ export default function AdminLogin() {
                     ) : (
                       <>
                         Authenticate
-                        <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight
+                          size={15}
+                          className="group-hover:translate-x-1 transition-transform"
+                        />
                       </>
                     )}
                   </span>

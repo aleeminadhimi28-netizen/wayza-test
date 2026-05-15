@@ -111,7 +111,9 @@ export default function PartnerPricing() {
             <div className="flex items-center gap-2 text-emerald-400 font-black text-[10px] uppercase tracking-[0.4em] mb-1">
               <Sparkles size={12} /> Revenue
             </div>
-            <h1 className="text-3xl font-black text-white tracking-tight uppercase">Price Manager</h1>
+            <h1 className="text-3xl font-black text-white tracking-tight uppercase">
+              Price Manager
+            </h1>
             <p className="text-sm text-white/30 font-medium mt-1">
               Adjust your listing prices dynamically based on market demand.
             </p>
@@ -125,7 +127,9 @@ export default function PartnerPricing() {
                 <div className="flex items-center gap-2 text-emerald-400 font-black text-[10px] uppercase tracking-[0.2em] mb-1">
                   <TrendingUp size={14} /> Trend Adjuster
                 </div>
-                <h3 className="text-lg font-black text-white uppercase tracking-tight">Dynamic Pricing</h3>
+                <h3 className="text-lg font-black text-white uppercase tracking-tight">
+                  Dynamic Pricing
+                </h3>
                 <p className="text-xs text-white/30 font-medium mt-0.5">
                   Adjust prices below. You cannot go below the base floor price set at creation.
                 </p>
@@ -279,7 +283,9 @@ export default function PartnerPricing() {
           </div>
         ) : (
           <div className="bg-white/[0.03] border border-white/[0.08] rounded-3xl p-12 text-center backdrop-blur-xl">
-            <p className="text-sm font-bold text-white/20 uppercase tracking-widest">You don't have any properties yet.</p>
+            <p className="text-sm font-bold text-white/20 uppercase tracking-widest">
+              You don't have any properties yet.
+            </p>
           </div>
         )}
       </div>

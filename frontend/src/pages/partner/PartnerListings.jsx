@@ -72,7 +72,9 @@ export default function PartnerListings() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 bg-[#050a08]">
         <div className="w-10 h-10 border-2 border-white/10 border-t-emerald-500 rounded-full animate-spin" />
-        <p className="text-sm font-bold text-white/30 uppercase tracking-widest">Loading your properties...</p>
+        <p className="text-sm font-bold text-white/30 uppercase tracking-widest">
+          Loading your properties...
+        </p>
       </div>
     );
 
@@ -118,7 +120,9 @@ export default function PartnerListings() {
               <Home size={32} />
             </div>
             <div className="space-y-2">
-              <h2 className="text-xl font-black text-white uppercase tracking-tight">No properties yet</h2>
+              <h2 className="text-xl font-black text-white uppercase tracking-tight">
+                No properties yet
+              </h2>
               <p className="text-white/30 text-xs font-medium max-w-sm mx-auto">
                 Add your first property to start receiving bookings on Wayzza.
               </p>
@@ -195,14 +199,14 @@ export default function PartnerListings() {
 
                       <div className="flex items-center justify-between border-t border-white/[0.05] pt-4">
                         <div>
-                          <p className="text-[10px] font-black text-white/20 uppercase tracking-wide">Starting from</p>
+                          <p className="text-[10px] font-black text-white/20 uppercase tracking-wide">
+                            Starting from
+                          </p>
                           <p className="text-xl font-black text-white">
                             {lowestPrice > 0 ? (
                               `₹${lowestPrice.toLocaleString()}`
                             ) : (
-                              <span className="text-white/20 text-sm font-bold">
-                                No price set
-                              </span>
+                              <span className="text-white/20 text-sm font-bold">No price set</span>
                             )}
                           </p>
                           {listing.variants?.length > 0 && (

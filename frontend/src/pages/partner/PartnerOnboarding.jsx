@@ -340,17 +340,17 @@ export default function PartnerOnboarding() {
                 {/* MSME & GST */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <FormInput
-                  label="MSME Number"
-                  required
-                  value={msmeNumber}
-                  onChange={(v) => {
-                    const cleaned = v.toUpperCase().replace(/[^A-Z0-9-]/g, '');
-                    setMsmeNumber(cleaned);
-                  }}
-                  placeholder="UDYAM-KL-00-0000000"
-                  maxLength={20}
-                  icon={<Briefcase size={20} />}
-                />
+                    label="MSME Number"
+                    required
+                    value={msmeNumber}
+                    onChange={(v) => {
+                      const cleaned = v.toUpperCase().replace(/[^A-Z0-9-]/g, '');
+                      setMsmeNumber(cleaned);
+                    }}
+                    placeholder="UDYAM-KL-00-0000000"
+                    maxLength={20}
+                    icon={<Briefcase size={20} />}
+                  />
                   <div className="space-y-4 group">
                     <label className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 group-focus-within:text-emerald-600 transition-colors">
                       GST Number <span className="text-slate-200">(optional)</span>
@@ -362,7 +362,10 @@ export default function PartnerOnboarding() {
                       <input
                         value={gstNumber}
                         onChange={(e) => {
-                          const val = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 15);
+                          const val = e.target.value
+                            .toUpperCase()
+                            .replace(/[^A-Z0-9]/g, '')
+                            .slice(0, 15);
                           setGstNumber(val);
                           if (!val) setGstEnabled(false);
                         }}
