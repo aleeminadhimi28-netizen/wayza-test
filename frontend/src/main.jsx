@@ -49,6 +49,7 @@ const CustomerSupport = lazy(() => import('./pages/public/CustomerSupport.jsx'))
 const ExploreMap = lazy(() => import('./pages/public/ExploreMap.jsx'));
 const AITripPlanner = lazy(() => import('./pages/public/AITripPlanner.jsx'));
 const Experiences = lazy(() => import('./pages/public/Experiences.jsx'));
+const Packages = lazy(() => import('./pages/public/Packages.jsx'));
 
 const PrivacyPolicy = lazy(() =>
   import('./pages/public/StaticPages.jsx').then((m) => ({ default: m.PrivacyPolicy }))
@@ -163,6 +164,7 @@ function AppContent() {
           <Route path="/explore-map" element={<ExploreMap />} />
           <Route path="/ai-trip-planner" element={<AITripPlanner />} />
           <Route path="/experiences" element={<Experiences />} />
+          <Route path="/packages" element={<Packages />} />
           <Route path="/partner-login" element={<PartnerLogin />} />
           <Route path="/partner-onboarding" element={<PartnerOnboarding />} />
           <Route path="/partner-register" element={<PartnerRegister />} />

@@ -654,6 +654,49 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* ── PACKAGES PROMO ── */}
+        <section className="py-16 md:py-24 px-4 sm:px-6 bg-slate-50 relative overflow-hidden">
+          <div className="max-w-7xl mx-auto">
+            <div className="rounded-[40px] md:rounded-[64px] bg-white border border-slate-100 shadow-sm overflow-hidden">
+              <div className="flex flex-col md:flex-row items-center gap-0">
+                {/* Image */}
+                <div className="w-full md:w-1/2 h-64 md:h-80 relative overflow-hidden">
+                  <img
+                    src="/images/varkala_cliff.webp"
+                    alt="Wayzza Travel Packages"
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/20 md:to-white/60" />
+                  <div className="absolute top-5 left-5 flex items-center gap-2 px-3 py-1.5 bg-emerald-500 rounded-full text-[10px] font-black uppercase tracking-[0.3em] text-white">
+                    <Sparkles size={10} /> New
+                  </div>
+                </div>
+                {/* Text */}
+                <div className="flex-1 p-8 md:p-12 lg:p-16 space-y-5">
+                  <p className="text-emerald-500 uppercase tracking-[0.4em] text-[11px] font-black">
+                    Curated Packages
+                  </p>
+                  <h2 className="text-3xl md:text-4xl font-black tracking-tighter text-slate-950 leading-tight">
+                    Stay. Ride. Explore.{' '}
+                    <span className="text-emerald-500 italic">All in one.</span>
+                  </h2>
+                  <p className="text-slate-500 font-medium leading-relaxed max-w-md">
+                    Skip the planning. Our curated packages combine a premium villa, a vehicle, and
+                    a local experience — at one bundled price.
+                  </p>
+                  <Link
+                    to="/packages"
+                    className="inline-flex items-center gap-2 bg-slate-950 text-white px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-[0.3em] hover:bg-emerald-600 transition-all duration-300"
+                  >
+                    Browse Packages <ArrowRight size={14} />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* ── AI PLANNER ── */}
         <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-[#06110d] text-white overflow-hidden relative">
           <div className="absolute inset-0 pointer-events-none">

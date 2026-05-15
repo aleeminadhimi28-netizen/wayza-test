@@ -98,5 +98,9 @@ const createIndexes = async (db) => {
     const notifications = db.collection("notifications");
     await notifications.createIndex({ email: 1, createdAt: -1 });
 
+    // Index for packages
+    const packages = db.collection("packages");
+    await packages.createIndex({ active: 1 });
+
     console.log("✅ Database indexes verified");
 };

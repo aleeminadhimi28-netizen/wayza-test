@@ -33,6 +33,7 @@ import miscRoutes from "./routes/misc.js";
 import communicationRoutes from "./routes/communication.js";
 import payRoutes from "./routes/pay.js";
 import webhookRoutes from "./routes/webhooks.js";
+import packageRoutes from "./routes/packages.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -151,6 +152,7 @@ app.use("/api/v1/admin/login", authLimiter);
 app.use("/api/v1/partner", partnerRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/misc", miscRoutes);
+app.use("/api/v1/packages", packageRoutes);
 app.use("/api/v1/comm", communicationRoutes);
 app.use("/api/v1/payments", paymentLimiter, payRoutes);
 
