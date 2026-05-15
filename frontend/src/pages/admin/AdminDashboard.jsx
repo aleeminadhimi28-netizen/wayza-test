@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   Users,
   Briefcase,
@@ -14,6 +14,7 @@ import {
   Tag,
   Activity,
   Menu,
+  Shield,
 } from 'lucide-react';
 
 import { api } from '../../utils/api.js';
@@ -60,18 +61,14 @@ const TAB_GROUPS = [
   },
 ];
 
-// Flat list for any logic that needs it
 const TABS = TAB_GROUPS.flatMap((g) => g.tabs);
 
 export default function AdminDashboard() {
-  // 1. STABLE HOOKS
   const { showToast } = useToast();
   const { logout, user } = useAuth();
 
-  // Derive real admin initials from email
   const adminInitials = user?.email ? user.email.split('@')[0].slice(0, 2).toUpperCase() : 'AD';
 
-  // 2. STATE DECLARATIONS
   const [stats, setStats] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
@@ -81,8 +78,17 @@ export default function AdminDashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [tickets, setTickets] = useState([]);
   const [withdrawals, setWithdrawals] = useState([]);
+  const [tick, setTick] = useState(0);
 
-  // 3. DATA LOADING HANDLERS
+  // Live clock tick
+  useEffect(() => {
+    const id = setInterval(() => setTick((t) => t + 1), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('en-GB', { hour12: false });
+
   const loadTickets = useCallback(async () => {
     setLoadingData(true);
     try {
@@ -147,7 +153,6 @@ export default function AdminDashboard() {
     }
   }, [activeTab, showToast]);
 
-  // 4. ACTION HANDLERS
   const handleDeleteItem = useCallback(
     async (type, idOrEmail) => {
       try {
@@ -279,7 +284,6 @@ export default function AdminDashboard() {
     window.location.href = '/admin-login';
   }, [logout]);
 
-  // 5. MEMOIZED VALUES
   const filteredData = useMemo(() => {
     const query = searchQuery.toLowerCase();
     return dataList.filter((item) => {
@@ -304,7 +308,6 @@ export default function AdminDashboard() {
 
   const openTickets = useMemo(() => tickets.filter((t) => t.status === 'open').length, [tickets]);
 
-  // 6. EFFECTS
   useEffect(() => {
     api
       .adminStats()
@@ -324,21 +327,20 @@ export default function AdminDashboard() {
     else loadTableData();
   }, [activeTab, loadTickets, loadWithdrawals, loadTableData]);
 
-  // 7. RENDER LOGIC
   if (errorMsg)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 font-sans p-6">
-        <div className="flex flex-col items-center gap-6 max-w-sm text-center p-10 bg-white border border-slate-200 rounded-2xl shadow-sm">
-          <div className="w-14 h-14 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center">
-            <Users size={28} />
+      <div className="min-h-screen flex items-center justify-center bg-[#06070f] font-sans p-6 text-white">
+        <div className="flex flex-col items-center gap-6 max-w-sm text-center p-10 bg-white/[0.03] border border-white/[0.08] rounded-2xl backdrop-blur-xl">
+          <div className="w-14 h-14 bg-rose-500/10 text-rose-400 rounded-2xl flex items-center justify-center">
+            <Shield size={28} />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-slate-900 mb-1">Access Denied</h1>
-            <p className="text-sm text-slate-500">{errorMsg}</p>
+            <h1 className="text-xl font-black uppercase tracking-tight mb-1">Access Denied</h1>
+            <p className="text-sm text-white/40 font-medium">{errorMsg}</p>
           </div>
           <button
             onClick={() => (window.location.href = '/admin-login')}
-            className="h-10 px-6 bg-slate-900 text-white rounded-xl font-semibold text-sm hover:bg-emerald-600 transition-colors"
+            className="h-11 px-6 bg-indigo-600 text-white rounded-xl font-bold text-[11px] uppercase tracking-wider hover:bg-indigo-700 transition-colors"
           >
             Sign In Again
           </button>
@@ -348,40 +350,48 @@ export default function AdminDashboard() {
 
   if (!stats)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-[#06070f] text-white">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-4 border-slate-100 border-t-emerald-500 rounded-full animate-spin" />
-          <p className="text-sm font-semibold text-slate-500">Loading dashboard...</p>
+          <div className="w-10 h-10 border-2 border-white/10 border-t-indigo-500 rounded-full animate-spin" />
+          <p className="text-xs font-bold text-white/30 uppercase tracking-widest">Loading Command Center...</p>
         </div>
       </div>
     );
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex overflow-hidden">
+    <div className="min-h-screen bg-[#06070f] text-white font-sans flex overflow-hidden selection:bg-indigo-900/50 selection:text-indigo-200">
+      {/* ── Ambient Background ── */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute top-0 left-[20%] w-[40%] h-[50%] bg-indigo-600/4 blur-[160px] rounded-full" />
+        <div className="absolute bottom-0 right-[10%] w-[35%] h-[40%] bg-violet-600/3 blur-[140px] rounded-full" />
+        {/* Dot grid */}
+        <div className="absolute inset-0 opacity-[0.03]"
+          style={{ backgroundImage: 'radial-gradient(circle, rgba(99,102,241,0.8) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
+      </div>
+
       {/* MOBILE OVERLAY */}
       {mobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 xl:hidden"
+          className="fixed inset-0 bg-black/60 z-40 xl:hidden backdrop-blur-sm"
           onClick={() => setMobileMenuOpen(false)}
         />
       )}
 
       {/* SIDEBAR */}
       <aside
-        className={`w-64 h-screen bg-slate-900 flex flex-col shrink-0 fixed xl:relative z-50 transition-transform duration-300 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full xl:translate-x-0'}`}
+        className={`w-64 h-screen bg-black/40 border-r border-white/[0.04] flex flex-col shrink-0 fixed xl:relative z-50 transition-transform duration-300 backdrop-blur-xl ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full xl:translate-x-0'}`}
       >
         <div className="p-6 mb-2">
           <div
             className="flex items-center gap-3 cursor-pointer"
             onClick={() => setActiveTab('overview')}
           >
-            <div className="w-9 h-9 bg-emerald-500 rounded-xl flex items-center justify-center text-white font-bold text-sm shadow-lg">
-              W
+            <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-600/20">
+              <Shield size={16} />
             </div>
             <div>
-              <span className="font-bold text-white text-lg">
-                Wayzza <span className="text-emerald-400">Admin</span>
-              </span>
+              <span className="font-black text-white text-base uppercase tracking-tight">Wayzza</span>
+              <p className="text-indigo-400/40 text-[9px] font-bold uppercase tracking-[0.3em] mt-0.5">Control</p>
             </div>
           </div>
         </div>
@@ -390,7 +400,7 @@ export default function AdminDashboard() {
           {TAB_GROUPS.map((group) => (
             <div key={group.label}>
               {group.label !== 'Overview' && (
-                <p className="px-3 mb-1.5 text-[10px] font-bold text-slate-600 uppercase tracking-widest">
+                <p className="px-3 mb-1.5 text-[10px] font-black text-white/20 uppercase tracking-[0.4em]">
                   {group.label}
                 </p>
               )}
@@ -403,24 +413,24 @@ export default function AdminDashboard() {
                       setSearchQuery('');
                       setMobileMenuOpen(false);
                     }}
-                    className={`w-full flex items-center gap-3 py-2.5 px-3 rounded-xl font-semibold text-sm transition-all ${
+                    className={`w-full flex items-center gap-3 py-2.5 px-3 rounded-xl font-bold text-[11px] uppercase tracking-wide transition-all ${
                       activeTab === tab.id
-                        ? 'bg-white/10 text-white'
-                        : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'
+                        ? 'bg-white/[0.05] text-white border border-white/[0.05]'
+                        : 'text-white/40 hover:bg-white/[0.02] hover:text-white/70 border border-transparent'
                     }`}
                   >
                     <tab.icon
-                      size={17}
-                      className={activeTab === tab.id ? 'text-emerald-400' : ''}
+                      size={14}
+                      className={activeTab === tab.id ? 'text-indigo-400' : 'text-white/20'}
                     />
                     {tab.label}
                     {tab.id === 'support' && openTickets > 0 && (
-                      <span className="ml-auto bg-rose-500 text-white text-[11px] font-bold px-1.5 py-0.5 rounded-md">
+                      <span className="ml-auto bg-rose-500/20 text-rose-400 text-[10px] font-black px-1.5 py-0.5 rounded-md">
                         {openTickets}
                       </span>
                     )}
                     {tab.id === 'withdrawals' && pendingWithdrawals > 0 && (
-                      <span className="ml-auto bg-amber-500 text-white text-[11px] font-bold px-1.5 py-0.5 rounded-md">
+                      <span className="ml-auto bg-amber-500/20 text-amber-400 text-[10px] font-black px-1.5 py-0.5 rounded-md">
                         {pendingWithdrawals}
                       </span>
                     )}
@@ -432,36 +442,36 @@ export default function AdminDashboard() {
         </nav>
 
         <div className="p-4 mt-auto space-y-3">
-          <div className="bg-white/5 rounded-xl p-4 border border-white/5">
+          <div className="bg-white/[0.02] rounded-xl p-4 border border-white/[0.04]">
             <div className="flex items-center gap-2 mb-1">
-              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-              <span className="text-xs font-semibold text-white">System Online</span>
+              <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse shadow-sm shadow-emerald-400/60" />
+              <span className="text-[10px] font-black text-white uppercase tracking-wide">Secure Link</span>
             </div>
-            <p className="text-xs text-slate-500">All services operational</p>
+            <p className="text-[10px] text-white/20 font-mono tracking-tight">NODE_OK // TLS_1.3</p>
           </div>
           <button
             onClick={handleLogout}
-            className="w-full h-10 flex items-center justify-center gap-2 bg-rose-500/10 rounded-xl font-semibold text-sm text-rose-400 hover:bg-rose-500 hover:text-white transition-all"
+            className="w-full h-11 flex items-center justify-center gap-2 bg-rose-500/10 border border-rose-500/10 rounded-xl font-bold text-[11px] uppercase tracking-wider text-rose-400 hover:bg-rose-500 hover:text-white transition-all"
           >
-            <LogOut size={15} /> Sign Out
+            <LogOut size={14} /> Sign Out
           </button>
         </div>
       </aside>
 
       {/* MAIN CONTENT */}
-      <main className="flex-1 h-screen overflow-y-auto">
+      <main className="flex-1 h-screen overflow-y-auto relative z-10">
         {/* HEADER */}
-        <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200 px-8 py-4">
+        <header className="sticky top-0 z-50 bg-[#06070f]/80 backdrop-blur-xl border-b border-white/[0.04] px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setMobileMenuOpen(true)}
-                className="xl:hidden w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-200 transition-colors"
+                className="xl:hidden w-10 h-10 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white/60 flex items-center justify-center hover:bg-white/[0.05] transition-colors"
               >
-                <Menu size={20} />
+                <Menu size={18} />
               </button>
               <div>
-                <h2 className="text-xl font-bold text-slate-900">
+                <h2 className="text-xl font-black uppercase tracking-tight text-white">
                   {activeTab === 'overview'
                     ? 'Dashboard Overview'
                     : activeTab === 'support'
@@ -470,23 +480,27 @@ export default function AdminDashboard() {
                         ? 'Financial Operations'
                         : `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Management`}
                 </h2>
-                <p className="text-xs text-slate-500 mt-0.5">Wayzza Admin Panel</p>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className="text-[10px] font-bold text-indigo-400/60 uppercase tracking-widest">Secure Console</span>
+                  <span className="text-white/10 font-mono text-[10px]">|</span>
+                  <span className="text-white/20 font-mono text-[10px]">{timeStr}</span>
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setActiveTab('support')}
                 title="View support tickets"
-                className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 text-slate-500 flex items-center justify-center hover:bg-slate-900 hover:text-white transition-all relative"
+                className="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white/40 flex items-center justify-center hover:bg-white/[0.05] hover:text-white transition-all relative"
               >
-                <Bell size={16} />
+                <Bell size={15} />
                 {openTickets > 0 && (
-                  <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border-2 border-white" />
+                  <span className="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse" />
                 )}
               </button>
               <div
                 title={user?.email || 'Admin'}
-                className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-bold text-xs shadow-md cursor-default"
+                className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-black text-xs shadow-lg shadow-indigo-600/20 cursor-default"
               >
                 {adminInitials}
               </div>

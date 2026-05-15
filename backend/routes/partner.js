@@ -12,7 +12,6 @@ const registerSchema = z.object({
     password: z.string().min(6),
     businessName: z.string().min(1, 'Business name is required'),
     phone: z.string().min(10, 'Valid phone number is required'),
-    type: z.string().optional(),
     mainSector: z.enum(['stays', 'vehicles']).default('stays')
 });
 
@@ -24,6 +23,7 @@ const loginSchema = z.object({
 const onboardSchema = z.object({
     businessName: z.string().min(1),
     subCategory: z.string().min(1),
+    brandVision: z.string().optional(),
     location: z.string().min(1),
     msmeNumber: z.string().min(1, 'MSME number is required'),
     gstNumber: z.string().optional(),
@@ -37,7 +37,7 @@ const onboardSchema = z.object({
         vehicleType: z.string().optional(),
         registrationCategory: z.string().optional(),
         cancellationPolicy: z.string().optional()
-    }).optional()
+    }).optional().nullable()
 });
 
 const walletSchema = z.object({
@@ -63,14 +63,14 @@ router.post("/register", async (req, res, next) => {
         const db = getDB();
         const users = db.collection("users");
         const partners = db.collection("partners");
-        const { email, password, businessName, phone, type, mainSector } = parsed.data;
+        const { email, password, businessName, phone, mainSector } = parsed.data;
 
         const exists = await users.findOne({ email });
         if (exists) return res.status(400).json({ ok: false, message: "Email already registered" });
 
         const hash = await bcrypt.hash(password, BCRYPT_ROUNDS);
         await users.insertOne({ email, password: hash, role: "partner", phone: phone || "", createdAt: new Date() });
-        await partners.insertOne({ email, businessName, type: type || mainSector, mainSector, phone: phone || "", onboarded: false, createdAt: new Date() });
+        await partners.insertOne({ email, businessName, mainSector, phone: phone || "", onboarded: false, createdAt: new Date() });
 
         res.json({ ok: true });
     } catch (err) { next(err); }
@@ -123,7 +123,7 @@ router.post("/onboard", requireAuth, requireRole(["partner"]), async (req, res, 
         const db = getDB();
         const partners = db.collection("partners");
         const listings = db.collection("listings");
-        const { businessName, subCategory, location, msmeNumber, gstNumber, gstEnabled, firstListing } = parsed.data;
+        const { businessName, subCategory, brandVision, location, msmeNumber, gstNumber, gstEnabled, firstListing } = parsed.data;
         const email = req.user.email;
 
         // Fetch partner to get mainSector
@@ -132,7 +132,7 @@ router.post("/onboard", requireAuth, requireRole(["partner"]), async (req, res, 
 
         await partners.updateOne(
             { email },
-            { $set: { businessName, subCategory, category: subCategory, location, msmeNumber: msmeNumber || '', gstNumber: gstNumber || '', gstEnabled: gstEnabled || false, onboardingCompleted: true, updatedAt: new Date() } },
+            { $set: { businessName, subCategory, category: subCategory, brandVision: brandVision || '', location, msmeNumber: msmeNumber || '', gstNumber: gstNumber || '', gstEnabled: gstEnabled || false, onboardingCompleted: true, updatedAt: new Date() } },
             { upsert: true }
         );
 

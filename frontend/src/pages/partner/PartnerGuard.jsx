@@ -7,12 +7,18 @@ import { useAuth } from '../../AuthContext.jsx';
 
 import { api } from '../../utils/api.js';
 
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+function isCacheValid() {
+  const ts = sessionStorage.getItem('partner_onboarded_at');
+  if (!ts) return false;
+  return sessionStorage.getItem('partner_onboarded') === 'true' && Date.now() - Number(ts) < CACHE_TTL_MS;
+}
+
 export default function PartnerGuard({ children }) {
   const navigate = useNavigate();
   const { user, loading: authLoading, logout } = useAuth();
-  const [checking, setChecking] = useState(
-    () => sessionStorage.getItem('partner_onboarded') !== 'true'
-  );
+  const [checking, setChecking] = useState(true); // always start checking; resolved in useEffect after auth loads
   const [pendingApproval, setPendingApproval] = useState(false);
 
   useEffect(() => {
@@ -21,12 +27,13 @@ export default function PartnerGuard({ children }) {
     // ✅ must be logged in AND partner
     if (!user || user.role !== 'partner') {
       sessionStorage.removeItem('partner_onboarded');
+      sessionStorage.removeItem('partner_onboarded_at');
       navigate('/partner-login', { replace: true });
       return;
     }
 
-    // Already verified this session — skip API call
-    if (sessionStorage.getItem('partner_onboarded') === 'true') {
+    // Already verified this session with a valid TTL — skip API call
+    if (isCacheValid()) {
       setChecking(false);
       return;
     }
@@ -40,8 +47,9 @@ export default function PartnerGuard({ children }) {
         if (!active) return;
 
         if (data.onboarded) {
-          // Fully approved — allow access
+          // Fully approved — allow access and stamp cache
           sessionStorage.setItem('partner_onboarded', 'true');
+          sessionStorage.setItem('partner_onboarded_at', String(Date.now()));
           setChecking(false);
         } else if (data.onboardingCompleted) {
           // Onboarding completed but admin hasn't approved yet
@@ -53,7 +61,11 @@ export default function PartnerGuard({ children }) {
         }
       })
       .catch(() => {
-        if (active) navigate('/partner-login', { replace: true });
+        if (active) {
+          // Network error — don't kick the user out, show a retry prompt instead
+          setPendingApproval(false);
+          setChecking(false);
+        }
       });
 
     return () => {
@@ -65,6 +77,7 @@ export default function PartnerGuard({ children }) {
   useEffect(() => {
     if (!authLoading && !user) {
       sessionStorage.removeItem('partner_onboarded');
+      sessionStorage.removeItem('partner_onboarded_at');
     }
   }, [user, authLoading]);
 
@@ -137,10 +150,11 @@ export default function PartnerGuard({ children }) {
           <div className="flex flex-col gap-3 pt-4">
             <button
               onClick={() => {
-                // Re-check status
+                // Re-check status — clear TTL cache
+                sessionStorage.removeItem('partner_onboarded');
+                sessionStorage.removeItem('partner_onboarded_at');
                 setChecking(true);
                 setPendingApproval(false);
-                sessionStorage.removeItem('partner_onboarded');
               }}
               className="w-full h-14 bg-slate-950 text-white rounded-2xl font-bold text-sm uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-lg active:scale-[0.98] flex items-center justify-center gap-3"
             >
@@ -157,10 +171,11 @@ export default function PartnerGuard({ children }) {
               </button>
               <button
                 onClick={() => {
-                  sessionStorage.removeItem('partner_onboarded');
-                  logout();
-                  navigate('/partner-login');
-                }}
+                    sessionStorage.removeItem('partner_onboarded');
+                    sessionStorage.removeItem('partner_onboarded_at');
+                    logout();
+                    navigate('/partner-login');
+                  }}
                 className="flex-1 h-12 bg-rose-50 text-rose-600 border border-rose-100 rounded-xl font-semibold text-xs uppercase tracking-wider hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center gap-2"
               >
                 <LogOut size={14} />

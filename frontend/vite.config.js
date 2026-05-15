@@ -64,7 +64,20 @@ export default defineConfig({
         allowedHosts: [
             "79eca6c6bfca31.lhr.life",
             ".lhr.life"
-        ]
+        ],
+        proxy: {
+            '/api': {
+                target: 'http://localhost:5000',
+                changeOrigin: true,
+            },
+            '/socket.io': {
+                target: 'http://localhost:5000',
+                ws: true,
+            },
+            '/uploads': {
+                target: 'http://localhost:5000',
+            }
+        }
     },
     build: {
         // Generate source maps for production error tracking

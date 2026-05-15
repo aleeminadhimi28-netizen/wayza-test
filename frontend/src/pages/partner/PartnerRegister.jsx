@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -130,6 +130,40 @@ export default function PartnerRegister() {
   const [loading, setLoading] = useState(false);
   const [otp, setOtp] = useState('');
   const [showTerms, setShowTerms] = useState(false);
+  const [otpCountdown, setOtpCountdown] = useState(0);
+  const countdownRef = useRef(null);
+
+  function startOtpCountdown() {
+    setOtpCountdown(600); // 10 minutes in seconds
+    if (countdownRef.current) clearInterval(countdownRef.current);
+    countdownRef.current = setInterval(() => {
+      setOtpCountdown((c) => {
+        if (c <= 1) { clearInterval(countdownRef.current); return 0; }
+        return c - 1;
+      });
+    }, 1000);
+  }
+
+  function formatCountdown(secs) {
+    const m = Math.floor(secs / 60).toString().padStart(2, '0');
+    const s = (secs % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  }
+
+  // Password strength
+  function getPasswordStrength(pw) {
+    if (!pw) return null;
+    const has8 = pw.length >= 8;
+    const hasUpper = /[A-Z]/.test(pw);
+    const hasNum = /\d/.test(pw);
+    const hasSpecial = /[^A-Za-z0-9]/.test(pw);
+    const score = [has8, hasUpper, hasNum, hasSpecial].filter(Boolean).length;
+    if (score <= 1) return { label: 'Weak', color: '#ef4444', width: '25%' };
+    if (score === 2) return { label: 'Fair', color: '#f59e0b', width: '50%' };
+    if (score === 3) return { label: 'Good', color: '#3b82f6', width: '75%' };
+    return { label: 'Strong', color: '#10b981', width: '100%' };
+  }
+  const pwStrength = getPasswordStrength(password);
 
   // ── Step 1: Send OTP & validate fields ──
   async function handleSendOtp(e) {
@@ -160,6 +194,7 @@ export default function PartnerRegister() {
       const res = await api.sendOTP(email);
       if (res.ok) {
         showToast('OTP sent to your email. Please verify.', 'success');
+        startOtpCountdown();
         setStep(2);
       } else {
         showToast(res.message || 'Failed to send OTP.', 'error');
@@ -193,7 +228,7 @@ export default function PartnerRegister() {
         email,
         password,
         phone,
-        type: mainSector,
+        mainSector,
       });
       if (regRes.ok) {
         showToast('Account established. Welcome to Wayzza Pro!', 'success');
@@ -393,6 +428,20 @@ export default function PartnerRegister() {
                         {show ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
                     </div>
+                    {/* Password strength bar */}
+                    {pwStrength && (
+                      <div className="space-y-1.5 px-2">
+                        <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
+                          <div
+                            className="h-full rounded-full transition-all duration-500"
+                            style={{ width: pwStrength.width, background: pwStrength.color }}
+                          />
+                        </div>
+                        <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: pwStrength.color }}>
+                          {pwStrength.label}
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   {/* Main Sector */}
@@ -522,13 +571,22 @@ export default function PartnerRegister() {
                   <p className="text-slate-400 font-bold text-[11px] uppercase tracking-widest">
                     We sent a 6-digit OTP to <span className="text-slate-700">{email}</span>
                   </p>
+                  {otpCountdown > 0 ? (
+                    <p className="text-[11px] font-black uppercase tracking-widest text-amber-500">
+                      Expires in {formatCountdown(otpCountdown)}
+                    </p>
+                  ) : (
+                    <p className="text-[11px] font-black uppercase tracking-widest text-rose-500">
+                      OTP expired — please resend
+                    </p>
+                  )}
                 </div>
 
                 <OtpInput value={otp} onChange={setOtp} />
 
                 <button
                   onClick={handleVerifyAndRegister}
-                  disabled={loading || otp.length < 6}
+                  disabled={loading || otp.length < 6 || otpCountdown === 0}
                   className="w-full h-16 bg-slate-950 text-white rounded-[28px] font-black uppercase text-xs tracking-[0.5em] transition-all hover:bg-emerald-600 active:scale-[0.98] flex items-center justify-center gap-6 disabled:opacity-30"
                 >
                   {loading ? (
@@ -547,6 +605,8 @@ export default function PartnerRegister() {
                     onClick={() => {
                       setStep(1);
                       setOtp('');
+                      setOtpCountdown(0);
+                      if (countdownRef.current) clearInterval(countdownRef.current);
                     }}
                     className="inline-flex items-center gap-2 text-slate-400 font-bold text-[11px] uppercase tracking-widest hover:text-slate-700 transition-colors"
                   >
@@ -554,10 +614,11 @@ export default function PartnerRegister() {
                   </button>
                   <button
                     type="button"
-                    onClick={handleSendOtp}
-                    className="text-emerald-600 font-black text-[11px] uppercase tracking-widest hover:underline"
+                    onClick={() => { handleSendOtp(); }}
+                    disabled={otpCountdown > 0}
+                    className="text-emerald-600 font-black text-[11px] uppercase tracking-widest hover:underline disabled:opacity-30 disabled:no-underline"
                   >
-                    Resend OTP
+                    {otpCountdown > 0 ? `Resend in ${formatCountdown(otpCountdown)}` : 'Resend OTP'}
                   </button>
                 </div>
               </motion.div>

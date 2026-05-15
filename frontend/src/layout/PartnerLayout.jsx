@@ -20,10 +20,9 @@ import {
   Navigation,
   Banknote,
   Bell,
-  Moon,
-  Sun,
   Menu,
   DollarSign,
+  Sparkles,
 } from 'lucide-react';
 import { useNotifications } from '../hooks/useNotifications.jsx';
 import { NotificationDropdown } from '../components/ui/NotificationDropdown.jsx';
@@ -47,7 +46,6 @@ export default function PartnerLayout() {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const { notifs, showNotifs, setShowNotifs, openNotifs } = useNotifications(user);
   const notifRef = useRef(null);
 
@@ -67,29 +65,6 @@ export default function PartnerLayout() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [setShowNotifs]);
 
-  useEffect(() => {
-    const saved = localStorage.getItem('wayzza-theme');
-    if (saved === 'dark') {
-      document.documentElement.classList.add('wayzza-dark');
-      setIsDarkMode(true);
-    } else {
-      setIsDarkMode(document.documentElement.classList.contains('wayzza-dark'));
-    }
-  }, []);
-
-  const toggleTheme = () => {
-    const root = document.documentElement;
-    if (root.classList.contains('wayzza-dark')) {
-      root.classList.remove('wayzza-dark');
-      setIsDarkMode(false);
-      localStorage.setItem('wayzza-theme', 'light');
-    } else {
-      root.classList.add('wayzza-dark');
-      setIsDarkMode(true);
-      localStorage.setItem('wayzza-theme', 'dark');
-    }
-  };
-
   function handleLogout() {
     logout();
     navigate('/');
@@ -99,7 +74,13 @@ export default function PartnerLayout() {
   const currentPage = NAV.find((n) => n.to === location.pathname);
 
   return (
-    <div className="flex h-screen bg-slate-50 font-sans selection:bg-emerald-100 selection:text-emerald-900 overflow-hidden">
+    <div className="flex h-screen bg-[#050a08] font-sans text-white selection:bg-emerald-900/50 selection:text-emerald-200 overflow-hidden">
+      {/* ── Ambient Background ── */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute top-0 left-0 w-[30%] h-[40%] bg-emerald-500/5 blur-[120px] rounded-full" />
+        <div className="absolute bottom-0 right-0 w-[40%] h-[40%] bg-emerald-700/5 blur-[100px] rounded-full" />
+      </div>
+
       {/* Mobile Overlay */}
       <AnimatePresence>
         {mobileMenuOpen && (
@@ -107,7 +88,7 @@ export default function PartnerLayout() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 z-40 md:hidden"
+            className="fixed inset-0 bg-black/60 z-40 md:hidden backdrop-blur-sm"
             onClick={() => setMobileMenuOpen(false)}
           />
         )}
@@ -115,7 +96,7 @@ export default function PartnerLayout() {
 
       {/* ===== SIDEBAR ===== */}
       <aside
-        className={`bg-slate-900 flex flex-col transition-all duration-300 ease-in-out shrink-0 h-screen z-50 shadow-xl
+        className={`bg-black/40 flex flex-col transition-all duration-300 ease-in-out shrink-0 h-screen z-50 border-r border-white/[0.05] backdrop-blur-xl
           fixed md:relative
           ${collapsed ? 'w-20' : 'w-64'}
           ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
@@ -123,24 +104,24 @@ export default function PartnerLayout() {
       >
         {/* Branding */}
         <div
-          className={`h-20 flex items-center px-4 border-b border-slate-800 ${collapsed ? 'justify-center' : 'justify-between'}`}
+          className={`h-20 flex items-center px-6 border-b border-white/[0.05] ${collapsed ? 'justify-center' : 'justify-between'}`}
         >
           {!collapsed && (
             <div
               className="flex items-center gap-3 cursor-pointer"
               onClick={() => navigate('/partner')}
             >
-              <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shrink-0">
+              <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center text-[#050a08] font-bold text-lg shrink-0 shadow-lg shadow-emerald-500/20">
                 W
               </div>
-              <span className="font-bold text-lg text-white">
-                Wayzza<span className="text-emerald-500">Pro</span>
+              <span className="font-black text-white uppercase tracking-tight">
+                Wayzza<span className="text-emerald-400">Pro</span>
               </span>
             </div>
           )}
           {collapsed && (
             <div
-              className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center text-white font-bold text-lg cursor-pointer shrink-0"
+              className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center text-[#050a08] font-bold text-lg cursor-pointer shrink-0 shadow-lg shadow-emerald-500/20"
               onClick={() => setCollapsed(false)}
             >
               W
@@ -149,7 +130,7 @@ export default function PartnerLayout() {
           {!collapsed && (
             <button
               onClick={() => setCollapsed(true)}
-              className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors flex items-center justify-center shrink-0"
+              className="w-8 h-8 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-white/40 hover:text-white transition-colors flex items-center justify-center shrink-0"
               aria-label="Collapse sidebar"
             >
               <ChevronLeft size={16} />
@@ -157,29 +138,11 @@ export default function PartnerLayout() {
           )}
         </div>
 
-        {/* Theme toggle */}
-        <div
-          className={`px-4 py-4 border-b border-slate-800 flex items-center ${collapsed ? 'justify-center' : 'justify-between'}`}
-        >
-          {!collapsed && (
-            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest leading-none">
-              Appearance
-            </span>
-          )}
-          <button
-            onClick={toggleTheme}
-            className={`w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center transition-all ${isDarkMode ? 'text-amber-400' : 'text-slate-400 hover:text-white'}`}
-            aria-label="Toggle theme"
-          >
-            {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
-          </button>
-        </div>
-
         {/* Navigation */}
-        <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto no-scrollbar">
+        <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto no-scrollbar relative z-10">
           {!collapsed && (
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-4 ml-3">
-              Menu
+            <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em] block mb-4 ml-3">
+              Management
             </span>
           )}
           {NAV.map((item) => (
@@ -189,23 +152,20 @@ export default function PartnerLayout() {
               end={item.end}
               title={item.label}
               className={({ isActive }) =>
-                `flex items-center gap-3 p-3 rounded-xl transition-all relative group
+                `flex items-center gap-3 p-3 rounded-xl transition-all relative group border
                 ${
                   isActive
-                    ? 'bg-emerald-500/10 text-emerald-400 font-semibold'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                    ? 'bg-emerald-500/10 text-emerald-400 font-bold border-emerald-500/10'
+                    : 'text-white/40 hover:text-white hover:bg-white/[0.02] border-transparent'
                 }`
               }
             >
               {({ isActive }) => (
                 <>
-                  {isActive && !collapsed && (
-                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-emerald-500 rounded-r-full" />
-                  )}
-                  <item.icon size={20} className={collapsed ? 'mx-auto shrink-0' : 'shrink-0'} />
-                  {!collapsed && <span className="text-sm truncate">{item.label}</span>}
+                  <item.icon size={16} className={collapsed ? 'mx-auto shrink-0' : 'shrink-0'} />
+                  {!collapsed && <span className="text-[11px] font-bold uppercase tracking-wider truncate">{item.label}</span>}
                   {collapsed && (
-                    <div className="absolute left-full ml-4 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 shadow-md">
+                    <div className="absolute left-full ml-4 px-2 py-1 bg-[#050a08] border border-white/[0.1] text-white text-[10px] font-bold uppercase tracking-wide rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 shadow-lg">
                       {item.label}
                     </div>
                   )}
@@ -216,73 +176,73 @@ export default function PartnerLayout() {
         </nav>
 
         {/* Partner info & logout */}
-        <div className="p-4 border-t border-slate-800 bg-slate-900/50 space-y-3">
+        <div className="p-4 border-t border-white/[0.05] bg-black/20 space-y-3 relative z-10">
           {!collapsed && (
-            <div className="flex items-center gap-3 p-3 bg-slate-800 rounded-xl">
-              <div className="w-10 h-10 rounded-lg bg-emerald-500/20 text-emerald-500 flex items-center justify-center font-bold text-sm shrink-0">
+            <div className="flex items-center gap-3 p-3 bg-white/[0.02] rounded-xl border border-white/[0.05]">
+              <div className="w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center font-bold text-sm shrink-0">
                 {(user?.email || 'P').charAt(0).toUpperCase()}
               </div>
               <div className="min-w-0">
-                <div className="text-sm font-semibold text-white truncate">
+                <div className="text-sm font-bold text-white truncate">
                   {user?.email?.split('@')?.[0]}
                 </div>
-                <div className="text-[11px] text-emerald-500 flex items-center gap-1 font-medium mt-0.5">
-                  <ShieldCheck size={12} /> Verified Partner
+                <div className="text-[10px] text-emerald-400 flex items-center gap-1 font-bold uppercase tracking-wide mt-0.5">
+                  <ShieldCheck size={10} /> Verified
                 </div>
               </div>
             </div>
           )}
           <button
             onClick={handleLogout}
-            className={`w-full h-10 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2 border border-slate-700 text-slate-300 hover:bg-rose-500 hover:text-white hover:border-rose-500 ${collapsed ? 'justify-center px-0' : 'justify-center px-4'}`}
+            className={`w-full h-11 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors flex items-center gap-2 border border-white/[0.05] text-white/40 hover:bg-rose-500 hover:text-white hover:border-rose-500 ${collapsed ? 'justify-center px-0' : 'justify-center px-4'}`}
             title={collapsed ? 'Sign Out' : undefined}
           >
-            <LogOut size={16} />
+            <LogOut size={14} />
             {!collapsed && 'Sign Out'}
           </button>
         </div>
       </aside>
 
       {/* ===== MAIN CONTENT ===== */}
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden relative z-10">
         {/* Header */}
-        <header className="bg-white border-b border-slate-200 h-16 md:h-20 px-4 md:px-8 flex items-center justify-between shrink-0 shadow-sm z-40">
+        <header className="bg-[#050a08]/80 backdrop-blur-xl border-b border-white/[0.05] h-20 px-8 flex items-center justify-between shrink-0 z-40">
           <div className="flex items-center gap-3">
             {/* Mobile hamburger */}
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className="md:hidden w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-200 transition-colors"
+              className="md:hidden w-10 h-10 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white/60 flex items-center justify-center hover:bg-white/[0.05] transition-colors"
               aria-label="Open menu"
             >
-              <Menu size={20} />
+              <Menu size={18} />
             </button>
             {/* Desktop expand when collapsed */}
             {collapsed && (
               <button
                 onClick={() => setCollapsed(false)}
-                className="hidden md:flex w-10 h-10 rounded-xl bg-slate-100 text-slate-600 items-center justify-center hover:bg-slate-200 transition-colors"
+                className="hidden md:flex w-10 h-10 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white/60 items-center justify-center hover:bg-white/[0.05] transition-colors"
                 aria-label="Expand sidebar"
               >
-                <ChevronRight size={20} />
+                <ChevronRight size={18} />
               </button>
             )}
             <div className="flex flex-col">
-              <h1 className="text-base md:text-xl font-bold text-slate-900 leading-tight">
+              <h1 className="text-xl font-black text-white uppercase tracking-tight">
                 {currentPage?.label || 'Dashboard'}
               </h1>
-              <div className="flex items-center gap-1.5 text-slate-500">
-                <Activity size={11} className="text-emerald-500" />
-                <span className="text-[11px] font-medium">System Active</span>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse shadow-sm shadow-emerald-400/60" />
+                <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Network Secure</span>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 md:gap-4">
+          <div className="flex items-center gap-3">
             <button
               onClick={() => navigate('/')}
-              className="h-9 md:h-10 px-3 md:px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-semibold text-sm flex items-center gap-2 transition-colors"
+              className="h-10 px-4 bg-white/[0.03] hover:bg-white/[0.05] border border-white/[0.08] text-white rounded-lg font-bold text-[11px] uppercase tracking-wider flex items-center gap-2 transition-colors shadow-sm"
             >
-              <Globe size={16} />
+              <Globe size={14} />
               <span className="hidden sm:inline">Public Site</span>
             </button>
 
@@ -290,12 +250,12 @@ export default function PartnerLayout() {
             <div className="relative" ref={notifRef}>
               <button
                 onClick={openNotifs}
-                className="w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-colors relative"
+                className="w-10 h-10 rounded-full bg-white/[0.03] hover:bg-white/[0.05] border border-white/[0.08] text-white/60 flex items-center justify-center transition-colors relative"
                 aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ''}`}
               >
-                <Bell size={18} />
+                <Bell size={16} />
                 {unreadCount > 0 && (
-                  <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full animate-pulse" />
+                  <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse" />
                 )}
               </button>
 
@@ -308,7 +268,7 @@ export default function PartnerLayout() {
 
             {/* Avatar */}
             <div
-              className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm cursor-pointer hover:bg-emerald-200 transition-colors border border-emerald-200 shrink-0"
+              className="w-10 h-10 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center font-bold text-sm cursor-pointer hover:bg-emerald-500/20 transition-colors shrink-0"
               onClick={() => navigate('/profile')}
               title="Account Profile"
               role="button"
@@ -321,11 +281,11 @@ export default function PartnerLayout() {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-8 bg-slate-50">
+        <main className="flex-1 overflow-y-auto p-8">
           <Outlet />
-          <div className="mt-12 py-6 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-slate-400 font-medium">
+          <div className="mt-12 py-6 border-t border-white/[0.05] flex flex-col sm:flex-row justify-between items-center gap-2 text-[10px] font-bold text-white/20 uppercase tracking-[0.2em]">
             <div className="flex items-center gap-2">
-              <Navigation size={14} /> Wayzza Partner Suite
+              <Sparkles size={12} className="text-emerald-400" /> Wayzza Partner Suite
             </div>
             <div>&copy; {new Date().getFullYear()} Wayzza Inc.</div>
           </div>

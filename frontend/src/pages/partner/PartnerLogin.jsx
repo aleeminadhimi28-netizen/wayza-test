@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../AuthContext.jsx';
 import { useToast } from '../../ToastContext.jsx';
@@ -204,6 +204,15 @@ export default function PartnerLogin() {
                     {show ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
                 </div>
+              </div>
+
+              <div className="flex justify-end pr-2">
+                <Link
+                  to="/forgot-password"
+                  className="text-[11px] font-bold text-slate-400 uppercase tracking-widest hover:text-emerald-600 transition-colors"
+                >
+                  Forgot Password?
+                </Link>
               </div>
 
               <button

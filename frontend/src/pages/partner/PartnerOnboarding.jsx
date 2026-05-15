@@ -98,6 +98,8 @@ export default function PartnerOnboarding() {
   // Listing fields
   const [listingName, setListingName] = useState('');
   const [price, setPrice] = useState('');
+  const [listingLat, setListingLat] = useState('');
+  const [listingLng, setListingLng] = useState('');
   const [cancellationPolicy, setCancellationPolicy] = useState('moderate');
 
   // Stays listing
@@ -130,6 +132,24 @@ export default function PartnerOnboarding() {
       showToast('MSME number is required.', 'error');
       return;
     }
+    // Validate MSME format: UDYAM-XX-00-XXXXXXX (alphanumeric, 2-letter state, 2-digit dist, 7-digit num)
+    const msmeRegex = /^UDYAM-[A-Z]{2}-\d{2}-\d{7}$/;
+    if (!msmeRegex.test(msmeNumber.trim())) {
+      showToast('Invalid MSME format. Expected: UDYAM-ST-00-0000000', 'error');
+      return;
+    }
+    // Validate GST format if provided
+    if (gstEnabled && gstNumber.trim()) {
+      const gstRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
+      if (!gstRegex.test(gstNumber.trim())) {
+        showToast('Invalid GST number format. Expected: 29XXXXX0000X1ZX', 'error');
+        return;
+      }
+    }
+    if (!listingName || !price) {
+      showToast('Please complete your first listing details before submitting.', 'error');
+      return;
+    }
     if (mainSector === 'vehicles' && !registrationCategory) {
       showToast('Please select a registration category for your vehicle.', 'error');
       return;
@@ -150,6 +170,8 @@ export default function PartnerOnboarding() {
           ? {
               title: listingName,
               price: Number(price),
+              latitude: listingLat ? Number(listingLat) : undefined,
+              longitude: listingLng ? Number(listingLng) : undefined,
               roomType: mainSector === 'stays' ? roomType : undefined,
               vehicleType: mainSector === 'vehicles' ? vehicleType : undefined,
               registrationCategory: mainSector === 'vehicles' ? registrationCategory : undefined,
@@ -318,14 +340,17 @@ export default function PartnerOnboarding() {
                 {/* MSME & GST */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <FormInput
-                    label="MSME Number"
-                    required
-                    value={msmeNumber}
-                    onChange={(v) => setMsmeNumber(v.toUpperCase())}
-                    placeholder="UDYAM-XX-00-XXXXXXX"
-                    maxLength={20}
-                    icon={<Briefcase size={20} />}
-                  />
+                  label="MSME Number"
+                  required
+                  value={msmeNumber}
+                  onChange={(v) => {
+                    const cleaned = v.toUpperCase().replace(/[^A-Z0-9-]/g, '');
+                    setMsmeNumber(cleaned);
+                  }}
+                  placeholder="UDYAM-KL-00-0000000"
+                  maxLength={20}
+                  icon={<Briefcase size={20} />}
+                />
                   <div className="space-y-4 group">
                     <label className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 group-focus-within:text-emerald-600 transition-colors">
                       GST Number <span className="text-slate-200">(optional)</span>
@@ -337,11 +362,11 @@ export default function PartnerOnboarding() {
                       <input
                         value={gstNumber}
                         onChange={(e) => {
-                          const val = e.target.value.toUpperCase();
+                          const val = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 15);
                           setGstNumber(val);
                           if (!val) setGstEnabled(false);
                         }}
-                        placeholder="29XXXXX0000X1ZX"
+                        placeholder="29ABCDE1234F1Z5"
                         maxLength={15}
                         className="w-full h-16 bg-white/50 border border-slate-100 rounded-[24px] pl-16 pr-6 font-bold text-sm tracking-widest text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-100 shadow-sm uppercase"
                       />
@@ -428,6 +453,26 @@ export default function PartnerOnboarding() {
                   placeholder="E.G. VARKALA CLIFF, KERALA"
                   icon={<MapPin size={24} />}
                 />
+
+                {/* Coordinates (optional, for map discovery) */}
+                <div className="grid grid-cols-2 gap-4">
+                  <FormInput
+                    label="Latitude (optional)"
+                    value={listingLat}
+                    onChange={setListingLat}
+                    placeholder="8.7379"
+                    type="number"
+                    icon={<MapPin size={18} />}
+                  />
+                  <FormInput
+                    label="Longitude (optional)"
+                    value={listingLng}
+                    onChange={setListingLng}
+                    placeholder="76.7143"
+                    type="number"
+                    icon={<MapPin size={18} />}
+                  />
+                </div>
                 <div className="space-y-4">
                   <label className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2">
                     Suggested Premium Hubs

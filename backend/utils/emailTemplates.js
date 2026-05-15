@@ -164,3 +164,28 @@ export const withdrawalStatusEmail = ({ ownerEmail, amount, status, reason }) =>
     </div>`;
     return { from: `"Wayzza" <${process.env.SMTP_FROM || process.env.EMAIL_USER}>`, to: ownerEmail, subject: `Withdrawal ${approved ? "Approved" : "Update"} — ₹${Number(amount).toLocaleString()}`, html };
 };
+
+export const partnerApprovedEmail = ({ partnerEmail, businessName }) => {
+    const year = new Date().getFullYear();
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    const html = `<div style='font-family:system-ui;max-width:560px;margin:0 auto;background:#f0fdf4;padding:32px;border-radius:20px;'>
+    <div style='background:linear-gradient(135deg,#064e3b,#059669);border-radius:16px;padding:32px;text-align:center;margin-bottom:28px;'>
+    <h1 style='color:white;margin:0;font-size:28px;'>Wayzza Pro</h1>
+    <p style='color:rgba(255,255,255,0.85);margin-top:8px;font-size:15px;'>Your partner account is approved!</p>
+    </div>
+    <p style='color:#374151;font-size:16px;margin-bottom:24px;'>Congratulations! <strong>${businessName || partnerEmail.split('@')[0]}</strong>, your Wayzza Partner account has been reviewed and approved by our team.</p>
+    <div style='background:white;border-radius:16px;padding:24px;margin-bottom:24px;border:1px solid #d1fae5;'>
+    <h2 style='margin:0 0 16px;color:#064e3b;font-size:18px;'>You can now:</h2>
+    <ul style='color:#374151;font-size:14px;line-height:2;padding-left:20px;margin:0;'>
+    <li>Access your full partner dashboard</li>
+    <li>Create and manage property listings</li>
+    <li>Accept guest bookings and receive payouts</li>
+    <li>View real-time analytics and earnings</li>
+    </ul></div>
+    <div style='text-align:center;margin-bottom:28px;'>
+    <a href='${frontendUrl}/partner' style='display:inline-block;padding:14px 32px;background:#059669;color:white;text-decoration:none;border-radius:12px;font-weight:700;font-size:15px;'>Launch Dashboard</a>
+    </div>
+    <p style='color:#9ca3af;font-size:12px;text-align:center;'>Questions? Reach us at support@wayzza.com<br>© ${year} Wayzza Partner Program</p>
+    </div>`;
+    return { from: `"Wayzza" <${process.env.SMTP_FROM || process.env.EMAIL_USER}>`, to: partnerEmail, subject: "🎉 Your Wayzza Partner Account is Approved!", html };
+};

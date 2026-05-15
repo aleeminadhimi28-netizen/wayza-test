@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import { ObjectId } from "mongodb";
 import { getDB } from "../config/db.js";
 import { requireAuth, requireRole } from "../middleware/auth.js";
-import { getTransporter, payoutSettledEmail, withdrawalStatusEmail } from "../utils/emailTemplates.js";
+import { getTransporter, payoutSettledEmail, withdrawalStatusEmail, partnerApprovedEmail } from "../utils/emailTemplates.js";
 import { sendWhatsAppAlert, formatWhatsAppListingApproved, formatWhatsAppPartnerOnboarded } from "../utils/whatsapp.js";
 import { z } from "zod";
 import { JWT_EXPIRY, BCRYPT_ROUNDS } from "../config/constants.js";
@@ -213,11 +213,22 @@ router.patch("/partners/:email/approve", requireAuth, requireRole(["admin"]), as
         const db = getDB();
         await db.collection("partners").updateOne(
             { email: req.params.email },
-            { $set: { onboarded: true, updatedAt: new Date() } }
+            { $set: { onboarded: true, onboardedAt: new Date(), updatedAt: new Date() } }
         );
 
-        // Notify Partner of account approval
+        // Fetch partner for notification details
         const partner = await db.collection("partners").findOne({ email: req.params.email });
+
+        // Send email notification
+        const transporter = await getTransporter();
+        if (transporter && partner?.email) {
+            transporter.sendMail(partnerApprovedEmail({
+                partnerEmail: partner.email,
+                businessName: partner.businessName
+            })).catch(e => console.error("Partner approval email error:", e));
+        }
+
+        // Send WhatsApp notification
         if (partner?.phone) {
             const msg = formatWhatsAppPartnerOnboarded({ email: req.params.email });
             sendWhatsAppAlert(partner.phone, msg).catch(e => console.error("WhatsApp alert error:", e));
