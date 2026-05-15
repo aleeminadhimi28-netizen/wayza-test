@@ -7,7 +7,7 @@ export default defineConfig({
         react(),
         VitePWA({
             registerType: 'autoUpdate',
-            includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg', 'sitemap.xml', 'robots.txt'],
+            includeAssets: ['favicon.svg', 'images/logo-light.svg', 'images/wayzza-icon.png', 'sitemap.xml', 'robots.txt'],
             manifest: {
                 name: 'Wayzza — Curated Sanctuaries',
                 short_name: 'Wayzza',

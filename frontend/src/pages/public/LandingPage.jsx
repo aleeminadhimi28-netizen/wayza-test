@@ -39,19 +39,19 @@ const DESTINATIONS = [
   {
     name: 'Varkala Cliff',
     properties: '45+ Properties',
-    image: '/images/varkala_cliff.png',
+    image: '/images/varkala_cliff.webp',
     className: 'md:col-span-8 md:row-span-2 h-[300px] md:h-full',
   },
   {
     name: 'Edava',
     properties: '20+ Properties',
-    image: '/images/varkala_edava.png',
+    image: '/images/varkala_edava.webp',
     className: 'md:col-span-4 h-[220px] md:h-[284px]',
   },
   {
     name: 'Odayam',
     properties: '15+ Properties',
-    image: '/images/varkala_odayam.png',
+    image: '/images/varkala_odayam.webp',
     className: 'md:col-span-4 h-[220px] md:h-[284px]',
   },
 ];
@@ -63,7 +63,7 @@ const PROMO_OFFER = {
   heading: 'Book a Getaway Deal',
   text: 'At least 15% off select stays.',
   button: 'Save on your next trip',
-  image: '/images/varkala_cliff.png',
+  image: '/images/varkala_cliff.webp',
 };
 
 function scrollCarousel(id, dir) {
@@ -233,7 +233,7 @@ export default function LandingPage() {
               className="w-full h-full"
             >
               <img
-                src="/images/varkala_hero.png"
+                src="/images/varkala_hero.webp"
                 alt="Luxury Sanctuary in Varkala"
                 className="w-full h-full object-cover"
                 fetchPriority="high"
