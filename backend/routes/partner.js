@@ -115,6 +115,18 @@ router.get("/status", requireAuth, async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
+router.get("/profile", requireAuth, requireRole(["partner", "admin"]), async (req, res, next) => {
+    try {
+        const db = getDB();
+        const partner = await db.collection("partners").findOne(
+            { email: req.user.email },
+            { projection: { password: 0 } }
+        );
+        if (!partner) return res.status(404).json({ ok: false, message: "Partner not found" });
+        res.json({ ok: true, data: partner });
+    } catch (err) { next(err); }
+});
+
 router.post("/onboard", requireAuth, requireRole(["partner"]), async (req, res, next) => {
     try {
         const parsed = onboardSchema.safeParse(req.body);

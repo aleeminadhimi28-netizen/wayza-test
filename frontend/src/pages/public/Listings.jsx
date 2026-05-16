@@ -15,8 +15,6 @@ import {
   Anchor,
   Calendar,
   ChevronDown,
-  Wifi,
-  Coffee,
   Shield,
   Navigation,
   CheckCircle,
@@ -64,6 +62,8 @@ export default function Listings() {
   const [showFilters, setShowFilters] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
+  const [minPriceInput, setMinPriceInput] = useState('');
+  const [maxPriceInput, setMaxPriceInput] = useState('');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [sort, setSort] = useState(params.get('sort') || '');
@@ -152,6 +152,15 @@ export default function Listings() {
   useEffect(() => {
     setPage(1);
   }, [location, minPrice, maxPrice, sort, category]);
+
+  // Debounce price filter — wait 400ms after user stops typing before firing the API
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setMinPrice(minPriceInput);
+      setMaxPrice(maxPriceInput);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [minPriceInput, maxPriceInput]);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -345,8 +354,8 @@ export default function Listings() {
                           <input
                             type="number"
                             placeholder="Min"
-                            value={minPrice}
-                            onChange={(e) => setMinPrice(e.target.value)}
+                            value={minPriceInput}
+                            onChange={(e) => setMinPriceInput(e.target.value)}
                             className="w-full h-11 pl-7 pr-3 text-sm font-bold bg-slate-50 border border-slate-100 rounded-xl focus:bg-white focus:border-emerald-500 transition-all"
                           />
                         </div>
@@ -358,8 +367,8 @@ export default function Listings() {
                           <input
                             type="number"
                             placeholder="Max"
-                            value={maxPrice}
-                            onChange={(e) => setMaxPrice(e.target.value)}
+                            value={maxPriceInput}
+                            onChange={(e) => setMaxPriceInput(e.target.value)}
                             className="w-full h-11 pl-7 pr-3 text-sm font-bold bg-slate-50 border border-slate-100 rounded-xl focus:bg-white focus:border-emerald-500 transition-all"
                           />
                         </div>
@@ -367,9 +376,11 @@ export default function Listings() {
                     </div>
 
                     <div className="flex items-end justify-start sm:justify-end sm:col-span-2">
-                      {(minPrice || maxPrice) && (
+                      {(minPriceInput || maxPriceInput) && (
                         <button
                           onClick={() => {
+                            setMinPriceInput('');
+                            setMaxPriceInput('');
                             setMinPrice('');
                             setMaxPrice('');
                           }}
@@ -578,17 +589,16 @@ export default function Listings() {
                           </p>
 
                           <div className="flex flex-wrap gap-2 pt-2">
-                            {[
-                              { icon: Wifi, text: 'Connectivity' },
-                              { icon: Coffee, text: 'Breakfast' },
-                              { icon: Shield, text: 'Secured' },
-                            ].map((a, idx) => (
+                            {(l.amenities?.length > 0
+                              ? l.amenities.slice(0, 3)
+                              : ['Secured Premises', 'Guest Services', 'Premium Location']
+                            ).map((a, idx) => (
                               <div
                                 key={idx}
                                 className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-lg border border-slate-100 text-[11px] font-bold text-slate-500 uppercase tracking-widest"
                               >
-                                <a.icon size={12} />
-                                {a.text}
+                                <Shield size={12} />
+                                {a}
                               </div>
                             ))}
                           </div>
@@ -607,9 +617,10 @@ export default function Listings() {
                                     : 'No Reviews Yet'}
                                 </p>
                               </div>
-                              <div className="w-12 h-12 bg-slate-950 text-white text-lg font-black rounded-2xl flex items-center justify-center shadow-xl shadow-slate-900/10">
-                                {score.toFixed(1)}
-                              </div>
+                          {/* Rating badge */}
+                          <div className="w-12 h-12 bg-slate-950 text-white text-lg font-black rounded-2xl flex items-center justify-center shadow-xl shadow-slate-900/10">
+                            {score > 0 ? score.toFixed(1) : <span className="text-xs font-black">NEW</span>}
+                          </div>
                             </div>
                           </div>
 
@@ -671,21 +682,34 @@ export default function Listings() {
                 <ChevronLeft size={20} />
               </button>
               <div className="flex items-center gap-2">
-                {Array.from({ length: Math.min(pages, 7) }, (_, i) => {
-                  const pg = i + 1;
-                  return (
-                    <button
-                      key={pg}
-                      onClick={() => {
-                        setPage(pg);
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                      }}
-                      className={`w-14 h-14 flex items-center justify-center rounded-2xl text-sm font-black transition-all ${pg === page ? 'bg-slate-900 text-white shadow-2xl shadow-slate-900/20 scale-110' : 'bg-white border border-slate-100 text-slate-400 hover:border-emerald-200 hover:text-emerald-500'}`}
-                    >
-                      {pg}
-                    </button>
-                  );
-                })}
+                {(() => {
+                  // Smart ellipsis: always show first, last, and current ±2 neighbours
+                  const range = new Set([1, pages]);
+                  for (let i = Math.max(2, page - 2); i <= Math.min(pages - 1, page + 2); i++) range.add(i);
+                  const sorted = [...range].sort((a, b) => a - b);
+                  const result = [];
+                  let prev = 0;
+                  sorted.forEach((pg) => {
+                    if (pg - prev > 1) {
+                      result.push(
+                        <span key={`dot-${pg}`} className="w-8 text-center text-slate-300 font-bold text-sm select-none">
+                          …
+                        </span>
+                      );
+                    }
+                    result.push(
+                      <button
+                        key={pg}
+                        onClick={() => { setPage(pg); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                        className={`w-14 h-14 flex items-center justify-center rounded-2xl text-sm font-black transition-all ${pg === page ? 'bg-slate-900 text-white shadow-2xl shadow-slate-900/20 scale-110' : 'bg-white border border-slate-100 text-slate-400 hover:border-emerald-200 hover:text-emerald-500'}`}
+                      >
+                        {pg}
+                      </button>
+                    );
+                    prev = pg;
+                  });
+                  return result;
+                })()}
               </div>
               <button
                 disabled={page >= pages}

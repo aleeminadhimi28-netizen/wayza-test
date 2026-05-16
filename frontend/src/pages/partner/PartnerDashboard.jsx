@@ -41,6 +41,7 @@ export default function PartnerDashboard() {
   const [earnings, setEarnings] = useState(null);
   const [monthly, setMonthly] = useState([]);
   const [listings, setListings] = useState([]);
+  const [partnerProfile, setPartnerProfile] = useState(null);
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
   const [loading, setLoading] = useState(true);
@@ -57,13 +58,15 @@ export default function PartnerDashboard() {
       api.getPartnerEarnings(),
       api.getPartnerMonthlyRevenue(),
       api.getOwnerListings(user.email),
+      api.getPartnerProfile(),
     ])
-      .then(([b, e, m, l]) => {
+      .then(([b, e, m, l, profile]) => {
         setBookings(Array.isArray(b) ? b : []);
         if (e.ok) setEarnings(e);
         if (m.ok) setMonthly(m.data || []);
         const listingArr = Array.isArray(l) ? l : [];
         setListings(listingArr);
+        if (profile?.ok) setPartnerProfile(profile.data);
 
         const initEdits = {};
         listingArr.forEach((lst) => {
@@ -306,7 +309,7 @@ export default function PartnerDashboard() {
               <Sparkles size={12} /> Partner Dashboard
             </div>
             <h1 className="text-3xl font-black text-white tracking-tight uppercase">
-              Welcome back, {user?.email?.split('@')?.[0]}
+              Welcome back, {partnerProfile?.businessName || user?.email?.split('@')?.[0]}
             </h1>
             <p className="text-white/30 text-sm font-medium">
               Here's what's happening with your properties today.

@@ -426,6 +426,19 @@ export const api = {
       body: JSON.stringify({ approved }),
     }).then((r) => r.json()),
 
+  adminRejectListing: (id, reason) =>
+    customFetch(`${API_URL}/admin/listings/${id}/reject`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+      body: JSON.stringify({ reason: reason || 'Does not meet platform standards' }),
+    }).then((r) => r.json()),
+
+  // Partner
+  getPartnerProfile: () =>
+    customFetch(`${API_URL}/partner/profile`, {
+      headers: getAuthHeaders(),
+    }).then((r) => r.json()),
+
   adminMuteUser: (email, muted) =>
     customFetch(`${API_URL}/admin/users/${email}/mute`, {
       method: 'PATCH',

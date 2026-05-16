@@ -26,6 +26,11 @@ export default function Payment() {
   const title = location.state?.title || 'Premium Experience';
   const nights = location.state?.nights || 1;
   const couponCode = location.state?.couponCode;
+  // Full breakdown passed from Booking.jsx
+  const baseAmount = location.state?.baseAmount ?? null;
+  const discountAmount = location.state?.discountAmount ?? 0;
+  const gst = location.state?.gst ?? null;
+  const serviceFee = location.state?.serviceFee ?? null;
 
   useEffect(() => {
     const script = document.createElement('script');
@@ -37,7 +42,7 @@ export default function Payment() {
     };
   }, []);
 
-  async function handlePayment() {
+  async function handlePayment(preferredMethod) {
     if (!bookingId) {
       showToast('Invalid transaction reference.', 'error');
       return;
@@ -55,13 +60,29 @@ export default function Payment() {
       }
 
       // 2. Configure Razorpay Options
+      const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID;
+      if (!razorpayKey) {
+        showToast('Payment gateway misconfigured. Please contact support.', 'error');
+        setSubmitting(false);
+        return;
+      }
+
+      // Build method pre-selection config for the Razorpay modal
+      const methodConfig =
+        preferredMethod === 'upi'
+          ? { config: { display: { blocks: { upi: { name: 'Pay via UPI', instruments: [{ method: 'upi' }] } }, sequence: ['block.upi'], preferences: { show_default_blocks: false } } } }
+          : preferredMethod === 'card'
+          ? { config: { display: { blocks: { card: { name: 'Pay by Card', instruments: [{ method: 'card' }] } }, sequence: ['block.card'], preferences: { show_default_blocks: false } } } }
+          : {};
+
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_SefBe7ldCASLlG',
+        key: razorpayKey,
         amount: orderData.amount,
         currency: orderData.currency,
         name: 'Wayzza',
         description: `Booking: ${title}`,
         order_id: orderData.orderId,
+        ...methodConfig,
         handler: async function (response) {
           try {
             // 3. Verify Payment on Backend
@@ -73,7 +94,7 @@ export default function Payment() {
             });
 
             if (confirmData.ok) {
-              showToast('Payment confirmed! Your stay is verified. ðŸŒ¿', 'success');
+              showToast('Payment confirmed! Your stay is verified.', 'success');
               navigate('/payment-success');
             } else {
               showToast(confirmData.message || 'Payment verification failed.', 'error');
@@ -132,7 +153,7 @@ export default function Payment() {
             Complete your payment
           </h1>
           <p className="text-slate-400 text-sm mb-10">
-            Your booking is held for 10 minutes. Complete payment to confirm.
+            Review your order and complete payment to confirm your reservation.
           </p>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
@@ -145,7 +166,7 @@ export default function Payment() {
                 </p>
                 <div className="space-y-3">
                   <button
-                    onClick={() => handlePayment()}
+                    onClick={() => handlePayment('upi')}
                     disabled={submitting}
                     className="w-full h-16 bg-white border border-slate-200 text-slate-900 rounded-xl px-6 flex items-center justify-between font-bold text-sm hover:border-emerald-400 hover:shadow-md transition-all active:scale-[0.99] disabled:opacity-50 group"
                   >
@@ -162,7 +183,7 @@ export default function Payment() {
                   </button>
 
                   <button
-                    onClick={() => handlePayment()}
+                    onClick={() => handlePayment('card')}
                     disabled={submitting}
                     className="w-full h-16 bg-white border border-slate-200 text-slate-900 rounded-xl px-6 flex items-center justify-between font-bold text-sm hover:border-emerald-400 hover:shadow-md transition-all active:scale-[0.99] disabled:opacity-50 group"
                   >
@@ -205,21 +226,48 @@ export default function Payment() {
                   <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-4">
                     Price Summary
                   </p>
-                  <div className="flex justify-between text-sm text-slate-600">
-                    <span>
-                      {nights} night{nights > 1 ? 's' : ''} (incl. taxes & fees)
-                    </span>
-                    <span>₹{price.toLocaleString()}</span>
-                  </div>
-                  {couponCode && (
+                  {baseAmount !== null ? (
+                    <>
+                      <div className="flex justify-between text-sm text-slate-600">
+                        <span>{nights} night{nights > 1 ? 's' : ''}</span>
+                        <span>&#x20B9;{baseAmount.toLocaleString()}</span>
+                      </div>
+                      {discountAmount > 0 && (
+                        <div className="flex justify-between text-sm text-emerald-600 font-semibold">
+                          <span>Promo ({couponCode})</span>
+                          <span>-&#x20B9;{discountAmount.toLocaleString()}</span>
+                        </div>
+                      )}
+                      {gst !== null && (
+                        <div className="flex justify-between text-sm text-slate-600">
+                          <span>GST {gst === 0 ? '(Waived)' : '(12%)'}</span>
+                          <span className={gst === 0 ? 'text-emerald-500 font-bold' : ''}>
+                            {gst === 0 ? 'Waived' : `&#x20B9;${gst.toLocaleString()}`}
+                          </span>
+                        </div>
+                      )}
+                      {serviceFee !== null && (
+                        <div className="flex justify-between text-sm text-slate-600">
+                          <span>Service Fee</span>
+                          <span>&#x20B9;{serviceFee.toLocaleString()}</span>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="flex justify-between text-sm text-slate-600">
+                      <span>{nights} night{nights > 1 ? 's' : ''} (incl. taxes &amp; fees)</span>
+                      <span>&#x20B9;{price.toLocaleString()}</span>
+                    </div>
+                  )}
+                  {couponCode && baseAmount === null && (
                     <div className="flex justify-between text-sm text-emerald-600 font-semibold">
                       <span>Promo: {couponCode}</span>
-                      <span>Applied ✓</span>
+                      <span>Applied &#x2713;</span>
                     </div>
                   )}
                   <div className="flex justify-between font-black text-slate-900 text-base pt-4 border-t border-slate-100">
                     <span>Total</span>
-                    <span>₹{price.toLocaleString()}</span>
+                    <span>&#x20B9;{price.toLocaleString()}</span>
                   </div>
                 </div>
 

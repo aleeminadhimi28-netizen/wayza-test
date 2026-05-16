@@ -198,9 +198,24 @@ export default function AdminDashboard() {
 
   const handleRejectProperty = useCallback(
     async (id) => {
-      await handleDeleteItem('listings', id);
+      try {
+        const d = await api.adminRejectListing(id);
+        if (d.ok) {
+          setDataList((prev) =>
+            prev.map((item) =>
+              item._id === id ? { ...item, approved: false, rejected: true } : item
+            )
+          );
+          showToast('Listing rejected. Partner has been flagged.', 'info');
+        } else {
+          showToast(d.message || 'Failed to reject listing.', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Failed to reject listing.', 'error');
+      }
     },
-    [handleDeleteItem]
+    [showToast]
   );
 
   const handleApprovePartner = useCallback(
@@ -309,16 +324,22 @@ export default function AdminDashboard() {
   const openTickets = useMemo(() => tickets.filter((t) => t.status === 'open').length, [tickets]);
 
   useEffect(() => {
-    api
-      .adminStats()
-      .then((d) => {
-        if (d.error) {
-          setErrorMsg('Unauthorized. Admin privileges required.');
-          return;
-        }
-        if (d) setStats(d);
-      })
-      .catch(() => setErrorMsg('Failed to load dashboard data. Is the backend running?'));
+    const fetchStats = () => {
+      api
+        .adminStats()
+        .then((d) => {
+          if (d.error) {
+            setErrorMsg('Unauthorized. Admin privileges required.');
+            return;
+          }
+          if (d) setStats(d);
+        })
+        .catch(() => setErrorMsg('Failed to load dashboard data. Is the backend running?'));
+    };
+
+    fetchStats(); // Initial load
+    const refreshId = setInterval(fetchStats, 5 * 60 * 1000); // Refresh every 5 minutes
+    return () => clearInterval(refreshId);
   }, []);
 
   useEffect(() => {

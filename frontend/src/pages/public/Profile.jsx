@@ -433,7 +433,7 @@ export default function Profile() {
                       </div>
                     ) : (
                       <div className="space-y-3">
-                        {bookings.map((b) => {
+                        {bookings.slice(0, 5).map((b) => {
                           const cfg = STATUS_CONFIG[b.status] || STATUS_CONFIG.pending;
                           const SIcon = cfg.icon;
                           return (
@@ -465,7 +465,7 @@ export default function Profile() {
                                   {cfg.label}
                                 </span>
                                 <span className="text-sm font-bold text-slate-900">
-                                  ₹{(b.totalPrice || 0).toLocaleString()}
+                                  &#x20B9;{(b.totalPrice || 0).toLocaleString()}
                                 </span>
                                 <button
                                   onClick={() => navigate(`/listing/${b.listingId}`)}
@@ -479,6 +479,19 @@ export default function Profile() {
                         })}
                       </div>
                     )}
+
+                    {/* CTA to full bookings page for cancel/invoice actions */}
+                    <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+                      <p className="text-xs text-slate-400">
+                        {bookings.length > 5 ? `Showing 5 of ${bookings.length} bookings` : `${bookings.length} booking${bookings.length !== 1 ? 's' : ''} total`}
+                      </p>
+                      <button
+                        onClick={() => navigate('/my-bookings')}
+                        className="h-9 px-5 bg-slate-900 text-white rounded-xl font-semibold text-xs hover:bg-emerald-600 transition-colors flex items-center gap-2 active:scale-95"
+                      >
+                        Manage All Bookings <ArrowRight size={13} />
+                      </button>
+                    </div>
                   </motion.div>
                 )}
 
@@ -557,11 +570,23 @@ export default function Profile() {
                                 </button>
                               </div>
                               <div className="p-4 space-y-1">
-                                <div className="flex items-center gap-1">
-                                  <Star size={11} className="text-amber-400 fill-amber-400" />
-                                  <span className="text-xs font-semibold text-slate-500">
-                                    Top Rated
-                                  </span>
+                                {/* Rating — real data, not hardcoded badge */}
+                                <div className="flex items-center gap-1.5">
+                                  {l.avgRating > 0 ? (
+                                    <>
+                                      <Star size={11} className="text-amber-400 fill-amber-400" />
+                                      <span className="text-xs font-semibold text-slate-500">
+                                        {Number(l.avgRating).toFixed(1)}
+                                      </span>
+                                      <span className="text-xs text-slate-300">
+                                        ({l.reviewCount || 0} reviews)
+                                      </span>
+                                    </>
+                                  ) : (
+                                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-300 bg-slate-50 border border-slate-100 px-2 py-0.5 rounded-full">
+                                      New
+                                    </span>
+                                  )}
                                 </div>
                                 <h3 className="font-bold text-slate-900 text-sm truncate">
                                   {l.title}

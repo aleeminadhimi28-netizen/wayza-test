@@ -189,8 +189,16 @@ export default function ListingDetails() {
         setSaved(list.some((x) => x.listingId === id));
       });
       api.getMyBookings().then((json) => {
-        const bookings = Array.isArray(json.data) ? json.data : [];
-        setCanReview(bookings.some((b) => b.listingId === id && b.status === 'paid'));
+        const bkgs = Array.isArray(json.data) ? json.data : [];
+        const today = new Date();
+        setCanReview(
+          bkgs.some(
+            (b) =>
+              b.listingId === id &&
+              b.status === 'paid' &&
+              new Date(b.checkOut || b.endDate) < today // only after checkout
+          )
+        );
       });
     }
   }, [id, user, loadReviews]);
@@ -353,6 +361,32 @@ export default function ListingDetails() {
               {listing.title}
             </span>
           </div>
+
+          {/* ─── PACKAGE CONTEXT BANNER ─── */}
+          {location.state?.fromPackage && (
+            <div className="mb-8 flex items-center gap-4 bg-emerald-50 border border-emerald-100 rounded-2xl px-5 py-4">
+              <div className="w-9 h-9 rounded-xl bg-emerald-500 flex items-center justify-center shrink-0">
+                <Sparkles size={16} className="text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[11px] font-black uppercase tracking-widest text-emerald-600 mb-0.5">
+                  Curated Package
+                </p>
+                <p className="text-sm font-bold text-slate-900 truncate">
+                  {location.state.fromPackage.name}
+                  <span className="text-slate-400 font-medium ml-2">
+                    — ₹{Number(location.state.fromPackage.price).toLocaleString('en-IN')} bundled
+                  </span>
+                </p>
+              </div>
+              <button
+                onClick={() => navigate('/packages')}
+                className="text-[11px] font-black text-emerald-600 uppercase tracking-widest hover:underline shrink-0"
+              >
+                ← Back to Packages
+              </button>
+            </div>
+          )}
 
           {/* ─── TITLE & ACTIONS ─── */}
           <div className="flex flex-col lg:flex-row justify-between items-start gap-8 lg:gap-12 mb-12 lg:mb-16">

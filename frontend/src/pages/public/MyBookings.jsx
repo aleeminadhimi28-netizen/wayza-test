@@ -45,6 +45,20 @@ const statusConfig = {
     icon: XCircle,
     border: 'border-rose-100',
   },
+  arrived: {
+    label: 'Checked In',
+    color: 'text-blue-600',
+    bg: 'bg-blue-50',
+    icon: CheckCircle,
+    border: 'border-blue-100',
+  },
+  departed: {
+    label: 'Completed',
+    color: 'text-slate-600',
+    bg: 'bg-slate-50',
+    icon: CheckCircle,
+    border: 'border-slate-200',
+  },
 };
 
 const tabs = [

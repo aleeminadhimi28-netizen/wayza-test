@@ -78,7 +78,15 @@ router.get("/stats", requireAuth, requireRole(["admin"]), async (req, res, next)
 
         const paid = await bookings.find({ status: "paid" }).toArray();
         const totalRevenue = paid.reduce((s, b) => s + (b.totalPrice || 0), 0);
+        
+        // platformCommission stores: Service Fee + Commission - Discount
         const platformCommission = paid.reduce((s, b) => s + (b.commissionAmount || (99 + Math.round((b.baseAmount || (b.totalPrice / 1.12)) * 0.10))), 0);
+        
+        // Total TCS collected
+        const totalTcs = paid.reduce((s, b) => s + (b.tcsAmount || 0), 0);
+        
+        // Total amount going to admin (Commission + TCS)
+        const totalPlatformShare = platformCommission + totalTcs;
 
         const revenueMap = {};
         paid.forEach(b => {
@@ -98,6 +106,8 @@ router.get("/stats", requireAuth, requireRole(["admin"]), async (req, res, next)
             totalBookings,
             totalRevenue,
             platformCommission,
+            totalTcs,
+            totalPlatformShare,
             pendingListings,
             recentBookings,
             monthlyRevenue
@@ -205,6 +215,29 @@ router.delete("/listings/:id", requireAuth, requireRole(["admin"]), async (req, 
         const db = getDB();
         await db.collection("listings").deleteOne({ _id: new ObjectId(req.params.id) });
         res.json({ ok: true });
+    } catch (err) { next(err); }
+});
+
+// Soft-reject: flags the listing as rejected with an audit trail instead of deleting it.
+// This allows admins to review rejection history and partners to appeal.
+router.patch("/listings/:id/reject", requireAuth, requireRole(["admin"]), async (req, res, next) => {
+    try {
+        if (!ObjectId.isValid(req.params.id)) return res.status(400).json({ ok: false });
+        const db = getDB();
+        const { reason } = req.body;
+        await db.collection("listings").updateOne(
+            { _id: new ObjectId(req.params.id) },
+            {
+                $set: {
+                    approved: false,
+                    rejected: true,
+                    rejectionReason: reason || "Does not meet platform standards",
+                    rejectedAt: new Date(),
+                    rejectedBy: req.user.email
+                }
+            }
+        );
+        res.json({ ok: true, message: "Listing rejected and flagged for partner review." });
     } catch (err) { next(err); }
 });
 

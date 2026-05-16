@@ -95,10 +95,20 @@ function PackageCard({ pkg, index }) {
             </p>
           </div>
           <button
-            onClick={() => navigate('/listings')}
+            onClick={() => {
+              if (pkg.hotelId) {
+                // Navigate directly to the linked listing's booking flow
+                navigate(`/listing/${pkg.hotelId}`, {
+                  state: { fromPackage: { id: pkg._id, name: pkg.name, price: pkg.price } },
+                });
+              } else {
+                // Fallback: search listings by package name
+                navigate(`/listings?location=${encodeURIComponent(pkg.name)}`);
+              }
+            }}
             className="flex items-center gap-2 bg-slate-950 text-white px-5 py-3 rounded-2xl text-xs font-black uppercase tracking-[0.25em] hover:bg-emerald-600 transition-all duration-300 active:scale-95"
           >
-            Book <ArrowRight size={13} />
+            View Stay <ArrowRight size={13} />
           </button>
         </div>
       </div>

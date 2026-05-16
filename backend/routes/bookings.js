@@ -139,6 +139,18 @@ router.post("/book", requireAuth, async (req, res, next) => {
 
         let booking;
         try {
+        // STALE PENDING CLEANUP: Cancel unpaid pending bookings older than 20 minutes
+        // so they don't permanently block partner availability
+        await bookings.updateMany(
+            {
+                listingId,
+                variantIndex: variantIndex || 0,
+                status: "pending",
+                createdAt: { $lt: new Date(Date.now() - 20 * 60 * 1000) }
+            },
+            { $set: { status: "cancelled", cancelledAt: new Date(), cancellationReason: "auto_expired" } }
+        );
+
             const conflictingBooking = await bookings.findOne({
                 listingId,
                 variantIndex: variantIndex || 0,
@@ -214,7 +226,7 @@ router.post("/confirm", requireAuth, async (req, res, next) => {
         const paymentId = razorpay_payment_id; // Map back to original variable for rest of logic
 
         const totalPrice = booking.totalPrice || 0;
-        const config = await db.collection("settings").findOne({ type: "financials" }) || { commissionRate: 0.10 };
+        const config = await db.collection("settings").findOne({ type: "financials" }) || { commissionRate: 0.10, tcsRate: 0.01 };
 
         // ─── PART 2 & 3: IMMUTABLE SNAPSHOT — Use frozen values only, never re-calculate ───────
         let commissionAmount;
@@ -231,7 +243,12 @@ router.post("/confirm", requireAuth, async (req, res, next) => {
 
         // Platform absorbs the guest discount — partner receives full pre-discount amount minus commission
         commissionAmount = commissionAmount - (booking.discountAmount || 0);
-        const netEarnings = totalPrice - commissionAmount;
+        
+        // ─── TCS CALCULATION (1%) ───
+        const tcsRate = config.tcsRate !== undefined ? config.tcsRate : 0.01;
+        const tcsAmount = Math.round((booking.baseAmount || 0) * tcsRate);
+        
+        const netEarnings = totalPrice - commissionAmount - tcsAmount;
         // ─────────────────────────────────────────────────────────────────────────
 
         const passcode = Math.floor(100000 + Math.random() * 900000).toString();
@@ -245,6 +262,7 @@ router.post("/confirm", requireAuth, async (req, res, next) => {
                     paidAt: new Date(),
                     commissionAmount,
                     netEarnings,
+                    tcsAmount, // Store TCS amount
                     payoutStatus: "pending",
                     checkInPasscode: passcode
                 }
@@ -273,9 +291,12 @@ router.post("/confirm", requireAuth, async (req, res, next) => {
             ]);
 
             // WhatsApp Alert for Owner
+            // Check partners collection first (partner onboarding flow), then users
             (async () => {
                 try {
-                    const owner = await db.collection("users").findOne({ email: booking.ownerEmail });
+                    const owner =
+                        await db.collection("partners").findOne({ email: booking.ownerEmail }) ||
+                        await db.collection("users").findOne({ email: booking.ownerEmail });
                     if (owner?.phone) {
                         const message = formatWhatsAppBookingMsg(emailData);
                         await sendWhatsAppAlert(owner.phone, message, [

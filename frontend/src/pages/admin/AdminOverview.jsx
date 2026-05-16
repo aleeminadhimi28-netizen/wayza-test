@@ -7,6 +7,8 @@ import {
   CalendarCheck,
   CheckCircle,
   ArrowUpRight,
+  Tag,
+  Banknote,
 } from 'lucide-react';
 import {
   AreaChart,
@@ -53,7 +55,25 @@ export default function AdminOverview({ stats, setActiveTab }) {
       icon: TrendingUp,
       bg: 'bg-emerald-500/10',
       color: 'text-emerald-400',
-      trend: `${stats.totalBookings || 0} bookings`,
+      trend: 'Fee + Comm',
+      up: true,
+    },
+    {
+      title: 'TCS Collected',
+      value: `₹${(stats.totalTcs || 0).toLocaleString()}`,
+      icon: Tag,
+      bg: 'bg-rose-500/10',
+      color: 'text-rose-400',
+      trend: '1% Deducted',
+      up: true,
+    },
+    {
+      title: 'Admin Wallet',
+      value: `₹${(stats.totalPlatformShare || 0).toLocaleString()}`,
+      icon: Banknote,
+      bg: 'bg-cyan-500/10',
+      color: 'text-cyan-400',
+      trend: 'Total Share',
       up: true,
     },
   ];
@@ -67,7 +87,7 @@ export default function AdminOverview({ stats, setActiveTab }) {
       className="space-y-8"
     >
       {/* KPI CARDS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
         {kpiCards.map((card, i) => (
           <div
             key={i}

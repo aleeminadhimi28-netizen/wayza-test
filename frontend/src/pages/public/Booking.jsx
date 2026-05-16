@@ -159,6 +159,11 @@ export default function Booking() {
           title: listing?.title,
           nights,
           couponCode: discountInfo ? discountInfo.code : null,
+          // Full itemized breakdown for Payment page display
+          baseAmount,
+          discountAmount,
+          gst,
+          serviceFee,
         },
       });
     } catch {

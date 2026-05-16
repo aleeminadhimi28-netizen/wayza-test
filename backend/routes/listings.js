@@ -122,6 +122,20 @@ router.get("/:id", async (req, res, next) => {
         const partner = await db.collection("partners").findOne({ email: listing.ownerEmail });
         listing.ownerGstEnabled = partner?.gstEnabled === true;
 
+        // Attach real review stats — keeps this endpoint consistent with the list endpoint
+        const listingIdStr = listing._id.toString();
+        const reviewStats = await db.collection("reviews").aggregate([
+            { $match: { listingId: listingIdStr } },
+            { $group: { _id: null, avgRating: { $avg: "$rating" }, count: { $sum: 1 } } }
+        ]).toArray();
+        if (reviewStats.length > 0) {
+            listing.avgRating = Math.round(reviewStats[0].avgRating * 10) / 10;
+            listing.reviewCount = reviewStats[0].count;
+        } else {
+            listing.avgRating = 0;
+            listing.reviewCount = 0;
+        }
+
         res.json({ ok: true, data: listing });
     } catch (err) { next(err); }
 });

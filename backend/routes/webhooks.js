@@ -47,7 +47,7 @@ router.post("/razorpay", async (req, res, next) => {
                 console.log(`[Webhook] Confirming booking ${booking._id} via webhook`);
 
                 // ─── FINANCIAL SNAPSHOT (mirrors /confirm route — must stay in sync) ───
-                const config = await db.collection("settings").findOne({ type: "financials" }) || { commissionRate: 0.10, serviceFee: 99 };
+                const config = await db.collection("settings").findOne({ type: "financials" }) || { commissionRate: 0.10, serviceFee: 99, tcsRate: 0.01 };
                 let commissionAmount;
                 if (booking.platformCommissionAmount !== undefined) {
                     commissionAmount = booking.platformCommissionAmount;
@@ -57,7 +57,12 @@ router.post("/razorpay", async (req, res, next) => {
                 }
                 // Platform absorbs the guest discount — partner earns pre-discount amount minus commission
                 commissionAmount = commissionAmount - (booking.discountAmount || 0);
-                const netEarnings = (booking.totalPrice || 0) - commissionAmount;
+                
+                // ─── TCS CALCULATION (1%) ───
+                const tcsRate = config.tcsRate !== undefined ? config.tcsRate : 0.01;
+                const tcsAmount = Math.round((booking.baseAmount || 0) * tcsRate);
+                
+                const netEarnings = (booking.totalPrice || 0) - commissionAmount - tcsAmount;
                 // ─────────────────────────────────────────────────────────────────────
 
                 const passcode = Math.floor(100000 + Math.random() * 900000).toString();
@@ -71,6 +76,7 @@ router.post("/razorpay", async (req, res, next) => {
                             checkInPasscode: passcode,
                             commissionAmount,
                             netEarnings,
+                            tcsAmount, // Store TCS amount
                             payoutStatus: "pending"
                         }
                     }
