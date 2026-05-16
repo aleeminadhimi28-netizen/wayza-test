@@ -20,7 +20,7 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
   const { currency, changeCurrency } = useCurrency();
   const [showCurr, setShowCurr] = useState(false);
 
-  const { notifs, showNotifs, setShowNotifs, openNotifs } = useNotifications(user);
+  const { notifs, showNotifs, setShowNotifs } = useNotifications(user);
 
   // THEME
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -72,7 +72,6 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
     ? 'bg-transparent'
     : 'bg-white/95 backdrop-blur-xl shadow-sm border-b border-slate-100';
 
-  const textColor = isTransparent ? 'text-white' : 'text-slate-900';
   const subTextColor = isTransparent ? 'text-white/60' : 'text-slate-500';
 
   // FIX: unified icon button base — same size & shape at every breakpoint

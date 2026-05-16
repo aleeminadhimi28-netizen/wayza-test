@@ -25,9 +25,7 @@ import ListingGallery from '../../components/listing/ListingGallery.jsx';
 import ListingReviews from '../../components/listing/ListingReviews.jsx';
 import BookingCard from '../../components/listing/BookingCard.jsx';
 
-const AMENITIES = []; // Legacy
-
-function StarRow({ rating, size = 16, interactive = false, onSet, onHover }) {
+function StarRow({ rating, size = 16, interactive = false, onSet }) {
   const [hov, setHov] = useState(0);
   return (
     <div className="flex gap-1">
@@ -53,7 +51,7 @@ export default function ListingDetails() {
   const location = useLocation();
   const { user } = useAuth();
   const { showToast } = useToast();
-  const { formatPrice } = useCurrency();
+  const { formatPrice: _formatPrice } = useCurrency();
 
   // 1. State definitions
   const [listing, setListing] = useState(null);
@@ -66,7 +64,6 @@ export default function ListingDetails() {
   const [comment, setComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [selectedVariant, setSelectedVariant] = useState(0);
-  const [showAllAmenities, setShowAllAmenities] = useState(false);
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
   const [platformConfig, setPlatformConfig] = useState(null);
@@ -194,9 +191,7 @@ export default function ListingDetails() {
         setCanReview(
           bkgs.some(
             (b) =>
-              b.listingId === id &&
-              b.status === 'paid' &&
-              new Date(b.checkOut || b.endDate) < today // only after checkout
+              b.listingId === id && b.status === 'paid' && new Date(b.checkOut || b.endDate) < today // only after checkout
           )
         );
       });

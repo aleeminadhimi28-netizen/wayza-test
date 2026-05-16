@@ -4,20 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
 import { api } from '../../utils/api.js';
 import SEO from '../../components/SEO.jsx';
-import {
-  Home,
-  Bike,
-  Sparkles,
-  ArrowRight,
-  CheckCircle2,
-  Package,
-} from 'lucide-react';
-
-const ICONS = { hotel: Home, bike: Bike, experience: Sparkles, default: Package };
+import { Home, Bike, Sparkles, ArrowRight, CheckCircle2, Package } from 'lucide-react';
 
 function PackageCard({ pkg, index }) {
   const navigate = useNavigate();
-  const Icon = ICONS.default;
 
   return (
     <motion.div
@@ -49,9 +39,7 @@ function PackageCard({ pkg, index }) {
           <h3 className="text-xl font-black tracking-tight text-slate-950 mb-1.5 leading-snug">
             {pkg.name}
           </h3>
-          <p className="text-sm text-slate-500 font-medium leading-relaxed">
-            {pkg.description}
-          </p>
+          <p className="text-sm text-slate-500 font-medium leading-relaxed">{pkg.description}</p>
         </div>
 
         {/* What's included */}
@@ -180,8 +168,7 @@ export default function Packages() {
             transition={{ delay: 0.05 }}
             className="text-4xl sm:text-6xl font-black tracking-tighter leading-tight text-white mb-4"
           >
-            Everything you need,{' '}
-            <span className="text-emerald-400 italic">bundled.</span>
+            Everything you need, <span className="text-emerald-400 italic">bundled.</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -207,9 +194,7 @@ export default function Packages() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {loading
               ? [1, 2, 3].map((i) => <PackageSkeleton key={i} />)
-              : packages.map((pkg, i) => (
-                  <PackageCard key={pkg._id} pkg={pkg} index={i} />
-                ))}
+              : packages.map((pkg, i) => <PackageCard key={pkg._id} pkg={pkg} index={i} />)}
           </div>
         )}
 

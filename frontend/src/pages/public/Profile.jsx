@@ -483,7 +483,9 @@ export default function Profile() {
                     {/* CTA to full bookings page for cancel/invoice actions */}
                     <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
                       <p className="text-xs text-slate-400">
-                        {bookings.length > 5 ? `Showing 5 of ${bookings.length} bookings` : `${bookings.length} booking${bookings.length !== 1 ? 's' : ''} total`}
+                        {bookings.length > 5
+                          ? `Showing 5 of ${bookings.length} bookings`
+                          : `${bookings.length} booking${bookings.length !== 1 ? 's' : ''} total`}
                       </p>
                       <button
                         onClick={() => navigate('/my-bookings')}

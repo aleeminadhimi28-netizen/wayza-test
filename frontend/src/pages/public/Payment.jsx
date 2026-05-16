@@ -70,10 +70,26 @@ export default function Payment() {
       // Build method pre-selection config for the Razorpay modal
       const methodConfig =
         preferredMethod === 'upi'
-          ? { config: { display: { blocks: { upi: { name: 'Pay via UPI', instruments: [{ method: 'upi' }] } }, sequence: ['block.upi'], preferences: { show_default_blocks: false } } } }
+          ? {
+              config: {
+                display: {
+                  blocks: { upi: { name: 'Pay via UPI', instruments: [{ method: 'upi' }] } },
+                  sequence: ['block.upi'],
+                  preferences: { show_default_blocks: false },
+                },
+              },
+            }
           : preferredMethod === 'card'
-          ? { config: { display: { blocks: { card: { name: 'Pay by Card', instruments: [{ method: 'card' }] } }, sequence: ['block.card'], preferences: { show_default_blocks: false } } } }
-          : {};
+            ? {
+                config: {
+                  display: {
+                    blocks: { card: { name: 'Pay by Card', instruments: [{ method: 'card' }] } },
+                    sequence: ['block.card'],
+                    preferences: { show_default_blocks: false },
+                  },
+                },
+              }
+            : {};
 
       const options = {
         key: razorpayKey,
@@ -229,7 +245,9 @@ export default function Payment() {
                   {baseAmount !== null ? (
                     <>
                       <div className="flex justify-between text-sm text-slate-600">
-                        <span>{nights} night{nights > 1 ? 's' : ''}</span>
+                        <span>
+                          {nights} night{nights > 1 ? 's' : ''}
+                        </span>
                         <span>&#x20B9;{baseAmount.toLocaleString()}</span>
                       </div>
                       {discountAmount > 0 && (
@@ -255,7 +273,9 @@ export default function Payment() {
                     </>
                   ) : (
                     <div className="flex justify-between text-sm text-slate-600">
-                      <span>{nights} night{nights > 1 ? 's' : ''} (incl. taxes &amp; fees)</span>
+                      <span>
+                        {nights} night{nights > 1 ? 's' : ''} (incl. taxes &amp; fees)
+                      </span>
                       <span>&#x20B9;{price.toLocaleString()}</span>
                     </div>
                   )}

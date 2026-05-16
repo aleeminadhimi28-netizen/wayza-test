@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../AuthContext.jsx';
 import { TrendingUp, Lock, CheckCircle, Save, AlertCircle, Sparkles } from 'lucide-react';
-import VerificationSpinner from '../../components/VerificationSpinner.jsx';
 import { api } from '../../utils/api.js';
 
 export default function PartnerPricing() {

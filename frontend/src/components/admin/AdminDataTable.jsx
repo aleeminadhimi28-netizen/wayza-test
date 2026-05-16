@@ -1,16 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-  Search,
-  CheckCircle,
-  Clock,
-  Trash2,
-  Volume2,
-  VolumeX,
-  X,
-  Plus,
-  Shield,
-} from 'lucide-react';
+import { Search, CheckCircle, Clock, Trash2, Volume2, VolumeX, X, Plus } from 'lucide-react';
 import ConfirmModal from '../ui/ConfirmModal.jsx';
 
 export default function AdminDataTable({

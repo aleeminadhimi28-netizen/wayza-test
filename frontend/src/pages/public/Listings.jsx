@@ -617,10 +617,14 @@ export default function Listings() {
                                     : 'No Reviews Yet'}
                                 </p>
                               </div>
-                          {/* Rating badge */}
-                          <div className="w-12 h-12 bg-slate-950 text-white text-lg font-black rounded-2xl flex items-center justify-center shadow-xl shadow-slate-900/10">
-                            {score > 0 ? score.toFixed(1) : <span className="text-xs font-black">NEW</span>}
-                          </div>
+                              {/* Rating badge */}
+                              <div className="w-12 h-12 bg-slate-950 text-white text-lg font-black rounded-2xl flex items-center justify-center shadow-xl shadow-slate-900/10">
+                                {score > 0 ? (
+                                  score.toFixed(1)
+                                ) : (
+                                  <span className="text-xs font-black">NEW</span>
+                                )}
+                              </div>
                             </div>
                           </div>
 
@@ -685,14 +689,18 @@ export default function Listings() {
                 {(() => {
                   // Smart ellipsis: always show first, last, and current ±2 neighbours
                   const range = new Set([1, pages]);
-                  for (let i = Math.max(2, page - 2); i <= Math.min(pages - 1, page + 2); i++) range.add(i);
+                  for (let i = Math.max(2, page - 2); i <= Math.min(pages - 1, page + 2); i++)
+                    range.add(i);
                   const sorted = [...range].sort((a, b) => a - b);
                   const result = [];
                   let prev = 0;
                   sorted.forEach((pg) => {
                     if (pg - prev > 1) {
                       result.push(
-                        <span key={`dot-${pg}`} className="w-8 text-center text-slate-300 font-bold text-sm select-none">
+                        <span
+                          key={`dot-${pg}`}
+                          className="w-8 text-center text-slate-300 font-bold text-sm select-none"
+                        >
                           …
                         </span>
                       );
@@ -700,7 +708,10 @@ export default function Listings() {
                     result.push(
                       <button
                         key={pg}
-                        onClick={() => { setPage(pg); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                        onClick={() => {
+                          setPage(pg);
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
                         className={`w-14 h-14 flex items-center justify-center rounded-2xl text-sm font-black transition-all ${pg === page ? 'bg-slate-900 text-white shadow-2xl shadow-slate-900/20 scale-110' : 'bg-white border border-slate-100 text-slate-400 hover:border-emerald-200 hover:text-emerald-500'}`}
                       >
                         {pg}

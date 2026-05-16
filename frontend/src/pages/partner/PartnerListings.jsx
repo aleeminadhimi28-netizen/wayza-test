@@ -12,7 +12,6 @@ import {
   ShieldCheck,
   Clock,
   Activity,
-  Building,
   ChevronRight,
   AlertCircle,
   Sparkles,

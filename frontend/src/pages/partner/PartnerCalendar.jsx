@@ -6,7 +6,6 @@ import {
   Calendar,
   CheckCircle,
   ArrowRight,
-  CalendarDays,
   ChevronLeft,
   ChevronRight,
   X,
@@ -15,7 +14,6 @@ import {
   Share2,
   Copy,
   Check,
-  MessageSquare,
   Sparkles,
 } from 'lucide-react';
 import { api } from '../../utils/api.js';
