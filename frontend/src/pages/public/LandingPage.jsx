@@ -9,9 +9,6 @@ import {
   Globe,
   Compass,
   ArrowRight,
-  Bike,
-  Car,
-  Home,
   Instagram,
   Twitter,
   Facebook,
@@ -27,13 +24,6 @@ import { api } from '../../utils/api.js';
 import { fixImg } from '../../utils/image.js';
 import { useToast } from '../../ToastContext.jsx';
 import SEO from '../../components/SEO.jsx';
-
-const CATEGORIES = [
-  { label: 'Villas', key: 'hotel', icon: Home },
-  { label: 'Bikes', key: 'bike', icon: Bike },
-  { label: 'Cars', key: 'car', icon: Car },
-  { label: 'Secrets', key: 'experience', icon: Sparkles },
-];
 
 const DESTINATIONS = [
   {
@@ -76,7 +66,7 @@ export default function LandingPage() {
   const { showToast } = useToast();
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState('hotel');
+  const tab = 'hotel';
   const [search, setSearch] = useState('');
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');

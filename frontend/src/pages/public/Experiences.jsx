@@ -3,9 +3,23 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
 import {
-  Anchor, ArrowRight, Star, MapPin, Sparkles, Zap, Globe,
-  Music, Wind, Waves, Coffee, Clock, Users, ChevronRight,
-  Heart, Camera, Sun, Utensils,
+  Anchor,
+  ArrowRight,
+  Star,
+  MapPin,
+  Sparkles,
+  Zap,
+  Globe,
+  Music,
+  Wind,
+  Waves,
+  Coffee,
+  Clock,
+  Users,
+  ChevronRight,
+  Heart,
+  Camera,
+  Utensils,
 } from 'lucide-react';
 import SEO from '../../components/SEO.jsx';
 
@@ -54,7 +68,7 @@ const EXPERIENCES = [
     price: 1299,
     rating: 4.9,
     reviews: 98,
-    badge: 'Chef\'s Table',
+    badge: "Chef's Table",
     badgeColor: '#10b981',
     desc: 'Cook authentic Kerala fish curry, prawn moilee, and coconut chutney with a local Malayali chef. Market visit included.',
     img: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=700&q=80',
@@ -136,7 +150,7 @@ const EXPERIENCES = [
     reviews: 153,
     badge: 'Adventure',
     badgeColor: '#ef4444',
-    desc: 'ISA-certified instructor, soft-top boards, rash guard and fins provided. Perfect for first-timers on Varkala\'s gentlest waves.',
+    desc: "ISA-certified instructor, soft-top boards, rash guard and fins provided. Perfect for first-timers on Varkala's gentlest waves.",
     img: 'https://images.unsplash.com/photo-1531722569936-825d4ecc6b37?w=700&q=80',
     tags: ['Surf', 'Beach', 'Sport'],
   },
@@ -202,7 +216,10 @@ function ExpCard({ exp, index }) {
 
         {/* Save */}
         <button
-          onClick={(e) => { e.stopPropagation(); setSaved(!saved); }}
+          onClick={(e) => {
+            e.stopPropagation();
+            setSaved(!saved);
+          }}
           className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center transition-all hover:bg-white/40"
         >
           <Heart size={14} className={saved ? 'fill-rose-500 text-rose-500' : 'text-white'} />
@@ -233,14 +250,24 @@ function ExpCard({ exp, index }) {
 
         <div className="flex flex-wrap gap-1.5">
           {exp.tags.map((t) => (
-            <span key={t} className="text-[10px] bg-slate-100 text-slate-600 font-semibold px-2 py-0.5 rounded-full">{t}</span>
+            <span
+              key={t}
+              className="text-[10px] bg-slate-100 text-slate-600 font-semibold px-2 py-0.5 rounded-full"
+            >
+              {t}
+            </span>
           ))}
         </div>
 
         <div className="flex items-center justify-between mt-auto pt-3 border-t border-slate-100">
           <div>
-            <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">From</div>
-            <div className="text-xl font-black text-slate-900">₹{exp.price.toLocaleString('en-IN')}<span className="text-xs font-normal text-slate-400"> /person</span></div>
+            <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+              From
+            </div>
+            <div className="text-xl font-black text-slate-900">
+              ₹{exp.price.toLocaleString('en-IN')}
+              <span className="text-xs font-normal text-slate-400"> /person</span>
+            </div>
           </div>
           <div className="flex items-center gap-1.5 text-xs font-black text-slate-600 group-hover:text-emerald-600 transition-colors">
             <Users size={12} /> {exp.groupSize}
@@ -260,9 +287,8 @@ export default function Experiences() {
   const heroY = useTransform(scrollY, [0, 500], [0, 120]);
   const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
 
-  const filtered = activeCat === 'all'
-    ? EXPERIENCES
-    : EXPERIENCES.filter((e) => e.cat === activeCat);
+  const filtered =
+    activeCat === 'all' ? EXPERIENCES : EXPERIENCES.filter((e) => e.cat === activeCat);
 
   return (
     <WayzzaLayout noPadding>
@@ -298,15 +324,19 @@ export default function Experiences() {
               <Anchor size={12} className="text-amber-400" /> Beyond the Stay
             </div>
             <h1 className="text-6xl sm:text-8xl md:text-[110px] font-black text-white tracking-tighter leading-[0.85] uppercase">
-              NATIVE<br />
+              NATIVE
+              <br />
               <span className="text-amber-400 lowercase">secrets.</span>
             </h1>
             <p className="text-white/60 text-lg max-w-xl leading-relaxed">
-              Handpicked local adventures, cultural rituals, and flavour journeys — designed for those who travel deeper.
+              Handpicked local adventures, cultural rituals, and flavour journeys — designed for
+              those who travel deeper.
             </p>
             <div className="flex flex-wrap gap-3 pt-2">
               <button
-                onClick={() => window.scrollTo({ top: window.innerHeight * 0.7, behavior: 'smooth' })}
+                onClick={() =>
+                  window.scrollTo({ top: window.innerHeight * 0.7, behavior: 'smooth' })
+                }
                 className="flex items-center gap-2 h-12 px-6 bg-amber-500 text-slate-950 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-amber-400 transition-all shadow-lg shadow-amber-500/20"
               >
                 <Sparkles size={14} /> Explore All
@@ -337,7 +367,9 @@ export default function Experiences() {
                   <Icon size={14} className="text-amber-400" />
                 </div>
                 <div>
-                  <div className="text-[10px] text-white/40 uppercase tracking-widest font-bold">{label}</div>
+                  <div className="text-[10px] text-white/40 uppercase tracking-widest font-bold">
+                    {label}
+                  </div>
                   <div className="text-white font-black text-sm">{value}</div>
                 </div>
               </div>
@@ -358,7 +390,9 @@ export default function Experiences() {
                   key={cat.id}
                   onClick={() => setActiveCat(cat.id)}
                   className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
-                    active ? 'bg-slate-950 text-white shadow' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'
+                    active
+                      ? 'bg-slate-950 text-white shadow'
+                      : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'
                   }`}
                 >
                   <Icon size={13} className={active ? 'text-amber-400' : ''} />
@@ -380,11 +414,17 @@ export default function Experiences() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-2xl font-black text-slate-900">
-              {activeCat === 'all' ? 'All Experiences' : CATEGORIES.find((c) => c.id === activeCat)?.label}
+              {activeCat === 'all'
+                ? 'All Experiences'
+                : CATEGORIES.find((c) => c.id === activeCat)?.label}
             </h2>
-            <p className="text-sm text-slate-400 mt-0.5">{filtered.length} experiences in Varkala</p>
+            <p className="text-sm text-slate-400 mt-0.5">
+              {filtered.length} experiences in Varkala
+            </p>
           </div>
-          <div className="text-xs text-slate-400 font-semibold hidden sm:block">Verified & locally curated</div>
+          <div className="text-xs text-slate-400 font-semibold hidden sm:block">
+            Verified & locally curated
+          </div>
         </div>
 
         <AnimatePresence mode="popLayout">
@@ -409,14 +449,21 @@ export default function Experiences() {
         >
           <div
             className="absolute inset-0 opacity-10"
-            style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?w=1200&q=80)', backgroundSize: 'cover', backgroundPosition: 'center' }}
+            style={{
+              backgroundImage:
+                'url(https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?w=1200&q=80)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
           />
           <div className="relative z-10">
             <div className="inline-flex items-center gap-2 bg-slate-950 text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest mb-5">
               <Utensils size={11} className="text-amber-400" /> Custom Package Builder
             </div>
             <h2 className="text-3xl sm:text-5xl font-black text-slate-950 tracking-tighter mb-3">
-              Mix & match your<br />perfect Varkala trip.
+              Mix & match your
+              <br />
+              perfect Varkala trip.
             </h2>
             <p className="text-slate-950/60 text-base max-w-lg mx-auto mb-7">
               Combine a stay, vehicle, and your favourite experiences into one seamless package.

@@ -90,7 +90,7 @@ export default function GuestChat() {
     return () => {
       leaveBookingRoom(selected._id);
     };
-  }, [selected?._id, loadMessages]);
+  }, [selected, loadMessages]);
 
   useEffect(() => {
     if (messages.length > 0) {

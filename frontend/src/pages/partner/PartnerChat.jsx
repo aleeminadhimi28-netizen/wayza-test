@@ -101,7 +101,7 @@ export default function PartnerChat() {
     return () => {
       leaveBookingRoom(selected._id);
     };
-  }, [selected?._id, loadMessages]);
+  }, [selected, loadMessages]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
