@@ -558,7 +558,7 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
               </h4>
               <ul className="space-y-4 text-[14px] font-bold text-white/60">
                 <li>
-                  <a href="#" className="hover:text-white transition-colors">
+                  <a href="https://www.instagram.com/wayzza.live" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
                     Instagram
                   </a>
                 </li>

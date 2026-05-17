@@ -1,412 +1,435 @@
-import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { WayzzaLayout, WayzzaSkeleton } from '../../WayzzaUI.jsx';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { WayzzaLayout } from '../../WayzzaUI.jsx';
 import {
-  Anchor,
-  ArrowRight,
-  PlayCircle,
-  Star,
-  Target,
-  MapPin,
-  Sparkles,
-  Zap,
-  Shield,
-  Globe,
-  Award,
-  Music,
-  Wind,
-  Waves,
-  Coffee,
+  Anchor, ArrowRight, Star, MapPin, Sparkles, Zap, Globe,
+  Music, Wind, Waves, Coffee, Clock, Users, ChevronRight,
+  Heart, Camera, Sun, Utensils,
 } from 'lucide-react';
-import { useCurrency } from '../../CurrencyContext.jsx';
-import { api } from '../../utils/api.js';
-import { fixImg } from '../../utils/image.js';
 import SEO from '../../components/SEO.jsx';
 
-const CATEGORIES = [
-  { id: 'all', label: 'All Secrets', icon: Globe },
-  { id: 'culinary', label: 'Culinary Dives', icon: Coffee },
-  { id: 'adventure', label: 'High Adrenaline', icon: Zap },
-  { id: 'cultural', label: 'Native Heritage', icon: Music },
-  { id: 'wellness', label: 'Soulful Retreats', icon: Wind },
-  { id: 'maritime', label: 'Ocean Expeditions', icon: Waves },
+// ── Curated experience data ────────────────────────────────────────────────────
+
+const EXPERIENCES = [
+  {
+    id: 'cliff-yoga',
+    cat: 'wellness',
+    title: 'Sunrise Cliff Yoga',
+    location: 'North Cliff, Varkala',
+    duration: '90 min',
+    groupSize: 'Up to 10',
+    price: 799,
+    rating: 4.9,
+    reviews: 214,
+    badge: 'Top Rated',
+    badgeColor: '#f59e0b',
+    desc: 'Start your morning 50 metres above the Arabian Sea. Expert-led Hatha yoga session on the cliff edge with panoramic ocean views.',
+    img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=700&q=80',
+    tags: ['Yoga', 'Sunrise', 'Meditative'],
+  },
+  {
+    id: 'backwater-kayak',
+    cat: 'adventure',
+    title: 'Backwater Kayak Trail',
+    location: 'Varkala Backwaters',
+    duration: '3 hrs',
+    groupSize: '2–6',
+    price: 1499,
+    rating: 4.8,
+    reviews: 132,
+    badge: 'Thrill Pick',
+    badgeColor: '#ef4444',
+    desc: 'Paddle through narrow mangrove channels and hidden lagoons. Expert guide leads you through routes no tourist boat can reach.',
+    img: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=700&q=80',
+    tags: ['Kayak', 'Mangroves', 'Wildlife'],
+  },
+  {
+    id: 'seafood-cooking',
+    cat: 'culinary',
+    title: 'Kerala Seafood Masterclass',
+    location: 'Black Beach Kitchen',
+    duration: '2.5 hrs',
+    groupSize: '2–8',
+    price: 1299,
+    rating: 4.9,
+    reviews: 98,
+    badge: 'Chef\'s Table',
+    badgeColor: '#10b981',
+    desc: 'Cook authentic Kerala fish curry, prawn moilee, and coconut chutney with a local Malayali chef. Market visit included.',
+    img: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=700&q=80',
+    tags: ['Cooking', 'Seafood', 'Local Chef'],
+  },
+  {
+    id: 'sunset-cruise',
+    cat: 'maritime',
+    title: 'Sunset Catamaran Cruise',
+    location: 'Varkala Coast',
+    duration: '2 hrs',
+    groupSize: 'Up to 12',
+    price: 1899,
+    rating: 4.8,
+    reviews: 176,
+    badge: 'Most Booked',
+    badgeColor: '#6366f1',
+    desc: 'Sail into a liquid gold sunset aboard a private catamaran. Canapes, mocktails, and live acoustic music included.',
+    img: 'https://images.unsplash.com/photo-1605281317010-fe5ffe798166?w=700&q=80',
+    tags: ['Cruise', 'Sunset', 'Romantic'],
+  },
+  {
+    id: 'kathakali',
+    cat: 'cultural',
+    title: 'Private Kathakali Performance',
+    location: 'Heritage Hall, Varkala',
+    duration: '1.5 hrs',
+    groupSize: '2–20',
+    price: 999,
+    rating: 4.7,
+    reviews: 64,
+    badge: 'Heritage',
+    badgeColor: '#d97706',
+    desc: 'An intimate performance by a Padma Shri-trained Kathakali artist, with a pre-show makeup demonstration and costume showcase.',
+    img: 'https://images.unsplash.com/photo-1610189352649-c2e2e9b2b3e3?w=700&q=80',
+    tags: ['Dance', 'Culture', 'Art'],
+  },
+  {
+    id: 'ayurveda-spa',
+    cat: 'wellness',
+    title: 'Authentic Ayurveda Ritual',
+    location: 'Cliff Wellness Centre',
+    duration: '2 hrs',
+    groupSize: '1–2',
+    price: 2499,
+    rating: 5.0,
+    reviews: 89,
+    badge: '5-Star Rated',
+    badgeColor: '#8b5cf6',
+    desc: 'Abhyanga full-body oil massage, Shirodhara head treatment, and steam therapy by a certified Ayurvedic physician.',
+    img: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=700&q=80',
+    tags: ['Ayurveda', 'Spa', 'Healing'],
+  },
+  {
+    id: 'cliff-photography',
+    cat: 'cultural',
+    title: 'Golden Hour Photo Walk',
+    location: 'Varkala Cliff & Beach',
+    duration: '2 hrs',
+    groupSize: '1–4',
+    price: 2999,
+    rating: 4.9,
+    reviews: 41,
+    badge: 'New',
+    badgeColor: '#0ea5e9',
+    desc: 'Professional photographer leads you to the best cliff vantage points during golden hour. 30 edited high-res images delivered.',
+    img: 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=700&q=80',
+    tags: ['Photography', 'Golden Hour', 'Portraits'],
+  },
+  {
+    id: 'surf-lesson',
+    cat: 'adventure',
+    title: 'Learn to Surf — Beginner',
+    location: 'Papanasam Beach',
+    duration: '2 hrs',
+    groupSize: '2–6',
+    price: 1199,
+    rating: 4.6,
+    reviews: 153,
+    badge: 'Adventure',
+    badgeColor: '#ef4444',
+    desc: 'ISA-certified instructor, soft-top boards, rash guard and fins provided. Perfect for first-timers on Varkala\'s gentlest waves.',
+    img: 'https://images.unsplash.com/photo-1531722569936-825d4ecc6b37?w=700&q=80',
+    tags: ['Surf', 'Beach', 'Sport'],
+  },
+  {
+    id: 'village-walk',
+    cat: 'cultural',
+    title: 'Hidden Village Heritage Walk',
+    location: 'Sivagiri & Surrounds',
+    duration: '3 hrs',
+    groupSize: '2–10',
+    price: 699,
+    rating: 4.8,
+    reviews: 77,
+    badge: 'Local Favourite',
+    badgeColor: '#10b981',
+    desc: 'Walk through paddy fields, visit a coir weaving workshop, and share chai with a local family. Strictly off guidebooks.',
+    img: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=700&q=80',
+    tags: ['Heritage', 'Village', 'Local Life'],
+  },
 ];
+
+const CATEGORIES = [
+  { id: 'all', label: 'All', icon: Globe },
+  { id: 'adventure', label: 'Adventure', icon: Zap },
+  { id: 'wellness', label: 'Wellness', icon: Wind },
+  { id: 'culinary', label: 'Culinary', icon: Coffee },
+  { id: 'cultural', label: 'Cultural', icon: Music },
+  { id: 'maritime', label: 'Maritime', icon: Waves },
+];
+
+// ── Card ───────────────────────────────────────────────────────────────────────
+
+function ExpCard({ exp, index }) {
+  const navigate = useNavigate();
+  const [saved, setSaved] = useState(false);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.96 }}
+      transition={{ delay: index * 0.06, duration: 0.4 }}
+      className="group bg-white rounded-[24px] border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-slate-200/60 hover:-translate-y-1 transition-all duration-500 overflow-hidden flex flex-col cursor-pointer"
+      onClick={() => navigate(`/listings?category=activity&q=${encodeURIComponent(exp.title)}`)}
+    >
+      {/* Image */}
+      <div className="relative h-52 overflow-hidden">
+        <img
+          src={exp.img}
+          alt={exp.title}
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          loading="lazy"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+
+        {/* Badge */}
+        <div
+          className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-white shadow"
+          style={{ background: exp.badgeColor }}
+        >
+          {exp.badge}
+        </div>
+
+        {/* Save */}
+        <button
+          onClick={(e) => { e.stopPropagation(); setSaved(!saved); }}
+          className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center transition-all hover:bg-white/40"
+        >
+          <Heart size={14} className={saved ? 'fill-rose-500 text-rose-500' : 'text-white'} />
+        </button>
+
+        {/* Duration pill */}
+        <div className="absolute bottom-3 right-3 flex items-center gap-1 bg-black/50 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full">
+          <Clock size={10} /> {exp.duration}
+        </div>
+      </div>
+
+      {/* Body */}
+      <div className="flex flex-col flex-1 p-4 gap-3">
+        <div className="flex items-start justify-between gap-2">
+          <div>
+            <div className="flex items-center gap-1 text-[10px] text-slate-400 font-semibold mb-1">
+              <MapPin size={10} className="text-emerald-500" /> {exp.location}
+            </div>
+            <h3 className="font-black text-slate-900 text-base leading-snug">{exp.title}</h3>
+          </div>
+          <div className="flex items-center gap-0.5 bg-amber-50 text-amber-600 px-2 py-1 rounded-full flex-shrink-0">
+            <Star size={10} className="fill-amber-500 text-amber-500" />
+            <span className="text-[11px] font-black">{exp.rating}</span>
+          </div>
+        </div>
+
+        <p className="text-xs text-slate-500 leading-relaxed line-clamp-2">{exp.desc}</p>
+
+        <div className="flex flex-wrap gap-1.5">
+          {exp.tags.map((t) => (
+            <span key={t} className="text-[10px] bg-slate-100 text-slate-600 font-semibold px-2 py-0.5 rounded-full">{t}</span>
+          ))}
+        </div>
+
+        <div className="flex items-center justify-between mt-auto pt-3 border-t border-slate-100">
+          <div>
+            <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">From</div>
+            <div className="text-xl font-black text-slate-900">₹{exp.price.toLocaleString('en-IN')}<span className="text-xs font-normal text-slate-400"> /person</span></div>
+          </div>
+          <div className="flex items-center gap-1.5 text-xs font-black text-slate-600 group-hover:text-emerald-600 transition-colors">
+            <Users size={12} /> {exp.groupSize}
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// ── Main ───────────────────────────────────────────────────────────────────────
 
 export default function Experiences() {
   const navigate = useNavigate();
-  const { formatPrice } = useCurrency();
-  const [listings, setListings] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [activeCat, setActiveCat] = useState('all');
-
   const { scrollY } = useScroll();
+  const heroY = useTransform(scrollY, [0, 500], [0, 120]);
   const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
-  const heroScale = useTransform(scrollY, [0, 400], [1, 1.1]);
 
-  useEffect(() => {
-    setLoading(true);
-    api
-      .getListings({ category: 'activity' })
-      .then((data) => {
-        const rows = data.rows || data;
-        if (Array.isArray(rows)) setListings(rows);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
-
-  const filtered = listings; // For now keeping it simple as specific subtypes aren't in model yet
+  const filtered = activeCat === 'all'
+    ? EXPERIENCES
+    : EXPERIENCES.filter((e) => e.cat === activeCat);
 
   return (
-    <WayzzaLayout noPadding hideFooter>
+    <WayzzaLayout noPadding>
       <SEO
-        title="Native Secrets & Authentic Varkala Experiences"
-        description="Unlock exclusive local secrets in Varkala. From hidden backwater trails to clifftop yoga, discover the most authentic Varkala experiences curated by our local specialists. Verified by native explorers."
-        author={{
-          name: 'Wayzza Network Curators',
-          role: 'Varkala Experience Specialists',
-          bio: 'A collective of native Varkala residents and digital nomad veterans dedicated to mapping the unseen soul of the coast.',
-        }}
+        title="Native Secrets — Varkala Experiences | Wayzza"
+        description="Discover the most authentic Varkala experiences. Cliff yoga, backwater kayaking, Kathakali, Ayurveda rituals, sunset cruises and more. Curated by local experts."
         breadcrumb={[
           { name: 'Home', url: 'https://wayzza.live' },
           { name: 'Experiences', url: 'https://wayzza.live/experiences' },
         ]}
       />
-      <div className="bg-white font-sans text-slate-900 selection:bg-amber-100 selection:text-amber-900 overflow-hidden">
-        {/* ════ CINEMATIC HERO ════ */}
-        <section className="relative h-[90vh] min-h-[800px] flex items-center justify-center bg-slate-950 overflow-hidden">
+
+      {/* ── Hero ── */}
+      <section className="relative h-[88vh] min-h-[640px] flex items-end bg-slate-950 overflow-hidden">
+        <motion.div style={{ y: heroY, opacity: heroOpacity }} className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1626442651167-797745778a08?w=2000&q=85"
+            alt="Varkala Experiences"
+            className="w-full h-full object-cover opacity-50"
+            fetchPriority="high"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent" />
+        </motion.div>
+
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-6 pb-20">
           <motion.div
-            style={{ opacity: heroOpacity, scale: heroScale }}
-            className="absolute inset-0 z-0"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="space-y-6"
           >
-            <img
-              src="https://images.unsplash.com/photo-1626442651167-797745778a08?auto=format&fit=crop&w=2400&q=85"
-              alt="Native Varkala Experience"
-              className="w-full h-full object-cover"
-              fetchPriority="high"
-              loading="eager"
-            />
-            <div className="absolute inset-0 bg-black/40" />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-5 py-2.5 rounded-full text-white text-[11px] font-bold uppercase tracking-widest">
+              <Anchor size={12} className="text-amber-400" /> Beyond the Stay
+            </div>
+            <h1 className="text-6xl sm:text-8xl md:text-[110px] font-black text-white tracking-tighter leading-[0.85] uppercase">
+              NATIVE<br />
+              <span className="text-amber-400 lowercase">secrets.</span>
+            </h1>
+            <p className="text-white/60 text-lg max-w-xl leading-relaxed">
+              Handpicked local adventures, cultural rituals, and flavour journeys — designed for those who travel deeper.
+            </p>
+            <div className="flex flex-wrap gap-3 pt-2">
+              <button
+                onClick={() => window.scrollTo({ top: window.innerHeight * 0.7, behavior: 'smooth' })}
+                className="flex items-center gap-2 h-12 px-6 bg-amber-500 text-slate-950 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-amber-400 transition-all shadow-lg shadow-amber-500/20"
+              >
+                <Sparkles size={14} /> Explore All
+              </button>
+              <button
+                onClick={() => navigate('/ai-trip-planner')}
+                className="flex items-center gap-2 h-12 px-6 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-white/20 transition-all"
+              >
+                Build a Package <ChevronRight size={14} />
+              </button>
+            </div>
           </motion.div>
 
-          <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-              className="space-y-12"
-            >
-              <div className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-3xl border border-white/20 px-8 py-3 rounded-full text-white font-bold text-[11px] uppercase tracking-[0.4em] shadow-2xl">
-                <Anchor size={14} className="text-amber-400" /> Beyond the Stay
-              </div>
-
-              <h1 className="text-7xl md:text-[160px] font-bold text-white tracking-tighter leading-[0.8] uppercase mb-4 drop-shadow-2xl">
-                NATIVE <br />
-                <span className="text-amber-400 lowercase drop-shadow-none">secrets.</span>
-              </h1>
-
-              <div className="flex flex-col items-center gap-8">
-                <p className="text-xl md:text-2xl text-white/60 max-w-3xl mx-auto font-medium leading-relaxed border-l-2 border-amber-500/50 pl-10 py-2">
-                  "Handpicked curated journeys, high-adrenaline adventures, and{' '}
-                  <span className="text-white font-bold">deep cultural dives</span> designed for the
-                  native explorer."
-                </p>
-
-                <div className="flex gap-4">
-                  <button className="h-16 px-10 bg-amber-500 text-slate-950 rounded-2xl font-bold uppercase text-[11px] tracking-widest hover:bg-amber-400 transition-all shadow-xl shadow-amber-500/20 flex items-center gap-3">
-                    <PlayCircle size={18} /> Watch Discovery
-                  </button>
-                  <button
-                    onClick={() => window.scrollTo({ top: 800, behavior: 'smooth' })}
-                    className="h-16 px-10 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-2xl font-bold uppercase text-[11px] tracking-widest hover:bg-white/20 transition-all"
-                  >
-                    Browse Grid
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-4 text-white/30">
-            <motion.div
-              animate={{ y: [0, 10, 0] }}
-              transition={{ repeat: Infinity, duration: 2 }}
-              className="w-px h-16 bg-gradient-to-b from-amber-500 to-transparent"
-            />
-          </div>
-        </section>
-
-        {/* ════ CATEGORY STRIP ════ */}
-        <div className="relative z-30 -mt-16 max-w-7xl mx-auto px-6">
+          {/* Stat strip */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="bg-white rounded-[40px] p-4 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] border border-slate-100 overflow-x-auto no-scrollbar"
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="mt-12 flex flex-wrap gap-8"
           >
-            <div className="flex gap-4 min-w-max p-2 justify-center">
-              {CATEGORIES.map((cat) => (
+            {[
+              { icon: Star, label: 'Avg Rating', value: '4.8 ★' },
+              { icon: Users, label: 'Happy Travellers', value: '3,200+' },
+              { icon: Camera, label: 'Experiences', value: `${EXPERIENCES.length} Curated` },
+            ].map(({ icon: Icon, label, value }) => (
+              <div key={label} className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center">
+                  <Icon size={14} className="text-amber-400" />
+                </div>
+                <div>
+                  <div className="text-[10px] text-white/40 uppercase tracking-widest font-bold">{label}</div>
+                  <div className="text-white font-black text-sm">{value}</div>
+                </div>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── Category Filter ── */}
+      <div className="sticky top-0 z-30 bg-white/90 backdrop-blur-xl border-b border-slate-100 shadow-sm">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-3">
+            {CATEGORIES.map((cat) => {
+              const Icon = cat.icon;
+              const active = activeCat === cat.id;
+              return (
                 <button
                   key={cat.id}
                   onClick={() => setActiveCat(cat.id)}
-                  className={`px-8 py-5 rounded-[24px] font-bold text-[11px] uppercase tracking-widest transition-all flex items-center gap-4 border-2 ${activeCat === cat.id ? 'bg-slate-950 border-slate-950 text-white shadow-2xl scale-105' : 'bg-transparent border-slate-50 text-slate-400 hover:border-slate-200 hover:text-slate-900'}`}
+                  className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
+                    active ? 'bg-slate-950 text-white shadow' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'
+                  }`}
                 >
-                  <cat.icon size={16} className={activeCat === cat.id ? 'text-amber-400' : ''} />
+                  <Icon size={13} className={active ? 'text-amber-400' : ''} />
                   {cat.label}
+                  {active && (
+                    <span className="bg-white/20 text-white text-[9px] px-1.5 py-0.5 rounded-full font-black">
+                      {filtered.length}
+                    </span>
+                  )}
                 </button>
-              ))}
-            </div>
-          </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Grid ── */}
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2 className="text-2xl font-black text-slate-900">
+              {activeCat === 'all' ? 'All Experiences' : CATEGORIES.find((c) => c.id === activeCat)?.label}
+            </h2>
+            <p className="text-sm text-slate-400 mt-0.5">{filtered.length} experiences in Varkala</p>
+          </div>
+          <div className="text-xs text-slate-400 font-semibold hidden sm:block">Verified & locally curated</div>
         </div>
 
-        {/* ════ THE GRID ════ */}
-        <section className="py-32 px-6 max-w-7xl mx-auto">
-          <header className="mb-24 flex flex-col md:flex-row justify-between items-end gap-10">
-            <div className="space-y-4">
-              <div className="flex items-center gap-3 text-amber-600 font-bold text-[11px] uppercase tracking-[0.5em]">
-                <Sparkles size={18} /> Top Rated Experiences
-              </div>
-              <h2 className="text-5xl md:text-7xl font-bold tracking-tighter uppercase leading-none">
-                Curated <br />
-                <span className="text-amber-500 lowercase">extraordinary.</span>
-              </h2>
+        <AnimatePresence mode="popLayout">
+          <motion.div
+            key={activeCat}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
+          >
+            {filtered.map((exp, i) => (
+              <ExpCard key={exp.id} exp={exp} index={i} />
+            ))}
+          </motion.div>
+        </AnimatePresence>
+      </main>
+
+      {/* ── CTA Banner ── */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 pb-20">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="relative rounded-[32px] overflow-hidden bg-amber-500 p-10 sm:p-14 text-center"
+        >
+          <div
+            className="absolute inset-0 opacity-10"
+            style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?w=1200&q=80)', backgroundSize: 'cover', backgroundPosition: 'center' }}
+          />
+          <div className="relative z-10">
+            <div className="inline-flex items-center gap-2 bg-slate-950 text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest mb-5">
+              <Utensils size={11} className="text-amber-400" /> Custom Package Builder
             </div>
-            <p className="text-slate-400 text-lg font-medium max-w-md border-l-2 border-slate-100 pl-8 pb-2">
-              Showing <span className="text-slate-900 font-bold">{listings.length}</span> handpicked
-              experiences verified for quality and authenticity.
+            <h2 className="text-3xl sm:text-5xl font-black text-slate-950 tracking-tighter mb-3">
+              Mix & match your<br />perfect Varkala trip.
+            </h2>
+            <p className="text-slate-950/60 text-base max-w-lg mx-auto mb-7">
+              Combine a stay, vehicle, and your favourite experiences into one seamless package.
             </p>
-          </header>
-
-          {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <WayzzaSkeleton key={i} className="aspect-[3/4] rounded-[48px]" />
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-              {listings.map((exp, i) => (
-                <motion.div
-                  key={exp._id}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                  onClick={() => navigate(`/listing/${exp._id}`)}
-                  className="group cursor-pointer relative"
-                >
-                  <div className="relative aspect-[3/4] rounded-[48px] overflow-hidden bg-slate-100 shadow-xl transition-all duration-700 hover:shadow-2xl hover:shadow-amber-500/10 hover:-translate-y-2">
-                    <img
-                      src={fixImg(exp.image)}
-                      alt={exp.title}
-                      className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-80" />
-
-                    {/* Badges */}
-                    <div className="absolute top-8 left-8 flex flex-col gap-2">
-                      <span className="bg-white/95 backdrop-blur-md text-slate-950 text-[11px] font-bold px-4 py-2 rounded-full uppercase tracking-widest shadow-lg">
-                        Verified Experience
-                      </span>
-                      {exp.price > 10000 && (
-                        <span className="bg-amber-500 text-slate-950 text-[11px] font-bold px-4 py-2 rounded-full uppercase tracking-widest shadow-lg flex items-center gap-1.5">
-                          <Award size={12} /> Elite Pick
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Action Button */}
-                    <div className="absolute top-8 right-8 w-12 h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 text-white transition-all group-hover:bg-amber-500 group-hover:border-amber-500 group-hover:text-slate-950 group-hover:scale-110">
-                      <ArrowRight
-                        size={20}
-                        className="-rotate-45 group-hover:rotate-0 transition-transform"
-                      />
-                    </div>
-
-                    {/* Info Overlay */}
-                    <div className="absolute bottom-10 left-10 right-10 space-y-4">
-                      <div className="flex items-center gap-3">
-                        <MapPin size={14} className="text-amber-500" />
-                        <span className="text-[11px] font-bold text-white/70 uppercase tracking-[0.2em]">
-                          {exp.location || 'Coastline'}
-                        </span>
-                      </div>
-                      <h3 className="text-3xl font-bold text-white uppercase leading-tight line-clamp-2">
-                        {exp.title}
-                      </h3>
-                      <div className="flex justify-between items-end pt-4 border-t border-white/10">
-                        <div>
-                          <p className="text-[11px] font-bold text-white/40 uppercase tracking-widest mb-1">
-                            Starting From
-                          </p>
-                          <p className="text-2xl font-bold text-white">{formatPrice(exp.price)}</p>
-                        </div>
-                        <div className="flex items-center gap-1.5 bg-amber-500/10 text-amber-500 px-3 py-1.5 rounded-full font-bold text-xs border border-amber-500/20">
-                          <Star size={12} className="fill-current" /> {exp.rating || 'New'}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          )}
-        </section>
-
-        {/* ════ ADRENALINE FEEDS ════ */}
-        <section className="py-48 bg-slate-950 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-1/3 h-full bg-amber-500/[0.03] blur-[150px] pointer-events-none" />
-          <div className="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row items-center gap-24">
-            <div className="flex-1 w-full relative">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                className="aspect-video rounded-[64px] overflow-hidden shadow-3xl border border-white/10 group bg-slate-900"
-              >
-                <img
-                  src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1200&q=80"
-                  className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-[5s]"
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-32 h-32 bg-amber-500 rounded-full flex items-center justify-center text-slate-950 shadow-3xl cursor-pointer hover:scale-110 transition-transform">
-                    <PlayCircle size={48} />
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-            <div className="flex-1 space-y-12">
-              <div className="inline-flex items-center gap-4 bg-white/5 border border-white/10 text-amber-400 px-8 py-3 rounded-full font-bold text-[11px] uppercase tracking-[0.4em]">
-                <Zap size={16} /> ADRENALINE PEAK
-              </div>
-              <h2 className="text-6xl md:text-9xl font-bold text-white tracking-tighter uppercase leading-[0.85]">
-                FEEL THE <br />
-                <span className="text-amber-500 lowercase">rush.</span>
-              </h2>
-              <p className="text-white/40 text-xl font-medium leading-relaxed border-l-4 border-amber-500/20 pl-10 py-2">
-                "From paragliding over red cliffs to high-speed jet ski expeditions, our adrenaline
-                portfolio is unmatched in the region."
-              </p>
-              <button className="h-24 px-16 bg-white text-slate-950 hover:bg-amber-500 hover:text-white rounded-[32px] font-bold text-[12px] uppercase tracking-[0.4em] transition-all flex items-center gap-8 active:scale-95 group">
-                View Extreme Collection{' '}
-                <ArrowRight size={20} className="group-hover:translate-x-3 transition-transform" />
-              </button>
-            </div>
-          </div>
-        </section>
-
-        {/* ════ NATIVE SECRETS FOOTER CTA ════ */}
-        <section className="py-48 px-6 bg-white relative overflow-hidden">
-          <div className="max-w-7xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              className="bg-amber-500 rounded-[80px] p-24 md:p-36 text-center relative overflow-hidden shadow-3xl group"
+            <button
+              onClick={() => navigate('/ai-trip-planner')}
+              className="inline-flex items-center gap-2 bg-slate-950 text-white font-black px-7 py-3.5 rounded-2xl hover:bg-slate-800 transition-all active:scale-95"
             >
-              <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?auto=format&fit=crop&w=2400&q=80')] bg-cover bg-center mix-blend-overlay opacity-20 grayscale group-hover:grayscale-0 transition-all duration-[3s]" />
-              <div className="relative z-10 space-y-12">
-                <span className="inline-flex items-center gap-4 bg-slate-950 text-white px-8 py-3 rounded-full font-bold text-[11px] uppercase tracking-[0.4em] shadow-2xl">
-                  <Target size={20} className="text-amber-400" /> NATIVE EXPLORATION PROGRAM
-                </span>
-                <h2 className="text-7xl md:text-[110px] font-bold text-slate-950 tracking-tighter leading-[0.8] uppercase">
-                  UNLOCK THE <br />
-                  <span className="lowercase text-white mt-4 block">unindexed.</span>
-                </h2>
-                <p className="text-slate-950/60 text-2xl md:text-3xl font-medium max-w-3xl mx-auto leading-relaxed border-t border-b border-slate-950/10 py-12">
-                  "Our Native Secrets collection includes private tours and entries not found on any
-                  global travel index."
-                </p>
-                <div className="flex flex-col md:flex-row justify-center gap-6">
-                  <button
-                    onClick={() => navigate('/listings?category=activity')}
-                    className="h-24 px-16 bg-slate-950 text-white hover:bg-slate-800 rounded-3xl font-bold uppercase text-[12px] tracking-[0.4em] transition-all shadow-3xl active:scale-95"
-                  >
-                    Start Your Discovery
-                  </button>
-                  <button
-                    onClick={() => navigate('/support')}
-                    className="h-24 px-16 bg-white/20 backdrop-blur-md border-2 border-slate-950/10 text-slate-950 hover:bg-white/30 rounded-3xl font-bold uppercase text-[12px] tracking-[0.4em] transition-all"
-                  >
-                    Talk to an Expert
-                  </button>
-                </div>
-              </div>
-            </motion.div>
+              Build Your Package <ArrowRight size={15} />
+            </button>
           </div>
-        </section>
-
-        {/* ════ REFINED FOOTER ════ */}
-        <footer className="bg-white py-48 px-6 md:px-12 border-t border-slate-100 relative">
-          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-32">
-            <div className="md:col-span-6 space-y-16">
-              <div className="space-y-8">
-                <h1 className="text-6xl font-bold tracking-tighter text-slate-950 uppercase m-0 leading-none">
-                  Wayzza<span className="text-amber-500">.</span>
-                </h1>
-                <p className="text-slate-400 font-medium text-2xl leading-relaxed max-w-lg">
-                  "Curating the extraordinary for those who seek the unindexed."
-                </p>
-              </div>
-              <div className="flex gap-4">
-                {[Globe, Shield, Zap, Music].map((Icon, i) => (
-                  <div
-                    key={i}
-                    className="w-16 h-16 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-center text-slate-400 hover:text-amber-600 hover:bg-amber-50 transition-all duration-500 cursor-pointer shadow-sm group"
-                  >
-                    <Icon size={20} className="group-hover:scale-110 transition-transform" />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="md:col-span-3 space-y-8">
-              <h3 className="text-slate-950 font-bold uppercase text-[11px] tracking-[0.6em] border-l-2 border-amber-500 pl-4">
-                NAVIGATE
-              </h3>
-              <ul className="space-y-6">
-                {[
-                  { name: 'Native Secrets', to: '/experiences' },
-                  { name: 'Interactive Map', to: '/explore-map' },
-                  { name: 'Our Stays', to: '/listings' },
-                  { name: 'Partner Program', to: '/partner-register' },
-                ].map((link) => (
-                  <li key={link.name}>
-                    <Link
-                      to={link.to}
-                      className="text-slate-400 font-bold text-lg hover:text-amber-600 transition-all uppercase tracking-tighter flex items-center gap-3"
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="md:col-span-3 space-y-8">
-              <h3 className="text-slate-950 font-bold uppercase text-[11px] tracking-[0.6em] border-l-2 border-amber-500 pl-4">
-                HELP
-              </h3>
-              <ul className="space-y-6">
-                {[
-                  { name: 'Support Center', to: '/support' },
-                  { name: 'Privacy', to: '/privacy' },
-                  { name: 'Terms', to: '/terms' },
-                  { name: 'About', to: '/about' },
-                ].map((link) => (
-                  <li key={link.name}>
-                    <Link
-                      to={link.to}
-                      className="text-slate-400 font-bold text-lg hover:text-amber-600 transition-all uppercase tracking-tighter flex items-center gap-3"
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </footer>
-      </div>
+        </motion.div>
+      </section>
     </WayzzaLayout>
   );
 }

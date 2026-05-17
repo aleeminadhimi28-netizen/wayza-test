@@ -130,7 +130,7 @@ export default function SEO({
       },
     ],
     sameAs: [
-      'https://www.instagram.com/wayzza',
+      'https://www.instagram.com/wayzza.live',
       'https://www.twitter.com/wayzza',
       'https://www.facebook.com/wayzza',
     ],

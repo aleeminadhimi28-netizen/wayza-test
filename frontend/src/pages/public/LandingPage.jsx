@@ -958,7 +958,7 @@ export default function LandingPage() {
                     {[
                       {
                         Icon: Instagram,
-                        url: 'https://www.instagram.com/wayzza',
+                        url: 'https://www.instagram.com/wayzza.live',
                         label: 'Instagram',
                       },
                       { Icon: Twitter, url: 'https://www.twitter.com/wayzza', label: 'Twitter' },
