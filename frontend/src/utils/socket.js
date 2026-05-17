@@ -8,11 +8,9 @@ export const initiateSocketConnection = () => {
   socket = io(BASE_URL, {
     withCredentials: true,
   });
-  console.log(`Connecting socket...`);
 };
 
 export const disconnectSocket = () => {
-  console.log('Disconnecting socket...');
   if (socket) socket.disconnect();
 };
 
@@ -39,7 +37,6 @@ export const subscribeToNotifications = (cb) => {
 export const subscribeToMessages = (cb) => {
   if (!socket) return true;
   socket.on('new_message', (msg) => {
-    console.log('Websocket event received!');
     return cb(null, msg);
   });
 };

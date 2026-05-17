@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Sparkles, RefreshCw, Home } from 'lucide-react';
 
@@ -23,7 +23,6 @@ class ErrorBoundary extends React.Component {
     ) {
       const hasReloaded = sessionStorage.getItem('wayzza_chunk_reload');
       if (!hasReloaded) {
-        console.log('Chunk error detected. Auto-reloading to fetch fresh assets...');
         sessionStorage.setItem('wayzza_chunk_reload', 'true');
         window.location.reload(true);
       }
