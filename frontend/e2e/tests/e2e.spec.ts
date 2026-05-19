@@ -12,10 +12,10 @@ test.describe('Wayzza Premium E2E Smoke Tests', () => {
     await expect(heroTitle).toBeVisible();
 
     // Check that we can navigate to the listings
-    const exploreBtn = page.locator('text=Explore');
+    const exploreBtn = page.locator('button:has-text("Explore")');
     if (await exploreBtn.count() > 0) {
       await exploreBtn.first().click();
-      await page.waitForURL('**/listings');
+      await page.waitForURL(url => url.pathname.includes('/listings'));
       await expect(page.locator('input[placeholder="Explore your next destination..."]')).toBeVisible();
     }
   });
@@ -35,7 +35,7 @@ test.describe('Wayzza Premium E2E Smoke Tests', () => {
 
     // Check standard microcopy
     const submitBtn = page.locator('button[type="submit"]');
-    await expect(submitBtn).toContainText(/log in|continue/i);
+    await expect(submitBtn).toContainText(/log in|continue|sign in/i);
   });
 
   test('Partner network registration renders', async ({ page }) => {
@@ -47,6 +47,8 @@ test.describe('Wayzza Premium E2E Smoke Tests', () => {
     // Verify inputs
     await expect(page.locator('input[type="email"]')).toBeVisible();
     await expect(page.locator('input[type="password"]')).toBeVisible();
-    await expect(page.locator('select')).toBeVisible();
+    await expect(page.locator('button:has-text("Stays")')).toBeVisible();
+    await expect(page.locator('button:has-text("Vehicles")')).toBeVisible();
   });
 });
+

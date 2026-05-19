@@ -10,6 +10,45 @@ import { api } from '../../utils/api.js';
 import { fixImg } from '../../utils/image.js';
 import SEO from '../../components/SEO.jsx';
 
+function getDatesInRange(startStr, endStr) {
+  if (!startStr || !endStr) return [];
+  const dates = [];
+  const start = new Date(startStr);
+  const end = new Date(endStr);
+  const current = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+  const target = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+  while (current < target) {
+    const yyyy = current.getFullYear();
+    const mm = String(current.getMonth() + 1).padStart(2, '0');
+    const dd = String(current.getDate()).padStart(2, '0');
+    dates.push(`${yyyy}-${mm}-${dd}`);
+    current.setDate(current.getDate() + 1);
+  }
+  return dates;
+}
+
+function calculatePriceForDates(listing, variantIndex, checkIn, checkOut) {
+  const variant = listing?.variants?.[variantIndex];
+  const basePrice = variant?.price || listing?.price || 0;
+  if (!checkIn || !checkOut) {
+    return { pricePerNight: basePrice, baseAmount: 0 };
+  }
+  const dates = getDatesInRange(checkIn, checkOut);
+  if (dates.length === 0) {
+    return { pricePerNight: basePrice, baseAmount: 0 };
+  }
+  const variantRules = Array.isArray(variant?.priceRules) ? variant.priceRules : [];
+  let totalBaseAmount = 0;
+  for (const dateStr of dates) {
+    const matchedRule = variantRules.find((r) => r.date === dateStr);
+    totalBaseAmount += matchedRule ? Number(matchedRule.price) : basePrice;
+  }
+  return {
+    pricePerNight: totalBaseAmount / dates.length,
+    baseAmount: totalBaseAmount,
+  };
+}
+
 export default function Booking() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -63,7 +102,13 @@ export default function Booking() {
 
   const variantIndex = location.state?.variantIndex || 0;
   const variant = listing?.variants?.[variantIndex];
-  const pricePerNight = variant?.price || listing?.price || 0;
+
+  const { pricePerNight, baseAmount: calculatedBaseAmount } = calculatePriceForDates(
+    listing,
+    variantIndex,
+    startDate,
+    endDate
+  );
 
   const nights =
     startDate && endDate
@@ -81,7 +126,7 @@ export default function Booking() {
       .catch(() => {});
   }, []);
 
-  const baseAmount = nights * pricePerNight;
+  const baseAmount = nights > 0 ? calculatedBaseAmount : pricePerNight * nights;
   const isVehicle = listing?.category === 'bike' || listing?.category === 'car';
   const gstRate = platformConfig?.gstRate ?? 0.12;
   const serviceFeeRate = platformConfig?.serviceFee ?? 99;
@@ -145,6 +190,7 @@ export default function Booking() {
         checkIn: startDate,
         checkOut: endDate,
         couponCode: discountInfo ? discountInfo.code : undefined,
+        expectedPricePerNight: pricePerNight,
       });
 
       if (!data.ok) {

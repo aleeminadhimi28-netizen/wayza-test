@@ -322,4 +322,68 @@ router.delete("/:id/variant/:index", requireAuth, async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
+/* ================= DATE PRICE RULES (per variant/room) ================= */
+
+// GET /:id/variant/:index/price-rules
+router.get("/:id/variant/:index/price-rules", requireAuth, async (req, res, next) => {
+    try {
+        const db = getDB();
+        const { id, index } = req.params;
+        const idx = parseInt(index, 10);
+        if (!ObjectId.isValid(id) || isNaN(idx)) return res.status(400).json({ ok: false });
+        const listing = await db.collection("listings").findOne(
+            { _id: new ObjectId(id) },
+            { projection: { variants: 1, ownerEmail: 1 } }
+        );
+        if (!listing) return res.status(404).json({ ok: false });
+        if (listing.ownerEmail !== req.user.email && req.user.role !== "admin") {
+            return res.status(403).json({ ok: false, message: "Not authorized" });
+        }
+        const variant = (listing.variants || [])[idx];
+        if (!variant) return res.status(404).json({ ok: false, message: "Variant not found" });
+        res.json({ ok: true, priceRules: variant.priceRules || [] });
+    } catch (err) { next(err); }
+});
+
+// PUT /:id/variant/:index/price-rules
+router.put("/:id/variant/:index/price-rules", requireAuth, async (req, res, next) => {
+    try {
+        const db = getDB();
+        const { id, index } = req.params;
+        const idx = parseInt(index, 10);
+        if (!ObjectId.isValid(id) || isNaN(idx)) return res.status(400).json({ ok: false });
+        const listing = await db.collection("listings").findOne(
+            { _id: new ObjectId(id) },
+            { projection: { ownerEmail: 1, baseFloorPrice: 1, variants: 1 } }
+        );
+        if (!listing) return res.status(404).json({ ok: false });
+        if (listing.ownerEmail !== req.user.email && req.user.role !== "admin") {
+            return res.status(403).json({ ok: false, message: "Not authorized" });
+        }
+        const variant = (listing.variants || [])[idx];
+        if (!variant) return res.status(404).json({ ok: false, message: "Variant not found" });
+
+        const rules = Array.isArray(req.body.priceRules) ? req.body.priceRules : [];
+        const floor = listing.baseFloorPrice || 0;
+        for (const rule of rules) {
+            if (!rule.date || typeof rule.date !== "string") {
+                return res.status(400).json({ ok: false, message: "Each rule must have a valid date" });
+            }
+            const p = Number(rule.price);
+            if (isNaN(p) || p < floor) {
+                return res.status(400).json({
+                    ok: false,
+                    message: `Price ₹${p} for ${rule.date} is below the floor price of ₹${floor}`
+                });
+            }
+        }
+
+        await db.collection("listings").updateOne(
+            { _id: new ObjectId(id) },
+            { $set: { [`variants.${idx}.priceRules`]: rules } }
+        );
+        res.json({ ok: true });
+    } catch (err) { next(err); }
+});
+
 export default router;

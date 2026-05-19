@@ -27,7 +27,7 @@ export default function AdminDataTable({
     title: '',
     message: '',
     confirmText: 'Confirm',
-    confirmVariant: 'indigo',
+    confirmVariant: 'emerald',
     onConfirm: null,
     isLoading: false,
   });
@@ -130,7 +130,7 @@ export default function AdminDataTable({
                           title: 'Approve Property',
                           message: `Are you sure you want to approve "${item.title}"?`,
                           confirmText: 'Approve Now',
-                          confirmVariant: 'indigo',
+                          confirmVariant: 'emerald',
                           onConfirm: () => handleApproveProperty(item._id),
                         })
                       }
@@ -174,7 +174,7 @@ export default function AdminDataTable({
             {activeTab === 'partners' && (
               <button
                 onClick={() => setCreatePartnerModal(true)}
-                className="h-10 px-4 bg-indigo-600 text-white rounded-lg font-bold text-[11px] uppercase tracking-wider hover:bg-indigo-700 transition-colors flex items-center gap-2 shadow-lg shadow-indigo-600/10 whitespace-nowrap"
+                className="h-10 px-4 bg-emerald-600 text-[#050a08] rounded-lg font-bold text-[11px] uppercase tracking-wider hover:bg-emerald-500 transition-colors flex items-center gap-2 shadow-lg shadow-emerald-500/10 whitespace-nowrap"
               >
                 <Plus size={14} strokeWidth={2.5} /> Onboard Partner
               </button>
@@ -330,7 +330,7 @@ export default function AdminDataTable({
                                     title: 'Settle Payout',
                                     message: `Mark payout for booking #${item._id?.slice(-8)?.toUpperCase()} as settled?`,
                                     confirmText: 'Mark as Settled',
-                                    confirmVariant: 'indigo',
+                                    confirmVariant: 'emerald',
                                     onConfirm: () => handleUpdatePayout(item._id, 'paid_out'),
                                   })
                                 }
@@ -346,7 +346,7 @@ export default function AdminDataTable({
                                   title: 'Approve Listing',
                                   message: `Approve "${item.title}" and make it visible to guests?`,
                                   confirmText: 'Approve Now',
-                                  confirmVariant: 'indigo',
+                                  confirmVariant: 'emerald',
                                   onConfirm: () => handleApproveProperty(item._id),
                                 })
                               }
@@ -362,7 +362,7 @@ export default function AdminDataTable({
                                   title: item.muted ? 'Unmute User' : 'Mute User',
                                   message: `Are you sure you want to ${item.muted ? 'unmute' : 'mute'} ${item.email}?`,
                                   confirmText: item.muted ? 'Unmute' : 'Mute User',
-                                  confirmVariant: item.muted ? 'indigo' : 'rose',
+                                  confirmVariant: item.muted ? 'emerald' : 'rose',
                                   onConfirm: () => handleMuteUser(item.email, !item.muted),
                                 })
                               }
@@ -392,7 +392,7 @@ export default function AdminDataTable({
                                     title: 'Approve Partner',
                                     message: `Approve ${item.businessName || item.email} as an active partner?`,
                                     confirmText: 'Approve Partner',
-                                    confirmVariant: 'indigo',
+                                    confirmVariant: 'emerald',
                                     onConfirm: () => handleApprovePartner(item.email),
                                   })
                                 }
@@ -455,11 +455,11 @@ export default function AdminDataTable({
 
       {/* Onboard Partner Modal */}
       {createPartnerModal && (
-        <div className="fixed inset-0 bg-[#06070f]/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-[#050a08]/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-[#06070f] border border-white/[0.08] rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"
+            className="bg-[#050a08] border border-white/[0.08] rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"
           >
             <div className="p-6 border-b border-white/[0.05] flex justify-between items-center bg-white/[0.02]">
               <div>
@@ -545,10 +545,10 @@ export default function AdminDataTable({
                 <button
                   type="submit"
                   disabled={isCreatingPartner}
-                  className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl font-bold text-[11px] uppercase tracking-wider hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-600/10 disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="px-5 py-2.5 bg-emerald-600 text-[#050a08] rounded-xl font-bold text-[11px] uppercase tracking-wider hover:bg-emerald-500 transition-colors shadow-lg shadow-emerald-500/10 disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
                 >
                   {isCreatingPartner && (
-                    <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                    <div className="w-4 h-4 border-2 border-[#050a08]/20 border-t-[#050a08] rounded-full animate-spin" />
                   )}
                   {isCreatingPartner ? 'Creating...' : 'Create Account'}
                 </button>

@@ -53,39 +53,53 @@ export default function PartnerDashboard() {
     if (!user?.email) return;
     window.scrollTo(0, 0);
 
-    Promise.all([
+    Promise.allSettled([
       api.getPartnerBookings(),
       api.getPartnerEarnings(),
       api.getPartnerMonthlyRevenue(),
       api.getOwnerListings(user.email),
       api.getPartnerProfile(),
     ])
-      .then(([b, e, m, l, profile]) => {
-        setBookings(Array.isArray(b) ? b : []);
-        if (e.ok) setEarnings(e);
-        if (m.ok) setMonthly(m.data || []);
-        const listingArr = Array.isArray(l) ? l : [];
-        setListings(listingArr);
-        if (profile?.ok) setPartnerProfile(profile.data);
+      .then(([bRes, eRes, mRes, lRes, profileRes]) => {
+        // Bookings — each resolved independently; a failure leaves the previous state intact
+        if (bRes.status === 'fulfilled') {
+          const b = bRes.value;
+          setBookings(Array.isArray(b) ? b : []);
+        }
 
-        const initEdits = {};
-        listingArr.forEach((lst) => {
-          initEdits[lst._id] = {
-            value: lst.price || 0,
-            saving: false,
-            error: null,
-            success: false,
-          };
-        });
-        setPriceEdits(initEdits);
+        if (eRes.status === 'fulfilled' && eRes.value?.ok) {
+          setEarnings(eRes.value);
+        }
+
+        if (mRes.status === 'fulfilled' && mRes.value?.ok) {
+          setMonthly(mRes.value.data || []);
+        }
+
+        // Listings — the key one: always apply even if other calls failed
+        if (lRes.status === 'fulfilled') {
+          const listingArr = Array.isArray(lRes.value) ? lRes.value : [];
+          setListings(listingArr);
+          const initEdits = {};
+          listingArr.forEach((lst) => {
+            initEdits[lst._id] = {
+              value: lst.price || 0,
+              saving: false,
+              error: null,
+              success: false,
+            };
+          });
+          setPriceEdits(initEdits);
+        }
+
+        if (profileRes.status === 'fulfilled' && profileRes.value?.ok) {
+          setPartnerProfile(profileRes.value.data);
+        }
       })
-      .catch((err) => console.error('Failed to load partner dashboard data:', err))
       .finally(() => setLoading(false));
   }, [user?.email]);
 
   const total = bookings.length;
   const pending = bookings.filter((b) => b.status === 'pending').length;
-  const activeCount = bookings.filter((b) => b.status === 'paid').length;
 
   const visible = bookings.filter((b) => {
     const matchStatus = filter === 'all' || b.status === filter;
@@ -180,11 +194,12 @@ export default function PartnerDashboard() {
   const currRev = monthly.length >= 1 ? monthly[monthly.length - 1]?.revenue || 0 : 0;
   const prevRev = monthly.length >= 2 ? monthly[monthly.length - 2]?.revenue || 0 : 0;
   const revTrendPct = prevRev > 0 ? (((currRev - prevRev) / prevRev) * 100).toFixed(1) : null;
+  const revTrendNum = revTrendPct !== null ? Number(revTrendPct) : null;
   const revTrendLabel =
-    revTrendPct !== null
-      ? `${revTrendPct > 0 ? '+' : ''}${revTrendPct}% vs last month`
+    revTrendNum !== null
+      ? `${revTrendNum > 0 ? '+' : ''}${revTrendPct}% vs last month`
       : 'No prior data';
-  const revTrendUp = revTrendPct === null || Number(revTrendPct) >= 0;
+  const revTrendUp = revTrendNum === null || revTrendNum >= 0;
 
   const currBookings = bookings.filter((b) => {
     const d = new Date(b.createdAt);
@@ -452,10 +467,10 @@ export default function PartnerDashboard() {
                   </p>
                 </div>
                 <button
-                  onClick={() => navigate('/partner/support')}
+                  onClick={() => navigate('/partner/earnings')}
                   className="w-full h-11 bg-white/[0.05] hover:bg-white/[0.1] text-white border border-white/[0.1] rounded-xl font-bold text-[11px] uppercase tracking-wider transition-colors"
                 >
-                  Learn More
+                  View Earnings
                 </button>
               </div>
             </div>

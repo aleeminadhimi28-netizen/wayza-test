@@ -31,7 +31,7 @@ function TerminalLine({ text, delay = 0 }) {
       initial={{ opacity: 0, x: -8 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay, duration: 0.4 }}
-      className="font-mono text-[11px] text-indigo-300/50 leading-relaxed"
+      className="font-mono text-[11px] text-emerald-300/50 leading-relaxed"
     >
       {text}
     </motion.div>
@@ -89,24 +89,24 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-h-screen bg-[#06070f] font-sans flex overflow-hidden relative selection:bg-indigo-900/50 selection:text-indigo-200">
+    <div className="min-h-screen bg-[#050a08] font-sans flex overflow-hidden relative selection:bg-emerald-950 selection:text-emerald-200">
       {/* ── Ambient Background ── */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-0 left-[20%] w-[40%] h-[50%] bg-indigo-600/6 blur-[180px] rounded-full" />
-        <div className="absolute bottom-0 right-[10%] w-[35%] h-[40%] bg-violet-600/5 blur-[160px] rounded-full" />
+        <div className="absolute top-0 left-[20%] w-[40%] h-[50%] bg-emerald-600/6 blur-[180px] rounded-full" />
+        <div className="absolute bottom-0 right-[10%] w-[35%] h-[40%] bg-teal-600/5 blur-[160px] rounded-full" />
         {/* Scanline overlay */}
         <div
           className="absolute inset-0 opacity-[0.015]"
           style={{
             backgroundImage:
-              'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(99,102,241,0.8) 2px, rgba(99,102,241,0.8) 3px)',
+              'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(16,185,129,0.8) 2px, rgba(16,185,129,0.8) 3px)',
           }}
         />
         {/* Dot grid */}
         <div
           className="absolute inset-0 opacity-[0.04]"
           style={{
-            backgroundImage: 'radial-gradient(circle, rgba(99,102,241,0.8) 1px, transparent 1px)',
+            backgroundImage: 'radial-gradient(circle, rgba(16,185,129,0.8) 1px, transparent 1px)',
             backgroundSize: '32px 32px',
           }}
         />
@@ -117,14 +117,14 @@ export default function AdminLogin() {
         {/* Logo */}
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-600/30 group-hover:shadow-indigo-600/50 transition-all">
+            <div className="w-9 h-9 bg-emerald-600 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-600/30 group-hover:shadow-emerald-600/50 transition-all">
               <Shield size={18} className="text-white" />
             </div>
             <div>
               <p className="text-white font-black text-sm tracking-tight uppercase leading-none">
                 Wayzza Admin
               </p>
-              <p className="text-indigo-400/40 text-[9px] font-bold uppercase tracking-[0.3em] mt-0.5">
+              <p className="text-emerald-400/40 text-[9px] font-bold uppercase tracking-[0.3em] mt-0.5">
                 Command Center
               </p>
             </div>
@@ -143,14 +143,14 @@ export default function AdminLogin() {
         {/* Center hero */}
         <div className="space-y-8">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] font-black uppercase tracking-[0.4em] mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-[0.4em] mb-6">
               <Activity size={10} className="animate-pulse" />
               System Operational
             </div>
             <h1 className="text-[64px] font-black text-white tracking-[-0.04em] leading-[0.85] uppercase">
               Admin
               <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-300 to-indigo-500">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500">
                 Control
               </span>
               <br />
@@ -175,8 +175,8 @@ export default function AdminLogin() {
                 transition={{ delay: 0.1 * i, duration: 0.4 }}
                 className="flex items-center gap-4 p-4 rounded-xl bg-white/[0.025] border border-white/[0.04] hover:bg-white/[0.04] transition-colors"
               >
-                <div className="w-8 h-8 rounded-lg bg-indigo-600/15 flex items-center justify-center">
-                  <Icon size={14} className="text-indigo-400" />
+                <div className="w-8 h-8 rounded-lg bg-emerald-600/15 flex items-center justify-center">
+                  <Icon size={14} className="text-emerald-400" />
                 </div>
                 <span className="text-white/50 text-xs font-bold uppercase tracking-widest flex-1">
                   {label}
@@ -209,7 +209,7 @@ export default function AdminLogin() {
             <motion.span
               animate={{ opacity: [1, 0, 1] }}
               transition={{ repeat: Infinity, duration: 1 }}
-              className="font-mono text-[11px] text-indigo-400"
+              className="font-mono text-[11px] text-emerald-400"
             >
               █
             </motion.span>
@@ -234,15 +234,15 @@ export default function AdminLogin() {
             <motion.div
               animate={{
                 boxShadow: [
-                  '0 0 0px rgba(99,102,241,0)',
-                  '0 0 32px rgba(99,102,241,0.25)',
-                  '0 0 0px rgba(99,102,241,0)',
+                  '0 0 0px rgba(16,185,129,0)',
+                  '0 0 32px rgba(16,185,129,0.25)',
+                  '0 0 0px rgba(16,185,129,0)',
                 ],
               }}
               transition={{ repeat: Infinity, duration: 3 }}
-              className="w-20 h-20 rounded-[28px] bg-indigo-600/15 border border-indigo-500/20 flex items-center justify-center"
+              className="w-20 h-20 rounded-[28px] bg-emerald-600/15 border border-emerald-500/20 flex items-center justify-center"
             >
-              <Shield size={36} className="text-indigo-400" strokeWidth={1.5} />
+              <Shield size={36} className="text-emerald-400" strokeWidth={1.5} />
             </motion.div>
           </div>
 
@@ -250,7 +250,7 @@ export default function AdminLogin() {
           <div className="bg-white/[0.03] border border-white/[0.07] rounded-[28px] p-10 backdrop-blur-2xl shadow-[0_32px_80px_rgba(0,0,0,0.7)]">
             {/* Mobile logo */}
             <Link to="/" className="lg:hidden flex items-center gap-2 mb-8">
-              <div className="w-8 h-8 bg-indigo-600 rounded-xl flex items-center justify-center">
+              <div className="w-8 h-8 bg-emerald-600 rounded-xl flex items-center justify-center">
                 <Shield size={14} className="text-white" />
               </div>
               <span className="text-white font-black tracking-tight text-sm uppercase">
@@ -261,15 +261,15 @@ export default function AdminLogin() {
             {/* Header */}
             <div className="mb-8">
               <div className="flex items-center gap-2 mb-3">
-                <span className="h-px w-6 bg-indigo-500/60" />
-                <span className="text-[10px] font-black text-indigo-400/60 uppercase tracking-[0.5em]">
+                <span className="h-px w-6 bg-emerald-500/60" />
+                <span className="text-[10px] font-black text-emerald-400/60 uppercase tracking-[0.5em]">
                   Restricted Access
                 </span>
               </div>
               <h2 className="text-3xl font-black text-white tracking-tight leading-none uppercase">
                 Administrator
                 <br />
-                <span className="text-indigo-400">Authentication.</span>
+                <span className="text-emerald-400">Authentication.</span>
               </h2>
               <p className="text-white/20 text-xs font-medium mt-3 leading-relaxed">
                 This area is restricted to authorized personnel only. All access attempts are logged
@@ -284,11 +284,11 @@ export default function AdminLogin() {
                   Admin Email
                 </label>
                 <div
-                  className={`relative rounded-xl transition-all duration-200 ${focused === 'email' ? 'ring-1 ring-indigo-500/40 shadow-[0_0_20px_rgba(99,102,241,0.08)]' : ''}`}
+                  className={`relative rounded-xl transition-all duration-200 ${focused === 'email' ? 'ring-1 ring-emerald-500/40 shadow-[0_0_20px_rgba(16,185,129,0.08)]' : ''}`}
                 >
                   <Mail
                     size={15}
-                    className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${focused === 'email' ? 'text-indigo-400' : 'text-white/15'}`}
+                    className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${focused === 'email' ? 'text-emerald-400' : 'text-white/15'}`}
                   />
                   <input
                     type="email"
@@ -299,7 +299,7 @@ export default function AdminLogin() {
                     onBlur={() => setFocused(null)}
                     placeholder="admin@wayzza.com"
                     autoComplete="email"
-                    className="w-full h-13 bg-white/[0.05] border border-white/[0.07] rounded-xl pl-11 pr-4 text-sm font-semibold text-white placeholder:text-white/10 focus:outline-none focus:bg-white/[0.08] focus:border-indigo-500/30 transition-all py-3.5"
+                    className="w-full h-13 bg-white/[0.05] border border-white/[0.07] rounded-xl pl-11 pr-4 text-sm font-semibold text-white placeholder:text-white/10 focus:outline-none focus:bg-white/[0.08] focus:border-emerald-500/30 transition-all py-3.5"
                   />
                 </div>
               </div>
@@ -310,11 +310,11 @@ export default function AdminLogin() {
                   Password
                 </label>
                 <div
-                  className={`relative rounded-xl transition-all duration-200 ${focused === 'pw' ? 'ring-1 ring-indigo-500/40 shadow-[0_0_20px_rgba(99,102,241,0.08)]' : ''}`}
+                  className={`relative rounded-xl transition-all duration-200 ${focused === 'pw' ? 'ring-1 ring-emerald-500/40 shadow-[0_0_20px_rgba(16,185,129,0.08)]' : ''}`}
                 >
                   <Lock
                     size={15}
-                    className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${focused === 'pw' ? 'text-indigo-400' : 'text-white/15'}`}
+                    className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${focused === 'pw' ? 'text-emerald-400' : 'text-white/15'}`}
                   />
                   <input
                     type={show ? 'text' : 'password'}
@@ -325,12 +325,12 @@ export default function AdminLogin() {
                     onBlur={() => setFocused(null)}
                     placeholder="••••••••••••"
                     autoComplete="current-password"
-                    className="w-full h-13 bg-white/[0.05] border border-white/[0.07] rounded-xl pl-11 pr-12 text-sm font-semibold text-white placeholder:text-white/10 focus:outline-none focus:bg-white/[0.08] focus:border-indigo-500/30 transition-all py-3.5 tracking-widest"
+                    className="w-full h-13 bg-white/[0.05] border border-white/[0.07] rounded-xl pl-11 pr-12 text-sm font-semibold text-white placeholder:text-white/10 focus:outline-none focus:bg-white/[0.08] focus:border-emerald-500/30 transition-all py-3.5 tracking-widest"
                   />
                   <button
                     type="button"
                     onClick={() => setShow(!show)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-white/15 hover:text-indigo-400 transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-white/15 hover:text-emerald-400 transition-colors"
                   >
                     {show ? <EyeOff size={15} /> : <Eye size={15} />}
                   </button>
@@ -353,9 +353,9 @@ export default function AdminLogin() {
                   disabled={loading}
                   className="relative w-full h-13 rounded-xl font-black text-[11px] uppercase tracking-[0.4em] overflow-hidden group transition-all active:scale-[0.98] disabled:opacity-40 py-3.5"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-violet-600 transition-opacity group-hover:opacity-90" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-600 transition-opacity group-hover:opacity-90" />
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-violet-500 blur-sm scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-500 blur-sm scale-105" />
                   </div>
                   <span className="relative flex items-center justify-center gap-3 text-white">
                     {loading ? (

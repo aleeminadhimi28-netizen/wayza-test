@@ -25,6 +25,45 @@ import ListingGallery from '../../components/listing/ListingGallery.jsx';
 import ListingReviews from '../../components/listing/ListingReviews.jsx';
 import BookingCard from '../../components/listing/BookingCard.jsx';
 
+function getDatesInRange(startStr, endStr) {
+  if (!startStr || !endStr) return [];
+  const dates = [];
+  const start = new Date(startStr);
+  const end = new Date(endStr);
+  const current = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+  const target = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+  while (current < target) {
+    const yyyy = current.getFullYear();
+    const mm = String(current.getMonth() + 1).padStart(2, '0');
+    const dd = String(current.getDate()).padStart(2, '0');
+    dates.push(`${yyyy}-${mm}-${dd}`);
+    current.setDate(current.getDate() + 1);
+  }
+  return dates;
+}
+
+function calculatePriceForDates(listing, variantIndex, checkIn, checkOut) {
+  const variant = listing?.variants?.[variantIndex];
+  const basePrice = variant?.price || listing?.price || 0;
+  if (!checkIn || !checkOut) {
+    return { pricePerNight: basePrice, baseAmount: 0 };
+  }
+  const dates = getDatesInRange(checkIn, checkOut);
+  if (dates.length === 0) {
+    return { pricePerNight: basePrice, baseAmount: 0 };
+  }
+  const variantRules = Array.isArray(variant?.priceRules) ? variant.priceRules : [];
+  let totalBaseAmount = 0;
+  for (const dateStr of dates) {
+    const matchedRule = variantRules.find((r) => r.date === dateStr);
+    totalBaseAmount += matchedRule ? Number(matchedRule.price) : basePrice;
+  }
+  return {
+    pricePerNight: totalBaseAmount / dates.length,
+    baseAmount: totalBaseAmount,
+  };
+}
+
 function StarRow({ rating, size = 16, interactive = false, onSet }) {
   const [hov, setHov] = useState(0);
   return (
@@ -131,7 +170,7 @@ export default function ListingDetails() {
       if (fresh.ok && fresh.data) {
         const freshVariant = fresh.data.variants?.[selectedVariant];
         const freshPrice = Number(freshVariant?.price || fresh.data.price || 0);
-        if (freshPrice !== basePrice) {
+        if (freshPrice !== variantBasePrice) {
           // Partner changed the price while the user was browsing — refresh and notify
           setListing(fresh.data);
           showToast(
@@ -265,7 +304,16 @@ export default function ListingDetails() {
     : null;
 
   const activeVariant = listing.variants?.[selectedVariant];
-  const basePrice = activeVariant?.price || listing.price || 0;
+  const variantBasePrice = activeVariant?.price || listing.price || 0;
+
+  const { pricePerNight, baseAmount } = calculatePriceForDates(
+    listing,
+    selectedVariant,
+    checkIn,
+    checkOut
+  );
+  const basePrice = pricePerNight;
+
   const nights =
     checkIn && checkOut
       ? Math.max(0, Math.ceil((new Date(checkOut) - new Date(checkIn)) / 86400000))
@@ -275,9 +323,12 @@ export default function ListingDetails() {
   const gstRate = platformConfig?.gstRate ?? 0.12;
   const serviceFeeRate = platformConfig?.serviceFee ?? 99;
 
-  const gst = !isVehicle && listing.ownerGstEnabled ? Math.round(basePrice * nights * gstRate) : 0;
+  const gst =
+    !isVehicle && listing.ownerGstEnabled
+      ? Math.round((nights > 0 ? baseAmount : basePrice * nights) * gstRate)
+      : 0;
   const serviceFee = nights > 0 ? serviceFeeRate : 0;
-  const total = basePrice * nights + gst + serviceFee;
+  const total = (nights > 0 ? baseAmount : basePrice * nights) + gst + serviceFee;
 
   const today = new Date().toISOString().split('T')[0];
   const canonicalUrl = `https://wayzza.live/listing/${id}`;

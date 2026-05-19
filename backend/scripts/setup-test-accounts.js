@@ -1,10 +1,10 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
 import { MongoClient } from "mongodb";
 
 dotenv.config();
 
-const url = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/wayzza_db";
+const url = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/wayzza_db";
 
 async function setupAccounts() {
     const client = new MongoClient(url);

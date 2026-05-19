@@ -109,7 +109,7 @@ export default function PartnerEarnings() {
           <button
             onClick={() => {
               const rows = bookings
-                .filter((b) => b.status === 'paid' || b.status === 'confirmed')
+                .filter((b) => b.status === 'paid')
                 .map((b) => ({
                   'Booking ID': b._id,
                   Property: b.title || '',
@@ -317,10 +317,10 @@ export default function PartnerEarnings() {
               </thead>
               <tbody className="divide-y divide-white/[0.03]">
                 {bookings
-                  .filter((b) => b.status === 'paid' || b.status === 'confirmed')
+                  .filter((b) => b.status === 'paid')
                   .map((b, i) => {
                     const base = b.baseAmount || Math.round(b.totalPrice / 1.12);
-                    const platformFee = b.serviceFee || 99;
+                    const platformFee = b.serviceFee || b.platformFee || Math.round(base * 0.02);
                     const commission = Math.round(base * 0.1);
                     const isSettled = b.payoutStatus === 'paid_out';
 
@@ -383,8 +383,7 @@ export default function PartnerEarnings() {
                       </tr>
                     );
                   })}
-                {bookings.filter((b) => b.status === 'paid' || b.status === 'confirmed').length ===
-                  0 && (
+                {bookings.filter((b) => b.status === 'paid').length === 0 && (
                   <tr>
                     <td colSpan={4} className="py-16 text-center">
                       <BarChart3 size={24} className="text-white/10 mx-auto mb-3" />

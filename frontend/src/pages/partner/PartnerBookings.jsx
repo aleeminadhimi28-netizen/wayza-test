@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useAuth } from '../../AuthContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -71,6 +71,7 @@ export default function PartnerBookings() {
   const [manualCode, setManualCode] = useState('');
   const [scanResult, setScanResult] = useState(null); // { id, data, type: 'check-in' | 'check-out' }
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, onConfirm: () => {} });
+  const scannerRef = useRef(null);
 
   const refresh = useCallback(() => {
     setLoading(true);
@@ -106,7 +107,7 @@ export default function PartnerBookings() {
 
   const totalRevenue = visible
     .filter((b) => b.status === 'paid' || b.status === 'arrived' || b.status === 'departed')
-    .reduce((s, b) => s + (b.totalPrice || 0), 0);
+    .reduce((s, b) => s + (b.netEarnings || 0), 0);
 
   const startScanner = async () => {
     setScannerActive(true);
@@ -116,6 +117,7 @@ export default function PartnerBookings() {
 
     setTimeout(() => {
       const html5QrCode = new Html5Qrcode('scanner-region');
+      scannerRef.current = html5QrCode;
       const config = { fps: 10, qrbox: { width: 250, height: 250 } };
 
       html5QrCode
@@ -126,6 +128,7 @@ export default function PartnerBookings() {
             if (decodedText.startsWith('wayzza-verify://')) {
               const id = decodedText.replace('wayzza-verify://', '');
               html5QrCode.stop().then(() => {
+                scannerRef.current = null;
                 setScanning(false);
                 processScannedId(id);
               });
@@ -133,14 +136,17 @@ export default function PartnerBookings() {
           },
           () => {} // Error silencer
         )
-        .catch((err) => {
-          console.error('Scanner failed', err);
+        .catch(() => {
           setScanning(false);
         });
-
-      // Cleanup on window close or modal close
-      window.stopScanner = () => html5QrCode.stop().catch(() => {});
     }, 500);
+  };
+
+  const stopScanner = () => {
+    if (scannerRef.current) {
+      scannerRef.current.stop().catch(() => {});
+      scannerRef.current = null;
+    }
   };
 
   const processScannedId = (id) => {
@@ -253,7 +259,35 @@ export default function PartnerBookings() {
             >
               <Scan size={16} strokeWidth={2.5} /> Verify Guest
             </button>
-            <button className="h-11 px-6 bg-white/[0.05] text-white hover:bg-white/[0.08] rounded-xl font-bold text-[11px] uppercase tracking-wider flex items-center gap-2 border border-white/[0.05] transition-all">
+            <button
+              onClick={() => {
+                const rows = bookings.map((b) => ({
+                  'Booking ID': b._id,
+                  Property: b.title || '',
+                  Guest: b.guestEmail || '',
+                  'Check In': b.checkIn || '',
+                  'Check Out': b.checkOut || '',
+                  Status: b.status || '',
+                  'Total Paid (₹)': b.totalPrice || 0,
+                  'Partner Earnings (₹)': b.netEarnings || 0,
+                  'Payout Status': b.payoutStatus || 'pending',
+                }));
+                if (!rows.length) return;
+                const headers = Object.keys(rows[0]);
+                const csv = [
+                  headers.join(','),
+                  ...rows.map((r) => headers.map((h) => `"${r[h]}"`).join(',')),
+                ].join('\n');
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `wayzza-bookings-${new Date().toISOString().split('T')[0]}.csv`;
+                a.click();
+                URL.revokeObjectURL(url);
+              }}
+              className="h-11 px-6 bg-white/[0.05] text-white hover:bg-white/[0.08] rounded-xl font-bold text-[11px] uppercase tracking-wider flex items-center gap-2 border border-white/[0.05] transition-all"
+            >
               <Download size={14} /> Export CSV
             </button>
           </div>
@@ -405,7 +439,10 @@ export default function PartnerBookings() {
                           <td className="px-6 py-4 text-right">
                             <div className="flex flex-col items-end gap-1">
                               <span className="text-sm font-bold text-white">
-                                ₹{(b.totalPrice || 0).toLocaleString()}
+                                ₹{(b.netEarnings || 0).toLocaleString()}
+                              </span>
+                              <span className="text-[9px] font-black text-white/20 uppercase tracking-widest">
+                                Partner Share
                               </span>
                               {b.status === 'arrived' && (
                                 <button
@@ -456,7 +493,7 @@ export default function PartnerBookings() {
 
                 <button
                   onClick={() => {
-                    window.stopScanner?.();
+                    stopScanner();
                     setScannerActive(false);
                   }}
                   className="absolute top-6 right-6 text-white/40 hover:text-white bg-white/[0.05] hover:bg-white/[0.1] p-1.5 rounded-lg transition-all"
@@ -520,7 +557,7 @@ export default function PartnerBookings() {
                         <input
                           value={manualCode}
                           onChange={(e) => setManualCode(e.target.value)}
-                          placeholder="ENTER 6-DIGIT PASSCODE"
+                          placeholder="ENTER GUEST PASSCODE"
                           className="h-12 flex-1 bg-white/[0.03] border border-white/[0.08] rounded-xl px-4 font-black text-center text-white placeholder:text-white/10 tracking-[0.3em] outline-none focus:border-white/[0.2] transition-all"
                         />
                         <button

@@ -5,7 +5,6 @@ import { Send, MessageSquare, CheckCircle, Search, Sparkles } from 'lucide-react
 import { api } from '../../utils/api.js';
 import {
   initiateSocketConnection,
-  disconnectSocket,
   subscribeToMessages,
   joinBookingRoom,
   leaveBookingRoom,
@@ -76,7 +75,7 @@ export default function PartnerChat() {
       });
     });
 
-    return () => disconnectSocket();
+    // Do NOT disconnect here — socket is shared with other components (e.g. GuestChat)
   }, []);
 
   useEffect(() => {
@@ -85,7 +84,9 @@ export default function PartnerChat() {
     api
       .getPartnerBookings()
       .then((rows) => {
-        const paid = Array.isArray(rows) ? rows.filter((b) => b.status === 'paid') : [];
+        const paid = Array.isArray(rows)
+          ? rows.filter((b) => ['paid', 'arrived', 'departed'].includes(b.status))
+          : [];
         setBookings(paid);
         if (paid.length > 0) setSelected(paid[0]);
         setLoading(false);

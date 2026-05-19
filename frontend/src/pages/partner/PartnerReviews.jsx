@@ -20,7 +20,7 @@ export default function PartnerReviews() {
         const list = Array.isArray(rows) ? rows : [];
         setListings(list);
 
-        const all = await Promise.all(
+        const results = await Promise.allSettled(
           list.map((l) =>
             api
               .getReviews(l._id)
@@ -28,7 +28,9 @@ export default function PartnerReviews() {
           )
         );
 
-        setReviews(all.flat().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+        const all = results.filter((r) => r.status === 'fulfilled').flatMap((r) => r.value);
+
+        setReviews(all.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
         setLoading(false);
       })
       .catch(() => setLoading(false));

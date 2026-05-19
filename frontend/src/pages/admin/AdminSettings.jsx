@@ -108,10 +108,10 @@ export default function AdminSettings() {
 
         {/* Service Fee */}
         <div className="bg-white border border-slate-200 rounded-2xl p-8 space-y-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 blur-[50px] rounded-full group-hover:bg-indigo-500/10 transition-all" />
+          <div className="absolute top-0 right-0 w-32 h-32 bg-teal-500/5 blur-[50px] rounded-full group-hover:bg-teal-500/10 transition-all" />
 
           <div className="flex items-center gap-4 relative z-10">
-            <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 border border-indigo-100">
+            <div className="w-12 h-12 bg-teal-50 rounded-2xl flex items-center justify-center text-teal-600 border border-teal-100">
               <DollarSign size={24} />
             </div>
             <div>
@@ -124,7 +124,7 @@ export default function AdminSettings() {
 
           <div className="space-y-4 relative z-10">
             <div className="flex items-baseline gap-2">
-              <span className="text-indigo-600 font-bold text-lg">₹</span>
+              <span className="text-teal-600 font-bold text-lg">₹</span>
               <span className="text-4xl font-bold text-slate-900">{config.serviceFee}</span>
             </div>
             <input
@@ -133,9 +133,9 @@ export default function AdminSettings() {
               onChange={(e) =>
                 setConfig({ ...config, serviceFee: parseFloat(e.target.value) || 0 })
               }
-              className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-3 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 font-bold transition-all"
+              className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-3 outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100 font-bold transition-all"
             />
-            <p className="text-xs text-indigo-600 font-medium bg-indigo-50 border border-indigo-100 rounded-xl p-3">
+            <p className="text-xs text-teal-600 font-medium bg-teal-50 border border-teal-100 rounded-xl p-3">
               Charged identically across all property tiers.
             </p>
           </div>

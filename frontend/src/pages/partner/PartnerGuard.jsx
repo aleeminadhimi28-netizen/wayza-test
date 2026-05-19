@@ -22,6 +22,7 @@ export default function PartnerGuard({ children }) {
   const { user, loading: authLoading, logout } = useAuth();
   const [checking, setChecking] = useState(true); // always start checking; resolved in useEffect after auth loads
   const [pendingApproval, setPendingApproval] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     if (authLoading) return;
@@ -73,7 +74,7 @@ export default function PartnerGuard({ children }) {
     return () => {
       active = false;
     };
-  }, [user, authLoading, navigate]);
+  }, [user, authLoading, navigate, retryCount]);
 
   // Reset cache on logout (user becomes null)
   useEffect(() => {
@@ -152,11 +153,12 @@ export default function PartnerGuard({ children }) {
           <div className="flex flex-col gap-3 pt-4">
             <button
               onClick={() => {
-                // Re-check status — clear TTL cache
+                // Re-check status — clear TTL cache and increment retry to re-trigger useEffect
                 sessionStorage.removeItem('partner_onboarded');
                 sessionStorage.removeItem('partner_onboarded_at');
-                setChecking(true);
                 setPendingApproval(false);
+                setChecking(true);
+                setRetryCount((c) => c + 1);
               }}
               className="w-full h-14 bg-slate-950 text-white rounded-2xl font-bold text-sm uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-lg active:scale-[0.98] flex items-center justify-center gap-3"
             >

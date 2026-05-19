@@ -31,7 +31,7 @@ export default function PartnerPricing() {
         });
         setPriceEdits(initEdits);
       })
-      .catch((err) => console.error('Failed to load listings for pricing:', err))
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, [user?.email]);
 
@@ -104,7 +104,7 @@ export default function PartnerPricing() {
         <div className="absolute bottom-0 right-0 w-[40%] h-[40%] bg-emerald-700/5 blur-[100px] rounded-full" />
       </div>
 
-      <div className="relative z-10 max-w-5xl mx-auto space-y-8">
+      <div className="relative z-10 max-w-5xl mx-auto px-6 lg:px-12 py-10 space-y-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white/[0.03] border border-white/[0.08] p-8 rounded-3xl backdrop-blur-xl">
           <div>
             <div className="flex items-center gap-2 text-emerald-400 font-black text-[10px] uppercase tracking-[0.4em] mb-1">

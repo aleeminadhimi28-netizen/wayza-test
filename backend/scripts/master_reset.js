@@ -3,7 +3,7 @@ import bcryptjs from 'bcryptjs';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const url = "process.env.MONGO_URI;
+const url = process.env.MONGO_URL;
 
 const client = new MongoClient(url);
 

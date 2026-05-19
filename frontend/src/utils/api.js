@@ -219,6 +219,19 @@ export const api = {
       body: JSON.stringify(data),
     }).then((r) => r.json()),
 
+  // Date-based Price Rules (per variant/room)
+  getPriceRules: (listingId, variantIndex) =>
+    customFetch(`${API_URL}/listings/${listingId}/variant/${variantIndex}/price-rules`, {
+      headers: getAuthHeaders(),
+    }).then((r) => r.json()),
+
+  savePriceRules: (listingId, variantIndex, priceRules) =>
+    customFetch(`${API_URL}/listings/${listingId}/variant/${variantIndex}/price-rules`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+      body: JSON.stringify({ priceRules }),
+    }).then((r) => r.json()),
+
   deleteVariant: (id, index) =>
     customFetch(`${API_URL}/listings/${id}/variant/${index}`, {
       method: 'DELETE',

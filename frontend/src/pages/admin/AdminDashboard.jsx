@@ -350,7 +350,7 @@ export default function AdminDashboard() {
 
   if (errorMsg)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#06070f] font-sans p-6 text-white">
+      <div className="min-h-screen flex items-center justify-center bg-[#050a08] font-sans p-6 text-white">
         <div className="flex flex-col items-center gap-6 max-w-sm text-center p-10 bg-white/[0.03] border border-white/[0.08] rounded-2xl backdrop-blur-xl">
           <div className="w-14 h-14 bg-rose-500/10 text-rose-400 rounded-2xl flex items-center justify-center">
             <Shield size={28} />
@@ -361,7 +361,7 @@ export default function AdminDashboard() {
           </div>
           <button
             onClick={() => (window.location.href = '/admin-login')}
-            className="h-11 px-6 bg-indigo-600 text-white rounded-xl font-bold text-[11px] uppercase tracking-wider hover:bg-indigo-700 transition-colors"
+            className="h-11 px-6 bg-emerald-600 text-[#050a08] rounded-xl font-bold text-[11px] uppercase tracking-wider hover:bg-emerald-500 transition-colors"
           >
             Sign In Again
           </button>
@@ -371,9 +371,9 @@ export default function AdminDashboard() {
 
   if (!stats)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#06070f] text-white">
+      <div className="min-h-screen flex items-center justify-center bg-[#050a08] text-white">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-2 border-white/10 border-t-indigo-500 rounded-full animate-spin" />
+          <div className="w-10 h-10 border-2 border-white/10 border-t-emerald-500 rounded-full animate-spin" />
           <p className="text-xs font-bold text-white/30 uppercase tracking-widest">
             Loading Command Center...
           </p>
@@ -382,16 +382,16 @@ export default function AdminDashboard() {
     );
 
   return (
-    <div className="min-h-screen bg-[#06070f] text-white font-sans flex overflow-hidden selection:bg-indigo-900/50 selection:text-indigo-200">
+    <div className="min-h-screen bg-[#050a08] text-white font-sans flex overflow-hidden selection:bg-emerald-950 selection:text-emerald-200">
       {/* ── Ambient Background ── */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-0 left-[20%] w-[40%] h-[50%] bg-indigo-600/4 blur-[160px] rounded-full" />
-        <div className="absolute bottom-0 right-[10%] w-[35%] h-[40%] bg-violet-600/3 blur-[140px] rounded-full" />
+        <div className="absolute top-0 left-[20%] w-[40%] h-[50%] bg-emerald-600/4 blur-[160px] rounded-full" />
+        <div className="absolute bottom-0 right-[10%] w-[35%] h-[40%] bg-teal-600/3 blur-[140px] rounded-full" />
         {/* Dot grid */}
         <div
           className="absolute inset-0 opacity-[0.03]"
           style={{
-            backgroundImage: 'radial-gradient(circle, rgba(99,102,241,0.8) 1px, transparent 1px)',
+            backgroundImage: 'radial-gradient(circle, rgba(16,185,129,0.8) 1px, transparent 1px)',
             backgroundSize: '32px 32px',
           }}
         />
@@ -414,14 +414,14 @@ export default function AdminDashboard() {
             className="flex items-center gap-3 cursor-pointer"
             onClick={() => setActiveTab('overview')}
           >
-            <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-600/20">
+            <div className="w-9 h-9 bg-emerald-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-emerald-600/20">
               <Shield size={16} />
             </div>
             <div>
               <span className="font-black text-white text-base uppercase tracking-tight">
                 Wayzza
               </span>
-              <p className="text-indigo-400/40 text-[9px] font-bold uppercase tracking-[0.3em] mt-0.5">
+              <p className="text-emerald-400/40 text-[9px] font-bold uppercase tracking-[0.3em] mt-0.5">
                 Control
               </p>
             </div>
@@ -453,7 +453,7 @@ export default function AdminDashboard() {
                   >
                     <tab.icon
                       size={14}
-                      className={activeTab === tab.id ? 'text-indigo-400' : 'text-white/20'}
+                      className={activeTab === tab.id ? 'text-emerald-400' : 'text-white/20'}
                     />
                     {tab.label}
                     {tab.id === 'support' && openTickets > 0 && (
@@ -495,7 +495,7 @@ export default function AdminDashboard() {
       {/* MAIN CONTENT */}
       <main className="flex-1 h-screen overflow-y-auto relative z-10">
         {/* HEADER */}
-        <header className="sticky top-0 z-50 bg-[#06070f]/80 backdrop-blur-xl border-b border-white/[0.04] px-8 py-4">
+        <header className="sticky top-0 z-50 bg-[#050a08]/80 backdrop-blur-xl border-b border-white/[0.04] px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <button
@@ -515,7 +515,7 @@ export default function AdminDashboard() {
                         : `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Management`}
                 </h2>
                 <div className="flex items-center gap-2 mt-0.5">
-                  <span className="text-[10px] font-bold text-indigo-400/60 uppercase tracking-widest">
+                  <span className="text-[10px] font-bold text-emerald-400/60 uppercase tracking-widest">
                     Secure Console
                   </span>
                   <span className="text-white/10 font-mono text-[10px]">|</span>
@@ -536,7 +536,7 @@ export default function AdminDashboard() {
               </button>
               <div
                 title={user?.email || 'Admin'}
-                className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-black text-xs shadow-lg shadow-indigo-600/20 cursor-default"
+                className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-black text-xs shadow-lg shadow-emerald-600/20 cursor-default"
               >
                 {adminInitials}
               </div>

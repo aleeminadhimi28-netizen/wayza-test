@@ -36,9 +36,11 @@ export default function PartnerListings() {
     try {
       const data = await api.getOwnerListings(user.email);
       setListings(Array.isArray(data) ? data : []);
-    } catch {}
+    } catch {
+      showToast('Failed to load properties. Please refresh.', 'error');
+    }
     setLoading(false);
-  }, [user?.email]);
+  }, [user?.email, showToast]);
 
   useEffect(() => {
     load();

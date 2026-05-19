@@ -69,7 +69,34 @@ router.post("/book", requireAuth, async (req, res, next) => {
 
         const variant = listing.variants?.[variantIndex || 0];
         const nights = Math.ceil((new Date(checkOut) - new Date(checkIn)) / 86400000);
-        const pricePerNight = Number(variant?.price || listing.price || 0);
+        const basePricePerNight = Number(variant?.price || listing.price || 0);
+
+        // ─── DATE-BASED PRICE RULE LOOKUP (per variant/room) ────────────────────
+        const getDatesInRange = (startStr, endStr) => {
+            const dates = [];
+            const start = new Date(startStr);
+            const end = new Date(endStr);
+            let current = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+            const target = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+            while (current < target) {
+                const yyyy = current.getFullYear();
+                const mm = String(current.getMonth() + 1).padStart(2, '0');
+                const dd = String(current.getDate()).padStart(2, '0');
+                dates.push(`${yyyy}-${mm}-${dd}`);
+                current.setDate(current.getDate() + 1);
+            }
+            return dates;
+        };
+
+        const dates = getDatesInRange(checkIn, checkOut);
+        const variantRules = Array.isArray(variant?.priceRules) ? variant.priceRules : [];
+        let totalBaseAmount = 0;
+        for (const dateStr of dates) {
+            const matchedRule = variantRules.find((r) => r.date === dateStr);
+            totalBaseAmount += matchedRule ? Number(matchedRule.price) : basePricePerNight;
+        }
+        const pricePerNight = dates.length > 0 ? (totalBaseAmount / dates.length) : basePricePerNight;
+        // ────────────────────────────────────────────────────────────────────────
 
         // ─── PART 4: STALE DATA PREVENTION ────────────────────────────────────────────
         const { expectedPricePerNight } = parsed.data;
@@ -83,7 +110,7 @@ router.post("/book", requireAuth, async (req, res, next) => {
         }
         // ───────────────────────────────────────────────────────────────────────────
 
-        const baseAmount = pricePerNight * nights;
+        const baseAmount = dates.length > 0 ? totalBaseAmount : basePricePerNight * nights;
         const isVehicle = listing.category === "bike" || listing.category === "car";
         
         const config = await db.collection("settings").findOne({ type: "financials" }) || { gstRate: 0.12, serviceFee: 99, commissionRate: 0.10 };

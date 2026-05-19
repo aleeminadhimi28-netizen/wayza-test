@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../AuthContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -15,8 +15,12 @@ import {
   Copy,
   Check,
   Sparkles,
+  Tag,
+  DollarSign,
+  Trash2,
 } from 'lucide-react';
 import { api } from '../../utils/api.js';
+import { useToast } from '../../ToastContext.jsx';
 
 const MONTH_NAMES = [
   'January',
@@ -89,6 +93,7 @@ function sameDay(a, b) {
 export default function PartnerCalendar() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const today = toDateOnly(new Date());
@@ -98,6 +103,15 @@ export default function PartnerCalendar() {
   const [feedUrl, setFeedUrl] = useState('');
   const [copied, setCopied] = useState(false);
   const [partnerPhone, setPartnerPhone] = useState('');
+
+  // ── Date Pricing ──
+  const [listings, setListings] = useState([]);
+  const [selectedListingId, setSelectedListingId] = useState('');
+  const [selectedVariantIdx, setSelectedVariantIdx] = useState(0);
+  const [priceRules, setPriceRules] = useState([]); // [{date:'YYYY-MM-DD', price:N}]
+  const [priceModal, setPriceModal] = useState(null); // { dateStr, existing }
+  const [priceInput, setPriceInput] = useState('');
+  const [priceSaving, setPriceSaving] = useState(false);
 
   useEffect(() => {
     if (!user?.email) return;
@@ -109,14 +123,98 @@ export default function PartnerCalendar() {
       })
       .catch(() => setLoading(false));
 
-    api.getCalendarSettings().then((d) => {
-      if (d.ok) setFeedUrl(d.feedUrl);
-    });
+    api
+      .getCalendarSettings()
+      .then((d) => {
+        if (d.ok) setFeedUrl(d.feedUrl);
+      })
+      .catch(() => {});
+    api
+      .getProfile()
+      .then((d) => {
+        if (d.ok && d.data?.phone) setPartnerPhone(d.data.phone);
+      })
+      .catch(() => {});
 
-    api.getProfile().then((d) => {
-      if (d.ok && d.data?.phone) setPartnerPhone(d.data.phone);
-    });
+    // Load listings for the price-rule selector
+    api
+      .getOwnerListings(user.email)
+      .then((l) => {
+        const arr = Array.isArray(l) ? l : [];
+        setListings(arr);
+        if (arr.length > 0) setSelectedListingId(arr[0]._id);
+      })
+      .catch(() => {});
   }, [user?.email]);
+
+  // Re-fetch price rules whenever listing or variant changes
+  const loadPriceRules = useCallback(() => {
+    const lst = listings.find((l) => l._id === selectedListingId);
+    if (!lst || !(lst.variants?.length > 0)) {
+      setPriceRules([]);
+      return;
+    }
+    api
+      .getPriceRules(selectedListingId, selectedVariantIdx)
+      .then((d) => {
+        if (d.ok) setPriceRules(d.priceRules || []);
+      })
+      .catch(() => {});
+  }, [selectedListingId, selectedVariantIdx, listings]);
+
+  useEffect(() => {
+    loadPriceRules();
+  }, [loadPriceRules]);
+
+  // ── Price rule helpers ──
+  const ruleForDate = (dateStr) => priceRules.find((r) => r.date === dateStr) || null;
+
+  function openPriceModal(cell) {
+    if (!cell.date || !cell.inMonth) return;
+    const dateStr = `${cell.date.getFullYear()}-${String(cell.date.getMonth() + 1).padStart(2, '0')}-${String(cell.date.getDate()).padStart(2, '0')}`;
+    const existing = ruleForDate(dateStr);
+    const lst = listings.find((l) => l._id === selectedListingId);
+    const variant = lst?.variants?.[selectedVariantIdx];
+    setPriceInput(existing ? String(existing.price) : String(variant?.price || lst?.price || ''));
+    setPriceModal({ dateStr, existing });
+  }
+
+  async function savePriceRule() {
+    if (!priceModal || !selectedListingId) return;
+    const newPrice = Number(priceInput);
+    if (isNaN(newPrice) || newPrice <= 0) {
+      showToast('Enter a valid price.', 'warning');
+      return;
+    }
+    setPriceSaving(true);
+    const updated = priceRules.filter((r) => r.date !== priceModal.dateStr);
+    updated.push({ date: priceModal.dateStr, price: newPrice });
+    try {
+      const res = await api.savePriceRules(selectedListingId, selectedVariantIdx, updated);
+      if (res.ok) {
+        setPriceRules(updated);
+        setPriceModal(null);
+        showToast('Price set for ' + priceModal.dateStr, 'success');
+      } else showToast(res.message || 'Failed to save.', 'error');
+    } catch {
+      showToast('Connection error.', 'error');
+    }
+    setPriceSaving(false);
+  }
+
+  async function deletePriceRule(dateStr) {
+    const updated = priceRules.filter((r) => r.date !== dateStr);
+    try {
+      const res = await api.savePriceRules(selectedListingId, selectedVariantIdx, updated);
+      if (res.ok) {
+        setPriceRules(updated);
+        setPriceModal(null);
+        showToast('Custom price removed.', 'success');
+      } else showToast('Failed to remove.', 'error');
+    } catch {
+      showToast('Connection error.', 'error');
+    }
+  }
 
   const handleCopy = () => {
     navigator.clipboard.writeText(feedUrl);
@@ -263,17 +361,28 @@ export default function PartnerCalendar() {
                     {week.map((cell, di) => {
                       const isToday = cell.date && sameDay(cell.date, today);
                       const dayBookings = bookingsForDay(cell.date);
+                      const dateStr = cell.date
+                        ? `${cell.date.getFullYear()}-${String(cell.date.getMonth() + 1).padStart(2, '0')}-${String(cell.date.getDate()).padStart(2, '0')}`
+                        : null;
+                      const customRule = dateStr ? ruleForDate(dateStr) : null;
+                      const isFree = cell.inMonth && dayBookings.length === 0 && selectedListingId;
                       return (
                         <div
                           key={di}
-                          className={`relative min-h-[95px] border-r border-white/[0.02] last:border-r-0 transition-colors ${cell.inMonth ? 'bg-transparent' : 'bg-white/[0.01]'}`}
+                          onClick={() => isFree && openPriceModal(cell)}
+                          className={`relative min-h-[95px] border-r border-white/[0.02] last:border-r-0 transition-colors ${cell.inMonth ? 'bg-transparent' : 'bg-white/[0.01]'} ${isFree ? 'cursor-pointer hover:bg-white/[0.03]' : ''}`}
                         >
-                          <div className="pt-2 pl-2">
+                          <div className="pt-2 pl-2 flex items-start justify-between pr-1">
                             <span
                               className={`inline-flex items-center justify-center w-7 h-7 rounded-lg text-xs font-bold ${isToday ? 'bg-emerald-500 text-[#050a08] shadow-lg shadow-emerald-500/20' : cell.inMonth ? 'text-white/70' : 'text-white/10'}`}
                             >
                               {cell.inMonth ? cell.dayNum : ''}
                             </span>
+                            {customRule && (
+                              <span className="text-[9px] font-black text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded px-1 py-0.5 leading-none">
+                                ₹{customRule.price.toLocaleString()}
+                              </span>
+                            )}
                           </div>
                           <div className="mt-1 space-y-0.5 px-0.5 overflow-hidden">
                             {dayBookings.slice(0, 3).map((b) => {
@@ -282,7 +391,10 @@ export default function PartnerCalendar() {
                               return (
                                 <button
                                   key={b._id}
-                                  onClick={() => setSelected(b)}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelected(b);
+                                  }}
                                   className={`w-full h-5 flex items-center ${isStart && !isEnd ? 'rounded-l-lg' : isEnd && !isStart ? 'rounded-r-lg' : isStart && isEnd ? 'rounded-lg' : ''} ${b.theme.bar} px-2 hover:opacity-80 transition-opacity`}
                                 >
                                   {isStart && (
@@ -302,6 +414,98 @@ export default function PartnerCalendar() {
                   </div>
                 ))}
               </div>
+            </div>
+
+            {/* ── PRICE RULE SELECTOR ── */}
+            <div className="bg-white/[0.03] border border-white/[0.08] rounded-3xl p-6 backdrop-blur-xl space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-400">
+                  <Tag size={18} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-black text-white uppercase tracking-tight">
+                    Date Pricing
+                  </h3>
+                  <p className="text-xs text-white/30 font-medium">
+                    Click any free date to set a custom room price.
+                  </p>
+                </div>
+              </div>
+              {listings.length === 0 ? (
+                <p className="text-xs text-white/20 font-bold uppercase tracking-widest text-center py-4">
+                  No properties found.
+                </p>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-white/30 uppercase tracking-widest">
+                      Property
+                    </label>
+                    <select
+                      value={selectedListingId}
+                      onChange={(e) => {
+                        setSelectedListingId(e.target.value);
+                        setSelectedVariantIdx(0);
+                      }}
+                      className="w-full h-10 bg-white/[0.03] border border-white/[0.08] rounded-lg px-3 text-xs font-bold text-white outline-none"
+                    >
+                      {listings.map((l) => (
+                        <option key={l._id} value={l._id}>
+                          {l.title}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-white/30 uppercase tracking-widest">
+                      Room / Variant
+                    </label>
+                    <select
+                      value={selectedVariantIdx}
+                      onChange={(e) => setSelectedVariantIdx(Number(e.target.value))}
+                      className="w-full h-10 bg-white/[0.03] border border-white/[0.08] rounded-lg px-3 text-xs font-bold text-white outline-none"
+                    >
+                      {(listings.find((l) => l._id === selectedListingId)?.variants || []).map(
+                        (v, i) => (
+                          <option key={i} value={i}>
+                            {v.name || `Variant ${i + 1}`}
+                          </option>
+                        )
+                      )}
+                    </select>
+                  </div>
+                </div>
+              )}
+              {priceRules.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-[10px] font-black text-white/20 uppercase tracking-widest">
+                    Active Custom Prices
+                  </p>
+                  <div className="max-h-32 overflow-y-auto space-y-1">
+                    {priceRules
+                      .sort((a, b) => a.date.localeCompare(b.date))
+                      .map((r) => (
+                        <div
+                          key={r.date}
+                          className="flex items-center justify-between px-3 py-2 bg-amber-500/5 border border-amber-500/10 rounded-lg"
+                        >
+                          <span className="text-xs font-bold text-white/70">{r.date}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-black text-amber-400">
+                              ₹{r.price.toLocaleString()}
+                            </span>
+                            <button
+                              onClick={() => deletePriceRule(r.date)}
+                              className="w-6 h-6 flex items-center justify-center text-white/20 hover:text-rose-400 transition-colors"
+                            >
+                              <Trash2 size={12} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* CALENDAR SYNC CARD */}
@@ -423,6 +627,82 @@ export default function PartnerCalendar() {
           </div>
         </div>
       </div>
+
+      {/* ── PRICE MODAL ── */}
+      <AnimatePresence>
+        {priceModal && (
+          <div
+            className="fixed inset-0 bg-[#050a08]/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={() => setPriceModal(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-[#050a08] border border-white/[0.08] rounded-2xl shadow-2xl w-full max-w-xs overflow-hidden"
+            >
+              <div className="h-1 w-full bg-amber-400" />
+              <div className="px-6 py-5 border-b border-white/[0.05] flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] font-black text-amber-400 uppercase tracking-widest">
+                    Custom Price
+                  </p>
+                  <h3 className="text-lg font-black text-white">{priceModal.dateStr}</h3>
+                </div>
+                <button
+                  onClick={() => setPriceModal(null)}
+                  className="w-8 h-8 rounded-lg bg-white/[0.05] flex items-center justify-center text-white/40 hover:bg-white/[0.1] transition-colors"
+                >
+                  <X size={15} />
+                </button>
+              </div>
+              <div className="p-6 space-y-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-white/30 uppercase tracking-widest">
+                    Price for this date (₹)
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 font-bold">
+                      ₹
+                    </span>
+                    <input
+                      type="number"
+                      value={priceInput}
+                      onChange={(e) => setPriceInput(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && savePriceRule()}
+                      autoFocus
+                      className="w-full h-12 pl-8 pr-4 bg-white/[0.03] border border-white/[0.1] rounded-xl text-white font-bold text-lg outline-none focus:border-amber-400 transition-colors"
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  {priceModal.existing && (
+                    <button
+                      onClick={() => deletePriceRule(priceModal.dateStr)}
+                      className="h-11 px-4 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-rose-500/20 transition-colors"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  )}
+                  <button
+                    onClick={savePriceRule}
+                    disabled={priceSaving}
+                    className="flex-1 h-11 bg-amber-400 hover:bg-amber-300 text-[#050a08] rounded-xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
+                  >
+                    {priceSaving ? (
+                      <span className="w-4 h-4 border-2 border-[#050a08]/30 border-t-[#050a08] rounded-full animate-spin" />
+                    ) : (
+                      <DollarSign size={14} />
+                    )}
+                    {priceSaving ? 'Saving...' : 'Set Price'}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* DETAIL MODAL */}
       <AnimatePresence>

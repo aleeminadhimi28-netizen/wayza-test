@@ -26,8 +26,8 @@ export default function AdminOverview({ stats, setActiveTab }) {
       title: 'Total Users',
       value: stats.totalUsers,
       icon: Users,
-      bg: 'bg-indigo-500/10',
-      color: 'text-indigo-400',
+      bg: 'bg-emerald-500/10',
+      color: 'text-emerald-400',
       trend: 'All time',
       up: true,
     },
@@ -35,8 +35,8 @@ export default function AdminOverview({ stats, setActiveTab }) {
       title: 'Partners',
       value: stats.totalPartners,
       icon: Briefcase,
-      bg: 'bg-violet-500/10',
-      color: 'text-violet-400',
+      bg: 'bg-teal-500/10',
+      color: 'text-teal-400',
       trend: 'Active',
       up: true,
     },
@@ -138,9 +138,9 @@ export default function AdminOverview({ stats, setActiveTab }) {
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={stats.monthlyRevenue}>
                   <defs>
-                    <linearGradient id="colorIndigo" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#6366f1" stopOpacity={0.2} />
-                      <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                    <linearGradient id="colorEmerald" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.2} />
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid
@@ -163,22 +163,22 @@ export default function AdminOverview({ stats, setActiveTab }) {
                   />
                   <RechartsTooltip
                     contentStyle={{
-                      background: '#06070f',
+                      background: '#050a08',
                       border: '1px solid rgba(255,255,255,0.1)',
                       borderRadius: '12px',
                       fontSize: '11px',
                       padding: '12px',
                       color: '#fff',
                     }}
-                    itemStyle={{ color: '#6366f1', fontWeight: 'bold' }}
+                    itemStyle={{ color: '#10b981', fontWeight: 'bold' }}
                   />
                   <Area
                     type="monotone"
                     dataKey="rev"
-                    stroke="#6366f1"
+                    stroke="#10b981"
                     strokeWidth={3}
                     fillOpacity={1}
-                    fill="url(#colorIndigo)"
+                    fill="url(#colorEmerald)"
                   />
                 </AreaChart>
               </ResponsiveContainer>
@@ -193,7 +193,7 @@ export default function AdminOverview({ stats, setActiveTab }) {
               Recent Activity
             </h3>
             <span
-              className="text-xs font-bold text-indigo-400 hover:text-indigo-300 cursor-pointer transition-colors uppercase tracking-wider"
+              className="text-xs font-bold text-emerald-400 hover:text-emerald-300 cursor-pointer transition-colors uppercase tracking-wider"
               onClick={() => setActiveTab('bookings')}
             >
               View All
