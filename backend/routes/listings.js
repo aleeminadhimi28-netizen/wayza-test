@@ -28,7 +28,8 @@ const variantSchema = z.object({
     type: z.string().optional(),
     desc: z.string().optional(),
     available: z.boolean().optional().default(true),
-    image: z.string().optional()
+    image: z.string().optional(),
+    amenities: z.array(z.string()).optional().default([])
 });
 
 const router = express.Router();
@@ -266,7 +267,7 @@ router.post("/:id/variant", requireAuth, async (req, res, next) => {
         const listing = await listings.findOne({ _id: new ObjectId(req.params.id) });
         if (!listing || (listing.ownerEmail !== req.user.email && req.user.role !== "admin")) return res.status(403).json({ ok: false, message: "Not authorized" });
 
-        const { name, type, price, qty, desc, available, image } = parsed.data;
+        const { name, type, price, qty, desc, available, image, amenities } = parsed.data;
         await listings.updateOne(
             { _id: new ObjectId(req.params.id) },
             {
@@ -278,6 +279,7 @@ router.post("/:id/variant", requireAuth, async (req, res, next) => {
                         desc,
                         available: available !== false,
                         image: image || null,
+                        amenities: amenities || [],
                         createdAt: new Date()
                     }
                 }
@@ -298,7 +300,7 @@ router.put("/:id/variant/:index", requireAuth, async (req, res, next) => {
         if (!listing || (listing.ownerEmail !== req.user.email && req.user.role !== "admin")) return res.status(403).json({ ok: false });
         if (idx >= (listing.variants || []).length) return res.status(400).json({ ok: false, message: "Index out of bounds" });
         const updates = {};
-        ["name", "type", "price", "qty", "desc", "available", "image"].forEach(f => {
+        ["name", "type", "price", "qty", "desc", "available", "image", "amenities"].forEach(f => {
             if (req.body[f] !== undefined) updates["variants." + idx + "." + f] = req.body[f];
         });
         await listings.updateOne({ _id: new ObjectId(id) }, { $set: updates });

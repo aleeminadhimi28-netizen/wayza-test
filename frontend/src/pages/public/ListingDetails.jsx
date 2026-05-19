@@ -20,7 +20,7 @@ import ListingConcierge from '../../components/ListingConcierge.jsx';
 import NeighborhoodVibes from '../../components/NeighborhoodVibes.jsx';
 import { api } from '../../utils/api.js';
 import { fixImg } from '../../utils/image.js';
-import { AMENITY_CATEGORIES } from '../../utils/amenities.js';
+import { AMENITY_CATEGORIES, ALL_AMENITIES } from '../../utils/amenities.js';
 import ListingGallery from '../../components/listing/ListingGallery.jsx';
 import ListingReviews from '../../components/listing/ListingReviews.jsx';
 import BookingCard from '../../components/listing/BookingCard.jsx';
@@ -658,6 +658,25 @@ export default function ListingDetails() {
                           <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">
                             {v.desc || 'Executive level residency'}
                           </p>
+                          {v.amenities && v.amenities.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5 pt-1">
+                              {v.amenities.map((amenityLabel, idx) => {
+                                const amenityObj = ALL_AMENITIES.find(
+                                  (a) => a.label === amenityLabel
+                                );
+                                if (!amenityObj) return null;
+                                return (
+                                  <span
+                                    key={idx}
+                                    className="inline-flex items-center gap-1 px-2.5 py-1 bg-white border border-slate-100 rounded-lg text-[9px] font-bold text-slate-500 uppercase tracking-wider shadow-sm"
+                                  >
+                                    <amenityObj.icon size={9} className="text-emerald-500" />
+                                    {amenityLabel}
+                                  </span>
+                                );
+                              })}
+                            </div>
+                          )}
                         </div>
                         <div className="text-center md:text-right">
                           <p className="text-4xl font-black text-slate-900 tracking-tighter">

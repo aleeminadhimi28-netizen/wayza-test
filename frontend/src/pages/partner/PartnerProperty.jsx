@@ -23,10 +23,40 @@ import { useToast } from '../../ToastContext.jsx';
 
 import { api, BASE_URL } from '../../utils/api.js';
 import { fixImg } from '../../utils/image.js';
-import { AMENITY_CATEGORIES } from '../../utils/amenities.js';
+import { AMENITY_CATEGORIES, ALL_AMENITIES } from '../../utils/amenities.js';
 import ConfirmModal from '../../components/ui/ConfirmModal.jsx';
 
-const AVAILABLE_AMENITIES = []; // Legacy constant for safety
+const ROOM_NAME_OPTIONS = [
+  'Standard Room',
+  'Deluxe Room',
+  'Super Deluxe Room',
+  'Premium Room',
+  'Suite',
+  'Executive Suite',
+  'Family Suite',
+  'Presidential Suite',
+  'Studio Room',
+  'Penthouse',
+  'Villa',
+  'Cottage',
+  'Cabin',
+  'Dorm Bed',
+];
+
+const VEHICLE_NAME_OPTIONS = [
+  'Scooter',
+  'Cruiser Bike',
+  'Sport Bike',
+  'Royal Enfield',
+  'Hatchback Car',
+  'Sedan Car',
+  'SUV Car',
+  'Luxury Car',
+  'Convertible Car',
+  'Off-road Vehicle',
+];
+
+const OTHER_NAME_OPTIONS = ['Standard Package', 'Premium Tour', 'Custom Entry'];
 
 export default function PartnerProperty() {
   const { id } = useParams();
@@ -36,6 +66,8 @@ export default function PartnerProperty() {
 
   const [type, setType] = useState('Room');
   const [name, setName] = useState('');
+  const [selectedNameOption, setSelectedNameOption] = useState('');
+  const [variantAmenities, setVariantAmenities] = useState([]);
   const [price, setPrice] = useState('');
   const [desc, setDesc] = useState('');
   const [available, setAvailable] = useState(true);
@@ -81,6 +113,8 @@ export default function PartnerProperty() {
   function resetForm() {
     setType(listing?.category === 'bike' || listing?.category === 'car' ? 'Vehicle' : 'Room');
     setName('');
+    setSelectedNameOption('');
+    setVariantAmenities([]);
     setPrice('');
     setDesc('');
     setAvailable(true);
@@ -129,6 +163,7 @@ export default function PartnerProperty() {
         price: Number(price) || 0,
         desc,
         available,
+        amenities: variantAmenities,
         ...(image ? { image } : {}),
       };
 
@@ -153,8 +188,24 @@ export default function PartnerProperty() {
 
   function startEdit(v, i) {
     setEditIndex(i);
-    setType(v.type || 'Room');
-    setName(v.name || '');
+    const typeVal = v.type || 'Room';
+    setType(typeVal);
+    const nameVal = v.name || '';
+    setName(nameVal);
+
+    const options =
+      typeVal === 'Vehicle'
+        ? VEHICLE_NAME_OPTIONS
+        : typeVal === 'Room'
+          ? ROOM_NAME_OPTIONS
+          : OTHER_NAME_OPTIONS;
+    if (options.includes(nameVal)) {
+      setSelectedNameOption(nameVal);
+    } else {
+      setSelectedNameOption(nameVal ? 'Custom' : '');
+    }
+
+    setVariantAmenities(v.amenities || []);
     setPrice(v.price || '');
     setDesc(v.desc || '');
     setAvailable(v.available !== false);
@@ -475,7 +526,12 @@ export default function PartnerProperty() {
                     />
                     <select
                       value={type}
-                      onChange={(e) => setType(e.target.value)}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setType(val);
+                        setName('');
+                        setSelectedNameOption('');
+                      }}
                       className="h-10 w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-8 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-colors appearance-none cursor-pointer"
                     >
                       {listing.category === 'bike' || listing.category === 'car' ? (
@@ -506,15 +562,55 @@ export default function PartnerProperty() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-700 block">Name</label>
-                <input
-                  required
-                  placeholder="e.g. Deluxe Double Room"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="h-10 w-full bg-slate-50 border border-slate-200 rounded-lg px-4 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-colors"
-                />
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-slate-700 block">Name</label>
+                  <select
+                    value={selectedNameOption}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setSelectedNameOption(val);
+                      if (val === 'Custom') {
+                        setName('');
+                      } else {
+                        setName(val);
+                      }
+                    }}
+                    className="h-10 w-full bg-slate-50 border border-slate-200 rounded-lg px-3 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-colors cursor-pointer"
+                  >
+                    <option value="">Select room name...</option>
+                    {(type === 'Vehicle'
+                      ? VEHICLE_NAME_OPTIONS
+                      : type === 'Room'
+                        ? ROOM_NAME_OPTIONS
+                        : OTHER_NAME_OPTIONS
+                    ).map((opt) => (
+                      <option key={opt} value={opt}>
+                        {opt}
+                      </option>
+                    ))}
+                    <option value="Custom">Custom Name...</option>
+                  </select>
+                </div>
+
+                {selectedNameOption === 'Custom' && (
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-slate-700 block">
+                      Custom Name
+                    </label>
+                    <input
+                      required
+                      placeholder={
+                        type === 'Vehicle'
+                          ? 'e.g. Royal Enfield Himalayan'
+                          : 'e.g. Deluxe Double Room'
+                      }
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="h-10 w-full bg-slate-50 border border-slate-200 rounded-lg px-4 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-colors"
+                    />
+                  </div>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -526,6 +622,36 @@ export default function PartnerProperty() {
                   rows={3}
                   className="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-colors resize-none"
                 />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-slate-700 block">Room Amenities</label>
+                <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto p-2 bg-slate-50 border border-slate-200 rounded-lg">
+                  {ALL_AMENITIES.map((a) => {
+                    const isSelected = variantAmenities.includes(a.label);
+                    return (
+                      <button
+                        type="button"
+                        key={a.id}
+                        onClick={() => {
+                          if (isSelected) {
+                            setVariantAmenities(variantAmenities.filter((x) => x !== a.label));
+                          } else {
+                            setVariantAmenities([...variantAmenities, a.label]);
+                          }
+                        }}
+                        className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                          isSelected
+                            ? 'bg-emerald-500 border border-emerald-500 text-white shadow-sm'
+                            : 'bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600'
+                        }`}
+                      >
+                        <a.icon size={12} />
+                        <span>{a.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
               <div className="space-y-2">
@@ -680,6 +806,25 @@ export default function PartnerProperty() {
                               <span className="text-slate-400">No description provided.</span>
                             )}
                           </p>
+                          {v.amenities && v.amenities.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mt-3">
+                              {v.amenities.map((amenityLabel, idx) => {
+                                const amenityObj = ALL_AMENITIES.find(
+                                  (a) => a.label === amenityLabel
+                                );
+                                if (!amenityObj) return null;
+                                return (
+                                  <span
+                                    key={idx}
+                                    className="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-50 border border-slate-100 rounded-lg text-[10px] font-bold text-slate-500 uppercase tracking-wider"
+                                  >
+                                    <amenityObj.icon size={10} className="text-emerald-500" />
+                                    {amenityLabel}
+                                  </span>
+                                );
+                              })}
+                            </div>
+                          )}
                         </div>
 
                         <div className="flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-slate-100 gap-4 mt-auto">
