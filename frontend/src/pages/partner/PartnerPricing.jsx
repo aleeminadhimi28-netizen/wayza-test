@@ -1,13 +1,33 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../AuthContext.jsx';
-import { TrendingUp, Lock, CheckCircle, Save, AlertCircle, Sparkles } from 'lucide-react';
-import { api } from '../../utils/api.js';
+import {
+  TrendingUp,
+  Lock,
+  CheckCircle,
+  Save,
+  AlertCircle,
+  Sparkles,
+  Tag,
+  Calendar,
+  X,
+  Layers,
+} from 'lucide-react';
+import { api, BASE_URL } from '../../utils/api.js';
 
 export default function PartnerPricing() {
   const { user } = useAuth();
   const [listings, setListings] = useState([]);
   const [priceEdits, setPriceEdits] = useState({});
+  const [variantPriceEdits, setVariantPriceEdits] = useState({});
   const [loading, setLoading] = useState(true);
+
+  // Date Pricing modal states
+  const [activeRulesModal, setActiveRulesModal] = useState(null); // { listingId, variantIdx, variantName }
+  const [modalRules, setModalRules] = useState([]);
+  const [modalLoading, setModalLoading] = useState(false);
+  const [newRuleStartDate, setNewRuleStartDate] = useState('');
+  const [newRuleEndDate, setNewRuleEndDate] = useState('');
+  const [newRulePrice, setNewRulePrice] = useState('');
 
   useEffect(() => {
     if (!user?.email) return;
@@ -21,6 +41,7 @@ export default function PartnerPricing() {
 
         // Initialise price editor state from fetched listings
         const initEdits = {};
+        const initVarEdits = {};
         listingArr.forEach((lst) => {
           initEdits[lst._id] = {
             value: lst.price || 0,
@@ -28,8 +49,17 @@ export default function PartnerPricing() {
             error: null,
             success: false,
           };
+          (lst.variants || []).forEach((v, idx) => {
+            initVarEdits[`${lst._id}-${idx}`] = {
+              value: v.price || 0,
+              saving: false,
+              error: null,
+              success: false,
+            };
+          });
         });
         setPriceEdits(initEdits);
+        setVariantPriceEdits(initVarEdits);
       })
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -40,6 +70,141 @@ export default function PartnerPricing() {
       ...prev,
       [id]: { ...prev[id], value, error: null, success: false },
     }));
+
+  const setVariantPriceField = (key, value) =>
+    setVariantPriceEdits((prev) => ({
+      ...prev,
+      [key]: { ...prev[key], value, error: null, success: false },
+    }));
+
+  const updateVariantPrice = async (listingId, variantIdx) => {
+    const key = `${listingId}-${variantIdx}`;
+    const edit = variantPriceEdits[key];
+    if (!edit) return;
+    const newPrice = Number(edit.value);
+
+    setVariantPriceEdits((prev) => ({
+      ...prev,
+      [key]: { ...prev[key], saving: true, error: null },
+    }));
+    try {
+      const res = await api.updateVariant(listingId, variantIdx, { price: newPrice });
+      if (res.ok) {
+        setListings((prev) =>
+          prev.map((l) => {
+            if (l._id === listingId) {
+              const updatedVariants = [...l.variants];
+              updatedVariants[variantIdx] = { ...updatedVariants[variantIdx], price: newPrice };
+              return { ...l, variants: updatedVariants };
+            }
+            return l;
+          })
+        );
+        setVariantPriceEdits((prev) => ({
+          ...prev,
+          [key]: { value: newPrice, saving: false, error: null, success: true },
+        }));
+        setTimeout(() => {
+          setVariantPriceEdits((prev) => ({
+            ...prev,
+            [key]: { ...prev[key], success: false },
+          }));
+        }, 3000);
+      } else {
+        throw new Error(res.message || 'Update failed');
+      }
+    } catch (err) {
+      setVariantPriceEdits((prev) => ({
+        ...prev,
+        [key]: { ...prev[key], saving: false, error: err.message },
+      }));
+    }
+  };
+
+  const openRulesModal = (listingId, variantIdx, variantName) => {
+    setModalLoading(true);
+    setActiveRulesModal({ listingId, variantIdx, variantName });
+    setNewRuleStartDate('');
+    setNewRuleEndDate('');
+    setNewRulePrice('');
+    api
+      .getPriceRules(listingId, variantIdx)
+      .then((d) => {
+        if (d.ok) setModalRules(d.priceRules || []);
+        else setModalRules([]);
+      })
+      .catch(() => setModalRules([]))
+      .finally(() => setModalLoading(false));
+  };
+
+  const handleAddRule = async (e) => {
+    e.preventDefault();
+    if (!newRuleStartDate || !newRulePrice || !activeRulesModal) return;
+
+    setModalLoading(true);
+    try {
+      const priceVal = Number(newRulePrice);
+      const start = new Date(newRuleStartDate);
+      const end = newRuleEndDate ? new Date(newRuleEndDate) : start;
+
+      const newRules = [...modalRules];
+
+      const curr = new Date(start);
+      while (curr <= end) {
+        const yyyy = curr.getFullYear();
+        const mm = String(curr.getMonth() + 1).padStart(2, '0');
+        const dd = String(curr.getDate()).padStart(2, '0');
+        const dateStr = `${yyyy}-${mm}-${dd}`;
+
+        const idx = newRules.findIndex((r) => r.date === dateStr);
+        if (idx > -1) {
+          newRules[idx] = { date: dateStr, price: priceVal };
+        } else {
+          newRules.push({ date: dateStr, price: priceVal });
+        }
+
+        curr.setDate(curr.getDate() + 1);
+      }
+
+      newRules.sort((a, b) => a.date.localeCompare(b.date));
+
+      const res = await api.savePriceRules(
+        activeRulesModal.listingId,
+        activeRulesModal.variantIdx,
+        newRules
+      );
+      if (res.ok) {
+        setModalRules(newRules);
+        setNewRuleStartDate('');
+        setNewRuleEndDate('');
+        setNewRulePrice('');
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setModalLoading(false);
+    }
+  };
+
+  const handleDeleteRule = async (dateStr) => {
+    if (!activeRulesModal) return;
+    setModalLoading(true);
+    try {
+      const newRules = modalRules.filter((r) => r.date !== dateStr);
+      const res = await api.savePriceRules(
+        activeRulesModal.listingId,
+        activeRulesModal.variantIdx,
+        newRules
+      );
+      if (res.ok) {
+        setModalRules(newRules);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setModalLoading(false);
+    }
+  };
 
   const updatePrice = async (listing) => {
     const edit = priceEdits[listing._id];
@@ -275,6 +440,112 @@ export default function PartnerPricing() {
                         {Number(edit.value).toLocaleString()}/night.
                       </div>
                     )}
+
+                    {/* List of Variants (if any exist) */}
+                    {lst.variants && lst.variants.length > 0 && (
+                      <div className="mt-6 pt-6 border-t border-white/[0.03] space-y-4">
+                        <div className="flex items-center gap-2 text-white/30 text-[10px] font-black uppercase tracking-wider">
+                          <Layers size={12} />
+                          <span>Room / Accommodation Tiers</span>
+                        </div>
+                        <div className="grid gap-3">
+                          {lst.variants.map((v, vIdx) => {
+                            const key = `${lst._id}-${vIdx}`;
+                            const vEdit = variantPriceEdits[key] || {
+                              value: v.price || 0,
+                              saving: false,
+                              error: null,
+                              success: false,
+                            };
+                            const isDirty = Number(vEdit.value) !== v.price;
+                            return (
+                              <div
+                                key={vIdx}
+                                className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-white/[0.01] border border-white/[0.04] rounded-2xl hover:border-white/[0.08] transition-all"
+                              >
+                                {/* Variant Info */}
+                                <div className="flex items-center gap-3 min-w-0">
+                                  {v.image ? (
+                                    <img
+                                      src={
+                                        v.image.startsWith('http')
+                                          ? v.image
+                                          : `${BASE_URL}/${v.image}`
+                                      }
+                                      className="w-10 h-10 object-cover rounded-lg border border-white/[0.05] shrink-0"
+                                      alt={v.name}
+                                    />
+                                  ) : (
+                                    <div className="w-10 h-10 bg-white/[0.05] rounded-lg flex items-center justify-center text-white/30 text-xs font-bold shrink-0">
+                                      Room
+                                    </div>
+                                  )}
+                                  <div className="min-w-0">
+                                    <p className="font-bold text-white text-xs truncate">
+                                      {v.name}
+                                    </p>
+                                    <p className="text-[10px] text-white/30 font-semibold truncate mt-0.5">
+                                      {v.desc || 'No description provided.'}
+                                    </p>
+                                  </div>
+                                </div>
+
+                                {/* Actions (Price edit + Manage rules) */}
+                                <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+                                  {/* Custom Price Input */}
+                                  <div className="relative">
+                                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-white/20 font-bold text-xs">
+                                      ₹
+                                    </span>
+                                    <input
+                                      type="number"
+                                      min={0}
+                                      step={100}
+                                      value={vEdit.value}
+                                      onChange={(e) => setVariantPriceField(key, e.target.value)}
+                                      className={`w-24 h-9 pl-6 pr-2 bg-white/[0.02] border rounded-lg text-xs font-bold text-white outline-none transition-all ${
+                                        isDirty
+                                          ? 'border-emerald-500 focus:border-emerald-500'
+                                          : 'border-white/[0.08] focus:border-white/[0.2]'
+                                      }`}
+                                    />
+                                  </div>
+
+                                  {/* Update Button */}
+                                  <button
+                                    onClick={() => updateVariantPrice(lst._id, vIdx)}
+                                    disabled={vEdit.saving || !isDirty}
+                                    className="h-9 px-3 bg-emerald-500 hover:bg-emerald-600 disabled:bg-white/[0.04] disabled:text-white/20 text-[#050a08] rounded-lg font-bold text-[10px] uppercase tracking-wider flex items-center gap-1 transition-all active:scale-95 disabled:cursor-not-allowed"
+                                  >
+                                    {vEdit.saving ? (
+                                      <span className="w-3.5 h-3.5 border-2 border-[#050a08]/30 border-t-[#050a08] rounded-full animate-spin" />
+                                    ) : vEdit.success ? (
+                                      <CheckCircle size={12} strokeWidth={2.5} />
+                                    ) : (
+                                      <Save size={12} strokeWidth={2.5} />
+                                    )}
+                                    {vEdit.saving
+                                      ? 'Saving...'
+                                      : vEdit.success
+                                        ? 'Saved!'
+                                        : 'Update'}
+                                  </button>
+
+                                  {/* Date Rules Button */}
+                                  <button
+                                    onClick={() => openRulesModal(lst._id, vIdx, v.name)}
+                                    className="h-9 w-9 bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.08] text-white/60 hover:text-white rounded-lg flex items-center justify-center transition-all"
+                                    title="Manage Date Price Overrides"
+                                  >
+                                    <Calendar size={14} />
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -288,6 +559,129 @@ export default function PartnerPricing() {
           </div>
         )}
       </div>
+
+      {/* ── Dynamic Price Overrides Modal ── */}
+      {activeRulesModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#050a08]/80 backdrop-blur-md">
+          <div className="relative w-full max-w-lg bg-slate-900 border border-white/[0.08] rounded-3xl p-6 shadow-2xl space-y-6">
+            <button
+              onClick={() => setActiveRulesModal(null)}
+              className="absolute top-4 right-4 text-white/40 hover:text-white transition-colors"
+            >
+              <X size={20} />
+            </button>
+
+            <div>
+              <div className="flex items-center gap-2 text-emerald-400 font-black text-[10px] uppercase tracking-[0.2em] mb-1">
+                <Tag size={12} /> Dynamic pricing
+              </div>
+              <h3 className="text-xl font-black text-white tracking-tight uppercase">
+                {activeRulesModal.variantName}
+              </h3>
+              <p className="text-xs text-white/40 font-medium">
+                Set custom prices for specific date ranges (e.g., weekends, holidays).
+              </p>
+            </div>
+
+            {/* Set Pricing Rules Form */}
+            <form onSubmit={handleAddRule} className="space-y-4 pt-2 border-t border-white/[0.05]">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[10px] font-black text-white/40 uppercase tracking-wider block mb-1">
+                    Start Date
+                  </label>
+                  <input
+                    type="date"
+                    required
+                    value={newRuleStartDate}
+                    onChange={(e) => setNewRuleStartDate(e.target.value)}
+                    className="w-full h-10 bg-white/[0.03] border border-white/[0.08] rounded-lg px-3 text-xs font-bold text-white outline-none focus:border-emerald-500 transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-black text-white/40 uppercase tracking-wider block mb-1">
+                    End Date
+                  </label>
+                  <input
+                    type="date"
+                    value={newRuleEndDate}
+                    onChange={(e) => setNewRuleEndDate(e.target.value)}
+                    placeholder="Same day if blank"
+                    className="w-full h-10 bg-white/[0.03] border border-white/[0.08] rounded-lg px-3 text-xs font-bold text-white outline-none focus:border-emerald-500 transition-colors"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-3 items-end">
+                <div className="flex-1">
+                  <label className="text-[10px] font-black text-white/40 uppercase tracking-wider block mb-1">
+                    Custom Price (₹)
+                  </label>
+                  <input
+                    type="number"
+                    required
+                    min={0}
+                    placeholder="Price per night"
+                    value={newRulePrice}
+                    onChange={(e) => setNewRulePrice(e.target.value)}
+                    className="w-full h-10 bg-white/[0.03] border border-white/[0.08] rounded-lg px-3 text-xs font-bold text-white outline-none focus:border-emerald-500 transition-colors"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={modalLoading}
+                  className="h-10 px-5 bg-emerald-500 hover:bg-emerald-600 disabled:bg-white/5 disabled:text-white/20 text-[#050a08] font-bold text-xs uppercase tracking-wider rounded-lg transition-colors whitespace-nowrap"
+                >
+                  {modalLoading ? 'Setting...' : 'Set Pricing'}
+                </button>
+              </div>
+            </form>
+
+            {/* Active Pricing Rules List */}
+            <div className="space-y-3 pt-4 border-t border-white/[0.05]">
+              <div className="flex justify-between items-center">
+                <label className="text-[10px] font-black text-white/40 uppercase tracking-wider block">
+                  Active Date Overrides
+                </label>
+                {modalRules.length > 0 && (
+                  <span className="text-[10px] font-bold text-emerald-400">
+                    {modalRules.length} rule(s) active
+                  </span>
+                )}
+              </div>
+              {modalRules.length === 0 ? (
+                <div className="text-center py-6 bg-white/[0.01] border border-dashed border-white/[0.05] rounded-2xl">
+                  <p className="text-xs text-white/20 font-medium italic">
+                    No date overrides configured for this room tier.
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-3 bg-white/[0.01] border border-white/[0.08] rounded-2xl">
+                  {modalRules.map((rule) => (
+                    <div
+                      key={rule.date}
+                      className="flex items-center justify-between gap-2 px-2.5 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-xs font-bold text-emerald-400"
+                    >
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <Calendar size={12} className="shrink-0" />
+                        <span className="truncate">
+                          {rule.date}: ₹{rule.price.toLocaleString()}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => handleDeleteRule(rule.date)}
+                        disabled={modalLoading}
+                        className="text-white/40 hover:text-rose-400 hover:scale-110 transition-all font-black text-sm shrink-0"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
