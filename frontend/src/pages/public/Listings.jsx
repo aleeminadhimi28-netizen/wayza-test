@@ -23,6 +23,11 @@ import {
   ArrowRight,
   Sparkles,
   SlidersHorizontal,
+  Fuel,
+  Gauge,
+  Key,
+  Compass,
+  Wifi,
 } from 'lucide-react';
 
 import { api } from '../../utils/api.js';
@@ -49,6 +54,58 @@ function getRatingLabel(score) {
   if (score >= 7.5) return 'Very Good';
   if (score >= 6.5) return 'Good';
   return 'Pleasant';
+}
+
+function getAmenityIcon(label, category) {
+  const normalized = label.toLowerCase();
+  if (normalized.includes('wifi') || normalized.includes('internet')) return Wifi;
+  if (
+    normalized.includes('helmet') ||
+    normalized.includes('safety') ||
+    normalized.includes('security') ||
+    normalized.includes('secured')
+  )
+    return Shield;
+  if (
+    normalized.includes('fuel') ||
+    normalized.includes('petrol') ||
+    normalized.includes('diesel') ||
+    normalized.includes('electric')
+  )
+    return Fuel;
+  if (
+    normalized.includes('unlimited') ||
+    normalized.includes('kilometer') ||
+    normalized.includes('kms') ||
+    normalized.includes('mileage') ||
+    normalized.includes('speed')
+  )
+    return Gauge;
+  if (
+    normalized.includes('assistance') ||
+    normalized.includes('support') ||
+    normalized.includes('guide')
+  )
+    return Compass;
+  if (normalized.includes('gear') || normalized.includes('equipment') || normalized.includes('key'))
+    return Key;
+
+  if (category === 'bike' || category === 'car') return Gauge;
+  if (category === 'activity') return Compass;
+  return Shield;
+}
+
+function getDefaultAmenities(category) {
+  if (category === 'bike') {
+    return ['Helmet Included', 'Unlimited Kms', '24/7 Roadside Assistance'];
+  }
+  if (category === 'car') {
+    return ['Air Conditioned', 'Unlimited Kms', '24/7 Roadside Assistance'];
+  }
+  if (category === 'activity') {
+    return ['Expert Guide', 'All Equipment Included', 'Free Cancellation'];
+  }
+  return ['Secured Premises', 'Guest Services', 'Premium Location'];
 }
 
 export default function Listings() {
@@ -576,32 +633,51 @@ export default function Listings() {
                             </h3>
                           </div>
 
-                          <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest">
-                            <MapPin size={14} className="text-emerald-500" />
-                            <span>{l.location || 'Kerala, India'}</span>
-                          </div>
+                          {(() => {
+                            const isVehicle = l.category === 'bike' || l.category === 'car';
+                            const isActivity = l.category === 'activity';
+                            return (
+                              <>
+                                <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest">
+                                  <MapPin size={14} className="text-emerald-500" />
+                                  <span>
+                                    {isVehicle
+                                      ? `Pickup: ${l.location || 'Kerala, India'}`
+                                      : l.location || 'Kerala, India'}
+                                  </span>
+                                </div>
 
-                          <p className="text-slate-500 text-sm leading-relaxed line-clamp-2 max-w-xl font-medium">
-                            "
-                            {l.description ||
-                              "Experience the pinnacle of coastal luxury, where modern architecture harmonizes with Kerala's serene natural beauty."}
-                            "
-                          </p>
+                                <p className="text-slate-500 text-sm leading-relaxed line-clamp-2 max-w-xl font-medium">
+                                  "
+                                  {l.description ||
+                                    (isVehicle
+                                      ? 'Premium verified fleet offering well-maintained rides for the perfect local exploration.'
+                                      : isActivity
+                                        ? 'Curated experiences and local tours to make your stay unforgettable.'
+                                        : "Experience the pinnacle of coastal luxury, where modern architecture harmonizes with Kerala's serene natural beauty.")}
+                                  "
+                                </p>
 
-                          <div className="flex flex-wrap gap-2 pt-2">
-                            {(l.amenities?.length > 0
-                              ? l.amenities.slice(0, 3)
-                              : ['Secured Premises', 'Guest Services', 'Premium Location']
-                            ).map((a, idx) => (
-                              <div
-                                key={idx}
-                                className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-lg border border-slate-100 text-[11px] font-bold text-slate-500 uppercase tracking-widest"
-                              >
-                                <Shield size={12} />
-                                {a}
-                              </div>
-                            ))}
-                          </div>
+                                <div className="flex flex-wrap gap-2 pt-2">
+                                  {(l.amenities?.length > 0
+                                    ? l.amenities.slice(0, 3)
+                                    : getDefaultAmenities(l.category)
+                                  ).map((a, idx) => {
+                                    const IconComponent = getAmenityIcon(a, l.category);
+                                    return (
+                                      <div
+                                        key={idx}
+                                        className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-lg border border-slate-100 text-[11px] font-bold text-slate-500 uppercase tracking-widest"
+                                      >
+                                        <IconComponent size={12} className="text-emerald-500" />
+                                        {a}
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </>
+                            );
+                          })()}
                         </div>
 
                         <div className="md:w-56 shrink-0 flex flex-row md:flex-col justify-between md:justify-center md:items-end items-center gap-6 md:border-l md:border-slate-100 md:pl-8 pt-6 md:pt-0 border-t md:border-t-0 border-slate-100">
@@ -630,17 +706,31 @@ export default function Listings() {
 
                           <div className="text-right">
                             {minVariantPrice > 0 ? (
-                              <>
-                                <p className="text-[11px] font-black uppercase tracking-widest text-slate-300 mb-1">
-                                  Nightly rate from
-                                </p>
-                                <p className="text-3xl font-black text-slate-900 tracking-tighter">
-                                  ₹{minVariantPrice.toLocaleString()}
-                                </p>
-                                <p className="text-[11px] font-bold text-emerald-600 uppercase tracking-widest mt-1">
-                                  Inclusive of Access
-                                </p>
-                              </>
+                              (() => {
+                                const isVehicle = l.category === 'bike' || l.category === 'car';
+                                const isActivity = l.category === 'activity';
+                                return (
+                                  <>
+                                    <p className="text-[11px] font-black uppercase tracking-widest text-slate-300 mb-1">
+                                      {isVehicle
+                                        ? 'Daily rental from'
+                                        : isActivity
+                                          ? 'Rate from'
+                                          : 'Nightly rate from'}
+                                    </p>
+                                    <p className="text-3xl font-black text-slate-900 tracking-tighter">
+                                      ₹{minVariantPrice.toLocaleString()}
+                                    </p>
+                                    <p className="text-[11px] font-bold text-emerald-600 uppercase tracking-widest mt-1">
+                                      {isVehicle
+                                        ? 'Inclusive of Insurance'
+                                        : isActivity
+                                          ? 'All Gear Included'
+                                          : 'Inclusive of Access'}
+                                    </p>
+                                  </>
+                                );
+                              })()
                             ) : (
                               <p className="text-sm font-black text-slate-900 uppercase">
                                 Rate on Inquiry
