@@ -24,6 +24,7 @@ const createListingSchema = z.object({
 const variantSchema = z.object({
     name: z.string().min(1),
     price: z.number().min(0).optional().default(0),
+    baseFloorPrice: z.number().min(0).optional(),
     qty: z.number().int().min(1).optional().default(1),
     type: z.string().optional(),
     desc: z.string().optional(),
@@ -275,6 +276,7 @@ router.post("/:id/variant", requireAuth, async (req, res, next) => {
                     variants: {
                         name, type,
                         price: Number(price) || 0,
+                        baseFloorPrice: Number(price) || 0,
                         qty: Number(qty) || 1,
                         desc,
                         available: available !== false,
@@ -299,10 +301,28 @@ router.put("/:id/variant/:index", requireAuth, async (req, res, next) => {
         const listing = await listings.findOne({ _id: new ObjectId(id) });
         if (!listing || (listing.ownerEmail !== req.user.email && req.user.role !== "admin")) return res.status(403).json({ ok: false });
         if (idx >= (listing.variants || []).length) return res.status(400).json({ ok: false, message: "Index out of bounds" });
+
+        const variant = listing.variants[idx];
+        const currentFloor = variant.baseFloorPrice !== undefined ? variant.baseFloorPrice : (variant.price || 0);
+        
+        const newPrice = req.body.price !== undefined ? Number(req.body.price) : undefined;
+        if (newPrice !== undefined && newPrice < currentFloor) {
+            return res.status(400).json({
+                ok: false,
+                message: `Price ₹${newPrice.toLocaleString()} is below the minimum floor price of ₹${currentFloor.toLocaleString()} for this variant.`
+            });
+        }
+
         const updates = {};
         ["name", "type", "price", "qty", "desc", "available", "image", "amenities"].forEach(f => {
             if (req.body[f] !== undefined) updates["variants." + idx + "." + f] = req.body[f];
         });
+
+        // Initialize baseFloorPrice for legacy variant if not present
+        if (variant.baseFloorPrice === undefined) {
+            updates["variants." + idx + ".baseFloorPrice"] = currentFloor;
+        }
+
         await listings.updateOne({ _id: new ObjectId(id) }, { $set: updates });
         res.json({ ok: true });
     } catch (err) { next(err); }

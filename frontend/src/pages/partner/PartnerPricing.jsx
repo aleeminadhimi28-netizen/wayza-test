@@ -458,7 +458,8 @@ export default function PartnerPricing() {
                               success: false,
                             };
                             const isDirty = Number(vEdit.value) !== v.price;
-                            const vFloor = 0;
+                            const vFloor =
+                              v.baseFloorPrice !== undefined ? v.baseFloorPrice : v.price || 0;
                             const vSliderMax = Math.max((v.price || 0) * 3, 5000);
                             const vPct =
                               vSliderMax > vFloor
@@ -467,6 +468,7 @@ export default function PartnerPricing() {
                                     ((Number(vEdit.value) - vFloor) / (vSliderMax - vFloor)) * 100
                                   )
                                 : 0;
+                            const isVBelowFloor = Number(vEdit.value) < vFloor;
                             return (
                               <div key={vIdx} className="space-y-2">
                                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-4 bg-white/[0.01] border border-white/[0.04] rounded-2xl hover:border-white/[0.08] transition-all">
@@ -509,12 +511,14 @@ export default function PartnerPricing() {
                                     <div className="relative h-1.5">
                                       <div className="absolute inset-0 rounded-full bg-white/[0.05]" />
                                       <div
-                                        className="absolute left-0 top-0 h-full rounded-full transition-all bg-emerald-500"
+                                        className={`absolute left-0 top-0 h-full rounded-full transition-all ${
+                                          isVBelowFloor ? 'bg-rose-500' : 'bg-emerald-500'
+                                        }`}
                                         style={{ width: `${Math.max(0, vPct)}%` }}
                                       />
                                       <input
                                         type="range"
-                                        min={vFloor}
+                                        min={Math.min(vFloor, Number(vEdit.value))}
                                         max={vSliderMax}
                                         step={50}
                                         value={Number(vEdit.value)}
@@ -523,8 +527,16 @@ export default function PartnerPricing() {
                                       />
                                     </div>
                                     <div className="flex justify-between text-[10px] font-black uppercase tracking-wide">
-                                      <span className="text-white/20">
-                                        {isDirty ? '● Price changed' : 'Current price'}
+                                      <span
+                                        className={
+                                          isVBelowFloor ? 'text-rose-400' : 'text-white/20'
+                                        }
+                                      >
+                                        {isVBelowFloor
+                                          ? '⚠ Below floor price'
+                                          : isDirty
+                                            ? '● Price changed'
+                                            : 'Current price'}
                                       </span>
                                       <span
                                         className={isDirty ? 'text-emerald-400' : 'text-white/20'}
@@ -550,9 +562,11 @@ export default function PartnerPricing() {
                                         value={vEdit.value}
                                         onChange={(e) => setVariantPriceField(key, e.target.value)}
                                         className={`w-32 h-11 pl-7 pr-3 bg-white/[0.03] border rounded-lg text-sm font-bold text-white outline-none transition-all ${
-                                          isDirty
-                                            ? 'border-emerald-500 focus:border-emerald-500'
-                                            : 'border-white/[0.08] focus:border-white/[0.2]'
+                                          isVBelowFloor
+                                            ? 'border-rose-500 focus:border-rose-500'
+                                            : isDirty
+                                              ? 'border-emerald-500 focus:border-emerald-500'
+                                              : 'border-white/[0.08] focus:border-white/[0.2]'
                                         }`}
                                       />
                                     </div>
@@ -560,7 +574,7 @@ export default function PartnerPricing() {
                                     {/* Update Button */}
                                     <button
                                       onClick={() => updateVariantPrice(lst._id, vIdx)}
-                                      disabled={vEdit.saving || !isDirty}
+                                      disabled={vEdit.saving || !isDirty || isVBelowFloor}
                                       className="h-11 px-5 bg-emerald-500 hover:bg-emerald-600 disabled:bg-white/[0.05] disabled:text-white/20 text-[#050a08] disabled:border-transparent rounded-lg font-bold text-[11px] uppercase tracking-wider flex items-center gap-2 transition-all active:scale-95 disabled:cursor-not-allowed whitespace-nowrap shadow-lg shadow-emerald-500/10 disabled:shadow-none"
                                     >
                                       {vEdit.saving ? (
