@@ -458,88 +458,147 @@ export default function PartnerPricing() {
                               success: false,
                             };
                             const isDirty = Number(vEdit.value) !== v.price;
+                            const vFloor = 0;
+                            const vSliderMax = Math.max((v.price || 0) * 3, 5000);
+                            const vPct =
+                              vSliderMax > vFloor
+                                ? Math.min(
+                                    100,
+                                    ((Number(vEdit.value) - vFloor) / (vSliderMax - vFloor)) * 100
+                                  )
+                                : 0;
                             return (
-                              <div
-                                key={vIdx}
-                                className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-white/[0.01] border border-white/[0.04] rounded-2xl hover:border-white/[0.08] transition-all"
-                              >
-                                {/* Variant Info */}
-                                <div className="flex items-center gap-3 min-w-0">
-                                  {v.image ? (
-                                    <img
-                                      src={
-                                        v.image.startsWith('http')
-                                          ? v.image
-                                          : `${BASE_URL}/${v.image}`
-                                      }
-                                      className="w-10 h-10 object-cover rounded-lg border border-white/[0.05] shrink-0"
-                                      alt={v.name}
-                                    />
-                                  ) : (
-                                    <div className="w-10 h-10 bg-white/[0.05] rounded-lg flex items-center justify-center text-white/30 text-xs font-bold shrink-0">
-                                      Room
-                                    </div>
-                                  )}
-                                  <div className="min-w-0">
-                                    <p className="font-bold text-white text-xs truncate">
-                                      {v.name}
-                                    </p>
-                                    <p className="text-[10px] text-white/30 font-semibold truncate mt-0.5">
-                                      {v.desc || 'No description provided.'}
-                                    </p>
-                                  </div>
-                                </div>
-
-                                {/* Actions (Price edit + Manage rules) */}
-                                <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
-                                  {/* Custom Price Input */}
-                                  <div className="relative">
-                                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-white/20 font-bold text-xs">
-                                      ₹
-                                    </span>
-                                    <input
-                                      type="number"
-                                      min={0}
-                                      step={100}
-                                      value={vEdit.value}
-                                      onChange={(e) => setVariantPriceField(key, e.target.value)}
-                                      className={`w-24 h-9 pl-6 pr-2 bg-white/[0.02] border rounded-lg text-xs font-bold text-white outline-none transition-all ${
-                                        isDirty
-                                          ? 'border-emerald-500 focus:border-emerald-500'
-                                          : 'border-white/[0.08] focus:border-white/[0.2]'
-                                      }`}
-                                    />
-                                  </div>
-
-                                  {/* Update Button */}
-                                  <button
-                                    onClick={() => updateVariantPrice(lst._id, vIdx)}
-                                    disabled={vEdit.saving || !isDirty}
-                                    className="h-9 px-3 bg-emerald-500 hover:bg-emerald-600 disabled:bg-white/[0.04] disabled:text-white/20 text-[#050a08] rounded-lg font-bold text-[10px] uppercase tracking-wider flex items-center gap-1 transition-all active:scale-95 disabled:cursor-not-allowed"
-                                  >
-                                    {vEdit.saving ? (
-                                      <span className="w-3.5 h-3.5 border-2 border-[#050a08]/30 border-t-[#050a08] rounded-full animate-spin" />
-                                    ) : vEdit.success ? (
-                                      <CheckCircle size={12} strokeWidth={2.5} />
+                              <div key={vIdx} className="space-y-2">
+                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-4 bg-white/[0.01] border border-white/[0.04] rounded-2xl hover:border-white/[0.08] transition-all">
+                                  {/* Variant Info */}
+                                  <div className="flex items-center gap-3 min-w-0 md:w-56 shrink-0">
+                                    {v.image ? (
+                                      <img
+                                        src={
+                                          v.image.startsWith('http')
+                                            ? v.image
+                                            : `${BASE_URL}/${v.image}`
+                                        }
+                                        className="w-10 h-10 object-cover rounded-lg border border-white/[0.05] shrink-0"
+                                        alt={v.name}
+                                      />
                                     ) : (
-                                      <Save size={12} strokeWidth={2.5} />
+                                      <div className="w-10 h-10 bg-white/[0.05] rounded-lg flex items-center justify-center text-white/30 text-xs font-bold shrink-0">
+                                        Room
+                                      </div>
                                     )}
-                                    {vEdit.saving
-                                      ? 'Saving...'
-                                      : vEdit.success
-                                        ? 'Saved!'
-                                        : 'Update'}
-                                  </button>
+                                    <div className="min-w-0">
+                                      <p className="font-bold text-white text-xs truncate">
+                                        {v.name}
+                                      </p>
+                                      <p className="text-[10px] text-white/30 font-semibold truncate mt-0.5">
+                                        {v.desc || 'No description provided.'}
+                                      </p>
+                                    </div>
+                                  </div>
 
-                                  {/* Date Rules Button */}
-                                  <button
-                                    onClick={() => openRulesModal(lst._id, vIdx, v.name)}
-                                    className="h-9 w-9 bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.08] text-white/60 hover:text-white rounded-lg flex items-center justify-center transition-all"
-                                    title="Manage Date Price Overrides"
-                                  >
-                                    <Calendar size={14} />
-                                  </button>
+                                  {/* Slider */}
+                                  <div className="flex-1 space-y-2">
+                                    <div className="flex justify-between items-center text-[10px] font-black text-white/30 uppercase tracking-wide">
+                                      <span>
+                                        ₹{vFloor.toLocaleString()}{' '}
+                                        <span className="text-white/10 font-medium">(floor)</span>
+                                      </span>
+                                      <span>₹{vSliderMax.toLocaleString()}</span>
+                                    </div>
+                                    <div className="relative h-1.5">
+                                      <div className="absolute inset-0 rounded-full bg-white/[0.05]" />
+                                      <div
+                                        className="absolute left-0 top-0 h-full rounded-full transition-all bg-emerald-500"
+                                        style={{ width: `${Math.max(0, vPct)}%` }}
+                                      />
+                                      <input
+                                        type="range"
+                                        min={vFloor}
+                                        max={vSliderMax}
+                                        step={50}
+                                        value={Number(vEdit.value)}
+                                        onChange={(e) => setVariantPriceField(key, e.target.value)}
+                                        className="absolute inset-0 w-full opacity-0 cursor-pointer h-full"
+                                      />
+                                    </div>
+                                    <div className="flex justify-between text-[10px] font-black uppercase tracking-wide">
+                                      <span className="text-white/20">
+                                        {isDirty ? '● Price changed' : 'Current price'}
+                                      </span>
+                                      <span
+                                        className={isDirty ? 'text-emerald-400' : 'text-white/20'}
+                                      >
+                                        {isDirty
+                                          ? `Was ₹${(v.price || 0).toLocaleString()}`
+                                          : `₹${(v.price || 0).toLocaleString()}/night`}
+                                      </span>
+                                    </div>
+                                  </div>
+
+                                  {/* Actions (Price edit + Manage rules) */}
+                                  <div className="flex items-center gap-3 shrink-0">
+                                    {/* Custom Price Input */}
+                                    <div className="relative">
+                                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20 font-bold text-sm">
+                                        ₹
+                                      </span>
+                                      <input
+                                        type="number"
+                                        min={0}
+                                        step={100}
+                                        value={vEdit.value}
+                                        onChange={(e) => setVariantPriceField(key, e.target.value)}
+                                        className={`w-32 h-11 pl-7 pr-3 bg-white/[0.03] border rounded-lg text-sm font-bold text-white outline-none transition-all ${
+                                          isDirty
+                                            ? 'border-emerald-500 focus:border-emerald-500'
+                                            : 'border-white/[0.08] focus:border-white/[0.2]'
+                                        }`}
+                                      />
+                                    </div>
+
+                                    {/* Update Button */}
+                                    <button
+                                      onClick={() => updateVariantPrice(lst._id, vIdx)}
+                                      disabled={vEdit.saving || !isDirty}
+                                      className="h-11 px-5 bg-emerald-500 hover:bg-emerald-600 disabled:bg-white/[0.05] disabled:text-white/20 text-[#050a08] disabled:border-transparent rounded-lg font-bold text-[11px] uppercase tracking-wider flex items-center gap-2 transition-all active:scale-95 disabled:cursor-not-allowed whitespace-nowrap shadow-lg shadow-emerald-500/10 disabled:shadow-none"
+                                    >
+                                      {vEdit.saving ? (
+                                        <span className="w-4 h-4 border-2 border-[#050a08]/30 border-t-[#050a08] rounded-full animate-spin" />
+                                      ) : vEdit.success ? (
+                                        <CheckCircle size={14} strokeWidth={2.5} />
+                                      ) : (
+                                        <Save size={14} strokeWidth={2.5} />
+                                      )}
+                                      {vEdit.saving
+                                        ? 'Saving...'
+                                        : vEdit.success
+                                          ? 'Saved!'
+                                          : 'Update'}
+                                    </button>
+
+                                    {/* Date Rules Button */}
+                                    <button
+                                      onClick={() => openRulesModal(lst._id, vIdx, v.name)}
+                                      className="h-11 w-11 bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.08] text-white/60 hover:text-white rounded-lg flex items-center justify-center transition-all"
+                                      title="Manage Date Price Overrides"
+                                    >
+                                      <Calendar size={18} />
+                                    </button>
+                                  </div>
                                 </div>
+
+                                {vEdit.error && (
+                                  <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-lg px-4 py-2">
+                                    <AlertCircle size={12} strokeWidth={2.5} /> {vEdit.error}
+                                  </div>
+                                )}
+                                {vEdit.success && (
+                                  <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-4 py-2">
+                                    <CheckCircle size={12} strokeWidth={2.5} /> Price updated to ₹
+                                    {Number(vEdit.value).toLocaleString()}/night.
+                                  </div>
+                                )}
                               </div>
                             );
                           })}
