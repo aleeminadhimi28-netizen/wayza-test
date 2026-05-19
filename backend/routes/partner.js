@@ -387,7 +387,7 @@ router.get("/calendar-settings", requireAuth, async (req, res, next) => {
         const partner = await partners.findOne({ email: req.user.email });
         if (!partner) return res.status(404).json({ ok: false });
 
-        const baseUrl = process.env.API_URL || "http://localhost:5000";
+        const baseUrl = process.env.API_URL || `${req.protocol}://${req.get("host")}`;
         let token = partner.calendarToken;
         if (!token) {
             token = crypto.randomBytes(32).toString('hex');
