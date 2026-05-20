@@ -161,10 +161,13 @@ export default function ExploreMap() {
           setAllListings(withGps);
           setListings(withGps);
 
-          if (withGps.length > 0 && !params.lat) {
-            // Only center if we're not doing a targeted search
-            setMapCenter([withGps[0].latitude, withGps[0].longitude]);
-            setMapZoom(12);
+          if (params.lat && params.lng) {
+            setMapCenter([params.lat, params.lng]);
+            setMapZoom(14);
+          } else {
+            // Default center is always Varkala when opened
+            setMapCenter([8.7379, 76.7163]);
+            setMapZoom(13);
           }
         }
       } catch (err) {
