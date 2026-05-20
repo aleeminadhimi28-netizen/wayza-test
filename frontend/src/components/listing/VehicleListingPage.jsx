@@ -26,13 +26,13 @@ import {
   Sparkles,
   Grid3x3,
   X,
-  ChevronLeft,
+  ExternalLink,
+  Navigation,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ListingReviews from './ListingReviews.jsx';
 import VehicleRentalCard from './VehicleRentalCard.jsx';
 import { VEHICLE_AMENITY_CATEGORIES, AMENITY_CATEGORIES } from '../../utils/amenities.js';
-import NeighborhoodVibes from '../NeighborhoodVibes.jsx';
 import ListingConcierge from '../ListingConcierge.jsx';
 
 /* ── Inline star widget ───────────────────────────────────────────── */
@@ -163,7 +163,7 @@ function VehicleGallery({ images, title }) {
             </div>
             <div className="flex-1 flex items-center justify-center relative px-16 py-4">
               <button onClick={prev} className="absolute left-4 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all z-10">
-                <ChevronLeft size={28} />
+                <ChevronRight size={28} className="rotate-180" />
               </button>
               <motion.img
                 key={idx}
@@ -175,7 +175,7 @@ function VehicleGallery({ images, title }) {
                 alt={`Photo ${idx + 1}`}
               />
               <button onClick={next} className="absolute right-4 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all z-10">
-                <ChevronLeft size={28} className="rotate-180" />
+                <ChevronRight size={28} />
               </button>
             </div>
             <div className="flex gap-2 px-6 py-4 overflow-x-auto no-scrollbar border-t border-white/10">
@@ -432,17 +432,51 @@ export default function VehicleListingPage({
               </div>
             )}
 
-            {/* Pickup location / neighbourhood */}
-            <div className="bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm">
-              <div className="p-6 md:p-8 pb-0">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="h-0.5 w-6 bg-slate-300 rounded-full" />
-                  <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">
-                    Pickup Location
-                  </h2>
+            {/* Pickup location card */}
+            <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+              {/* Map embed or static placeholder */}
+              {listing.latitude && listing.longitude ? (
+                <div className="relative w-full h-44 overflow-hidden">
+                  <iframe
+                    title="Pickup Location"
+                    src={`https://maps.google.com/maps?q=${listing.latitude},${listing.longitude}&z=15&output=embed`}
+                    className="w-full h-full border-0"
+                    loading="lazy"
+                    allowFullScreen
+                  />
+                  <div className="absolute inset-0 pointer-events-none ring-1 ring-inset ring-black/5" />
                 </div>
+              ) : (
+                <div className="w-full h-44 bg-slate-100 flex items-center justify-center">
+                  <div className="flex flex-col items-center gap-2 text-slate-400">
+                    <Navigation size={28} />
+                    <span className="text-xs font-semibold">Map not available</span>
+                  </div>
+                </div>
+              )}
+
+              <div className="p-5 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 shrink-0">
+                    <MapPin size={18} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Pickup Location</p>
+                    <p className="text-sm font-bold text-slate-900 truncate">{listing.location || 'Varkala, Kerala'}</p>
+                  </div>
+                </div>
+                {listing.latitude && listing.longitude && (
+                  <a
+                    href={`https://www.google.com/maps?q=${listing.latitude},${listing.longitude}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 text-xs font-bold text-emerald-600 hover:text-emerald-700 transition-colors shrink-0 bg-emerald-50 border border-emerald-100 px-3 py-2 rounded-xl"
+                  >
+                    <ExternalLink size={12} />
+                    Open in Maps
+                  </a>
+                )}
               </div>
-              <NeighborhoodVibes location={listing.location} category={listing.category} />
             </div>
 
             {/* Reviews */}
