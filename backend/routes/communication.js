@@ -150,7 +150,7 @@ router.patch("/support-tickets/:id/reply", requireAuth, async (req, res, next) =
     } catch (err) { next(err); }
 });
 
-router.delete("/admin/support-tickets/:id", requireAuth, async (req, res, next) => {
+router.delete("/support-tickets/:id", requireAuth, async (req, res, next) => {
     try {
         if (req.user.role !== "admin") return res.status(403).json({ ok: false });
         const db = getDB();

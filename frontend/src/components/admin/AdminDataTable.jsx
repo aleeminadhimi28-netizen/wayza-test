@@ -1,7 +1,19 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, CheckCircle, Clock, Trash2, Volume2, VolumeX, X, Plus } from 'lucide-react';
+import {
+  Search,
+  CheckCircle,
+  Clock,
+  Trash2,
+  Volume2,
+  VolumeX,
+  X,
+  Plus,
+  FileText,
+  ExternalLink,
+} from 'lucide-react';
 import ConfirmModal from '../ui/ConfirmModal.jsx';
+import { fixImg } from '../../utils/image.js';
 
 export default function AdminDataTable({
   activeTab,
@@ -114,13 +126,56 @@ export default function AdminDataTable({
                       <div className="flex items-center gap-2">
                         <p className="font-bold text-sm text-white">{item.title}</p>
                         <span className="text-[10px] bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded uppercase font-black tracking-wide">
-                          {item.category === 'activity' ? 'Experience' : 'Property'}
+                          {item.category === 'bike' || item.category === 'car'
+                            ? 'Vehicle'
+                            : item.category === 'activity'
+                              ? 'Experience'
+                              : 'Property'}
                         </span>
                       </div>
                       <p className="text-xs text-white/30 font-medium mt-0.5">
                         {item.ownerEmail} · {item.location || 'No location'} · ₹
                         {item.price?.toLocaleString()}
                       </p>
+                      {(item.category === 'bike' || item.category === 'car') && (
+                        <div className="mt-2 flex flex-wrap gap-2 text-xs">
+                          {item.licensePlate && (
+                            <span className="bg-white/10 text-white/80 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wide">
+                              Plate: <strong className="text-white">{item.licensePlate}</strong>
+                            </span>
+                          )}
+                          {item.rcDoc && (
+                            <a
+                              href={fixImg(item.rcDoc)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 px-2 py-1 rounded flex items-center gap-1 transition-colors text-[10px] font-black uppercase tracking-wider"
+                            >
+                              <FileText size={11} /> RC Doc <ExternalLink size={10} />
+                            </a>
+                          )}
+                          {item.insuranceDoc && (
+                            <a
+                              href={fixImg(item.insuranceDoc)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 px-2 py-1 rounded flex items-center gap-1 transition-colors text-[10px] font-black uppercase tracking-wider"
+                            >
+                              <FileText size={11} /> Insurance <ExternalLink size={10} />
+                            </a>
+                          )}
+                          {item.pucDoc && (
+                            <a
+                              href={fixImg(item.pucDoc)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 px-2 py-1 rounded flex items-center gap-1 transition-colors text-[10px] font-black uppercase tracking-wider"
+                            >
+                              <FileText size={11} /> PUC Doc <ExternalLink size={10} />
+                            </a>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -245,7 +300,11 @@ export default function AdminDataTable({
                               )}
                               {activeTab === 'listings' && (
                                 <span className="text-[10px] bg-white/[0.05] text-white/40 px-1.5 py-0.5 rounded uppercase font-black tracking-wide">
-                                  {item.category === 'activity' ? 'Exp.' : 'Prop.'}
+                                  {item.category === 'bike' || item.category === 'car'
+                                    ? 'Veh.'
+                                    : item.category === 'activity'
+                                      ? 'Exp.'
+                                      : 'Prop.'}
                                 </span>
                               )}
                             </div>
@@ -254,6 +313,42 @@ export default function AdminDataTable({
                                 item.email ||
                                 `#${item._id?.slice(-8)?.toUpperCase()}`}
                             </p>
+                            {activeTab === 'listings' &&
+                              (item.category === 'bike' || item.category === 'car') &&
+                              (item.rcDoc || item.insuranceDoc || item.pucDoc) && (
+                                <div className="flex gap-2 mt-1">
+                                  {item.rcDoc && (
+                                    <a
+                                      href={fixImg(item.rcDoc)}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-[10px] text-emerald-400 hover:underline"
+                                    >
+                                      RC
+                                    </a>
+                                  )}
+                                  {item.insuranceDoc && (
+                                    <a
+                                      href={fixImg(item.insuranceDoc)}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-[10px] text-emerald-400 hover:underline"
+                                    >
+                                      Ins
+                                    </a>
+                                  )}
+                                  {item.pucDoc && (
+                                    <a
+                                      href={fixImg(item.pucDoc)}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-[10px] text-emerald-400 hover:underline"
+                                    >
+                                      PUC
+                                    </a>
+                                  )}
+                                </div>
+                              )}
                           </div>
                         </div>
                       </td>

@@ -79,7 +79,7 @@ router.post("/reviews", requireAuth, async (req, res, next) => {
         const db = getDB();
         const { listingId, rating, comment } = parsed.data;
 
-        const booked = await db.collection("bookings").findOne({ listingId, guestEmail: req.user.email, status: "paid" });
+        const booked = await db.collection("bookings").findOne({ listingId, guestEmail: req.user.email, status: { $in: ["paid", "arrived", "departed"] } });
         if (!booked) return res.status(403).json({ ok: false, message: "You must book to review" });
 
         const already = await db.collection("reviews").findOne({ listingId, guestEmail: req.user.email });

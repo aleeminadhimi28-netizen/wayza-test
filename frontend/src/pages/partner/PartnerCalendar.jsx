@@ -179,6 +179,27 @@ export default function PartnerCalendar() {
     setPriceModal({ dateStr, existing });
   }
 
+  async function handleVariantChangeInModal(newIdx) {
+    setSelectedVariantIdx(newIdx);
+    if (!priceModal || !selectedListingId) return;
+    try {
+      const res = await api.getPriceRules(selectedListingId, newIdx);
+      if (res.ok) {
+        const rules = res.priceRules || [];
+        setPriceRules(rules);
+        const existing = rules.find((r) => r.date === priceModal.dateStr) || null;
+        const lst = listings.find((l) => l._id === selectedListingId);
+        const variant = lst?.variants?.[newIdx];
+        setPriceInput(
+          existing ? String(existing.price) : String(variant?.price || lst?.price || '')
+        );
+        setPriceModal({ dateStr: priceModal.dateStr, existing });
+      }
+    } catch {
+      showToast('Connection error loading variant pricing.', 'error');
+    }
+  }
+
   async function savePriceRule() {
     if (!priceModal || !selectedListingId) return;
     const newPrice = Number(priceInput);
@@ -436,45 +457,53 @@ export default function PartnerCalendar() {
                   No properties found.
                 </p>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-black text-white/30 uppercase tracking-widest">
-                      Property
-                    </label>
-                    <select
-                      value={selectedListingId}
-                      onChange={(e) => {
-                        setSelectedListingId(e.target.value);
-                        setSelectedVariantIdx(0);
-                      }}
-                      className="w-full h-10 bg-white/[0.03] border border-white/[0.08] rounded-lg px-3 text-xs font-bold text-white outline-none"
+                (() => {
+                  const currentListing = listings.find((l) => l._id === selectedListingId);
+                  const showVariantSelector = currentListing && currentListing.variants?.length > 1;
+                  return (
+                    <div
+                      className={`grid grid-cols-1 ${showVariantSelector ? 'sm:grid-cols-2' : ''} gap-3`}
                     >
-                      {listings.map((l) => (
-                        <option key={l._id} value={l._id}>
-                          {l.title}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-black text-white/30 uppercase tracking-widest">
-                      Room / Variant
-                    </label>
-                    <select
-                      value={selectedVariantIdx}
-                      onChange={(e) => setSelectedVariantIdx(Number(e.target.value))}
-                      className="w-full h-10 bg-white/[0.03] border border-white/[0.08] rounded-lg px-3 text-xs font-bold text-white outline-none"
-                    >
-                      {(listings.find((l) => l._id === selectedListingId)?.variants || []).map(
-                        (v, i) => (
-                          <option key={i} value={i}>
-                            {v.name || `Variant ${i + 1}`}
-                          </option>
-                        )
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-black text-white/30 uppercase tracking-widest">
+                          Property
+                        </label>
+                        <select
+                          value={selectedListingId}
+                          onChange={(e) => {
+                            setSelectedListingId(e.target.value);
+                            setSelectedVariantIdx(0);
+                          }}
+                          className="w-full h-10 bg-white/[0.03] border border-white/[0.08] rounded-lg px-3 text-xs font-bold text-white outline-none"
+                        >
+                          {listings.map((l) => (
+                            <option key={l._id} value={l._id}>
+                              {l.title}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      {showVariantSelector && (
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-black text-white/30 uppercase tracking-widest">
+                            Room / Variant
+                          </label>
+                          <select
+                            value={selectedVariantIdx}
+                            onChange={(e) => setSelectedVariantIdx(Number(e.target.value))}
+                            className="w-full h-10 bg-white/[0.03] border border-white/[0.08] rounded-lg px-3 text-xs font-bold text-white outline-none"
+                          >
+                            {(currentListing.variants || []).map((v, i) => (
+                              <option key={i} value={i}>
+                                {v.name || `Variant ${i + 1}`}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
                       )}
-                    </select>
-                  </div>
-                </div>
+                    </div>
+                  );
+                })()
               )}
               {priceRules.length > 0 && (
                 <div className="space-y-2">
@@ -658,6 +687,26 @@ export default function PartnerCalendar() {
                 </button>
               </div>
               <div className="p-6 space-y-4">
+                {listings.length > 0 && (
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-white/30 uppercase tracking-widest">
+                      Room / Variant
+                    </label>
+                    <select
+                      value={selectedVariantIdx}
+                      onChange={(e) => handleVariantChangeInModal(Number(e.target.value))}
+                      className="w-full h-12 bg-white/[0.03] border border-white/[0.1] rounded-xl px-3 text-sm font-bold text-white outline-none focus:border-amber-400 transition-colors cursor-pointer"
+                    >
+                      {(listings.find((l) => l._id === selectedListingId)?.variants || []).map(
+                        (v, i) => (
+                          <option key={i} value={i} className="bg-[#050a08] text-white">
+                            {v.name || `Variant ${i + 1}`}
+                          </option>
+                        )
+                      )}
+                    </select>
+                  </div>
+                )}
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-white/30 uppercase tracking-widest">
                     Price for this date (₹)

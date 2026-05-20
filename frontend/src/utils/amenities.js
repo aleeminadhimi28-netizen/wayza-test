@@ -88,6 +88,36 @@ export const AMENITY_CATEGORIES = [
   },
 ];
 
-export const ALL_AMENITIES = AMENITY_CATEGORIES.flatMap((c) => c.amenities);
+export const VEHICLE_AMENITY_CATEGORIES = [
+  {
+    id: 'inclusions',
+    label: 'Rental Inclusions',
+    description: 'Inclusions with your rental vehicle',
+    amenities: [
+      { id: 'helmet', label: 'Helmet Included', icon: Shield },
+      { id: 'insurance_inc', label: 'Comprehensive Insurance Included', icon: Shield },
+      { id: 'roadside', label: '24/7 Roadside Assistance', icon: Sparkles },
+      { id: 'fuel_policy', label: 'Full-to-Full Fuel Policy', icon: GlassWater },
+    ],
+  },
+  {
+    id: 'features',
+    label: 'Vehicle Features',
+    description: 'Hardware and technology features',
+    amenities: [
+      { id: 'ac_veh', label: 'Air Conditioned', icon: Wind },
+      { id: 'gps_nav', label: 'GPS / Navigation System', icon: Mountain },
+      { id: 'bluetooth_veh', label: 'Bluetooth Audio', icon: Bluetooth },
+      { id: 'usb_charger', label: 'USB Charger / Mobile Holder', icon: Plug },
+      { id: 'carrier', label: 'Luggage Carrier / Top Box', icon: Home },
+      { id: 'ev_veh', label: 'Electric / Green Plate', icon: Zap },
+    ],
+  },
+];
+
+export const ALL_AMENITIES = [
+  ...AMENITY_CATEGORIES.flatMap((c) => c.amenities),
+  ...VEHICLE_AMENITY_CATEGORIES.flatMap((c) => c.amenities),
+];
 
 export const getAmenityByLabel = (label) => ALL_AMENITIES.find((a) => a.label === label);

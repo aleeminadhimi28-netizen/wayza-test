@@ -18,7 +18,15 @@ const createListingSchema = z.object({
     longitude: z.number().optional(),
     walkthroughVideo: z.string().optional(),
     amenities: z.array(z.string()).optional().default([]),
-    wifiSpeed: z.number().optional().default(0)
+    wifiSpeed: z.number().optional().default(0),
+    licensePlate: z.string().optional().default(""),
+    registrationDate: z.string().optional().default(""),
+    vehicleType: z.string().optional().default(""),
+    registrationCategory: z.string().optional().default(""),
+    cancellationPolicy: z.string().optional().default(""),
+    rcDoc: z.string().optional().default(""),
+    insuranceDoc: z.string().optional().default(""),
+    pucDoc: z.string().optional().default("")
 });
 
 const variantSchema = z.object({
@@ -149,7 +157,12 @@ router.post("/", requireAuth, async (req, res, next) => {
 
         const db = getDB();
         const listings = db.collection("listings");
-        const { title, location, price, description, image, images, category, latitude, longitude, walkthroughVideo, amenities, wifiSpeed } = parsed.data;
+        const {
+            title, location, price, description, image, images, category,
+            latitude, longitude, walkthroughVideo, amenities, wifiSpeed,
+            licensePlate, registrationDate, vehicleType, registrationCategory,
+            cancellationPolicy, rcDoc, insuranceDoc, pucDoc
+        } = parsed.data;
 
         const result = await listings.insertOne({
             title, location,
@@ -159,13 +172,23 @@ router.post("/", requireAuth, async (req, res, next) => {
             images: images || [],
             category: category || "hotel",
             ownerEmail: req.user.email,
-            variants: [],
+            variants: (category && category !== "hotel")
+                ? [{ name: "Standard", price: Number(price) || 0, priceRules: [] }]
+                : [],
             approved: false,
             latitude: latitude ? Number(latitude) : null,
             longitude: longitude ? Number(longitude) : null,
             walkthroughVideo: walkthroughVideo || null,
             amenities: amenities || [],
             wifiSpeed: Number(wifiSpeed) || 0,
+            licensePlate: licensePlate || "",
+            registrationDate: registrationDate || "",
+            vehicleType: vehicleType || "",
+            registrationCategory: registrationCategory || "",
+            cancellationPolicy: cancellationPolicy || "",
+            rcDoc: rcDoc || "",
+            insuranceDoc: insuranceDoc || "",
+            pucDoc: pucDoc || "",
             createdAt: new Date()
         });
 
@@ -194,7 +217,12 @@ router.put("/:id", requireAuth, async (req, res, next) => {
         }
 
         const updates = {};
-        const fields = ["title", "location", "description", "category", "latitude", "longitude", "walkthroughVideo", "image", "amenities", "wifiSpeed"];
+        const fields = [
+            "title", "location", "description", "category", "latitude", "longitude",
+            "walkthroughVideo", "image", "amenities", "wifiSpeed",
+            "licensePlate", "registrationDate", "vehicleType", "registrationCategory",
+            "cancellationPolicy", "rcDoc", "insuranceDoc", "pucDoc"
+        ];
         fields.forEach(f => {
             if (req.body[f] !== undefined) {
                 if (["latitude", "longitude"].includes(f) && req.body[f] !== null) {

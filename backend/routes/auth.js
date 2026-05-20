@@ -296,11 +296,31 @@ router.post("/send-otp", async (req, res, next) => {
         if (!email) return res.status(400).json({ ok: false, message: "Email required" });
 
         const db = getDB();
+        const emailKey = email.toLowerCase().trim();
+        const otpRequests = db.collection("otp_requests");
+        const fifteenMinsAgo = new Date(Date.now() - 15 * 60 * 1000);
+
+        // Check if there are already 3 requests in the last 15 minutes
+        const count = await otpRequests.countDocuments({
+            email: emailKey,
+            requestedAt: { $gte: fifteenMinsAgo }
+        });
+
+        if (count >= 3) {
+            return res.status(429).json({
+                ok: false,
+                message: "Too many OTP requests. Please try again after 15 minutes."
+            });
+        }
+
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         const expiry = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
 
-        await db.collection("otps").deleteMany({ email: email.toLowerCase().trim() });
-        await db.collection("otps").insertOne({ email: email.toLowerCase().trim(), otp, expiry });
+        await db.collection("otps").deleteMany({ email: emailKey });
+        await db.collection("otps").insertOne({ email: emailKey, otp, expiry });
+
+        // Record the request timestamp for rate limiting
+        await otpRequests.insertOne({ email: emailKey, requestedAt: new Date() });
 
         const transporter = await getTransporter();
         const info = await transporter.sendMail({

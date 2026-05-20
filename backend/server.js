@@ -50,8 +50,9 @@ const checkOrigin = (origin, callback) => {
   if (allowedOrigins.includes(origin) || (process.env.NODE_ENV === "development" && origin.includes("localhost"))) {
     return callback(null, true);
   }
-  // Allow only Wayzza Vercel domains (production and previews)
-  if (origin.endsWith(".vercel.app") && (origin.includes("wayza") || origin.includes("wayzza"))) {
+  // Allow only trusted Wayzza Vercel domains (production and previews)
+  const isVercelPreview = /^https:\/\/(?:[a-zA-Z0-9-]+\.)?wayzz?a(?:-[a-zA-Z0-9-]+)?\.vercel\.app$/i.test(origin);
+  if (isVercelPreview) {
     return callback(null, true);
   }
   return callback(new Error("CORS: Origin not allowed by security policy"));

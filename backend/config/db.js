@@ -30,6 +30,75 @@ export const connectDB = async () => {
         console.log("✅ MongoDB Connected");
         db = client.db();
         await createIndexes(db);
+
+        try {
+            // Ensure legacy vehicle listings have licensePlate and registrationDate fields
+            const migrationResult = await db.collection("listings").updateMany(
+                { category: { $in: ["bike", "car"] }, licensePlate: { $exists: false } },
+                { $set: { licensePlate: "", registrationDate: "" } }
+            );
+            if (migrationResult.modifiedCount > 0) {
+                console.log(`✅ Migrated ${migrationResult.modifiedCount} legacy vehicle listings (added licensePlate & registrationDate)`);
+            }
+
+            // Ensure non-hotel listings have a default variant to support date-based custom pricing
+            const cursor = db.collection("listings").find({
+                category: { $in: ["bike", "car", "activity"] },
+                $or: [
+                    { variants: { $exists: false } },
+                    { variants: { $size: 0 } },
+                    { variants: null }
+                ]
+            });
+            let variantMigrationCount = 0;
+            while (await cursor.hasNext()) {
+                const doc = await cursor.next();
+                const parentPrice = typeof doc.price === "number" ? doc.price : Number(doc.price) || 0;
+                await db.collection("listings").updateOne(
+                    { _id: doc._id },
+                    {
+                        $set: {
+                            variants: [
+                                { name: "Standard", price: parentPrice, priceRules: [] }
+                            ]
+                        }
+                    }
+                );
+                variantMigrationCount++;
+            }
+            if (variantMigrationCount > 0) {
+                console.log(`✅ Migrated ${variantMigrationCount} listings to have a default variant`);
+            }
+
+            // Self-healing: Repair any listings where variants.price was set to the literal string "$price"
+            const brokenCursor = db.collection("listings").find({
+                category: { $in: ["bike", "car", "activity"] },
+                "variants.price": "$price"
+            });
+            let healedCount = 0;
+            while (await brokenCursor.hasNext()) {
+                const doc = await brokenCursor.next();
+                const parentPrice = typeof doc.price === "number" ? doc.price : Number(doc.price) || 0;
+                const updatedVariants = (doc.variants || []).map(v => {
+                    if (v.price === "$price") {
+                        return { ...v, price: parentPrice };
+                    }
+                    return v;
+                });
+                await db.collection("listings").updateOne(
+                    { _id: doc._id },
+                    { $set: { variants: updatedVariants } }
+                );
+                healedCount++;
+            }
+            if (healedCount > 0) {
+                console.log(`✅ Healed ${healedCount} listings with corrupted literal "$price" variants`);
+            }
+
+        } catch (migrationErr) {
+            console.error("⚠️ Failed to migrate legacy vehicle listings:", migrationErr.message);
+        }
+
         return db;
     } catch (err) {
         console.error("❌ Failed to connect to MongoDB:", err.message);
@@ -67,8 +136,15 @@ const createIndexes = async (db) => {
     await bookings.createIndex({ listingId: 1, variantIndex: 1, status: 1, checkIn: 1, checkOut: 1 });
     // Location search index for AI planner
     await listings.createIndex({ location: 1 });
-    await wishlists.createIndex({ userEmail: 1 });
+    await listings.createIndex({ price: 1 });
+    await listings.createIndex({ title: "text", location: "text" });
+
+    // Safely migrate wishlist index
+    await wishlists.dropIndex("userEmail_1").catch(() => {});
+    await wishlists.createIndex({ email: 1 });
+    await wishlists.createIndex({ email: 1, listingId: 1 }, { unique: true });
     await wishlists.createIndex({ listingId: 1 });
+
     await reviews.createIndex({ listingId: 1 });
     await messages.createIndex({ bookingId: 1, createdAt: 1 });
     await messages.createIndex({ timestamp: -1 });
@@ -77,6 +153,9 @@ const createIndexes = async (db) => {
     const otps = db.collection("otps");
     await otps.createIndex({ expiry: 1 }, { expireAfterSeconds: 0 });
 
+    const otpRequests = db.collection("otp_requests");
+    await otpRequests.createIndex({ requestedAt: 1 }, { expireAfterSeconds: 900 });
+
     const coupons = db.collection("coupons");
     await coupons.createIndex({ code: 1 }, { unique: true });
 
@@ -84,7 +163,8 @@ const createIndexes = async (db) => {
     await webhooks.createIndex({ eventId: 1 }, { unique: true });
 
     const bookingLocks = db.collection("booking_locks");
-    await bookingLocks.createIndex({ lockedAt: 1 }, { expireAfterSeconds: 60 });
+    await bookingLocks.dropIndex("lockedAt_1").catch(() => {});
+    await bookingLocks.createIndex({ lockedAt: 1 }, { expireAfterSeconds: 30 });
 
     // TTL: Auto-expire pending bookings after 15 minutes (900 seconds)
     // Only affects documents where status === "pending" (partial filter)

@@ -1,7 +1,7 @@
 import express from "express";
 import { ObjectId } from "mongodb";
 import { getDB } from "../config/db.js";
-import { requireAuth } from "../middleware/auth.js";
+import { requireAuth, requireRole } from "../middleware/auth.js";
 import { z } from "zod";
 
 const createPackageSchema = z.object({
@@ -40,7 +40,7 @@ router.get("/:id", async (req, res, next) => {
 });
 
 // Create package
-router.post("/", requireAuth, async (req, res, next) => {
+router.post("/", requireAuth, requireRole(["admin", "partner"]), async (req, res, next) => {
     try {
         const parsed = createPackageSchema.safeParse(req.body);
         if (!parsed.success) return res.status(400).json({ ok: false, message: "Invalid package data", errors: parsed.error.flatten() });

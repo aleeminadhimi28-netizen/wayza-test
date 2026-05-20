@@ -107,6 +107,8 @@ export default function PartnerOnboarding() {
   // Vehicles listing
   const [vehicleType, setVehicleType] = useState('');
   const [registrationCategory, setRegistrationCategory] = useState('');
+  const [licensePlate, setLicensePlate] = useState('');
+  const [registrationDate, setRegistrationDate] = useState('');
 
   useEffect(() => {
     if (authLoading) return;
@@ -176,6 +178,8 @@ export default function PartnerOnboarding() {
               vehicleType: mainSector === 'vehicles' ? vehicleType : undefined,
               registrationCategory: mainSector === 'vehicles' ? registrationCategory : undefined,
               cancellationPolicy,
+              licensePlate: mainSector === 'vehicles' ? licensePlate : undefined,
+              registrationDate: mainSector === 'vehicles' ? registrationDate : undefined,
             }
           : null,
       };
@@ -601,6 +605,32 @@ export default function PartnerOnboarding() {
                   </div>
                 )}
 
+                {/* License Plate & Registration Date for Vehicles */}
+                {mainSector === 'vehicles' && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <FormInput
+                      label="License Plate Number"
+                      required
+                      value={licensePlate}
+                      onChange={setLicensePlate}
+                      placeholder="E.G. KL-01-CA-1234"
+                      icon={<ShieldCheck size={24} />}
+                    />
+                    <div className="space-y-4">
+                      <label className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2 block">
+                        Registration Date
+                      </label>
+                      <input
+                        type="date"
+                        required
+                        value={registrationDate}
+                        onChange={(e) => setRegistrationDate(e.target.value)}
+                        className="w-full h-16 px-6 bg-slate-50 border border-slate-100 rounded-2xl text-slate-800 font-bold placeholder:text-slate-300 text-sm focus:outline-none focus:border-emerald-500 focus:bg-white transition-all shadow-inner"
+                      />
+                    </div>
+                  </div>
+                )}
+
                 {/* Pricing & Net Payout */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-end">
                   <FormInput
@@ -646,6 +676,24 @@ export default function PartnerOnboarding() {
                   if (!listingName) {
                     showToast('Please define the listing name', 'error');
                     return;
+                  }
+                  if (mainSector === 'vehicles') {
+                    if (!vehicleType) {
+                      showToast('Please select a vehicle type', 'error');
+                      return;
+                    }
+                    if (!registrationCategory) {
+                      showToast('Please select a registration category', 'error');
+                      return;
+                    }
+                    if (!licensePlate.trim()) {
+                      showToast('Please enter the vehicle license plate number', 'error');
+                      return;
+                    }
+                    if (!registrationDate) {
+                      showToast('Please select the vehicle registration date', 'error');
+                      return;
+                    }
                   }
                   if (!price) {
                     showToast('Base rate is required', 'error');

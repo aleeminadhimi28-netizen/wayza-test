@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { getDB } from "../config/db.js";
 
 dotenv.config();
 
@@ -9,7 +10,7 @@ const SECRET = process.env.JWT_SECRET;
  * REQUIRE AUTH MIDDLEWARE
  * Enforces that a valid JWT is present in either cookies or Authorization header.
  */
-export function requireAuth(req, res, next) {
+export async function requireAuth(req, res, next) {
     if (!SECRET) {
         console.error("FATAL: JWT_SECRET is not defined in environment.");
         return res.status(500).json({ ok: false, error: "Internal server security configuration error" });
@@ -39,6 +40,16 @@ export function requireAuth(req, res, next) {
         // Ensure critical fields exist in the token
         if (!decoded.email || !decoded.role) {
             throw new Error("Invalid token payload structure");
+        }
+
+        // Query database to check if user is muted/suspended
+        const db = getDB();
+        const userDoc = await db.collection("users").findOne({ email: decoded.email });
+        if (userDoc && userDoc.muted === true) {
+            return res.status(403).json({
+                ok: false,
+                error: "Your account has been suspended. Please contact customer support."
+            });
         }
 
         req.user = decoded;

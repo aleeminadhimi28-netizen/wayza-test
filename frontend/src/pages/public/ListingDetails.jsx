@@ -14,6 +14,8 @@ import {
   MessageSquare,
   Sparkles,
   CheckCircle,
+  Shield,
+  Calendar,
 } from 'lucide-react';
 import SEO from '../../components/SEO.jsx';
 import ListingConcierge from '../../components/ListingConcierge.jsx';
@@ -320,6 +322,27 @@ export default function ListingDetails() {
       : 0;
 
   const isVehicle = listing.category === 'bike' || listing.category === 'car';
+
+  const getCategoryPluralLabel = () => {
+    if (isVehicle) return 'Vehicles';
+    if (listing.category === 'experience') return 'Experiences';
+    return 'Stays';
+  };
+
+  const getCategoryTerm = () => {
+    if (listing.category === 'bike') return 'ride';
+    if (listing.category === 'car') return 'vehicle';
+    if (listing.category === 'experience') return 'experience';
+    return 'stay';
+  };
+
+  const getCategoryNewLabel = () => {
+    if (listing.category === 'bike') return 'New Bike';
+    if (listing.category === 'car') return 'New Car';
+    if (listing.category === 'experience') return 'New Experience';
+    return 'New Stay';
+  };
+
   const gstRate = platformConfig?.gstRate ?? 0.12;
   const serviceFeeRate = platformConfig?.serviceFee ?? 99;
 
@@ -379,7 +402,7 @@ export default function ListingDetails() {
         breadcrumb={[
           { name: 'Home', url: 'https://wayzza.live' },
           {
-            name: isVehicle ? 'Vehicles' : 'Stays',
+            name: getCategoryPluralLabel(),
             url: `https://wayzza.live/listings?category=${listing.category}`,
           },
           { name: listing.title, url: canonicalUrl },
@@ -400,7 +423,7 @@ export default function ListingDetails() {
               onClick={() => navigate('/listings')}
               className="hover:text-emerald-600 transition-colors"
             >
-              Stays
+              {getCategoryPluralLabel()}
             </button>
             <ChevronRight size={10} />
             <span className="text-slate-900 truncate max-w-[150px] md:max-w-[200px]">
@@ -466,7 +489,7 @@ export default function ListingDetails() {
                         : 'New'}
                     </p>
                     <p className="text-[11px] lg:text-[11px] font-bold text-slate-300 uppercase tracking-widest">
-                      {reviews.length > 0 ? `${reviews.length} Reviews` : 'New Stay'}
+                      {reviews.length > 0 ? `${reviews.length} Reviews` : getCategoryNewLabel()}
                     </p>
                   </div>
                 </div>
@@ -583,6 +606,99 @@ export default function ListingDetails() {
               {/* Neighborhood Discovery */}
               <NeighborhoodVibes location={listing.location} category={listing.category} />
 
+              {/* Vehicle Specifications */}
+              {isVehicle && (
+                <section className="space-y-8 bg-slate-50 border border-slate-100 rounded-[32px] p-8 md:p-10">
+                  <div className="flex items-center gap-4">
+                    <span className="h-px w-12 bg-slate-200" />
+                    <span className="text-[11px] font-black uppercase tracking-[0.5em] text-slate-300">
+                      Vehicle Specifications
+                    </span>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-4">
+                    {listing.vehicleType && (
+                      <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 bg-white rounded-xl border border-slate-100 flex items-center justify-center text-emerald-600 shadow-sm shrink-0">
+                          <CheckCircle size={18} />
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                            Vehicle Type
+                          </p>
+                          <p className="text-sm font-black text-slate-900 uppercase tracking-tight mt-0.5">
+                            {listing.vehicleType}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {listing.registrationCategory && (
+                      <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 bg-white rounded-xl border border-slate-100 flex items-center justify-center text-emerald-600 shadow-sm shrink-0">
+                          <Shield size={18} />
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                            Registration Category
+                          </p>
+                          <p className="text-sm font-black text-slate-900 uppercase tracking-tight mt-0.5">
+                            {listing.registrationCategory}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {listing.licensePlate && (
+                      <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 bg-white rounded-xl border border-slate-100 flex items-center justify-center text-emerald-600 shadow-sm shrink-0">
+                          <span className="font-black text-xs text-slate-700">#</span>
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                            License Plate
+                          </p>
+                          <p className="text-sm font-black text-slate-900 uppercase tracking-tight mt-0.5">
+                            {listing.licensePlate}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {listing.registrationDate && (
+                      <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 bg-white rounded-xl border border-slate-100 flex items-center justify-center text-emerald-600 shadow-sm shrink-0">
+                          <Calendar size={18} />
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                            Registration Date
+                          </p>
+                          <p className="text-sm font-black text-slate-900 uppercase tracking-tight mt-0.5">
+                            {(() => {
+                              const d = new Date(listing.registrationDate);
+                              if (isNaN(d.getTime())) return listing.registrationDate;
+                              return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+                            })()}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {listing.cancellationPolicy && (
+                    <div className="border-t border-slate-200/60 pt-6 mt-6">
+                      <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                        Cancellation Policy
+                      </p>
+                      <p className="text-xs font-bold text-slate-600 mt-1 leading-relaxed">
+                        {listing.cancellationPolicy}
+                      </p>
+                    </div>
+                  )}
+                </section>
+              )}
+
               {/* Artifacts (Amenities) */}
               {listing.amenities && listing.amenities.length > 0 && (
                 <section className="space-y-12">
@@ -639,7 +755,7 @@ export default function ListingDetails() {
               )}
 
               {/* Variants Detail */}
-              {listing.variants?.length > 0 && (
+              {!isVehicle && listing.variants?.length > 1 && (
                 <section className="space-y-10">
                   <h2 className="text-[11px] font-black uppercase tracking-[0.5em] text-slate-300">
                     Accommodation Options
@@ -707,7 +823,7 @@ export default function ListingDetails() {
                   <div className="bg-amber-50 border border-amber-100 rounded-[32px] p-8 md:p-10 space-y-8">
                     <div>
                       <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">
-                        Rate your stay
+                        Rate your {getCategoryTerm()}
                       </h3>
                       <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1">
                         Your feedback helps the Wayzza community
@@ -721,7 +837,7 @@ export default function ListingDetails() {
                       <textarea
                         value={comment}
                         onChange={(e) => setComment(e.target.value)}
-                        placeholder="Share details about your stay..."
+                        placeholder={`Share details about your ${getCategoryTerm()}...`}
                         rows={4}
                         className="w-full bg-white border border-amber-200 p-4 rounded-2xl outline-none focus:border-amber-400 focus:ring-4 focus:ring-amber-400/10 transition-all text-sm resize-none"
                       />
@@ -745,7 +861,7 @@ export default function ListingDetails() {
                 <div className="flex items-center gap-3 text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-2xl px-6 py-4">
                   <CheckCircle size={16} />
                   <span className="text-[11px] font-black uppercase tracking-widest">
-                    You&apos;ve reviewed this stay — thank you!
+                    You&apos;ve reviewed this {getCategoryTerm()} — thank you!
                   </span>
                 </div>
               )}

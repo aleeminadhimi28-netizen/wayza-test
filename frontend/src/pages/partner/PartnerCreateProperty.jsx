@@ -1,4 +1,4 @@
-﻿import { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../AuthContext.jsx';
 import { useToast } from '../../ToastContext.jsx';
@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 
 import { api } from '../../utils/api.js';
-import { AMENITY_CATEGORIES } from '../../utils/amenities.js';
+import { AMENITY_CATEGORIES, VEHICLE_AMENITY_CATEGORIES } from '../../utils/amenities.js';
 
 const CATEGORIES = [
   { value: 'hotel', label: 'ðŸ¨ Stays (Hotels, Villas, Houses)' },
@@ -46,6 +46,19 @@ export default function PartnerCreateProperty() {
   const [locationLocked, setLocationLocked] = useState(false);
   const [selectedAmenities, setSelectedAmenities] = useState([]);
   const [wifiSpeed, setWifiSpeed] = useState('');
+  // Vehicle fields
+  const [licensePlate, setLicensePlate] = useState('');
+  const [registrationDate, setRegistrationDate] = useState('');
+  const [vehicleType, setVehicleType] = useState('');
+  const [registrationCategory, setRegistrationCategory] = useState('');
+  const [cancellationPolicy, setCancellationPolicy] = useState('moderate');
+  const [rcDoc, setRcDoc] = useState(null);
+  const [rcDocPreview, setRcDocPreview] = useState(null);
+  const [insuranceDoc, setInsuranceDoc] = useState(null);
+  const [insuranceDocPreview, setInsuranceDocPreview] = useState(null);
+  const [pucDoc, setPucDoc] = useState(null);
+  const [pucDocPreview, setPucDocPreview] = useState(null);
+  const isVehicle = category === 'bike' || category === 'car';
 
   const fetchGPSLocation = useCallback(async () => {
     if (!navigator.geolocation) {
@@ -127,6 +140,9 @@ export default function PartnerCreateProperty() {
 
     setLoading(true);
     let filename = null;
+    let rcPath = '';
+    let insPath = '';
+    let pucPath = '';
 
     try {
       if (image) {
@@ -135,6 +151,33 @@ export default function PartnerCreateProperty() {
         const uploadRes = await api.uploadImage(form);
         if (uploadRes.ok) {
           filename = uploadRes.filename;
+        }
+      }
+
+      if (isVehicle) {
+        if (rcDoc) {
+          const form = new FormData();
+          form.append('image', rcDoc);
+          const uploadRes = await api.uploadImage(form);
+          if (uploadRes.ok) {
+            rcPath = uploadRes.filename;
+          }
+        }
+        if (insuranceDoc) {
+          const form = new FormData();
+          form.append('image', insuranceDoc);
+          const uploadRes = await api.uploadImage(form);
+          if (uploadRes.ok) {
+            insPath = uploadRes.filename;
+          }
+        }
+        if (pucDoc) {
+          const form = new FormData();
+          form.append('image', pucDoc);
+          const uploadRes = await api.uploadImage(form);
+          if (uploadRes.ok) {
+            pucPath = uploadRes.filename;
+          }
         }
       }
 
@@ -149,12 +192,22 @@ export default function PartnerCreateProperty() {
         longitude: longitude ? Number(longitude) : null,
         walkthroughVideo,
         amenities: selectedAmenities,
-        wifiSpeed: Number(wifiSpeed) || 0,
+        wifiSpeed: isVehicle ? 0 : Number(wifiSpeed) || 0,
+        licensePlate: isVehicle ? licensePlate : undefined,
+        registrationDate: isVehicle ? registrationDate : undefined,
+        vehicleType: isVehicle ? vehicleType : undefined,
+        registrationCategory: isVehicle ? registrationCategory : undefined,
+        cancellationPolicy: isVehicle ? cancellationPolicy : undefined,
+        rcDoc: isVehicle ? rcPath : undefined,
+        insuranceDoc: isVehicle ? insPath : undefined,
+        pucDoc: isVehicle ? pucPath : undefined,
       });
 
       if (data.ok) {
         showToast(
-          'Property created! It will go live after admin approval. Add your room variants now.',
+          isVehicle
+            ? 'Vehicle listing created! It will go live after admin approval. Configure details and pricing now.'
+            : 'Property created! It will go live after admin approval. Add your room variants now.',
           'success'
         );
         navigate(`/partner/property/${data.id}`);
@@ -178,14 +231,15 @@ export default function PartnerCreateProperty() {
       {/* HEADER */}
       <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
         <div className="flex items-center gap-2 text-emerald-600 font-bold text-xs uppercase tracking-wide mb-1">
-          <Plus size={14} /> New Property
+          <Plus size={14} /> {isVehicle ? 'New Vehicle' : 'New Property'}
         </div>
         <h1 className="text-3xl font-bold text-slate-900">
           Create a <span className="text-emerald-500">New Listing</span>
         </h1>
         <p className="text-slate-500 text-sm mt-1">
-          Add your property to the Wayzza platform. You can add room types and variants after
-          creation.
+          {isVehicle
+            ? 'Add your vehicle to the Wayzza platform. You can define details and pricing after creation.'
+            : 'Add your property to the Wayzza platform. You can add room types and variants after creation.'}
         </p>
       </div>
 
@@ -201,16 +255,21 @@ export default function PartnerCreateProperty() {
             {/* LEFT: Basic Details */}
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-bold text-slate-900 mb-0.5">Property Details</h3>
+                <h3 className="text-lg font-bold text-slate-900 mb-0.5">
+                  {isVehicle ? 'Vehicle Details' : 'Property Details'}
+                </h3>
                 <p className="text-sm text-slate-500">
-                  Name, location, and category of your property.
+                  {isVehicle
+                    ? 'Name, hub location, and category of your vehicle.'
+                    : 'Name, location, and category of your property.'}
                 </p>
               </div>
 
               <div className="space-y-4">
                 <div className="space-y-2">
                   <label className="text-xs font-semibold text-slate-700 block">
-                    Property Name <span className="text-rose-400">*</span>
+                    {isVehicle ? 'Vehicle Name' : 'Property Name'}{' '}
+                    <span className="text-rose-400">*</span>
                   </label>
                   <div className="relative">
                     <Building
@@ -220,7 +279,9 @@ export default function PartnerCreateProperty() {
                     <input
                       required
                       type="text"
-                      placeholder="e.g. Ocean View Villa"
+                      placeholder={
+                        isVehicle ? 'e.g. Royal Enfield Himalayan' : 'e.g. Ocean View Villa'
+                      }
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                       className="h-11 w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-4 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition-all"
@@ -230,7 +291,8 @@ export default function PartnerCreateProperty() {
 
                 <div className="space-y-2">
                   <label className="text-xs font-semibold text-slate-700 block">
-                    Property Location <span className="text-rose-400">*</span>
+                    {isVehicle ? 'Operational Hub Location' : 'Property Location'}{' '}
+                    <span className="text-rose-400">*</span>
                   </label>
 
                   {!locationLocked ? (
@@ -329,6 +391,234 @@ export default function PartnerCreateProperty() {
                   </select>
                 </div>
 
+                {isVehicle && (
+                  <div className="p-6 bg-slate-50 rounded-2xl border border-slate-200 space-y-4">
+                    <h4 className="text-xs font-bold text-slate-700 uppercase tracking-widest">
+                      Vehicle Specifications & Verification
+                    </h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-xs font-semibold text-slate-700 block">
+                          License Plate <span className="text-rose-400">*</span>
+                        </label>
+                        <input
+                          required
+                          type="text"
+                          placeholder="e.g. KL-01-CA-1234"
+                          value={licensePlate}
+                          onChange={(e) => setLicensePlate(e.target.value)}
+                          className="h-10 w-full bg-white border border-slate-200 rounded-lg px-3 text-sm font-medium text-slate-900 focus:border-emerald-500 outline-none transition-all"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-semibold text-slate-700 block">
+                          Registration Date <span className="text-rose-400">*</span>
+                        </label>
+                        <input
+                          required
+                          type="date"
+                          value={registrationDate}
+                          onChange={(e) => setRegistrationDate(e.target.value)}
+                          className="h-10 w-full bg-white border border-slate-200 rounded-lg px-3 text-sm font-medium text-slate-900 focus:border-emerald-500 outline-none transition-all"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-xs font-semibold text-slate-700 block">
+                        Vehicle Type <span className="text-rose-400">*</span>
+                      </label>
+                      <select
+                        required
+                        value={vehicleType}
+                        onChange={(e) => setVehicleType(e.target.value)}
+                        className="h-10 w-full bg-white border border-slate-200 rounded-lg px-3 text-sm font-medium text-slate-900 focus:border-emerald-500 outline-none transition-all appearance-none cursor-pointer"
+                      >
+                        <option value="">Select Sub-Type</option>
+                        {category === 'bike' ? (
+                          <>
+                            <option value="Scooter (Activa, Ntorq, etc.)">
+                              Scooter (Activa, Ntorq, etc.)
+                            </option>
+                            <option value="Cruiser (Royal Enfield, etc.)">
+                              Cruiser (Royal Enfield, etc.)
+                            </option>
+                            <option value="Adventure / Tourer">Adventure / Tourer</option>
+                            <option value="Premium / Sports Bike">Premium / Sports Bike</option>
+                          </>
+                        ) : (
+                          <>
+                            <option value="Hatchback / Sedan">Hatchback / Sedan</option>
+                            <option value="SUV / MUV">SUV / MUV</option>
+                            <option value="Luxury Sedan">Luxury Sedan</option>
+                            <option value="Off-Roader / 4x4">Off-Roader / 4x4</option>
+                          </>
+                        )}
+                      </select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-xs font-semibold text-slate-700 block">
+                        Registration Category / Permit <span className="text-rose-400">*</span>
+                      </label>
+                      <select
+                        required
+                        value={registrationCategory}
+                        onChange={(e) => setRegistrationCategory(e.target.value)}
+                        className="h-10 w-full bg-white border border-slate-200 rounded-lg px-3 text-sm font-medium text-slate-900 focus:border-emerald-500 outline-none transition-all appearance-none cursor-pointer"
+                      >
+                        <option value="">Select Category</option>
+                        <option value="Commercial Self-Drive (Black Plate / Yellow Text)">
+                          Commercial Self-Drive (Black Plate / Yellow Text)
+                        </option>
+                        <option value="Private Registration (White Plate / Black Text)">
+                          Private Registration (White Plate / Black Text)
+                        </option>
+                        <option value="Commercial Transport (Yellow Plate / Black Text)">
+                          Commercial Transport (Yellow Plate / Black Text)
+                        </option>
+                      </select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-xs font-semibold text-slate-700 block">
+                        Cancellation Policy <span className="text-rose-400">*</span>
+                      </label>
+                      <select
+                        required
+                        value={cancellationPolicy}
+                        onChange={(e) => setCancellationPolicy(e.target.value)}
+                        className="h-10 w-full bg-white border border-slate-200 rounded-lg px-3 text-sm font-medium text-slate-900 focus:border-emerald-500 outline-none transition-all appearance-none cursor-pointer"
+                      >
+                        <option value="flexible">Flexible</option>
+                        <option value="moderate">Moderate</option>
+                        <option value="strict">Strict</option>
+                      </select>
+                    </div>
+
+                    <div className="pt-4 border-t border-slate-200 space-y-4 col-span-1 sm:col-span-2">
+                      <h5 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                        Required Verification Documents
+                      </h5>
+
+                      {/* RC Document */}
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold text-slate-700 block">
+                          Registration Certificate (RC) <span className="text-rose-400">*</span>
+                        </label>
+                        {rcDocPreview ? (
+                          <div className="flex items-center justify-between bg-white border border-slate-200 rounded-lg p-2.5">
+                            <span className="text-xs text-slate-600 truncate max-w-[250px]">
+                              {rcDoc?.name || 'Uploaded Document'}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setRcDoc(null);
+                                setRcDocPreview(null);
+                              }}
+                              className="text-rose-500 hover:text-rose-700 text-xs font-bold"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        ) : (
+                          <input
+                            required
+                            type="file"
+                            accept="image/*,application/pdf"
+                            onChange={(e) => {
+                              const file = e.target.files[0];
+                              if (file) {
+                                setRcDoc(file);
+                                setRcDocPreview(URL.createObjectURL(file));
+                              }
+                            }}
+                            className="text-xs file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer w-full"
+                          />
+                        )}
+                      </div>
+
+                      {/* Insurance Policy */}
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold text-slate-700 block">
+                          Insurance Policy <span className="text-rose-400">*</span>
+                        </label>
+                        {insuranceDocPreview ? (
+                          <div className="flex items-center justify-between bg-white border border-slate-200 rounded-lg p-2.5">
+                            <span className="text-xs text-slate-600 truncate max-w-[250px]">
+                              {insuranceDoc?.name || 'Uploaded Document'}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setInsuranceDoc(null);
+                                setInsuranceDocPreview(null);
+                              }}
+                              className="text-rose-500 hover:text-rose-700 text-xs font-bold"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        ) : (
+                          <input
+                            required
+                            type="file"
+                            accept="image/*,application/pdf"
+                            onChange={(e) => {
+                              const file = e.target.files[0];
+                              if (file) {
+                                setInsuranceDoc(file);
+                                setInsuranceDocPreview(URL.createObjectURL(file));
+                              }
+                            }}
+                            className="text-xs file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer w-full"
+                          />
+                        )}
+                      </div>
+
+                      {/* PUC Certificate */}
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold text-slate-700 block">
+                          PUC Certificate (Pollution Control){' '}
+                          <span className="text-rose-400">*</span>
+                        </label>
+                        {pucDocPreview ? (
+                          <div className="flex items-center justify-between bg-white border border-slate-200 rounded-lg p-2.5">
+                            <span className="text-xs text-slate-600 truncate max-w-[250px]">
+                              {pucDoc?.name || 'Uploaded Document'}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setPucDoc(null);
+                                setPucDocPreview(null);
+                              }}
+                              className="text-rose-500 hover:text-rose-700 text-xs font-bold"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        ) : (
+                          <input
+                            required
+                            type="file"
+                            accept="image/*,application/pdf"
+                            onChange={(e) => {
+                              const file = e.target.files[0];
+                              if (file) {
+                                setPucDoc(file);
+                                setPucDocPreview(URL.createObjectURL(file));
+                              }
+                            }}
+                            className="text-xs file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer w-full"
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div className="space-y-2">
                   <label className="text-xs font-semibold text-slate-700 block">
                     Walkthrough Video URL (YouTube)
@@ -354,7 +644,9 @@ export default function PartnerCreateProperty() {
                 <div className="space-y-6 pt-6 border-t border-slate-100">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="text-sm font-bold text-slate-900">Available Utilities</h3>
+                      <h3 className="text-sm font-bold text-slate-900">
+                        {isVehicle ? 'Vehicle Inclusions & Features' : 'Available Utilities'}
+                      </h3>
                       <p className="text-[11px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">
                         Professional Inventory Management
                       </p>
@@ -365,27 +657,29 @@ export default function PartnerCreateProperty() {
                   </div>
 
                   {/* Wifi Speed Input */}
-                  <div className="space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                    <label className="text-[11px] font-black uppercase tracking-widest text-slate-400 block ml-1">
-                      Verified Wi-Fi Speed (Mbps)
-                    </label>
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center border border-slate-200">
-                        <Wifi size={16} className="text-emerald-500" />
+                  {!isVehicle && (
+                    <div className="space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                      <label className="text-[11px] font-black uppercase tracking-widest text-slate-400 block ml-1">
+                        Verified Wi-Fi Speed (Mbps)
+                      </label>
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center border border-slate-200">
+                          <Wifi size={16} className="text-emerald-500" />
+                        </div>
+                        <input
+                          type="number"
+                          placeholder="e.g. 100"
+                          value={wifiSpeed}
+                          onChange={(e) => setWifiSpeed(e.target.value)}
+                          className="h-10 flex-1 bg-white border border-slate-200 rounded-lg px-4 text-sm font-bold text-slate-900 outline-none focus:border-emerald-500 transition-all"
+                        />
+                        <span className="text-[11px] font-black text-slate-400">MBPS</span>
                       </div>
-                      <input
-                        type="number"
-                        placeholder="e.g. 100"
-                        value={wifiSpeed}
-                        onChange={(e) => setWifiSpeed(e.target.value)}
-                        className="h-10 flex-1 bg-white border border-slate-200 rounded-lg px-4 text-sm font-bold text-slate-900 outline-none focus:border-emerald-500 transition-all"
-                      />
-                      <span className="text-[11px] font-black text-slate-400">MBPS</span>
                     </div>
-                  </div>
+                  )}
 
                   <div className="space-y-8">
-                    {AMENITY_CATEGORIES.map((cat) => (
+                    {(isVehicle ? VEHICLE_AMENITY_CATEGORIES : AMENITY_CATEGORIES).map((cat) => (
                       <div key={cat.id} className="space-y-3">
                         <div className="flex items-center gap-2">
                           <div className="h-px w-4 bg-slate-200" />
@@ -437,7 +731,7 @@ export default function PartnerCreateProperty() {
               <div>
                 <h3 className="text-lg font-bold text-slate-900 mb-0.5">Cover Photo</h3>
                 <p className="text-sm text-slate-500">
-                  Upload a high-quality image for your property listing.
+                  Upload a high-quality image for your {isVehicle ? 'vehicle' : 'property'} listing.
                 </p>
               </div>
 
@@ -484,8 +778,9 @@ export default function PartnerCreateProperty() {
           <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl p-4">
             <Info size={16} className="text-blue-500 mt-0.5 shrink-0" />
             <p className="text-sm text-blue-700 font-medium">
-              After creating the listing, you can add room types, set pricing, and upload variant
-              photos. Your listing will be reviewed by our team before going live.
+              {isVehicle
+                ? 'After creating the vehicle listing, you can define rental pricing rules. Your listing will be reviewed by our team before going live.'
+                : 'After creating the listing, you can add room types, set pricing, and upload variant photos. Your listing will be reviewed by our team before going live.'}
             </p>
           </div>
 
@@ -508,7 +803,7 @@ export default function PartnerCreateProperty() {
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
                 <>
-                  <span>Create Property</span>
+                  <span>{isVehicle ? 'Create Vehicle Listing' : 'Create Property'}</span>
                   <ArrowRight size={15} />
                 </>
               )}

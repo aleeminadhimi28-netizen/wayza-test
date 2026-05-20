@@ -23,7 +23,11 @@ import { useToast } from '../../ToastContext.jsx';
 
 import { api, BASE_URL } from '../../utils/api.js';
 import { fixImg } from '../../utils/image.js';
-import { AMENITY_CATEGORIES, ALL_AMENITIES } from '../../utils/amenities.js';
+import {
+  AMENITY_CATEGORIES,
+  VEHICLE_AMENITY_CATEGORIES,
+  ALL_AMENITIES,
+} from '../../utils/amenities.js';
 import ConfirmModal from '../../components/ui/ConfirmModal.jsx';
 
 const ROOM_NAME_OPTIONS = [
@@ -84,7 +88,24 @@ export default function PartnerProperty() {
   const [mainVideo, setMainVideo] = useState('');
   const [mainAmenities, setMainAmenities] = useState([]);
   const [mainWifiSpeed, setMainWifiSpeed] = useState('');
+  const [mainLicensePlate, setMainLicensePlate] = useState('');
+  const [mainRegistrationDate, setMainRegistrationDate] = useState('');
+  const [mainVehicleType, setMainVehicleType] = useState('');
+  const [mainRegistrationCategory, setMainRegistrationCategory] = useState('');
+  const [mainCancellationPolicy, setMainCancellationPolicy] = useState('moderate');
+  const [mainRcDoc, setMainRcDoc] = useState('');
+  const [mainInsuranceDoc, setMainInsuranceDoc] = useState('');
+  const [mainPucDoc, setMainPucDoc] = useState('');
+
+  const [rcFile, setRcFile] = useState(null);
+  const [rcPreview, setRcPreview] = useState('');
+  const [insFile, setInsFile] = useState(null);
+  const [insPreview, setInsPreview] = useState('');
+  const [pucFile, setPucFile] = useState(null);
+  const [pucPreview, setPucPreview] = useState('');
+
   const [mainLoading, setMainLoading] = useState(false);
+  const isVehicle = listing?.category === 'bike' || listing?.category === 'car';
 
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, onConfirm: () => {} });
 
@@ -97,6 +118,21 @@ export default function PartnerProperty() {
       setMainVideo(l.walkthroughVideo || '');
       setMainAmenities(l.amenities || []);
       setMainWifiSpeed(l.wifiSpeed || '');
+      setMainLicensePlate(l.licensePlate || '');
+      setMainRegistrationDate(l.registrationDate || '');
+      setMainVehicleType(l.vehicleType || '');
+      setMainRegistrationCategory(l.registrationCategory || '');
+      setMainCancellationPolicy(l.cancellationPolicy || 'moderate');
+      setMainRcDoc(l.rcDoc || '');
+      setMainInsuranceDoc(l.insuranceDoc || '');
+      setMainPucDoc(l.pucDoc || '');
+
+      setRcFile(null);
+      setRcPreview('');
+      setInsFile(null);
+      setInsPreview('');
+      setPucFile(null);
+      setPucPreview('');
 
       if (editIndex === null) {
         setType(l.category === 'bike' || l.category === 'car' ? 'Vehicle' : 'Room');
@@ -249,18 +285,59 @@ export default function PartnerProperty() {
   async function updateMainDetails() {
     setMainLoading(true);
     try {
-      const data = await api.updateListing(id, {
+      let rcPath = mainRcDoc;
+      let insPath = mainInsuranceDoc;
+      let pucPath = mainPucDoc;
+
+      if (rcFile) {
+        const fd = new FormData();
+        fd.append('image', rcFile);
+        const res = await api.uploadImage(fd);
+        if (res.ok) rcPath = res.filename;
+      }
+      if (insFile) {
+        const fd = new FormData();
+        fd.append('image', insFile);
+        const res = await api.uploadImage(fd);
+        if (res.ok) insPath = res.filename;
+      }
+      if (pucFile) {
+        const fd = new FormData();
+        fd.append('image', pucFile);
+        const res = await api.uploadImage(fd);
+        if (res.ok) pucPath = res.filename;
+      }
+
+      const payload = {
         title: mainTitle,
         walkthroughVideo: mainVideo,
         amenities: mainAmenities,
-        wifiSpeed: Number(mainWifiSpeed) || 0,
-      });
+        ...(isVehicle
+          ? {
+              licensePlate: mainLicensePlate,
+              registrationDate: mainRegistrationDate,
+              vehicleType: mainVehicleType,
+              registrationCategory: mainRegistrationCategory,
+              cancellationPolicy: mainCancellationPolicy,
+              rcDoc: rcPath,
+              insuranceDoc: insPath,
+              pucDoc: pucPath,
+            }
+          : {
+              wifiSpeed: Number(mainWifiSpeed) || 0,
+            }),
+      };
+
+      const data = await api.updateListing(id, payload);
       if (data.ok) {
-        showToast('Property details updated.', 'success');
+        showToast(isVehicle ? 'Vehicle details updated.' : 'Property details updated.', 'success');
         setIsEditingMain(false);
         load();
       } else {
-        showToast('Failed to update property details.', 'error');
+        showToast(
+          isVehicle ? 'Failed to update vehicle details.' : 'Failed to update property details.',
+          'error'
+        );
       }
     } catch {
       showToast('Connection error. Please try again.', 'error');
@@ -336,12 +413,15 @@ export default function PartnerProperty() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-2">
                   <label className="text-[11px] font-black uppercase tracking-widest text-white/40 ml-2">
-                    Property Identity
+                    {isVehicle ? 'Vehicle Identity' : 'Property Identity'}
                   </label>
                   <input
                     type="text"
                     value={mainTitle}
                     onChange={(e) => setMainTitle(e.target.value)}
+                    placeholder={
+                      isVehicle ? 'e.g. Royal Enfield Himalayan' : 'e.g. Ocean View Villa'
+                    }
                     className="w-full bg-white/5 border border-white/10 rounded-2xl h-14 px-6 text-white font-bold text-sm outline-none focus:border-emerald-500 transition-all"
                   />
                 </div>
@@ -369,27 +449,282 @@ export default function PartnerProperty() {
                   </div>
 
                   {/* Wifi Speed Edit */}
-                  <div className="space-y-2 bg-white/5 p-4 rounded-2xl border border-white/10 max-w-xs">
-                    <label className="text-[11px] font-black uppercase tracking-widest text-white/30 block ml-1">
-                      Verified Wi-Fi Speed (Mbps)
-                    </label>
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center border border-white/10">
-                        <Wifi size={16} className="text-emerald-500" />
+                  {!isVehicle && (
+                    <div className="space-y-2 bg-white/5 p-4 rounded-2xl border border-white/10 max-w-xs">
+                      <label className="text-[11px] font-black uppercase tracking-widest text-white/30 block ml-1">
+                        Verified Wi-Fi Speed (Mbps)
+                      </label>
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center border border-white/10">
+                          <Wifi size={16} className="text-emerald-500" />
+                        </div>
+                        <input
+                          type="number"
+                          placeholder="e.g. 100"
+                          value={mainWifiSpeed}
+                          onChange={(e) => setMainWifiSpeed(e.target.value)}
+                          className="h-10 flex-1 bg-transparent border-b border-white/10 px-2 text-sm font-bold text-white outline-none focus:border-emerald-500 transition-all"
+                        />
+                        <span className="text-[11px] font-black text-white/20 uppercase">MBPS</span>
                       </div>
-                      <input
-                        type="number"
-                        placeholder="e.g. 100"
-                        value={mainWifiSpeed}
-                        onChange={(e) => setMainWifiSpeed(e.target.value)}
-                        className="h-10 flex-1 bg-transparent border-b border-white/10 px-2 text-sm font-bold text-white outline-none focus:border-emerald-500 transition-all"
-                      />
-                      <span className="text-[11px] font-black text-white/20 uppercase">MBPS</span>
                     </div>
-                  </div>
+                  )}
+
+                  {isVehicle && (
+                    <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 bg-white/5 p-6 rounded-2xl border border-white/10">
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-black uppercase tracking-widest text-white/40 ml-2">
+                          License Plate
+                        </label>
+                        <input
+                          type="text"
+                          value={mainLicensePlate}
+                          onChange={(e) => setMainLicensePlate(e.target.value)}
+                          className="w-full bg-white/5 border border-white/10 rounded-xl h-12 px-4 text-white font-bold text-sm outline-none focus:border-emerald-500 transition-all"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-black uppercase tracking-widest text-white/40 ml-2">
+                          Registration Date
+                        </label>
+                        <input
+                          type="date"
+                          value={mainRegistrationDate}
+                          onChange={(e) => setMainRegistrationDate(e.target.value)}
+                          className="w-full bg-white/5 border border-white/10 rounded-xl h-12 px-4 text-white font-bold text-sm outline-none focus:border-emerald-500 transition-all"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-black uppercase tracking-widest text-white/40 ml-2">
+                          Vehicle Type
+                        </label>
+                        <select
+                          value={mainVehicleType}
+                          onChange={(e) => setMainVehicleType(e.target.value)}
+                          className="w-full bg-[#050a08] border border-white/10 rounded-xl h-12 px-4 text-white font-bold text-sm outline-none focus:border-emerald-500 transition-all appearance-none cursor-pointer"
+                        >
+                          <option value="">Select Sub-Type</option>
+                          {listing?.category === 'bike' ? (
+                            <>
+                              <option value="Scooter (Activa, Ntorq, etc.)">
+                                Scooter (Activa, Ntorq, etc.)
+                              </option>
+                              <option value="Cruiser Bike">Cruiser Bike</option>
+                              <option value="Sport Bike">Sport Bike</option>
+                              <option value="Royal Enfield">Royal Enfield</option>
+                            </>
+                          ) : (
+                            <>
+                              <option value="Hatchback Car">Hatchback Car</option>
+                              <option value="Sedan Car">Sedan Car</option>
+                              <option value="SUV Car">SUV Car</option>
+                              <option value="Luxury Car">Luxury Car</option>
+                            </>
+                          )}
+                        </select>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-black uppercase tracking-widest text-white/40 ml-2">
+                          Registration Category / Permit
+                        </label>
+                        <select
+                          value={mainRegistrationCategory}
+                          onChange={(e) => setMainRegistrationCategory(e.target.value)}
+                          className="w-full bg-[#050a08] border border-white/10 rounded-xl h-12 px-4 text-white font-bold text-sm outline-none focus:border-emerald-500 transition-all appearance-none cursor-pointer"
+                        >
+                          <option value="">Select Category</option>
+                          <option value="Commercial Self-Drive (Black Plate / Yellow Text)">
+                            Commercial Self-Drive (Black Plate / Yellow Text)
+                          </option>
+                          <option value="Private Registration (White Plate / Black Text)">
+                            Private Registration (White Plate / Black Text)
+                          </option>
+                          <option value="Commercial Transport (Yellow Plate / Black Text)">
+                            Commercial Transport (Yellow Plate / Black Text)
+                          </option>
+                        </select>
+                      </div>
+                      <div className="space-y-2 col-span-1 md:col-span-2">
+                        <label className="text-[11px] font-black uppercase tracking-widest text-white/40 ml-2">
+                          Cancellation Policy
+                        </label>
+                        <select
+                          value={mainCancellationPolicy}
+                          onChange={(e) => setMainCancellationPolicy(e.target.value)}
+                          className="w-full bg-[#050a08] border border-white/10 rounded-xl h-12 px-4 text-white font-bold text-sm outline-none focus:border-emerald-500 transition-all appearance-none cursor-pointer"
+                        >
+                          <option value="flexible">Flexible</option>
+                          <option value="moderate">Moderate</option>
+                          <option value="strict">Strict</option>
+                        </select>
+                      </div>
+
+                      <div className="md:col-span-2 pt-4 border-t border-white/10 space-y-4">
+                        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                          Required Verification Documents
+                        </h4>
+
+                        {/* RC Document */}
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-semibold text-slate-300 block">
+                            Registration Certificate (RC)
+                          </label>
+                          {mainRcDoc && !rcPreview && (
+                            <div className="flex items-center justify-between bg-white/5 border border-white/10 rounded-xl p-2.5">
+                              <span className="text-xs text-slate-400 truncate max-w-[250px]">
+                                Existing RC File:{' '}
+                                <a
+                                  href={fixImg(mainRcDoc)}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-emerald-400 hover:underline"
+                                >
+                                  {mainRcDoc.split('/').pop()}
+                                </a>
+                              </span>
+                            </div>
+                          )}
+                          {rcPreview ? (
+                            <div className="flex items-center justify-between bg-white/5 border border-white/10 rounded-xl p-2.5">
+                              <span className="text-xs text-slate-300 truncate max-w-[250px]">
+                                {rcFile?.name || 'New Document Selected'}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setRcFile(null);
+                                  setRcPreview('');
+                                }}
+                                className="text-rose-400 hover:text-rose-500 text-xs font-bold"
+                              >
+                                Clear
+                              </button>
+                            </div>
+                          ) : (
+                            <input
+                              type="file"
+                              accept="image/*,application/pdf"
+                              onChange={(e) => {
+                                const file = e.target.files[0];
+                                if (file) {
+                                  setRcFile(file);
+                                  setRcPreview(URL.createObjectURL(file));
+                                }
+                              }}
+                              className="text-xs file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20 cursor-pointer w-full"
+                            />
+                          )}
+                        </div>
+
+                        {/* Insurance Document */}
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-semibold text-slate-300 block">
+                            Insurance Policy
+                          </label>
+                          {mainInsuranceDoc && !insPreview && (
+                            <div className="flex items-center justify-between bg-white/5 border border-white/10 rounded-xl p-2.5">
+                              <span className="text-xs text-slate-400 truncate max-w-[250px]">
+                                Existing Insurance:{' '}
+                                <a
+                                  href={fixImg(mainInsuranceDoc)}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-emerald-400 hover:underline"
+                                >
+                                  {mainInsuranceDoc.split('/').pop()}
+                                </a>
+                              </span>
+                            </div>
+                          )}
+                          {insPreview ? (
+                            <div className="flex items-center justify-between bg-white/5 border border-white/10 rounded-xl p-2.5">
+                              <span className="text-xs text-slate-300 truncate max-w-[250px]">
+                                {insFile?.name || 'New Document Selected'}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setInsFile(null);
+                                  setInsPreview('');
+                                }}
+                                className="text-rose-400 hover:text-rose-500 text-xs font-bold"
+                              >
+                                Clear
+                              </button>
+                            </div>
+                          ) : (
+                            <input
+                              type="file"
+                              accept="image/*,application/pdf"
+                              onChange={(e) => {
+                                const file = e.target.files[0];
+                                if (file) {
+                                  setInsFile(file);
+                                  setInsPreview(URL.createObjectURL(file));
+                                }
+                              }}
+                              className="text-xs file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20 cursor-pointer w-full"
+                            />
+                          )}
+                        </div>
+
+                        {/* PUC Certificate */}
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-semibold text-slate-300 block">
+                            PUC Certificate
+                          </label>
+                          {mainPucDoc && !pucPreview && (
+                            <div className="flex items-center justify-between bg-white/5 border border-white/10 rounded-xl p-2.5">
+                              <span className="text-xs text-slate-400 truncate max-w-[250px]">
+                                Existing PUC:{' '}
+                                <a
+                                  href={fixImg(mainPucDoc)}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-emerald-400 hover:underline"
+                                >
+                                  {mainPucDoc.split('/').pop()}
+                                </a>
+                              </span>
+                            </div>
+                          )}
+                          {pucPreview ? (
+                            <div className="flex items-center justify-between bg-white/5 border border-white/10 rounded-xl p-2.5">
+                              <span className="text-xs text-slate-300 truncate max-w-[250px]">
+                                {pucFile?.name || 'New Document Selected'}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setPucFile(null);
+                                  setPucPreview('');
+                                }}
+                                className="text-rose-400 hover:text-rose-500 text-xs font-bold"
+                              >
+                                Clear
+                              </button>
+                            </div>
+                          ) : (
+                            <input
+                              type="file"
+                              accept="image/*,application/pdf"
+                              onChange={(e) => {
+                                const file = e.target.files[0];
+                                if (file) {
+                                  setPucFile(file);
+                                  setPucPreview(URL.createObjectURL(file));
+                                }
+                              }}
+                              className="text-xs file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20 cursor-pointer w-full"
+                            />
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   <div className="space-y-8">
-                    {AMENITY_CATEGORIES.map((cat) => (
+                    {(isVehicle ? VEHICLE_AMENITY_CATEGORIES : AMENITY_CATEGORIES).map((cat) => (
                       <div key={cat.id} className="space-y-3">
                         <div className="flex items-center gap-2">
                           <div className="h-[1px] w-4 bg-white/10" />

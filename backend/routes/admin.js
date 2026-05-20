@@ -362,6 +362,43 @@ router.patch("/withdrawals/:id", requireAuth, requireRole(["admin"]), async (req
             { $set: { status, reason: reason || null, processedAt: new Date() } }
         );
 
+        // If updated to completed, lock down matching bookings as paid_out up to the request amount
+        if (status === "completed" && request && request.status !== "completed") {
+            const bookingsCol = db.collection("bookings");
+            const now = new Date();
+            // Fetch all past bookings for this partner (ownerEmail) which are paid but not paid_out
+            const eligibleBookings = await bookingsCol.find({
+                ownerEmail: request.email,
+                status: "paid",
+                payoutStatus: { $ne: "paid_out" }
+            }).sort({ checkIn: 1 }).toArray();
+
+            let targetAmount = request.amount;
+            let updatedAmount = 0;
+            const bookingsToUpdate = [];
+
+            for (const b of eligibleBookings) {
+                if (new Date(b.checkIn) <= now) {
+                    const fee = b.commissionAmount !== undefined ? b.commissionAmount : (99 + Math.round((b.baseAmount || (b.totalPrice / 1.12)) * 0.10));
+                    const earnings = b.netEarnings !== undefined ? b.netEarnings : (b.totalPrice || 0) - fee;
+                    
+                    bookingsToUpdate.push(b._id);
+                    updatedAmount += earnings;
+                    
+                    if (updatedAmount >= targetAmount) {
+                        break;
+                    }
+                }
+            }
+
+            if (bookingsToUpdate.length > 0) {
+                await bookingsCol.updateMany(
+                    { _id: { $in: bookingsToUpdate } },
+                    { $set: { payoutStatus: "paid_out", settledAt: new Date() } }
+                );
+            }
+        }
+
         // Send email notification
         const transporter = await getTransporter();
         if (transporter && request?.email) {

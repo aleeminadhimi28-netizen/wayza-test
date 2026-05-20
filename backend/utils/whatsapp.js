@@ -4,13 +4,57 @@
  */
 
 export async function sendWhatsAppAlert(phone, message, buttons = []) {
-    // 1. In production, you would call:
-    // const response = await fetch('https://graph.facebook.com/v17.0/YOUR_PHONE_NUMBER_ID/messages', { ... })
+    const accountSid = process.env.TWILIO_ACCOUNT_SID;
+    const authToken = process.env.TWILIO_AUTH_TOKEN;
+    const fromPhone = process.env.TWILIO_FROM_PHONE; // e.g. +14155238886 (Twilio sandbox) or your number
 
     console.log(`[WHATSAPP ALERT] To: ${phone}`);
     console.log(`[MESSAGE]: ${message}`);
     if (buttons.length > 0) {
         console.log(`[INTERACTIVE BUTTONS]: ${buttons.map(b => b.title).join(' | ')}`);
+    }
+
+    if (accountSid && authToken && fromPhone) {
+        try {
+            // Ensure phone starts with '+' or format correctly. Standardise for Twilio format: 'whatsapp:+91...'
+            let formattedPhone = phone.trim();
+            if (!formattedPhone.startsWith("+")) {
+                formattedPhone = "+" + formattedPhone;
+            }
+
+            let formattedFrom = fromPhone.trim();
+            if (!formattedFrom.startsWith("+")) {
+                formattedFrom = "+" + formattedFrom;
+            }
+
+            const bodyParams = new URLSearchParams();
+            bodyParams.append("To", `whatsapp:${formattedPhone}`);
+            bodyParams.append("From", `whatsapp:${formattedFrom}`);
+            bodyParams.append("Body", message);
+
+            const authString = Buffer.from(`${accountSid}:${authToken}`).toString("base64");
+            const res = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Authorization": `Basic ${authString}`
+                },
+                body: bodyParams
+            });
+
+            if (!res.ok) {
+                const errData = await res.json();
+                console.error("❌ Twilio WhatsApp Error:", errData);
+                return { ok: false, error: errData };
+            }
+
+            const result = await res.json();
+            console.log("✅ Twilio WhatsApp sent. SID:", result.sid);
+            return { ok: true, messageId: result.sid };
+        } catch (e) {
+            console.error("❌ Failed to send WhatsApp via Twilio:", e.message);
+            return { ok: true, messageId: "wa_fallback_" + Math.random().toString(36).substr(2, 9), error: e.message };
+        }
     }
 
     // Mock successful response

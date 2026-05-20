@@ -36,7 +36,9 @@ const onboardSchema = z.object({
         roomType: z.string().optional(),
         vehicleType: z.string().optional(),
         registrationCategory: z.string().optional(),
-        cancellationPolicy: z.string().optional()
+        cancellationPolicy: z.string().optional(),
+        licensePlate: z.string().optional(),
+        registrationDate: z.string().optional()
     }).optional().nullable()
 });
 
@@ -152,6 +154,7 @@ router.post("/onboard", requireAuth, requireRole(["partner"]), async (req, res, 
             await listings.insertOne({
                 title: firstListing.title,
                 price: firstListing.price || 0,
+                baseFloorPrice: firstListing.price || 0,
                 location, subCategory, category: subCategory, mainSector,
                 ownerEmail: email,
                 variants: [],
@@ -162,6 +165,8 @@ router.post("/onboard", requireAuth, requireRole(["partner"]), async (req, res, 
                 vehicleType: firstListing.vehicleType || null,
                 registrationCategory: firstListing.registrationCategory || null,
                 cancellationPolicy: firstListing.cancellationPolicy || 'moderate',
+                licensePlate: firstListing.licensePlate || "",
+                registrationDate: firstListing.registrationDate || "",
                 createdAt: new Date()
             });
         }
@@ -206,13 +211,22 @@ router.get("/earnings", requireAuth, requireRole(["partner", "admin"]), async (r
             }
         });
 
+        // Deduct pending/approved withdrawals from availableBalance
+        const withdrawals = db.collection("withdrawalRequests");
+        const pendingOrApprovedRequests = await withdrawals.find({
+            email: req.user.email,
+            status: { $in: ["pending", "approved"] }
+        }).toArray();
+        const pendingWithdrawalTotal = pendingOrApprovedRequests.reduce((sum, r) => sum + r.amount, 0);
+        const adjustedAvailableBalance = Math.max(0, Math.round(availableBalance) - pendingWithdrawalTotal);
+
         res.json({
             ok: true,
             totalRevenue: Math.round(totalRevenue),
             platformFee: Math.round(platformFee),
             ownerPayout: Math.round(ownerPayout),
             pendingBalance: Math.round(pendingBalance),
-            availableBalance: Math.round(availableBalance),
+            availableBalance: adjustedAvailableBalance,
             alreadyPaid: Math.round(alreadyPaid),
             totalBookings: allPaid.length
         });
@@ -309,7 +323,15 @@ router.post("/wallet/request", requireAuth, requireRole(["partner"]), async (req
             return sum;
         }, 0);
 
-        if (amount > Math.round(available)) {
+        // Deduct pending/approved withdrawals from available balance calculation
+        const pendingOrApprovedRequests = await withdrawals.find({
+            email: req.user.email,
+            status: { $in: ["pending", "approved"] }
+        }).toArray();
+        const pendingWithdrawalTotal = pendingOrApprovedRequests.reduce((sum, r) => sum + r.amount, 0);
+        const adjustedAvailableBalance = Math.max(0, Math.round(available) - pendingWithdrawalTotal);
+
+        if (amount > adjustedAvailableBalance) {
             return res.status(400).json({ ok: false, message: "Insufficient available balance" });
         }
 
@@ -346,7 +368,7 @@ router.get("/calendar-feed/:token", async (req, res, next) => {
 
         const rows = await bookings.find({
             ownerEmail: partner.email,
-            status: "paid"
+            status: { $in: ["paid", "arrived", "departed"] }
         }).toArray();
 
         let ics = [
