@@ -168,6 +168,7 @@ export default function PartnerOnboarding() {
         msmeNumber,
         gstNumber,
         gstEnabled,
+        mainSector,
         firstListing: listingName
           ? {
               title: listingName,
@@ -301,13 +302,67 @@ export default function PartnerOnboarding() {
               </div>
 
               <div className="space-y-12">
+                {/* Primary Service Sector */}
+                <div className="space-y-6">
+                  <label className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] ml-2">
+                    Primary Service Sector
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMainSector('stays');
+                        setSubCategory('Resort / Hotel');
+                      }}
+                      className={`p-6 rounded-[32px] border-2 transition-all text-left flex items-center gap-6 group/btn ${mainSector === 'stays' ? 'bg-slate-900 border-slate-900 text-white shadow-xl shadow-slate-900/20' : 'bg-white/50 border-slate-100 text-slate-900 hover:border-emerald-200'}`}
+                    >
+                      <div
+                        className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors ${mainSector === 'stays' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-400 group-hover/btn:text-emerald-500'}`}
+                      >
+                        <Home size={20} />
+                      </div>
+                      <div>
+                        <p className="font-black uppercase tracking-widest text-[10px] leading-none">
+                          Stays
+                        </p>
+                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1.5 group-hover/btn:text-slate-300">
+                          Hotels & Homestays
+                        </p>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMainSector('vehicles');
+                        setSubCategory('Individual / Peer-to-Peer Host');
+                      }}
+                      className={`p-6 rounded-[32px] border-2 transition-all text-left flex items-center gap-6 group/btn ${mainSector === 'vehicles' ? 'bg-slate-900 border-slate-900 text-white shadow-xl shadow-slate-900/20' : 'bg-white/50 border-slate-100 text-slate-900 hover:border-emerald-200'}`}
+                    >
+                      <div
+                        className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors ${mainSector === 'vehicles' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-400 group-hover/btn:text-emerald-500'}`}
+                      >
+                        <Bike size={20} />
+                      </div>
+                      <div>
+                        <p className="font-black uppercase tracking-widest text-[10px] leading-none">
+                          Vehicles
+                        </p>
+                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1.5 group-hover/btn:text-slate-300">
+                          Cars & Bikes
+                        </p>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
                 <FormInput
-                  label="Official Asset Name"
+                  label={mainSector === 'stays' ? "Official Asset Name" : "Official Business / Fleet Name"}
                   value={businessName}
                   onChange={setBusinessName}
                   required
-                  placeholder="E.G. AZURE CLIFF ESTATE"
-                  icon={<Building size={24} />}
+                  placeholder={mainSector === 'stays' ? "E.G. AZURE CLIFF ESTATE" : "E.G. WAYZZA RENTALS"}
+                  icon={mainSector === 'stays' ? <Building size={24} /> : <Bike size={24} />}
                 />
 
                 {/* Sub-Category / Partner Type based on mainSector */}

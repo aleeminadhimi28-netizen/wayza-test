@@ -28,6 +28,7 @@ const onboardSchema = z.object({
     msmeNumber: z.string().min(1, 'MSME number is required'),
     gstNumber: z.string().optional(),
     gstEnabled: z.boolean().optional(),
+    mainSector: z.string().optional(),
     firstListing: z.object({
         title: z.string().min(1),
         price: z.number().optional(),
@@ -137,25 +138,38 @@ router.post("/onboard", requireAuth, requireRole(["partner"]), async (req, res, 
         const db = getDB();
         const partners = db.collection("partners");
         const listings = db.collection("listings");
-        const { businessName, subCategory, brandVision, location, msmeNumber, gstNumber, gstEnabled, firstListing } = parsed.data;
+        const { businessName, subCategory, brandVision, location, msmeNumber, gstNumber, gstEnabled, mainSector: requestMainSector, firstListing } = parsed.data;
         const email = req.user.email;
-
+ 
         // Fetch partner to get mainSector
         const partner = await partners.findOne({ email });
-        const mainSector = partner?.mainSector || 'stays';
-
+        const mainSector = requestMainSector || partner?.mainSector || 'stays';
+ 
         await partners.updateOne(
             { email },
-            { $set: { businessName, subCategory, category: subCategory, brandVision: brandVision || '', location, msmeNumber: msmeNumber || '', gstNumber: gstNumber || '', gstEnabled: gstEnabled || false, onboardingCompleted: true, updatedAt: new Date() } },
+            { $set: { businessName, subCategory, mainSector, category: subCategory, brandVision: brandVision || '', location, msmeNumber: msmeNumber || '', gstNumber: gstNumber || '', gstEnabled: gstEnabled || false, onboardingCompleted: true, updatedAt: new Date() } },
             { upsert: true }
         );
-
+ 
         if (firstListing?.title) {
+            let calculatedCategory = 'hotel';
+            if (mainSector === 'vehicles') {
+                const vType = firstListing.vehicleType || '';
+                if (vType.toLowerCase().includes('car')) {
+                    calculatedCategory = 'car';
+                } else {
+                    calculatedCategory = 'bike';
+                }
+            }
+
             await listings.insertOne({
                 title: firstListing.title,
                 price: firstListing.price || 0,
                 baseFloorPrice: firstListing.price || 0,
-                location, subCategory, category: subCategory, mainSector,
+                location, 
+                subCategory, 
+                category: calculatedCategory, 
+                mainSector,
                 ownerEmail: email,
                 variants: [],
                 approved: false,
