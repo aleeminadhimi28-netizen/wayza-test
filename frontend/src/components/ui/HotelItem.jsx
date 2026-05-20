@@ -1,4 +1,4 @@
-﻿import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useCurrency } from '../../CurrencyContext.jsx';
 import { Wifi } from 'lucide-react';
 
@@ -55,7 +55,12 @@ export function HotelItem({ hotel, isSaved, onToggleWishlist }) {
                   Superhost
                 </span>
               )}
-              {!isRare && hotel.price <= 8000 && (
+              {hotel.featured && (
+                <span className="bg-amber-400 text-slate-900 text-[11px] md:text-[11px] font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-full uppercase tracking-widest shadow-lg flex items-center gap-1 w-max">
+                  ★ Featured
+                </span>
+              )}
+              {!hotel.featured && hotel.viewCount >= 10 && (
                 <span className="bg-emerald-500 text-white text-[11px] md:text-[11px] font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-full uppercase tracking-widest shadow-lg shadow-emerald-500/10">
                   Trending
                 </span>

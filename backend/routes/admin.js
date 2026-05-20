@@ -296,6 +296,20 @@ router.patch("/listings/:id/approve", requireAuth, requireRole(["admin"]), async
     } catch (err) { next(err); }
 });
 
+/* ── TOGGLE FEATURED ── */
+router.patch("/listings/:id/featured", requireAuth, requireRole(["admin"]), async (req, res, next) => {
+    try {
+        if (!ObjectId.isValid(req.params.id)) return res.status(400).json({ ok: false });
+        const db = getDB();
+        const { featured } = req.body;
+        await db.collection("listings").updateOne(
+            { _id: new ObjectId(req.params.id) },
+            { $set: { featured: featured === true, featuredAt: featured === true ? new Date() : null } }
+        );
+        res.json({ ok: true });
+    } catch (err) { next(err); }
+});
+
 router.patch("/users/:email/mute", requireAuth, requireRole(["admin"]), async (req, res, next) => {
     try {
         const db = getDB();

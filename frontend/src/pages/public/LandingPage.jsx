@@ -96,14 +96,13 @@ export default function LandingPage() {
   useEffect(() => {
     setLoading(true);
     api
-      .getListings({ category: tab, limit: 8 })
+      .getTrendingListings(8)
       .then((data) => {
-        const list = data.rows || data;
-        if (Array.isArray(list)) setListings(list);
+        if (Array.isArray(data.rows)) setListings(data.rows);
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, [tab]);
+  }, []);
 
   const handleSearch = useCallback(() => {
     const params = new URLSearchParams();
@@ -476,6 +475,8 @@ export default function LandingPage() {
                           price: listing.price,
                           image: fixImg(listing.image),
                           wifiSpeed: listing.wifiSpeed || 0,
+                          featured: listing.featured || false,
+                          viewCount: listing.viewCount || 0,
                         }}
                       />
                     </div>
@@ -537,6 +538,8 @@ export default function LandingPage() {
                           price: listing.price,
                           image: fixImg(listing.image),
                           wifiSpeed: listing.wifiSpeed || 0,
+                          featured: listing.featured || false,
+                          viewCount: listing.viewCount || 0,
                         }}
                       />
                     </div>

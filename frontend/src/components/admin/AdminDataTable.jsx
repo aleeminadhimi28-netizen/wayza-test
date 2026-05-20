@@ -11,6 +11,7 @@ import {
   Plus,
   FileText,
   ExternalLink,
+  Star,
 } from 'lucide-react';
 import ConfirmModal from '../ui/ConfirmModal.jsx';
 import { fixImg } from '../../utils/image.js';
@@ -27,6 +28,7 @@ export default function AdminDataTable({
   const {
     handleApproveProperty,
     handleRejectProperty,
+    handleToggleFeatured,
     handleUpdatePayout,
     handleMuteUser,
     handleApprovePartner,
@@ -409,7 +411,11 @@ export default function AdminDataTable({
                             {activeTab === 'bookings'
                               ? item.guestEmail
                               : item.price
-                                ? `₹${item.price.toLocaleString()}`
+                                ? `₹${item.price.toLocaleString()}${
+                                    activeTab === 'listings' && item.viewCount
+                                      ? ` · 👁 ${item.viewCount.toLocaleString()} views`
+                                      : ''
+                                  }`
                                 : item.role || item.checkIn || '—'}
                           </span>
                         )}
@@ -434,6 +440,20 @@ export default function AdminDataTable({
                                 <CheckCircle size={12} strokeWidth={2.5} /> Settle
                               </button>
                             )}
+                          {activeTab === 'listings' && item.approved && (
+                            <button
+                              onClick={() => handleToggleFeatured(item._id, !item.featured)}
+                              title={item.featured ? 'Unpin from featured' : 'Pin as featured'}
+                              className={`h-8 px-3 rounded-lg font-bold text-[10px] uppercase tracking-wider flex items-center gap-1.5 transition-all border ${
+                                item.featured
+                                  ? 'bg-amber-500/20 text-amber-400 border-amber-500/30 hover:bg-amber-500 hover:text-[#050a08]'
+                                  : 'bg-white/[0.05] text-white/40 border-white/[0.08] hover:bg-amber-500/20 hover:text-amber-400'
+                              }`}
+                            >
+                              <Star size={11} className={item.featured ? 'fill-amber-400' : ''} />
+                              {item.featured ? 'Featured' : 'Feature'}
+                            </button>
+                          )}
                           {activeTab === 'listings' && !item.approved && (
                             <button
                               onClick={() =>

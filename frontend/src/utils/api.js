@@ -184,6 +184,19 @@ export const api = {
       headers: getAuthHeaders(),
     }).then((r) => r.json()),
 
+  getTrendingListings: (limit = 8) =>
+    customFetch(`${API_URL}/listings/trending?limit=${limit}`).then((r) => r.json()),
+
+  trackView: (id) =>
+    customFetch(`${API_URL}/listings/${id}/view`, { method: 'POST' }).then((r) => r.json()),
+
+  adminToggleFeatured: (id, featured) =>
+    customFetch(`${API_URL}/admin/listings/${id}/featured`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+      body: JSON.stringify({ featured }),
+    }).then((r) => r.json()),
+
   createListing: (data) =>
     customFetch(`${API_URL}/listings`, {
       method: 'POST',

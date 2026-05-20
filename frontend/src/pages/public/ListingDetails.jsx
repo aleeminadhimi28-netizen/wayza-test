@@ -176,7 +176,11 @@ export default function ListingDetails() {
     if (!id) return;
     api.getListing(id)
       .then((json) => {
-        if (json.ok && json.data) setListing(json.data);
+        if (json.ok && json.data) {
+          setListing(json.data);
+          // Fire-and-forget: increment view count for real trending data
+          api.trackView(id).catch(() => {});
+        }
         else setError(json.message || 'Property not found');
       })
       .catch(() => setError('Connection anomaly detected'));

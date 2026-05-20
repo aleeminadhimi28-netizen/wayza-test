@@ -99,6 +99,34 @@ router.get("/", async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
+/* ── TRENDING — sorted by viewCount desc, featured listings pinned first ── */
+router.get("/trending", async (req, res, next) => {
+    try {
+        const db = getDB();
+        const limit = Math.min(Number(req.query.limit) || 8, 20);
+        const rows = await db.collection("listings")
+            .find({ approved: true })
+            .sort({ featured: -1, viewCount: -1, createdAt: -1 })
+            .limit(limit)
+            .toArray();
+        res.json({ ok: true, rows });
+    } catch (err) { next(err); }
+});
+
+/* ── TRACK VIEW — fire-and-forget, increments viewCount ── */
+router.post("/:id/view", async (req, res, next) => {
+    try {
+        const db = getDB();
+        if (!ObjectId.isValid(req.params.id)) return res.json({ ok: false });
+        await db.collection("listings").updateOne(
+            { _id: new ObjectId(req.params.id) },
+            { $inc: { viewCount: 1 } }
+        );
+        res.json({ ok: true });
+    } catch (err) { next(err); }
+});
+
+
 router.get("/:id", async (req, res, next) => {
     try {
         const db = getDB();

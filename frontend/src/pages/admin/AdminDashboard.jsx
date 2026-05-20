@@ -218,6 +218,24 @@ export default function AdminDashboard() {
     [showToast]
   );
 
+  const handleToggleFeatured = useCallback(
+    async (id, featured) => {
+      try {
+        const d = await api.adminToggleFeatured(id, featured);
+        if (d.ok) {
+          setDataList((prev) =>
+            prev.map((item) => (item._id === id ? { ...item, featured } : item))
+          );
+          showToast(featured ? '⭐ Listing pinned as Featured' : 'Removed from Featured', 'success');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Failed to update featured status.', 'error');
+      }
+    },
+    [showToast]
+  );
+
   const handleApprovePartner = useCallback(
     async (email) => {
       if (!email) return;
@@ -586,6 +604,7 @@ export default function AdminDashboard() {
                 handlers={{
                   handleApproveProperty,
                   handleRejectProperty,
+                  handleToggleFeatured,
                   handleUpdatePayout,
                   handleMuteUser,
                   handleApprovePartner,
