@@ -135,7 +135,29 @@ export default function ExploreMap() {
         const data = await api.getListings(query);
         if (data.ok) {
           const rows = data.rows || data.data || (Array.isArray(data) ? data : []);
-          const withGps = rows.filter((r) => r.latitude && r.longitude);
+          const withGps = rows.map((r, index) => {
+            let lat = parseFloat(r.latitude);
+            let lng = parseFloat(r.longitude);
+
+            // If coordinates are missing or invalid, assign fallback demo coordinates based on location name
+            if (isNaN(lat) || isNaN(lng) || lat === 0 || lng === 0) {
+              const isMumbai = r.location && r.location.toLowerCase().includes('mumbai');
+              const baseLat = isMumbai ? 19.076 : 8.7379;
+              const baseLng = isMumbai ? 72.8777 : 76.7163;
+
+              // Jitter offset so multiple properties don't stack on the exact same location
+              const offsetAngle = index * 0.6;
+              const radius = 0.004 + index * 0.0006;
+              lat = baseLat + Math.sin(offsetAngle) * radius;
+              lng = baseLng + Math.cos(offsetAngle) * radius;
+            }
+
+            return {
+              ...r,
+              latitude: lat,
+              longitude: lng,
+            };
+          });
           setAllListings(withGps);
           setListings(withGps);
 
