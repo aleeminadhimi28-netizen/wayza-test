@@ -5,7 +5,7 @@
  * but with an entirely different structure (dark hero, spec strip, etc.)
  */
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Star,
   MapPin,
@@ -20,11 +20,12 @@ import {
   CheckCircle,
   MessageSquare,
   ChevronRight,
+  ChevronLeft,
   Gauge,
   Fuel,
   Tag,
   Sparkles,
-  Grid3x3,
+  Images,
   X,
   ExternalLink,
   Navigation,
@@ -74,120 +75,162 @@ function SpecChip({ icon: Icon, label, value }) {
   );
 }
 
-/* ── Inline gallery (vehicle-style) ───────────────────────────────── */
+/* ── Vehicle photo grid + lightbox ────────────────────────────────── */
 function VehicleGallery({ images, title }) {
-  const [open, setOpen] = useState(false);
-  const [idx, setIdx] = useState(0);
-  const next = () => setIdx((idx + 1) % images.length);
-  const prev = () => setIdx((idx - 1 + images.length) % images.length);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [activeIdx, setActiveIdx] = useState(0);
+
+  const openAt = (i) => { setActiveIdx(i); setLightboxOpen(true); };
+  const close = () => setLightboxOpen(false);
+  const next = useCallback(() => setActiveIdx((i) => (i + 1) % images.length), [images.length]);
+  const prev = useCallback(() => setActiveIdx((i) => (i - 1 + images.length) % images.length), [images.length]);
+
+  /* Keyboard nav */
+  useEffect(() => {
+    if (!lightboxOpen) return;
+    const handler = (e) => {
+      if (e.key === 'ArrowRight') next();
+      if (e.key === 'ArrowLeft') prev();
+      if (e.key === 'Escape') close();
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [lightboxOpen, next, prev]);
+
+  /* Lock body scroll */
+  useEffect(() => {
+    document.body.style.overflow = lightboxOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [lightboxOpen]);
 
   return (
     <>
-      {/* Hero image grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-2 h-[380px] lg:h-[520px] rounded-3xl overflow-hidden">
-        {/* Main big image */}
+      {/* ── 5-photo grid ─────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 lg:grid-rows-2 gap-2 h-[340px] md:h-[460px] lg:h-[540px] rounded-3xl overflow-hidden">
+
+        {/* Hero — 2 cols × 2 rows */}
         <div
-          className="lg:col-span-3 relative overflow-hidden cursor-pointer group"
-          onClick={() => { setIdx(0); setOpen(true); }}
+          className="lg:col-span-2 lg:row-span-2 relative overflow-hidden cursor-pointer group"
+          onClick={() => openAt(0)}
         >
           <img
             src={images[0]}
             alt={title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
             fetchPriority="high"
             loading="eager"
           />
-          {/* Dark gradient at bottom for title floating */}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-slate-950/10 to-transparent pointer-events-none" />
-          <div className="absolute bottom-4 left-4 lg:hidden bg-black/50 backdrop-blur-md text-white text-[11px] font-black px-3 py-1.5 rounded-full">
+          {/* Cinematic dark gradient */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/5 to-transparent pointer-events-none" />
+          {/* Mobile counter */}
+          <div className="absolute bottom-3 left-3 lg:hidden bg-black/60 backdrop-blur-md text-white text-[11px] font-bold px-3 py-1.5 rounded-full">
             1 / {images.length}
           </div>
         </div>
 
-        {/* Right side thumbnail grid (desktop only) */}
-        <div className="hidden lg:grid lg:col-span-2 grid-rows-2 gap-2">
-          {images[1] && (
-            <div
-              className="relative overflow-hidden cursor-pointer group rounded-lg"
-              onClick={() => { setIdx(1); setOpen(true); }}
+        {/* Top-right */}
+        {images[1] && (
+          <div className="hidden lg:block relative overflow-hidden cursor-pointer group" onClick={() => openAt(1)}>
+            <img src={images[1]} alt="Photo 2" className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out" loading="lazy" />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
+          </div>
+        )}
+
+        {/* Top-far-right */}
+        {images[2] && (
+          <div className="hidden lg:block relative overflow-hidden cursor-pointer group" onClick={() => openAt(2)}>
+            <img src={images[2]} alt="Photo 3" className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out" loading="lazy" />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
+          </div>
+        )}
+
+        {/* Bottom-right */}
+        {images[3] && (
+          <div className="hidden lg:block relative overflow-hidden cursor-pointer group" onClick={() => openAt(3)}>
+            <img src={images[3]} alt="Photo 4" className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out" loading="lazy" />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
+          </div>
+        )}
+
+        {/* Bottom-far-right + "Show all" */}
+        {images[4] && (
+          <div className="hidden lg:block relative overflow-hidden cursor-pointer group" onClick={() => openAt(4)}>
+            <img src={images[4]} alt="Photo 5" className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out" loading="lazy" />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
+            <button
+              onClick={(e) => { e.stopPropagation(); openAt(0); }}
+              className="absolute bottom-3 right-3 flex items-center gap-2 bg-white/95 backdrop-blur-sm border border-slate-200 text-slate-900 px-4 py-2.5 rounded-full text-[11px] font-black uppercase tracking-wider shadow-lg hover:bg-slate-950 hover:text-white transition-all duration-300"
             >
-              <img
-                src={images[1]}
-                alt="Photo 2"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-            </div>
-          )}
-          {images[2] && (
-            <div
-              className="relative overflow-hidden cursor-pointer group rounded-lg"
-              onClick={() => { setIdx(2); setOpen(true); }}
-            >
-              <img
-                src={images[2]}
-                alt="Photo 3"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-              <button
-                onClick={(e) => { e.stopPropagation(); setIdx(0); setOpen(true); }}
-                className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm border border-slate-200 text-slate-900 px-4 py-2.5 rounded-full text-[11px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-slate-950 hover:text-white transition-all shadow-md"
-              >
-                <Grid3x3 size={12} />
-                All photos ({images.length})
-              </button>
-            </div>
-          )}
-        </div>
+              <Images size={13} />
+              All {images.length} photos
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* Fullscreen lightbox */}
+      {/* ── Lightbox ─────────────────────────────────────────────── */}
       <AnimatePresence>
-        {open && (
+        {lightboxOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/95 z-[99999] flex flex-col"
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[99999] bg-black/97 flex flex-col"
           >
-            <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 shrink-0">
               <div>
-                <p className="text-white font-bold">{title}</p>
-                <p className="text-white/40 text-xs">{idx + 1} / {images.length}</p>
+                <p className="text-white font-bold text-sm">{title}</p>
+                <p className="text-white/40 text-xs font-medium mt-0.5">
+                  {activeIdx + 1} of {images.length}
+                </p>
               </div>
-              <button
-                onClick={() => setOpen(false)}
-                className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all"
-              >
-                <X size={22} />
+              <button onClick={close} className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all">
+                <X size={20} />
               </button>
             </div>
-            <div className="flex-1 flex items-center justify-center relative px-16 py-4">
-              <button onClick={prev} className="absolute left-4 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all z-10">
-                <ChevronRight size={28} className="rotate-180" />
+
+            {/* Main image */}
+            <div className="flex-1 relative flex items-center justify-center px-4 md:px-20 min-h-0">
+              <button onClick={prev} className="absolute left-4 md:left-6 z-10 w-12 h-12 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center transition-all hover:scale-110">
+                <ChevronLeft size={26} />
               </button>
-              <motion.img
-                key={idx}
-                src={images[idx]}
-                initial={{ opacity: 0, scale: 0.96 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3 }}
-                className="max-h-full max-w-full object-contain rounded-xl"
-                alt={`Photo ${idx + 1}`}
-              />
-              <button onClick={next} className="absolute right-4 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all z-10">
-                <ChevronRight size={28} />
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={activeIdx}
+                  src={images[activeIdx]}
+                  alt={`${title} photo ${activeIdx + 1}`}
+                  initial={{ opacity: 0, x: 40, scale: 0.97 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  exit={{ opacity: 0, x: -40, scale: 0.97 }}
+                  transition={{ duration: 0.25, ease: 'easeOut' }}
+                  className="max-h-full max-w-full object-contain rounded-2xl select-none"
+                  draggable={false}
+                />
+              </AnimatePresence>
+              <button onClick={next} className="absolute right-4 md:right-6 z-10 w-12 h-12 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center transition-all hover:scale-110">
+                <ChevronRight size={26} />
               </button>
             </div>
-            <div className="flex gap-2 px-6 py-4 overflow-x-auto no-scrollbar border-t border-white/10">
-              {images.map((img, i) => (
-                <div
-                  key={i}
-                  onClick={() => setIdx(i)}
-                  className={`w-20 h-14 rounded-lg overflow-hidden shrink-0 cursor-pointer border-2 transition-all ${i === idx ? 'border-emerald-500 opacity-100' : 'border-transparent opacity-50 hover:opacity-75'}`}
-                >
-                  <img src={img} className="w-full h-full object-cover" alt="" />
-                </div>
-              ))}
+
+            {/* Thumbnail strip */}
+            <div className="shrink-0 px-6 py-4 border-t border-white/10">
+              <div className="flex gap-2 overflow-x-auto no-scrollbar justify-start md:justify-center">
+                {images.map((img, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setActiveIdx(i)}
+                    className={`relative w-16 h-12 md:w-20 md:h-14 rounded-xl overflow-hidden shrink-0 transition-all duration-200 ${
+                      i === activeIdx
+                        ? 'ring-2 ring-emerald-500 ring-offset-2 ring-offset-black opacity-100 scale-105'
+                        : 'opacity-40 hover:opacity-70'
+                    }`}
+                  >
+                    <img src={img} className="w-full h-full object-cover" alt="" />
+                  </button>
+                ))}
+              </div>
             </div>
           </motion.div>
         )}
