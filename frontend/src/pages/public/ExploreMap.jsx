@@ -18,6 +18,8 @@ import {
   Compass,
   Locate,
   Search,
+  Bike,
+  Car,
 } from 'lucide-react';
 import SEO from '../../components/SEO.jsx';
 
@@ -119,6 +121,8 @@ export default function ExploreMap() {
     { id: 'heritage', label: 'Heritage', icon: <History size={16} /> },
     { id: 'villa', label: 'Villas', icon: <Building size={16} /> },
     { id: 'glamping', label: 'Glamping', icon: <Tent size={16} /> },
+    { id: 'bike', label: 'Bikes', icon: <Bike size={16} /> },
+    { id: 'car', label: 'Cars', icon: <Car size={16} /> },
   ];
 
   const fetchData = useCallback(
@@ -185,8 +189,8 @@ export default function ExploreMap() {
   return (
     <WayzzaLayout noPadding>
       <SEO
-        title="Explore Varkala Stays on Map"
-        description="Discover and book the best clifftop villas and beach stays in Varkala using our interactive discovery map."
+        title="Explore Varkala on Map"
+        description="Discover and book stays, bikes, and cars in Varkala using our interactive discovery map."
         breadcrumb={[
           { name: 'Home', url: 'https://wayza-app.vercel.app' },
           { name: 'Explore Map', url: 'https://wayza-app.vercel.app/explore-map' },
@@ -202,7 +206,7 @@ export default function ExploreMap() {
             <div>
               <h1 className="text-xl font-bold text-slate-900 tracking-tight">Explore Varkala</h1>
               <p className="text-xs text-slate-500 font-medium">
-                Discover curated stays and hidden gems
+                Discover curated stays, bikes, and cars
               </p>
             </div>
           </div>
@@ -211,7 +215,7 @@ export default function ExploreMap() {
               <div className="flex items-center gap-1.5">
                 <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm" />
                 <span className="text-[11px] font-bold text-slate-600 uppercase tracking-widest">
-                  {listings.length} Properties found
+                  {listings.length} Listings found
                 </span>
               </div>
             </div>
@@ -362,7 +366,8 @@ export default function ExploreMap() {
                         {item.title}
                       </div>
                       <div className="text-[10px] text-emerald-600 font-extrabold uppercase tracking-wider">
-                        ₹{item.price.toLocaleString()} / night
+                        ₹{item.price.toLocaleString()}{' '}
+                        {item.category === 'bike' || item.category === 'car' ? '/ day' : '/ night'}
                       </div>
                     </div>
                   </Tooltip>
@@ -390,7 +395,11 @@ export default function ExploreMap() {
                         <div className="flex items-center gap-1.5 mb-1">
                           <Star size={10} className="text-amber-400 fill-amber-400" />
                           <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                            New Property
+                            {item.category === 'bike'
+                              ? 'New Bike'
+                              : item.category === 'car'
+                                ? 'New Car'
+                                : 'New Property'}
                           </span>
                         </div>
                         <h3 className="text-sm font-bold text-slate-900 mb-1 truncate">
@@ -410,7 +419,7 @@ export default function ExploreMap() {
                           </a>
                         </p>
                         <Link
-                          to={`/listings/${item._id}`}
+                          to={`/listing/${item._id}`}
                           className="block w-full text-center py-2.5 bg-emerald-600 text-white rounded-lg font-bold text-[11px] uppercase tracking-widest hover:bg-slate-900 transition-all shadow-lg shadow-emerald-500/10"
                         >
                           Book Now
@@ -491,7 +500,11 @@ export default function ExploreMap() {
                     </div>
                     <div className="flex-1 min-w-0 flex flex-col">
                       <p className="text-[11px] font-bold text-emerald-600 uppercase tracking-widest mb-1">
-                        {activeItem.category || 'Property'}
+                        {activeItem.category === 'bike'
+                          ? 'Bike'
+                          : activeItem.category === 'car'
+                            ? 'Car'
+                            : activeItem.category || 'Property'}
                       </p>
                       <h3 className="text-lg font-bold text-slate-900 truncate mb-1">
                         {activeItem.title}
@@ -516,11 +529,15 @@ export default function ExploreMap() {
                           </span>
                           <span className="text-sm font-black text-slate-900">
                             ₹{activeItem.price.toLocaleString()}
-                            <span className="text-[11px] font-bold text-slate-400">/night</span>
+                            <span className="text-[11px] font-bold text-slate-400">
+                              {activeItem.category === 'bike' || activeItem.category === 'car'
+                                ? '/day'
+                                : '/night'}
+                            </span>
                           </span>
                         </div>
                         <Link
-                          to={`/listings/${activeItem._id}`}
+                          to={`/listing/${activeItem._id}`}
                           className="h-9 px-5 bg-slate-900 text-white rounded-xl flex items-center gap-1.5 font-bold text-[11px] uppercase tracking-widest hover:bg-emerald-600 transition-all active:scale-95 shadow-lg shadow-slate-950/20"
                         >
                           Details <ArrowUpRight size={12} className="hidden" />
