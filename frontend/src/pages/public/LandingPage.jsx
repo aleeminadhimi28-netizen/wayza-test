@@ -637,73 +637,8 @@ export default function LandingPage() {
                   ))}
             </div>
           </div>
-
-          {/* More Bikes */}
-          <div className="space-y-6">
-            <div className="flex items-center justify-between gap-3 flex-wrap">
-              <div>
-                <h3 className="text-xl md:text-2xl font-black tracking-tight text-slate-950">
-                  More bikes
-                </h3>
-                <p className="text-sm text-slate-500 font-medium">
-                  Browse more bikes available for rent.
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => scrollCarousel('bikes-scroll', -1)}
-                  className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
-                  aria-label="Scroll bikes left"
-                >
-                  <ChevronLeft size={18} />
-                </button>
-                <button
-                  onClick={() => scrollCarousel('bikes-scroll', 1)}
-                  className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
-                  aria-label="Scroll bikes right"
-                >
-                  <ChevronRight size={18} />
-                </button>
-                <Link
-                  to="/listings?category=bike"
-                  className="hidden sm:block text-xs uppercase font-black tracking-[0.3em] text-slate-400 hover:text-slate-900 ml-2 transition-colors"
-                >
-                  Browse all
-                </Link>
-              </div>
-            </div>
-            <div
-              id="bikes-scroll"
-              className="flex gap-4 overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory scroll-smooth"
-            >
-              {bikesLoading
-                ? [1, 2, 3].map((i) => (
-                    <div key={i} className="w-[280px] shrink-0 snap-start">
-                      <WayzzaSkeleton className="h-[360px] rounded-[32px]" />
-                    </div>
-                  ))
-                : bikes.length === 0
-                  ? <p className="text-slate-300 text-sm font-bold uppercase tracking-widest py-12">No bikes listed yet</p>
-                  : bikes.slice(0, 6).map((listing) => (
-                    <div key={listing._id} className="w-[280px] shrink-0 snap-start">
-                      <WayzzaHotelItem
-                        perUnit="day"
-                        hotel={{
-                          id: listing._id,
-                          name: listing.title,
-                          location: listing.location || 'Varkala',
-                          price: listing.price,
-                          image: fixImg(listing.image),
-                          wifiSpeed: 0,
-                          featured: listing.featured || false,
-                          viewCount: listing.viewCount || 0,
-                        }}
-                      />
-                    </div>
-                  ))}
-            </div>
-          </div>
         </section>
+
 
         {/* ── CARS ── */}
         <section className="px-4 sm:px-6 max-w-7xl mx-auto space-y-8 pb-10 pt-2">
@@ -772,73 +707,8 @@ export default function LandingPage() {
                   ))}
             </div>
           </div>
-
-          {/* More Cars */}
-          <div className="space-y-6">
-            <div className="flex items-center justify-between gap-3 flex-wrap">
-              <div>
-                <h3 className="text-xl md:text-2xl font-black tracking-tight text-slate-950">
-                  More cars
-                </h3>
-                <p className="text-sm text-slate-500 font-medium">
-                  Browse more cars available for rent.
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => scrollCarousel('cars-scroll', -1)}
-                  className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
-                  aria-label="Scroll cars left"
-                >
-                  <ChevronLeft size={18} />
-                </button>
-                <button
-                  onClick={() => scrollCarousel('cars-scroll', 1)}
-                  className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
-                  aria-label="Scroll cars right"
-                >
-                  <ChevronRight size={18} />
-                </button>
-                <Link
-                  to="/listings?category=car"
-                  className="hidden sm:block text-xs uppercase font-black tracking-[0.3em] text-slate-400 hover:text-slate-900 ml-2 transition-colors"
-                >
-                  Browse all
-                </Link>
-              </div>
-            </div>
-            <div
-              id="cars-scroll"
-              className="flex gap-4 overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory scroll-smooth"
-            >
-              {carsLoading
-                ? [1, 2, 3].map((i) => (
-                    <div key={i} className="w-[280px] shrink-0 snap-start">
-                      <WayzzaSkeleton className="h-[360px] rounded-[32px]" />
-                    </div>
-                  ))
-                : cars.length === 0
-                  ? <p className="text-slate-300 text-sm font-bold uppercase tracking-widest py-12">No cars listed yet</p>
-                  : cars.slice(0, 6).map((listing) => (
-                    <div key={listing._id} className="w-[280px] shrink-0 snap-start">
-                      <WayzzaHotelItem
-                        perUnit="day"
-                        hotel={{
-                          id: listing._id,
-                          name: listing.title,
-                          location: listing.location || 'Varkala',
-                          price: listing.price,
-                          image: fixImg(listing.image),
-                          wifiSpeed: 0,
-                          featured: listing.featured || false,
-                          viewCount: listing.viewCount || 0,
-                        }}
-                      />
-                    </div>
-                  ))}
-            </div>
-          </div>
         </section>
+
 
         {/* ── DESTINATIONS MASONRY ── */}
         <section className="py-20 md:py-32 bg-slate-50 px-4 sm:px-6 relative overflow-hidden">
