@@ -100,7 +100,7 @@ export default function LandingPage() {
   useEffect(() => {
     setLoading(true);
     api
-      .getTrendingListings(8)
+      .getTrendingListings(8, 'hotel')
       .then((data) => {
         if (Array.isArray(data.rows)) setListings(data.rows);
         setLoading(false);
