@@ -115,7 +115,9 @@ export default function ListingDetails() {
       const rows = Array.isArray(data.data) ? data.data : [];
       setReviews(rows);
       if (user?.email) setAlreadyReviewed(rows.some((r) => r.guestEmail === user.email));
-    } catch { /* fail silently */ }
+    } catch {
+      /* fail silently */
+    }
   }, [id, user?.email]);
 
   async function submitReview() {
@@ -125,25 +127,38 @@ export default function ListingDetails() {
       const data = await api.postReview({ listingId: id, rating, comment });
       if (data.ok) {
         showToast('Review submitted. Thank you!', 'success');
-        setComment(''); setRating(5); setAlreadyReviewed(true); loadReviews();
+        setComment('');
+        setRating(5);
+        setAlreadyReviewed(true);
+        loadReviews();
       } else {
         showToast(data.message || 'Failed to submit review.', 'error');
       }
-    } catch { showToast('Connection error. Please try again.', 'error'); }
+    } catch {
+      showToast('Connection error. Please try again.', 'error');
+    }
     setSubmitting(false);
   }
 
   const toggleWishlist = async () => {
-    if (!user) { navigate('/login', { state: { from: location } }); return; }
+    if (!user) {
+      navigate('/login', { state: { from: location } });
+      return;
+    }
     try {
       const data = await api.toggleWishlist({ listingId: id });
       setSaved(data.saved);
       showToast(data.saved ? 'Saved to favorites!' : 'Removed from favorites', 'info');
-    } catch { showToast('Failed to update saved list.', 'error'); }
+    } catch {
+      showToast('Failed to update saved list.', 'error');
+    }
   };
 
   const handleReserve = async () => {
-    if (!user) { navigate('/login', { state: { from: location } }); return; }
+    if (!user) {
+      navigate('/login', { state: { from: location } });
+      return;
+    }
     setReserving(true);
     try {
       const fresh = await api.getListing(id);
@@ -152,19 +167,29 @@ export default function ListingDetails() {
         const freshPrice = Number(freshVariant?.price || fresh.data.price || 0);
         if (freshPrice !== variantBasePrice) {
           setListing(fresh.data);
-          showToast(`Price updated to ₹${freshPrice.toLocaleString()}/${isVehicle ? 'day' : 'night'}. Please review before reserving.`, 'error');
+          showToast(
+            `Price updated to ₹${freshPrice.toLocaleString()}/${isVehicle ? 'day' : 'night'}. Please review before reserving.`,
+            'error'
+          );
           setReserving(false);
           return;
         }
       }
-    } catch { /* non-critical */ }
-    navigate(`/booking/${id}`, { state: { variantIndex: selectedVariant, expectedPricePerNight: basePrice } });
+    } catch {
+      /* non-critical */
+    }
+    navigate(`/booking/${id}`, {
+      state: { variantIndex: selectedVariant, expectedPricePerNight: basePrice },
+    });
     setReserving(false);
   };
 
   const handleMobileReserve = () => {
     if (!checkIn || !checkOut) {
-      showToast(`Please select your ${isVehicle ? 'pick-up and drop-off' : 'check-in and check-out'} dates first`, 'error');
+      showToast(
+        `Please select your ${isVehicle ? 'pick-up and drop-off' : 'check-in and check-out'} dates first`,
+        'error'
+      );
       document.getElementById('reservation-console')?.scrollIntoView({ behavior: 'smooth' });
       return;
     }
@@ -174,14 +199,14 @@ export default function ListingDetails() {
   useEffect(() => {
     window.scrollTo(0, 0);
     if (!id) return;
-    api.getListing(id)
+    api
+      .getListing(id)
       .then((json) => {
         if (json.ok && json.data) {
           setListing(json.data);
           // Fire-and-forget: increment view count for real trending data
           api.trackView(id).catch(() => {});
-        }
-        else setError(json.message || 'Property not found');
+        } else setError(json.message || 'Property not found');
       })
       .catch(() => setError('Connection anomaly detected'));
     loadReviews();
@@ -193,13 +218,23 @@ export default function ListingDetails() {
       api.getMyBookings().then((json) => {
         const bkgs = Array.isArray(json.data) ? json.data : [];
         const today = new Date();
-        setCanReview(bkgs.some((b) => b.listingId === id && b.status === 'paid' && new Date(b.checkOut || b.endDate) < today));
+        setCanReview(
+          bkgs.some(
+            (b) =>
+              b.listingId === id && b.status === 'paid' && new Date(b.checkOut || b.endDate) < today
+          )
+        );
       });
     }
   }, [id, user, loadReviews]);
 
   useEffect(() => {
-    api.getPlatformConfig().then((res) => { if (res.ok) setPlatformConfig(res.data); }).catch(() => {});
+    api
+      .getPlatformConfig()
+      .then((res) => {
+        if (res.ok) setPlatformConfig(res.data);
+      })
+      .catch(() => {});
   }, []);
 
   if (error) {
@@ -246,7 +281,9 @@ export default function ListingDetails() {
   const images = (listing.images || []).map(fixImg);
   if (images.length === 0) images.push(fixImg(listing.image));
   while (images.length < 5)
-    images.push('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80');
+    images.push(
+      'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80'
+    );
 
   const avgRating = reviews.length
     ? (reviews.reduce((s, r) => s + (r.rating || 0), 0) / reviews.length).toFixed(1)
@@ -254,14 +291,22 @@ export default function ListingDetails() {
 
   const activeVariant = listing.variants?.[selectedVariant];
   const variantBasePrice = activeVariant?.price || listing.price || 0;
-  const { pricePerNight, baseAmount } = calculatePriceForDates(listing, selectedVariant, checkIn, checkOut);
+  const { pricePerNight, baseAmount } = calculatePriceForDates(
+    listing,
+    selectedVariant,
+    checkIn,
+    checkOut
+  );
   const basePrice = pricePerNight;
 
   const isVehicle = listing.category === 'bike' || listing.category === 'car';
   const isBike = listing.category === 'bike';
   const isCar = listing.category === 'car';
 
-  const nights = checkIn && checkOut ? Math.max(0, Math.ceil((new Date(checkOut) - new Date(checkIn)) / 86400000)) : 0;
+  const nights =
+    checkIn && checkOut
+      ? Math.max(0, Math.ceil((new Date(checkOut) - new Date(checkIn)) / 86400000))
+      : 0;
 
   const getCategoryPluralLabel = () => {
     if (isVehicle) return 'Vehicles';
@@ -283,7 +328,10 @@ export default function ListingDetails() {
 
   const gstRate = platformConfig?.gstRate ?? 0.12;
   const serviceFeeRate = platformConfig?.serviceFee ?? 99;
-  const gst = !isVehicle && listing.ownerGstEnabled ? Math.round((nights > 0 ? baseAmount : basePrice * nights) * gstRate) : 0;
+  const gst =
+    !isVehicle && listing.ownerGstEnabled
+      ? Math.round((nights > 0 ? baseAmount : basePrice * nights) * gstRate)
+      : 0;
   const serviceFee = nights > 0 ? serviceFeeRate : 0;
   const total = (nights > 0 ? baseAmount : basePrice * nights) + gst + serviceFee;
 
@@ -301,7 +349,12 @@ export default function ListingDetails() {
     image: images.slice(0, 3),
     url: canonicalUrl,
     priceRange: `₹${basePrice.toLocaleString()}`,
-    address: { '@type': 'PostalAddress', addressLocality: listing.location || 'Varkala', addressRegion: 'Kerala', addressCountry: 'IN' },
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: listing.location || 'Varkala',
+      addressRegion: 'Kerala',
+      addressCountry: 'IN',
+    },
     brand: { '@type': 'Brand', name: 'Wayzza Verified' },
     sku: listing._id,
     offers: {
@@ -312,12 +365,18 @@ export default function ListingDetails() {
       url: canonicalUrl,
       priceValidUntil: new Date(Date.now() + 2592000000).toISOString().split('T')[0],
     },
-    aggregateRating: reviews.length > 0 ? { '@type': 'AggregateRating', ratingValue: avgRating, reviewCount: reviews.length } : undefined,
+    aggregateRating:
+      reviews.length > 0
+        ? { '@type': 'AggregateRating', ratingValue: avgRating, reviewCount: reviews.length }
+        : undefined,
   };
 
   const seoBreadcrumb = [
     { name: 'Home', url: 'https://wayzza.live' },
-    { name: getCategoryPluralLabel(), url: `https://wayzza.live/listings?category=${listing.category}` },
+    {
+      name: getCategoryPluralLabel(),
+      url: `https://wayzza.live/listings?category=${listing.category}`,
+    },
     { name: listing.title, url: canonicalUrl },
   ];
 
@@ -386,9 +445,19 @@ export default function ListingDetails() {
         <div className="bg-white border-b border-slate-100">
           <div className="max-w-[1280px] mx-auto px-5 md:px-10 py-3">
             <div className="flex items-center gap-2 text-xs font-medium text-slate-400 overflow-x-auto whitespace-nowrap no-scrollbar">
-              <button onClick={() => navigate('/')} className="hover:text-emerald-600 transition-colors shrink-0">Home</button>
+              <button
+                onClick={() => navigate('/')}
+                className="hover:text-emerald-600 transition-colors shrink-0"
+              >
+                Home
+              </button>
               <ChevronRight size={12} />
-              <button onClick={() => navigate('/listings')} className="hover:text-emerald-600 transition-colors shrink-0">{getCategoryPluralLabel()}</button>
+              <button
+                onClick={() => navigate('/listings')}
+                className="hover:text-emerald-600 transition-colors shrink-0"
+              >
+                {getCategoryPluralLabel()}
+              </button>
               <ChevronRight size={12} />
               <span className="text-slate-700 font-semibold truncate">{listing.title}</span>
             </div>
@@ -396,7 +465,6 @@ export default function ListingDetails() {
         </div>
 
         <div className="max-w-[1280px] mx-auto px-5 md:px-10 py-8">
-
           {/* ── PACKAGE CONTEXT BANNER ── */}
           {location.state?.fromPackage && (
             <div className="mb-6 flex items-center gap-4 bg-emerald-50 border border-emerald-100 rounded-2xl px-5 py-4">
@@ -404,13 +472,22 @@ export default function ListingDetails() {
                 <Sparkles size={16} className="text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[11px] font-bold text-emerald-600 uppercase tracking-widest mb-0.5">Curated Package</p>
+                <p className="text-[11px] font-bold text-emerald-600 uppercase tracking-widest mb-0.5">
+                  Curated Package
+                </p>
                 <p className="text-sm font-semibold text-slate-900 truncate">
                   {location.state.fromPackage.name}
-                  <span className="text-slate-400 font-medium ml-2">— ₹{Number(location.state.fromPackage.price).toLocaleString('en-IN')} bundled</span>
+                  <span className="text-slate-400 font-medium ml-2">
+                    — ₹{Number(location.state.fromPackage.price).toLocaleString('en-IN')} bundled
+                  </span>
                 </p>
               </div>
-              <button onClick={() => navigate('/packages')} className="text-xs font-semibold text-emerald-600 hover:underline shrink-0">← Packages</button>
+              <button
+                onClick={() => navigate('/packages')}
+                className="text-xs font-semibold text-emerald-600 hover:underline shrink-0"
+              >
+                ← Packages
+              </button>
             </div>
           )}
 
@@ -420,11 +497,15 @@ export default function ListingDetails() {
               <div className="flex-1 min-w-0">
                 {/* Category badge row */}
                 <div className="flex flex-wrap items-center gap-2 mb-4">
-                  <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-widest ${
-                    isBike ? 'bg-orange-100 text-orange-700' :
-                    isCar ? 'bg-blue-100 text-blue-700' :
-                    'bg-slate-100 text-slate-700'
-                  }`}>
+                  <div
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-widest ${
+                      isBike
+                        ? 'bg-orange-100 text-orange-700'
+                        : isCar
+                          ? 'bg-blue-100 text-blue-700'
+                          : 'bg-slate-100 text-slate-700'
+                    }`}
+                  >
                     {isVehicle ? vehicleIcon : null}
                     {listing.category || 'Stay'}
                   </div>
@@ -454,7 +535,9 @@ export default function ListingDetails() {
                       <span className="text-sm font-bold text-slate-900">{avgRating || 'New'}</span>
                     </div>
                     <span className="text-slate-400 text-sm">
-                      {reviews.length > 0 ? `· ${reviews.length} review${reviews.length !== 1 ? 's' : ''}` : `· ${getCategoryNewLabel()}`}
+                      {reviews.length > 0
+                        ? `· ${reviews.length} review${reviews.length !== 1 ? 's' : ''}`
+                        : `· ${getCategoryNewLabel()}`}
                     </span>
                   </div>
 
@@ -464,10 +547,12 @@ export default function ListingDetails() {
                     {listing.latitude && listing.longitude ? (
                       <a
                         href={`https://www.google.com/maps?q=${listing.latitude},${listing.longitude}`}
-                        target="_blank" rel="noopener noreferrer"
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="hover:text-emerald-600 transition-colors font-medium"
                       >
-                        {listing.location || 'Kerala'} · <span className="text-emerald-600">View map ↗</span>
+                        {listing.location || 'Kerala'} ·{' '}
+                        <span className="text-emerald-600">View map ↗</span>
                       </a>
                     ) : (
                       <span className="font-medium">{listing.location || 'Kerala'}</span>
@@ -478,7 +563,9 @@ export default function ListingDetails() {
                   {listing.wifiSpeed > 0 && (
                     <div className="flex items-center gap-1.5 text-sm text-slate-500">
                       <Wifi size={14} className="text-emerald-500" />
-                      <span className="font-medium text-emerald-700">{listing.wifiSpeed} Mbps Wi-Fi</span>
+                      <span className="font-medium text-emerald-700">
+                        {listing.wifiSpeed} Mbps Wi-Fi
+                      </span>
                     </div>
                   )}
                 </div>
@@ -489,14 +576,19 @@ export default function ListingDetails() {
                 <button
                   onClick={toggleWishlist}
                   className={`flex items-center gap-2 h-10 px-4 rounded-xl font-semibold text-sm transition-all border ${
-                    saved ? 'bg-rose-50 border-rose-200 text-rose-600' : 'bg-white border-slate-200 text-slate-700 hover:border-rose-200 hover:text-rose-500'
+                    saved
+                      ? 'bg-rose-50 border-rose-200 text-rose-600'
+                      : 'bg-white border-slate-200 text-slate-700 hover:border-rose-200 hover:text-rose-500'
                   }`}
                 >
                   <Heart size={15} className={saved ? 'fill-rose-500' : ''} />
                   {saved ? 'Saved' : 'Save'}
                 </button>
                 <button
-                  onClick={() => { navigator.clipboard.writeText(window.location.href); showToast('Link copied!', 'success'); }}
+                  onClick={() => {
+                    navigator.clipboard.writeText(window.location.href);
+                    showToast('Link copied!', 'success');
+                  }}
                   className="w-10 h-10 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-slate-600 hover:border-slate-300 transition-all"
                 >
                   <Share2 size={15} />
@@ -512,10 +604,8 @@ export default function ListingDetails() {
 
           {/* ── MAIN CONTENT GRID ── */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-
             {/* ── LEFT: Details ── */}
             <div className="lg:col-span-7 space-y-5">
-
               {/* Description card */}
               <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-sm">
                 <div className="flex items-center gap-2 mb-5">
@@ -537,7 +627,9 @@ export default function ListingDetails() {
                 <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-sm">
                   <div className="flex items-center gap-2 mb-6">
                     <div className="h-0.5 w-6 bg-slate-300 rounded-full" />
-                    <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Vehicle Specifications</h2>
+                    <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                      Vehicle Specifications
+                    </h2>
                   </div>
 
                   <div className="grid grid-cols-2 md:grid-cols-2 gap-5">
@@ -547,7 +639,9 @@ export default function ListingDetails() {
                           {isBike ? <Bike size={16} /> : <Car size={16} />}
                         </div>
                         <div>
-                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Vehicle Type</p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">
+                            Vehicle Type
+                          </p>
                           <p className="text-sm font-bold text-slate-900">{listing.vehicleType}</p>
                         </div>
                       </div>
@@ -559,8 +653,12 @@ export default function ListingDetails() {
                           <Shield size={16} />
                         </div>
                         <div>
-                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Registration</p>
-                          <p className="text-sm font-bold text-slate-900 leading-tight">{listing.registrationCategory}</p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">
+                            Registration
+                          </p>
+                          <p className="text-sm font-bold text-slate-900 leading-tight">
+                            {listing.registrationCategory}
+                          </p>
                         </div>
                       </div>
                     )}
@@ -571,8 +669,12 @@ export default function ListingDetails() {
                           <FileText size={16} />
                         </div>
                         <div>
-                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">License Plate</p>
-                          <p className="text-sm font-bold text-slate-900 font-mono">{listing.licensePlate}</p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">
+                            License Plate
+                          </p>
+                          <p className="text-sm font-bold text-slate-900 font-mono">
+                            {listing.licensePlate}
+                          </p>
                         </div>
                       </div>
                     )}
@@ -583,12 +685,17 @@ export default function ListingDetails() {
                           <Calendar size={16} />
                         </div>
                         <div>
-                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Registered</p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">
+                            Registered
+                          </p>
                           <p className="text-sm font-bold text-slate-900">
                             {(() => {
                               const d = new Date(listing.registrationDate);
                               if (isNaN(d.getTime())) return listing.registrationDate;
-                              return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+                              return d.toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                              });
                             })()}
                           </p>
                         </div>
@@ -600,8 +707,12 @@ export default function ListingDetails() {
                     <div className="mt-5 flex items-start gap-3 p-4 bg-amber-50 border border-amber-100 rounded-2xl">
                       <AlertCircle size={16} className="text-amber-600 shrink-0 mt-0.5" />
                       <div>
-                        <p className="text-[10px] font-bold text-amber-700 uppercase tracking-widest mb-0.5">Cancellation Policy</p>
-                        <p className="text-sm font-semibold text-amber-900 capitalize">{listing.cancellationPolicy}</p>
+                        <p className="text-[10px] font-bold text-amber-700 uppercase tracking-widest mb-0.5">
+                          Cancellation Policy
+                        </p>
+                        <p className="text-sm font-semibold text-amber-900 capitalize">
+                          {listing.cancellationPolicy}
+                        </p>
                       </div>
                     </div>
                   )}
@@ -613,7 +724,9 @@ export default function ListingDetails() {
                 <div className="p-6 md:p-8 pb-0">
                   <div className="flex items-center gap-2 mb-4">
                     <div className="h-0.5 w-6 bg-slate-300 rounded-full" />
-                    <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Neighbourhood</h2>
+                    <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                      Neighbourhood
+                    </h2>
                   </div>
                 </div>
                 <NeighborhoodVibes location={listing.location} category={listing.category} />
@@ -630,21 +743,32 @@ export default function ListingDetails() {
                   </div>
                   <div className="space-y-8">
                     {AMENITY_CATEGORIES.map((category) => {
-                      const present = category.amenities.filter((a) => listing.amenities.includes(a.label));
+                      const present = category.amenities.filter((a) =>
+                        listing.amenities.includes(a.label)
+                      );
                       if (present.length === 0) return null;
                       return (
                         <div key={category.id}>
-                          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">{category.label}</p>
+                          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">
+                            {category.label}
+                          </p>
                           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                             {present.map((a, i) => (
-                              <div key={i} className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50/50 transition-all group">
+                              <div
+                                key={i}
+                                className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50/50 transition-all group"
+                              >
                                 <div className="w-8 h-8 bg-white rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 group-hover:text-emerald-600 transition-colors shrink-0">
                                   <a.icon size={15} />
                                 </div>
                                 <div>
-                                  <span className="text-xs font-semibold text-slate-700 block">{a.label}</span>
+                                  <span className="text-xs font-semibold text-slate-700 block">
+                                    {a.label}
+                                  </span>
                                   {a.id === 'wifi' && listing.wifiSpeed > 0 && (
-                                    <span className="text-[10px] font-bold text-emerald-600">{listing.wifiSpeed} Mbps</span>
+                                    <span className="text-[10px] font-bold text-emerald-600">
+                                      {listing.wifiSpeed} Mbps
+                                    </span>
                                   )}
                                 </div>
                               </div>
@@ -662,7 +786,9 @@ export default function ListingDetails() {
                 <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-sm">
                   <div className="flex items-center gap-2 mb-6">
                     <div className="h-0.5 w-6 bg-slate-300 rounded-full" />
-                    <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Room Options</h2>
+                    <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                      Room Options
+                    </h2>
                   </div>
                   <div className="space-y-3">
                     {listing.variants.map((v, i) => (
@@ -677,14 +803,21 @@ export default function ListingDetails() {
                       >
                         <div className="flex-1 min-w-0">
                           <h3 className="text-sm font-bold text-slate-900 mb-1">{v.name}</h3>
-                          <p className="text-xs text-slate-400 font-medium">{v.desc || 'Executive level residency'}</p>
+                          <p className="text-xs text-slate-400 font-medium">
+                            {v.desc || 'Executive level residency'}
+                          </p>
                           {v.amenities && v.amenities.length > 0 && (
                             <div className="flex flex-wrap gap-1.5 mt-2">
                               {v.amenities.slice(0, 4).map((amenityLabel, idx) => {
-                                const amenityObj = ALL_AMENITIES.find((a) => a.label === amenityLabel);
+                                const amenityObj = ALL_AMENITIES.find(
+                                  (a) => a.label === amenityLabel
+                                );
                                 if (!amenityObj) return null;
                                 return (
-                                  <span key={idx} className="inline-flex items-center gap-1 px-2 py-1 bg-white border border-slate-100 rounded-md text-[10px] font-semibold text-slate-500">
+                                  <span
+                                    key={idx}
+                                    className="inline-flex items-center gap-1 px-2 py-1 bg-white border border-slate-100 rounded-md text-[10px] font-semibold text-slate-500"
+                                  >
                                     <amenityObj.icon size={9} className="text-emerald-500" />
                                     {amenityLabel}
                                   </span>
@@ -694,7 +827,9 @@ export default function ListingDetails() {
                           )}
                         </div>
                         <div className="text-right shrink-0">
-                          <p className="text-xl font-black text-slate-900">₹{v.price.toLocaleString()}</p>
+                          <p className="text-xl font-black text-slate-900">
+                            ₹{v.price.toLocaleString()}
+                          </p>
                           <p className="text-[11px] text-slate-400 font-medium">/ night</p>
                         </div>
                       </div>
@@ -713,10 +848,16 @@ export default function ListingDetails() {
                 <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-sm">
                   <div className="flex items-center gap-2 mb-5">
                     <div className="h-0.5 w-6 bg-amber-400 rounded-full" />
-                    <h2 className="text-xs font-bold text-amber-600 uppercase tracking-widest">Leave a Review</h2>
+                    <h2 className="text-xs font-bold text-amber-600 uppercase tracking-widest">
+                      Leave a Review
+                    </h2>
                   </div>
-                  <h3 className="text-lg font-bold text-slate-900 mb-2">Rate your {getCategoryTerm()}</h3>
-                  <p className="text-sm text-slate-400 font-medium mb-5">Your feedback helps the Wayzza community make better choices.</p>
+                  <h3 className="text-lg font-bold text-slate-900 mb-2">
+                    Rate your {getCategoryTerm()}
+                  </h3>
+                  <p className="text-sm text-slate-400 font-medium mb-5">
+                    Your feedback helps the Wayzza community make better choices.
+                  </p>
                   <StarRow rating={rating} size={24} interactive onSet={setRating} />
                   <textarea
                     value={comment}
@@ -730,7 +871,11 @@ export default function ListingDetails() {
                     disabled={submitting}
                     className="mt-4 h-11 px-6 bg-slate-900 text-white rounded-xl font-semibold text-sm hover:bg-emerald-600 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
                   >
-                    {submitting ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Star size={14} className="fill-white" />}
+                    {submitting ? (
+                      <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : (
+                      <Star size={14} className="fill-white" />
+                    )}
                     Submit Review
                   </button>
                 </div>
@@ -739,7 +884,9 @@ export default function ListingDetails() {
               {alreadyReviewed && (
                 <div className="flex items-center gap-3 text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-2xl px-5 py-4">
                   <CheckCircle size={16} />
-                  <span className="text-sm font-semibold">You&apos;ve reviewed this {getCategoryTerm()} — thank you!</span>
+                  <span className="text-sm font-semibold">
+                    You&apos;ve reviewed this {getCategoryTerm()} — thank you!
+                  </span>
                 </div>
               )}
             </div>
@@ -779,7 +926,6 @@ export default function ListingDetails() {
                 </div>
               </div>
             </div>
-
           </div>
         </div>
 
@@ -788,13 +934,23 @@ export default function ListingDetails() {
           <div>
             <p className="text-base font-black text-slate-900">
               ₹{basePrice.toLocaleString()}
-              <span className="text-slate-400 font-medium text-sm ml-1">/ {isVehicle ? 'day' : 'night'}</span>
+              <span className="text-slate-400 font-medium text-sm ml-1">
+                / {isVehicle ? 'day' : 'night'}
+              </span>
             </p>
             <button
-              onClick={() => document.getElementById('reservation-console')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() =>
+                document
+                  .getElementById('reservation-console')
+                  ?.scrollIntoView({ behavior: 'smooth' })
+              }
               className="text-xs font-bold text-emerald-600"
             >
-              {checkIn && checkOut ? `${nights} ${isVehicle ? 'days' : 'nights'} selected` : isVehicle ? 'Select dates' : 'Select dates'}
+              {checkIn && checkOut
+                ? `${nights} ${isVehicle ? 'days' : 'nights'} selected`
+                : isVehicle
+                  ? 'Select dates'
+                  : 'Select dates'}
             </button>
           </div>
           <button

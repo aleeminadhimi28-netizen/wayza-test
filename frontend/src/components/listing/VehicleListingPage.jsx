@@ -80,10 +80,16 @@ function VehicleGallery({ images, title }) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [activeIdx, setActiveIdx] = useState(0);
 
-  const openAt = (i) => { setActiveIdx(i); setLightboxOpen(true); };
+  const openAt = (i) => {
+    setActiveIdx(i);
+    setLightboxOpen(true);
+  };
   const close = () => setLightboxOpen(false);
   const next = useCallback(() => setActiveIdx((i) => (i + 1) % images.length), [images.length]);
-  const prev = useCallback(() => setActiveIdx((i) => (i - 1 + images.length) % images.length), [images.length]);
+  const prev = useCallback(
+    () => setActiveIdx((i) => (i - 1 + images.length) % images.length),
+    [images.length]
+  );
 
   /* Keyboard nav */
   useEffect(() => {
@@ -100,14 +106,15 @@ function VehicleGallery({ images, title }) {
   /* Lock body scroll */
   useEffect(() => {
     document.body.style.overflow = lightboxOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [lightboxOpen]);
 
   return (
     <>
       {/* ── 5-photo grid ─────────────────────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-4 lg:grid-rows-2 gap-2 h-[340px] md:h-[460px] lg:h-[540px] rounded-3xl overflow-hidden">
-
         {/* Hero — 2 cols × 2 rows */}
         <div
           className="lg:col-span-2 lg:row-span-2 relative overflow-hidden cursor-pointer group"
@@ -130,35 +137,70 @@ function VehicleGallery({ images, title }) {
 
         {/* Top-right */}
         {images[1] && (
-          <div className="hidden lg:block relative overflow-hidden cursor-pointer group" onClick={() => openAt(1)}>
-            <img src={images[1]} alt="Photo 2" className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out" loading="lazy" />
+          <div
+            className="hidden lg:block relative overflow-hidden cursor-pointer group"
+            onClick={() => openAt(1)}
+          >
+            <img
+              src={images[1]}
+              alt="Photo 2"
+              className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+              loading="lazy"
+            />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
           </div>
         )}
 
         {/* Top-far-right */}
         {images[2] && (
-          <div className="hidden lg:block relative overflow-hidden cursor-pointer group" onClick={() => openAt(2)}>
-            <img src={images[2]} alt="Photo 3" className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out" loading="lazy" />
+          <div
+            className="hidden lg:block relative overflow-hidden cursor-pointer group"
+            onClick={() => openAt(2)}
+          >
+            <img
+              src={images[2]}
+              alt="Photo 3"
+              className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+              loading="lazy"
+            />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
           </div>
         )}
 
         {/* Bottom-right */}
         {images[3] && (
-          <div className="hidden lg:block relative overflow-hidden cursor-pointer group" onClick={() => openAt(3)}>
-            <img src={images[3]} alt="Photo 4" className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out" loading="lazy" />
+          <div
+            className="hidden lg:block relative overflow-hidden cursor-pointer group"
+            onClick={() => openAt(3)}
+          >
+            <img
+              src={images[3]}
+              alt="Photo 4"
+              className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+              loading="lazy"
+            />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
           </div>
         )}
 
         {/* Bottom-far-right + "Show all" */}
         {images[4] && (
-          <div className="hidden lg:block relative overflow-hidden cursor-pointer group" onClick={() => openAt(4)}>
-            <img src={images[4]} alt="Photo 5" className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out" loading="lazy" />
+          <div
+            className="hidden lg:block relative overflow-hidden cursor-pointer group"
+            onClick={() => openAt(4)}
+          >
+            <img
+              src={images[4]}
+              alt="Photo 5"
+              className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+              loading="lazy"
+            />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
             <button
-              onClick={(e) => { e.stopPropagation(); openAt(0); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                openAt(0);
+              }}
               className="absolute bottom-3 right-3 flex items-center gap-2 bg-white/95 backdrop-blur-sm border border-slate-200 text-slate-900 px-4 py-2.5 rounded-full text-[11px] font-black uppercase tracking-wider shadow-lg hover:bg-slate-950 hover:text-white transition-all duration-300"
             >
               <Images size={13} />
@@ -186,14 +228,20 @@ function VehicleGallery({ images, title }) {
                   {activeIdx + 1} of {images.length}
                 </p>
               </div>
-              <button onClick={close} className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all">
+              <button
+                onClick={close}
+                className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all"
+              >
                 <X size={20} />
               </button>
             </div>
 
             {/* Main image */}
             <div className="flex-1 relative flex items-center justify-center px-4 md:px-20 min-h-0">
-              <button onClick={prev} className="absolute left-4 md:left-6 z-10 w-12 h-12 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center transition-all hover:scale-110">
+              <button
+                onClick={prev}
+                className="absolute left-4 md:left-6 z-10 w-12 h-12 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center transition-all hover:scale-110"
+              >
                 <ChevronLeft size={26} />
               </button>
               <AnimatePresence mode="wait">
@@ -209,7 +257,10 @@ function VehicleGallery({ images, title }) {
                   draggable={false}
                 />
               </AnimatePresence>
-              <button onClick={next} className="absolute right-4 md:right-6 z-10 w-12 h-12 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center transition-all hover:scale-110">
+              <button
+                onClick={next}
+                className="absolute right-4 md:right-6 z-10 w-12 h-12 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center transition-all hover:scale-110"
+              >
                 <ChevronRight size={26} />
               </button>
             </div>
@@ -285,30 +336,29 @@ export default function VehicleListingPage({
   })();
 
   /* Merge amenities: check both vehicle and standard categories */
-  const allAmenityRows = [
-    ...VEHICLE_AMENITY_CATEGORIES,
-    ...AMENITY_CATEGORIES,
-  ].map((cat) => {
-    const present = cat.amenities.filter((a) =>
-      (listing.amenities || []).includes(a.label)
-    );
-    return { ...cat, present };
-  }).filter((cat) => cat.present.length > 0);
+  const allAmenityRows = [...VEHICLE_AMENITY_CATEGORIES, ...AMENITY_CATEGORIES]
+    .map((cat) => {
+      const present = cat.amenities.filter((a) => (listing.amenities || []).includes(a.label));
+      return { ...cat, present };
+    })
+    .filter((cat) => cat.present.length > 0);
 
   return (
     <div className="bg-slate-50 min-h-screen font-sans pb-24 lg:pb-0">
-
       <div className="max-w-[1280px] mx-auto px-5 md:px-10 py-6">
-
         {/* ── IDENTITY HEADER ──────────────────────────────────────── */}
         <div className="mb-6">
           {/* Category + action row */}
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-5">
             <div className="flex flex-wrap items-center gap-2">
               {/* Vehicle type badge */}
-              <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-widest ${
-                isBike ? 'bg-amber-50 text-amber-700 border border-amber-100' : 'bg-slate-100 text-slate-700'
-              }`}>
+              <div
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-widest ${
+                  isBike
+                    ? 'bg-amber-50 text-amber-700 border border-amber-100'
+                    : 'bg-slate-100 text-slate-700'
+                }`}
+              >
                 {vehicleIcon}
                 {listing.category === 'bike' ? 'Bike' : 'Car'} Rental
               </div>
@@ -360,7 +410,9 @@ export default function VehicleListingPage({
               <Star size={14} className="fill-amber-400 text-amber-400" />
               <span className="text-sm font-bold text-slate-900">{avgRating || 'New'}</span>
               <span className="text-sm text-slate-400">
-                {reviews.length > 0 ? `· ${reviews.length} review${reviews.length !== 1 ? 's' : ''}` : '· New Vehicle'}
+                {reviews.length > 0
+                  ? `· ${reviews.length} review${reviews.length !== 1 ? 's' : ''}`
+                  : '· New Vehicle'}
               </span>
             </div>
             <div className="flex items-center gap-1.5 text-sm text-slate-500">
@@ -393,9 +445,7 @@ export default function VehicleListingPage({
           <SpecChip icon={FileText} label="License Plate" value={listing.licensePlate} />
           <SpecChip icon={Shield} label="Registration" value={listing.registrationCategory} />
           <SpecChip icon={Calendar} label="Registered" value={regDateFormatted} />
-          {listing.fuelType && (
-            <SpecChip icon={Fuel} label="Fuel Type" value={listing.fuelType} />
-          )}
+          {listing.fuelType && <SpecChip icon={Fuel} label="Fuel Type" value={listing.fuelType} />}
           {listing.engineCC && (
             <SpecChip icon={Gauge} label="Engine" value={`${listing.engineCC}cc`} />
           )}
@@ -406,10 +456,8 @@ export default function VehicleListingPage({
 
         {/* ── MAIN CONTENT GRID ────────────────────────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-
           {/* LEFT: Details */}
           <div className="lg:col-span-7 space-y-5">
-
             {/* About this vehicle */}
             <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-sm">
               <div className="flex items-center gap-2 mb-5">
@@ -463,9 +511,7 @@ export default function VehicleListingPage({
                             <div className="w-8 h-8 bg-white rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 group-hover:text-emerald-600 transition-colors shrink-0">
                               <a.icon size={14} />
                             </div>
-                            <span className="text-xs font-semibold text-slate-700">
-                              {a.label}
-                            </span>
+                            <span className="text-xs font-semibold text-slate-700">{a.label}</span>
                           </div>
                         ))}
                       </div>
@@ -504,8 +550,12 @@ export default function VehicleListingPage({
                     <MapPin size={18} />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Pickup Location</p>
-                    <p className="text-sm font-bold text-slate-900 truncate">{listing.location || 'Varkala, Kerala'}</p>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">
+                      Pickup Location
+                    </p>
+                    <p className="text-sm font-bold text-slate-900 truncate">
+                      {listing.location || 'Varkala, Kerala'}
+                    </p>
                   </div>
                 </div>
                 {listing.latitude && listing.longitude && (
@@ -604,15 +654,12 @@ export default function VehicleListingPage({
                 </div>
                 <div>
                   <p className="text-sm font-bold text-slate-900">Direct Inquiries</p>
-                  <p className="text-xs text-slate-400 font-medium">
-                    Connect with our Concierge
-                  </p>
+                  <p className="text-xs text-slate-400 font-medium">Connect with our Concierge</p>
                 </div>
                 <ChevronRight size={16} className="ml-auto text-slate-300" />
               </div>
             </div>
           </div>
-
         </div>
       </div>
 

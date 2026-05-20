@@ -226,7 +226,10 @@ export default function AdminDashboard() {
           setDataList((prev) =>
             prev.map((item) => (item._id === id ? { ...item, featured } : item))
           );
-          showToast(featured ? '⭐ Listing pinned as Featured' : 'Removed from Featured', 'success');
+          showToast(
+            featured ? '⭐ Listing pinned as Featured' : 'Removed from Featured',
+            'success'
+          );
         }
       } catch (err) {
         console.error(err);

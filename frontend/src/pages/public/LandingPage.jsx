@@ -610,35 +610,38 @@ export default function LandingPage() {
               id="bikes-featured-scroll"
               className="flex gap-4 overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory scroll-smooth"
             >
-              {bikesLoading
-                ? [1, 2, 3].map((i) => (
-                    <div key={i} className="w-[280px] shrink-0 snap-start">
-                      <WayzzaSkeleton className="h-[360px] rounded-[32px]" />
-                    </div>
-                  ))
-                : bikes.length === 0
-                  ? <p className="text-slate-300 text-sm font-bold uppercase tracking-widest py-12">No bikes listed yet</p>
-                  : bikes.map((listing) => (
-                    <div key={listing._id} className="w-[280px] shrink-0 snap-start">
-                      <WayzzaHotelItem
-                        perUnit="day"
-                        hotel={{
-                          id: listing._id,
-                          name: listing.title,
-                          location: listing.location || 'Varkala',
-                          price: listing.price,
-                          image: fixImg(listing.image),
-                          wifiSpeed: 0,
-                          featured: listing.featured || false,
-                          viewCount: listing.viewCount || 0,
-                        }}
-                      />
-                    </div>
-                  ))}
+              {bikesLoading ? (
+                [1, 2, 3].map((i) => (
+                  <div key={i} className="w-[280px] shrink-0 snap-start">
+                    <WayzzaSkeleton className="h-[360px] rounded-[32px]" />
+                  </div>
+                ))
+              ) : bikes.length === 0 ? (
+                <p className="text-slate-300 text-sm font-bold uppercase tracking-widest py-12">
+                  No bikes listed yet
+                </p>
+              ) : (
+                bikes.map((listing) => (
+                  <div key={listing._id} className="w-[280px] shrink-0 snap-start">
+                    <WayzzaHotelItem
+                      perUnit="day"
+                      hotel={{
+                        id: listing._id,
+                        name: listing.title,
+                        location: listing.location || 'Varkala',
+                        price: listing.price,
+                        image: fixImg(listing.image),
+                        wifiSpeed: 0,
+                        featured: listing.featured || false,
+                        viewCount: listing.viewCount || 0,
+                      }}
+                    />
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </section>
-
 
         {/* ── CARS ── */}
         <section className="px-4 sm:px-6 max-w-7xl mx-auto space-y-8 pb-10 pt-2">
@@ -680,35 +683,38 @@ export default function LandingPage() {
               id="cars-featured-scroll"
               className="flex gap-4 overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory scroll-smooth"
             >
-              {carsLoading
-                ? [1, 2, 3].map((i) => (
-                    <div key={i} className="w-[280px] shrink-0 snap-start">
-                      <WayzzaSkeleton className="h-[360px] rounded-[32px]" />
-                    </div>
-                  ))
-                : cars.length === 0
-                  ? <p className="text-slate-300 text-sm font-bold uppercase tracking-widest py-12">No cars listed yet</p>
-                  : cars.map((listing) => (
-                    <div key={listing._id} className="w-[280px] shrink-0 snap-start">
-                      <WayzzaHotelItem
-                        perUnit="day"
-                        hotel={{
-                          id: listing._id,
-                          name: listing.title,
-                          location: listing.location || 'Varkala',
-                          price: listing.price,
-                          image: fixImg(listing.image),
-                          wifiSpeed: 0,
-                          featured: listing.featured || false,
-                          viewCount: listing.viewCount || 0,
-                        }}
-                      />
-                    </div>
-                  ))}
+              {carsLoading ? (
+                [1, 2, 3].map((i) => (
+                  <div key={i} className="w-[280px] shrink-0 snap-start">
+                    <WayzzaSkeleton className="h-[360px] rounded-[32px]" />
+                  </div>
+                ))
+              ) : cars.length === 0 ? (
+                <p className="text-slate-300 text-sm font-bold uppercase tracking-widest py-12">
+                  No cars listed yet
+                </p>
+              ) : (
+                cars.map((listing) => (
+                  <div key={listing._id} className="w-[280px] shrink-0 snap-start">
+                    <WayzzaHotelItem
+                      perUnit="day"
+                      hotel={{
+                        id: listing._id,
+                        name: listing.title,
+                        location: listing.location || 'Varkala',
+                        price: listing.price,
+                        image: fixImg(listing.image),
+                        wifiSpeed: 0,
+                        featured: listing.featured || false,
+                        viewCount: listing.viewCount || 0,
+                      }}
+                    />
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </section>
-
 
         {/* ── DESTINATIONS MASONRY ── */}
         <section className="py-20 md:py-32 bg-slate-50 px-4 sm:px-6 relative overflow-hidden">

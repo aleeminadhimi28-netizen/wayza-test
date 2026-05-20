@@ -41,7 +41,6 @@ export default function VehicleRentalCard({
 
   return (
     <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl shadow-slate-900/10 overflow-hidden">
-
       {/* ── PRICE HERO ─────────────────────────────────────────────── */}
       <div className="relative bg-slate-950 px-8 pt-7 pb-8 overflow-hidden">
         {/* Decorative emerald glow orb */}
@@ -94,7 +93,6 @@ export default function VehicleRentalCard({
 
       {/* ── BODY ───────────────────────────────────────────────────── */}
       <div className="p-6 space-y-4">
-
         {/* DATE PICKERS */}
         <div>
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2.5">
@@ -102,10 +100,15 @@ export default function VehicleRentalCard({
           </p>
           <div className="grid grid-cols-2 gap-2.5">
             {/* Pick-up */}
-            <div className={`relative rounded-2xl border-2 transition-all ${checkIn ? 'border-emerald-500 bg-emerald-50/50' : 'border-slate-200 bg-slate-50 hover:border-slate-300'}`}>
+            <div
+              className={`relative rounded-2xl border-2 transition-all ${checkIn ? 'border-emerald-500 bg-emerald-50/50' : 'border-slate-200 bg-slate-50 hover:border-slate-300'}`}
+            >
               <div className="px-4 pt-3 pb-3">
                 <div className="flex items-center gap-1.5 mb-1.5">
-                  <CalendarDays size={11} className={checkIn ? 'text-emerald-500' : 'text-slate-400'} />
+                  <CalendarDays
+                    size={11}
+                    className={checkIn ? 'text-emerald-500' : 'text-slate-400'}
+                  />
                   <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 cursor-pointer">
                     Pick-up
                   </label>
@@ -126,10 +129,15 @@ export default function VehicleRentalCard({
             </div>
 
             {/* Drop-off */}
-            <div className={`relative rounded-2xl border-2 transition-all ${checkOut ? 'border-emerald-500 bg-emerald-50/50' : 'border-slate-200 bg-slate-50 hover:border-slate-300'}`}>
+            <div
+              className={`relative rounded-2xl border-2 transition-all ${checkOut ? 'border-emerald-500 bg-emerald-50/50' : 'border-slate-200 bg-slate-50 hover:border-slate-300'}`}
+            >
               <div className="px-4 pt-3 pb-3">
                 <div className="flex items-center gap-1.5 mb-1.5">
-                  <CalendarDays size={11} className={checkOut ? 'text-emerald-500' : 'text-slate-400'} />
+                  <CalendarDays
+                    size={11}
+                    className={checkOut ? 'text-emerald-500' : 'text-slate-400'}
+                  />
                   <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 cursor-pointer">
                     Drop-off
                   </label>
@@ -171,7 +179,9 @@ export default function VehicleRentalCard({
               </div>
             </div>
             <div className="flex justify-between items-center px-5 py-4 bg-slate-900 ">
-              <span className="text-sm font-bold text-white/60 uppercase tracking-widest">Total</span>
+              <span className="text-sm font-bold text-white/60 uppercase tracking-widest">
+                Total
+              </span>
               <span className="text-xl font-black text-white">₹{total.toLocaleString()}</span>
             </div>
           </div>
@@ -189,13 +199,18 @@ export default function VehicleRentalCard({
           onClick={() => setAgreed((v) => !v)}
           className="w-full flex items-start gap-3 text-left group"
         >
-          <div className={`w-5 h-5 mt-0.5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${
-            agreed ? 'bg-emerald-500 border-emerald-500' : 'border-slate-300 group-hover:border-emerald-400'
-          }`}>
+          <div
+            className={`w-5 h-5 mt-0.5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${
+              agreed
+                ? 'bg-emerald-500 border-emerald-500'
+                : 'border-slate-300 group-hover:border-emerald-400'
+            }`}
+          >
             {agreed && <CheckCircle size={11} className="text-white" />}
           </div>
           <p className="text-xs text-slate-400 font-medium leading-relaxed">
-            I agree to the rental terms &amp; cancellation policy, and confirm I hold a valid driving licence.
+            I agree to the rental terms &amp; cancellation policy, and confirm I hold a valid
+            driving licence.
           </p>
         </button>
 
@@ -216,7 +231,10 @@ export default function VehicleRentalCard({
             <>
               {isBike ? <Bike size={16} /> : <Car size={16} />}
               Rent Now
-              <ArrowRight size={15} className="ml-auto opacity-60 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight
+                size={15}
+                className="ml-auto opacity-60 group-hover:translate-x-1 transition-transform"
+              />
             </>
           )}
         </button>

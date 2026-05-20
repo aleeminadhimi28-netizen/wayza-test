@@ -6,10 +6,16 @@ export default function ListingGallery({ images, title, priority = false }) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [activeIdx, setActiveIdx] = useState(0);
 
-  const openAt = (i) => { setActiveIdx(i); setLightboxOpen(true); };
+  const openAt = (i) => {
+    setActiveIdx(i);
+    setLightboxOpen(true);
+  };
   const close = () => setLightboxOpen(false);
   const next = useCallback(() => setActiveIdx((i) => (i + 1) % images.length), [images.length]);
-  const prev = useCallback(() => setActiveIdx((i) => (i - 1 + images.length) % images.length), [images.length]);
+  const prev = useCallback(
+    () => setActiveIdx((i) => (i - 1 + images.length) % images.length),
+    [images.length]
+  );
 
   /* Keyboard navigation */
   useEffect(() => {
@@ -26,14 +32,15 @@ export default function ListingGallery({ images, title, priority = false }) {
   /* Lock body scroll when lightbox open */
   useEffect(() => {
     document.body.style.overflow = lightboxOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [lightboxOpen]);
 
   return (
     <>
       {/* ── PHOTO GRID ──────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-4 lg:grid-rows-2 gap-2 h-[340px] md:h-[460px] lg:h-[540px] rounded-2xl lg:rounded-3xl overflow-hidden">
-
         {/* Hero image — spans 2 rows on desktop */}
         <div
           className="lg:col-span-2 lg:row-span-2 relative overflow-hidden cursor-pointer group"
@@ -116,7 +123,10 @@ export default function ListingGallery({ images, title, priority = false }) {
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
             {/* Show all button */}
             <button
-              onClick={(e) => { e.stopPropagation(); openAt(0); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                openAt(0);
+              }}
               className="absolute bottom-3 right-3 flex items-center gap-2 bg-white/95 backdrop-blur-sm border border-slate-200 text-slate-900 px-4 py-2.5 rounded-full text-[11px] font-black uppercase tracking-wider shadow-lg hover:bg-slate-950 hover:text-white transition-all duration-300"
             >
               <Images size={13} />
