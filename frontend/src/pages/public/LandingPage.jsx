@@ -497,6 +497,8 @@ export default function LandingPage() {
                           price: listing.price,
                           image: fixImg(listing.image),
                           wifiSpeed: listing.wifiSpeed || 0,
+                          featured: listing.featured || false,
+                          viewCount: listing.viewCount || 0,
                         }}
                       />
                     </div>
@@ -558,6 +560,8 @@ export default function LandingPage() {
                           price: listing.price,
                           image: fixImg(listing.image),
                           wifiSpeed: listing.wifiSpeed || 0,
+                          featured: listing.featured || false,
+                          viewCount: listing.viewCount || 0,
                         }}
                       />
                     </div>
@@ -568,28 +572,29 @@ export default function LandingPage() {
 
         {/* ── BIKES ── */}
         <section className="px-4 sm:px-6 max-w-7xl mx-auto space-y-8 pb-6 pt-2">
+          {/* Featured Bikes */}
           <div className="space-y-6">
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <div>
                 <h3 className="text-xl md:text-2xl font-black tracking-tight text-slate-950">
-                  Bikes for rent
+                  Featured Bikes
                 </h3>
                 <p className="text-sm text-slate-500 font-medium">
-                  Royal Enfield, scooters &amp; more — ready to ride.
+                  Top-picked rides curated for your Varkala adventure.
                 </p>
               </div>
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => scrollCarousel('bikes-scroll', -1)}
+                  onClick={() => scrollCarousel('bikes-featured-scroll', -1)}
                   className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
-                  aria-label="Scroll bikes left"
+                  aria-label="Scroll featured bikes left"
                 >
                   <ChevronLeft size={18} />
                 </button>
                 <button
-                  onClick={() => scrollCarousel('bikes-scroll', 1)}
+                  onClick={() => scrollCarousel('bikes-featured-scroll', 1)}
                   className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
-                  aria-label="Scroll bikes right"
+                  aria-label="Scroll featured bikes right"
                 >
                   <ChevronRight size={18} />
                 </button>
@@ -602,7 +607,7 @@ export default function LandingPage() {
               </div>
             </div>
             <div
-              id="bikes-scroll"
+              id="bikes-featured-scroll"
               className="flex gap-4 overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory scroll-smooth"
             >
               {bikesLoading
@@ -632,18 +637,151 @@ export default function LandingPage() {
                   ))}
             </div>
           </div>
-        </section>
 
-        {/* ── CARS ── */}
-        <section className="px-4 sm:px-6 max-w-7xl mx-auto space-y-8 pb-10 pt-2">
+          {/* More Bikes */}
           <div className="space-y-6">
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <div>
                 <h3 className="text-xl md:text-2xl font-black tracking-tight text-slate-950">
-                  Cars for rent
+                  More bikes
                 </h3>
                 <p className="text-sm text-slate-500 font-medium">
-                  Self-drive &amp; chauffeur-driven — explore Kerala in comfort.
+                  Browse more bikes available for rent.
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => scrollCarousel('bikes-scroll', -1)}
+                  className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
+                  aria-label="Scroll bikes left"
+                >
+                  <ChevronLeft size={18} />
+                </button>
+                <button
+                  onClick={() => scrollCarousel('bikes-scroll', 1)}
+                  className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
+                  aria-label="Scroll bikes right"
+                >
+                  <ChevronRight size={18} />
+                </button>
+                <Link
+                  to="/listings?category=bike"
+                  className="hidden sm:block text-xs uppercase font-black tracking-[0.3em] text-slate-400 hover:text-slate-900 ml-2 transition-colors"
+                >
+                  Browse all
+                </Link>
+              </div>
+            </div>
+            <div
+              id="bikes-scroll"
+              className="flex gap-4 overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory scroll-smooth"
+            >
+              {bikesLoading
+                ? [1, 2, 3].map((i) => (
+                    <div key={i} className="min-w-[280px] snap-start">
+                      <WayzzaSkeleton className="h-[360px] rounded-[32px]" />
+                    </div>
+                  ))
+                : bikes.length === 0
+                  ? <p className="text-slate-300 text-sm font-bold uppercase tracking-widest py-12">No bikes listed yet</p>
+                  : bikes.slice(0, 6).map((listing) => (
+                    <div key={listing._id} className="min-w-[280px] snap-start">
+                      <WayzzaHotelItem
+                        perUnit="day"
+                        hotel={{
+                          id: listing._id,
+                          name: listing.title,
+                          location: listing.location || 'Varkala',
+                          price: listing.price,
+                          image: fixImg(listing.image),
+                          wifiSpeed: 0,
+                          featured: listing.featured || false,
+                          viewCount: listing.viewCount || 0,
+                        }}
+                      />
+                    </div>
+                  ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── CARS ── */}
+        <section className="px-4 sm:px-6 max-w-7xl mx-auto space-y-8 pb-10 pt-2">
+          {/* Featured Cars */}
+          <div className="space-y-6">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div>
+                <h3 className="text-xl md:text-2xl font-black tracking-tight text-slate-950">
+                  Featured Cars
+                </h3>
+                <p className="text-sm text-slate-500 font-medium">
+                  Handpicked cars for a seamless Kerala drive.
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => scrollCarousel('cars-featured-scroll', -1)}
+                  className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
+                  aria-label="Scroll featured cars left"
+                >
+                  <ChevronLeft size={18} />
+                </button>
+                <button
+                  onClick={() => scrollCarousel('cars-featured-scroll', 1)}
+                  className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
+                  aria-label="Scroll featured cars right"
+                >
+                  <ChevronRight size={18} />
+                </button>
+                <Link
+                  to="/listings?category=car"
+                  className="hidden sm:block text-xs uppercase font-black tracking-[0.3em] text-slate-400 hover:text-slate-900 ml-2 transition-colors"
+                >
+                  View all
+                </Link>
+              </div>
+            </div>
+            <div
+              id="cars-featured-scroll"
+              className="flex gap-4 overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory scroll-smooth"
+            >
+              {carsLoading
+                ? [1, 2, 3].map((i) => (
+                    <div key={i} className="min-w-[280px] snap-start">
+                      <WayzzaSkeleton className="h-[360px] rounded-[32px]" />
+                    </div>
+                  ))
+                : cars.length === 0
+                  ? <p className="text-slate-300 text-sm font-bold uppercase tracking-widest py-12">No cars listed yet</p>
+                  : cars.map((listing) => (
+                    <div key={listing._id} className="min-w-[280px] snap-start">
+                      <WayzzaHotelItem
+                        perUnit="day"
+                        hotel={{
+                          id: listing._id,
+                          name: listing.title,
+                          location: listing.location || 'Varkala',
+                          price: listing.price,
+                          image: fixImg(listing.image),
+                          wifiSpeed: 0,
+                          featured: listing.featured || false,
+                          viewCount: listing.viewCount || 0,
+                        }}
+                      />
+                    </div>
+                  ))}
+            </div>
+          </div>
+
+          {/* More Cars */}
+          <div className="space-y-6">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div>
+                <h3 className="text-xl md:text-2xl font-black tracking-tight text-slate-950">
+                  More cars
+                </h3>
+                <p className="text-sm text-slate-500 font-medium">
+                  Browse more cars available for rent.
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -665,7 +803,7 @@ export default function LandingPage() {
                   to="/listings?category=car"
                   className="hidden sm:block text-xs uppercase font-black tracking-[0.3em] text-slate-400 hover:text-slate-900 ml-2 transition-colors"
                 >
-                  View all
+                  Browse all
                 </Link>
               </div>
             </div>
@@ -681,7 +819,7 @@ export default function LandingPage() {
                   ))
                 : cars.length === 0
                   ? <p className="text-slate-300 text-sm font-bold uppercase tracking-widest py-12">No cars listed yet</p>
-                  : cars.map((listing) => (
+                  : cars.slice(0, 6).map((listing) => (
                     <div key={listing._id} className="min-w-[280px] snap-start">
                       <WayzzaHotelItem
                         perUnit="day"
