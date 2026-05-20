@@ -27,7 +27,17 @@ import { api } from '../../utils/api.js';
    Sub-components
 ───────────────────────────────────────────────────────── */
 
-function StyledInput({ label, value, onChange, placeholder, icon, type = 'text', maxLength, required = false, hint }) {
+function StyledInput({
+  label,
+  value,
+  onChange,
+  placeholder,
+  icon,
+  type = 'text',
+  maxLength,
+  required = false,
+  hint,
+}) {
   return (
     <div className="space-y-2 group">
       <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 uppercase tracking-widest group-focus-within:text-emerald-600 transition-colors">
@@ -62,14 +72,18 @@ function SectorCard({ icon, title, subtitle, active, onClick }) {
           : 'bg-white border-slate-200 text-slate-700 hover:border-emerald-300 hover:shadow-md'
       }`}
     >
-      <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-colors ${active ? 'bg-white/20' : 'bg-slate-100 group-hover:bg-emerald-50'}`}>
+      <div
+        className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-colors ${active ? 'bg-white/20' : 'bg-slate-100 group-hover:bg-emerald-50'}`}
+      >
         <span className={active ? 'text-white' : 'text-slate-400 group-hover:text-emerald-500'}>
           {icon}
         </span>
       </div>
       <div>
         <p className={`font-bold text-sm ${active ? 'text-white' : 'text-slate-800'}`}>{title}</p>
-        <p className={`text-xs mt-0.5 font-medium ${active ? 'text-white/70' : 'text-slate-400'}`}>{subtitle}</p>
+        <p className={`text-xs mt-0.5 font-medium ${active ? 'text-white/70' : 'text-slate-400'}`}>
+          {subtitle}
+        </p>
       </div>
       {active && (
         <div className="absolute top-3 right-3 w-5 h-5 bg-white rounded-full flex items-center justify-center">
@@ -179,20 +193,29 @@ export default function PartnerOnboarding() {
     setLoading(true);
     try {
       const payload = {
-        email, businessName, subCategory, brandVision, location,
-        msmeNumber, gstNumber, gstEnabled, mainSector,
-        firstListing: listingName ? {
-          title: listingName,
-          price: Number(price),
-          latitude: listingLat ? Number(listingLat) : undefined,
-          longitude: listingLng ? Number(listingLng) : undefined,
-          roomType: mainSector === 'stays' ? roomType : undefined,
-          vehicleType: mainSector === 'vehicles' ? vehicleType : undefined,
-          registrationCategory: mainSector === 'vehicles' ? registrationCategory : undefined,
-          cancellationPolicy,
-          licensePlate: mainSector === 'vehicles' ? licensePlate : undefined,
-          registrationDate: mainSector === 'vehicles' ? registrationDate : undefined,
-        } : null,
+        email,
+        businessName,
+        subCategory,
+        brandVision,
+        location,
+        msmeNumber,
+        gstNumber,
+        gstEnabled,
+        mainSector,
+        firstListing: listingName
+          ? {
+              title: listingName,
+              price: Number(price),
+              latitude: listingLat ? Number(listingLat) : undefined,
+              longitude: listingLng ? Number(listingLng) : undefined,
+              roomType: mainSector === 'stays' ? roomType : undefined,
+              vehicleType: mainSector === 'vehicles' ? vehicleType : undefined,
+              registrationCategory: mainSector === 'vehicles' ? registrationCategory : undefined,
+              cancellationPolicy,
+              licensePlate: mainSector === 'vehicles' ? licensePlate : undefined,
+              registrationDate: mainSector === 'vehicles' ? registrationDate : undefined,
+            }
+          : null,
       };
 
       const data = await api.partnerOnboard(payload);
@@ -210,21 +233,45 @@ export default function PartnerOnboarding() {
   if (!email) return null;
 
   const steps = [
-    { id: 1, label: 'Identity', description: 'Business & compliance details', icon: <Briefcase size={16} /> },
-    { id: 2, label: 'Location', description: 'Operational hub coordinates', icon: <MapPin size={16} /> },
-    { id: 3, label: 'Inventory', description: 'Your first listing setup', icon: <PlusCircle size={16} /> },
+    {
+      id: 1,
+      label: 'Identity',
+      description: 'Business & compliance details',
+      icon: <Briefcase size={16} />,
+    },
+    {
+      id: 2,
+      label: 'Location',
+      description: 'Operational hub coordinates',
+      icon: <MapPin size={16} />,
+    },
+    {
+      id: 3,
+      label: 'Inventory',
+      description: 'Your first listing setup',
+      icon: <PlusCircle size={16} />,
+    },
     { id: 4, label: 'Review', description: 'Confirm & submit', icon: <CheckCircle size={16} /> },
   ];
 
   const staySubCategories = [
-    'Resort / Hotel', 'Homestay / Guesthouse', 'Backpacker Hostel', 'Private Villa / Independent House',
+    'Resort / Hotel',
+    'Homestay / Guesthouse',
+    'Backpacker Hostel',
+    'Private Villa / Independent House',
   ];
   const vehiclePartnerTypes = [
-    'Individual / Peer-to-Peer Host', 'Registered Rental Agency', 'Hotel / Homestay Partner',
+    'Individual / Peer-to-Peer Host',
+    'Registered Rental Agency',
+    'Hotel / Homestay Partner',
   ];
   const stayRoomTypes = [
-    'Standard Room', 'Deluxe Room', 'Premium / Suite',
-    'Dormitory Bed', 'Bamboo Hut / Cottage', 'Tent / Glamping',
+    'Standard Room',
+    'Deluxe Room',
+    'Premium / Suite',
+    'Dormitory Bed',
+    'Bamboo Hut / Cottage',
+    'Tent / Glamping',
   ];
   const vehicleTypes = ['Car', 'Scooter / Bike', 'Both (Cars & Bikes)'];
   const registrationCategories = [
@@ -239,7 +286,6 @@ export default function PartnerOnboarding() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex font-sans">
-
       {/* ── LEFT SIDEBAR ── */}
       <div className="hidden lg:flex flex-col w-[340px] xl:w-[380px] shrink-0 bg-slate-950 text-white relative overflow-hidden">
         {/* Decorative background blobs */}
@@ -258,13 +304,17 @@ export default function PartnerOnboarding() {
             </div>
             <div>
               <p className="text-white font-black text-lg tracking-tight leading-none">WAYZZA</p>
-              <p className="text-emerald-400 text-[10px] font-bold uppercase tracking-[0.3em] mt-0.5">Partner Pro</p>
+              <p className="text-emerald-400 text-[10px] font-bold uppercase tracking-[0.3em] mt-0.5">
+                Partner Pro
+              </p>
             </div>
           </div>
 
           {/* Step navigator */}
           <div className="flex-1 space-y-2">
-            <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-6">Onboarding Flow</p>
+            <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-6">
+              Onboarding Flow
+            </p>
             {steps.map((s) => (
               <div
                 key={s.id}
@@ -272,24 +322,29 @@ export default function PartnerOnboarding() {
                   step === s.id
                     ? 'bg-white/10 border border-white/10'
                     : step > s.id
-                    ? 'opacity-60'
-                    : 'opacity-30'
+                      ? 'opacity-60'
+                      : 'opacity-30'
                 }`}
               >
-                <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
-                  step > s.id
-                    ? 'bg-emerald-500'
-                    : step === s.id
-                    ? 'bg-white/20'
-                    : 'bg-white/5'
-                }`}>
-                  {step > s.id
-                    ? <CheckCircle size={16} className="text-white" />
-                    : <span className={step === s.id ? 'text-white' : 'text-slate-600'}>{s.icon}</span>
-                  }
+                <div
+                  className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                    step > s.id ? 'bg-emerald-500' : step === s.id ? 'bg-white/20' : 'bg-white/5'
+                  }`}
+                >
+                  {step > s.id ? (
+                    <CheckCircle size={16} className="text-white" />
+                  ) : (
+                    <span className={step === s.id ? 'text-white' : 'text-slate-600'}>
+                      {s.icon}
+                    </span>
+                  )}
                 </div>
                 <div>
-                  <p className={`text-sm font-bold ${step === s.id ? 'text-white' : 'text-slate-400'}`}>{s.label}</p>
+                  <p
+                    className={`text-sm font-bold ${step === s.id ? 'text-white' : 'text-slate-400'}`}
+                  >
+                    {s.label}
+                  </p>
                   <p className="text-[11px] text-slate-500 font-medium mt-0.5">{s.description}</p>
                 </div>
               </div>
@@ -326,9 +381,13 @@ export default function PartnerOnboarding() {
               <Sparkles size={14} className="text-white" />
             </div>
             <span className="font-black text-slate-900 tracking-tight">WAYZZA</span>
-            <span className="text-[10px] bg-emerald-100 text-emerald-700 font-bold uppercase tracking-widest px-2 py-0.5 rounded-md">Pro</span>
+            <span className="text-[10px] bg-emerald-100 text-emerald-700 font-bold uppercase tracking-widest px-2 py-0.5 rounded-md">
+              Pro
+            </span>
           </div>
-          <span className="text-xs font-bold text-slate-400">{step}/{steps.length}</span>
+          <span className="text-xs font-bold text-slate-400">
+            {step}/{steps.length}
+          </span>
         </div>
 
         {/* Mobile progress bar */}
@@ -344,7 +403,6 @@ export default function PartnerOnboarding() {
         <div className="flex-1 flex items-start justify-center p-6 md:p-12 lg:p-16">
           <div className="w-full max-w-2xl">
             <AnimatePresence mode="wait">
-
               {/* ── STEP 1: IDENTITY ── */}
               {step === 1 && (
                 <motion.div
@@ -358,46 +416,64 @@ export default function PartnerOnboarding() {
                   <div>
                     <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-50 border border-emerald-100 rounded-full mb-4">
                       <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                      <span className="text-xs font-bold text-emerald-700 uppercase tracking-widest">Step 1 — Identity</span>
+                      <span className="text-xs font-bold text-emerald-700 uppercase tracking-widest">
+                        Step 1 — Identity
+                      </span>
                     </div>
                     <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight">
-                      Tell us about<br />
+                      Tell us about
+                      <br />
                       <span className="text-emerald-600">your business.</span>
                     </h1>
                     <p className="text-slate-500 text-sm font-medium mt-3 max-w-md leading-relaxed">
-                      Define your presence within the Wayzza partner network. This information will be used for KYC verification.
+                      Define your presence within the Wayzza partner network. This information will
+                      be used for KYC verification.
                     </p>
                   </div>
 
                   <div className="space-y-6">
                     {/* Sector toggle */}
                     <div className="space-y-3">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Primary Service Sector</label>
+                      <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                        Primary Service Sector
+                      </label>
                       <div className="grid grid-cols-2 gap-3">
                         <SectorCard
                           icon={<Home size={18} />}
                           title="Stays"
                           subtitle="Hotels & Homestays"
                           active={mainSector === 'stays'}
-                          onClick={() => { setMainSector('stays'); setSubCategory('Resort / Hotel'); }}
+                          onClick={() => {
+                            setMainSector('stays');
+                            setSubCategory('Resort / Hotel');
+                          }}
                         />
                         <SectorCard
                           icon={<Car size={18} />}
                           title="Vehicles"
                           subtitle="Cars & Bikes"
                           active={mainSector === 'vehicles'}
-                          onClick={() => { setMainSector('vehicles'); setSubCategory('Individual / Peer-to-Peer Host'); }}
+                          onClick={() => {
+                            setMainSector('vehicles');
+                            setSubCategory('Individual / Peer-to-Peer Host');
+                          }}
                         />
                       </div>
                     </div>
 
                     {/* Business name */}
                     <StyledInput
-                      label={mainSector === 'stays' ? 'Official Property Name' : 'Official Business / Fleet Name'}
+                      label={
+                        mainSector === 'stays'
+                          ? 'Official Property Name'
+                          : 'Official Business / Fleet Name'
+                      }
                       value={businessName}
                       onChange={setBusinessName}
                       required
-                      placeholder={mainSector === 'stays' ? 'e.g. Azure Cliff Estate' : 'e.g. Wayzza Rentals'}
+                      placeholder={
+                        mainSector === 'stays' ? 'e.g. Azure Cliff Estate' : 'e.g. Wayzza Rentals'
+                      }
                       icon={mainSector === 'stays' ? <Building size={16} /> : <Car size={16} />}
                     />
 
@@ -407,9 +483,16 @@ export default function PartnerOnboarding() {
                         {mainSector === 'stays' ? 'Property Type' : 'Partner Type'}
                       </label>
                       <div className="flex flex-wrap gap-2">
-                        {(mainSector === 'stays' ? staySubCategories : vehiclePartnerTypes).map((item) => (
-                          <CategoryPill key={item} label={item} active={subCategory === item} onClick={() => setSubCategory(item)} />
-                        ))}
+                        {(mainSector === 'stays' ? staySubCategories : vehiclePartnerTypes).map(
+                          (item) => (
+                            <CategoryPill
+                              key={item}
+                              label={item}
+                              active={subCategory === item}
+                              onClick={() => setSubCategory(item)}
+                            />
+                          )
+                        )}
                       </div>
                     </div>
 
@@ -426,7 +509,10 @@ export default function PartnerOnboarding() {
                         hint="Format: UDYAM-ST-00-0000000"
                       />
                       <div className="space-y-2 group">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">GST Number <span className="text-slate-300 normal-case font-medium">(optional)</span></label>
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                          GST Number{' '}
+                          <span className="text-slate-300 normal-case font-medium">(optional)</span>
+                        </label>
                         <div className="relative">
                           <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors">
                             <Wallet size={16} />
@@ -434,7 +520,10 @@ export default function PartnerOnboarding() {
                           <input
                             value={gstNumber}
                             onChange={(e) => {
-                              const val = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 15);
+                              const val = e.target.value
+                                .toUpperCase()
+                                .replace(/[^A-Z0-9]/g, '')
+                                .slice(0, 15);
                               setGstNumber(val);
                               if (!val) setGstEnabled(false);
                             }}
@@ -451,7 +540,9 @@ export default function PartnerOnboarding() {
                               onChange={(e) => setGstEnabled(e.target.checked)}
                               className="w-4 h-4 accent-emerald-500 cursor-pointer rounded"
                             />
-                            <span className="text-xs font-semibold text-slate-600">Include GST on guest invoices</span>
+                            <span className="text-xs font-semibold text-slate-600">
+                              Include GST on guest invoices
+                            </span>
                           </label>
                         )}
                       </div>
@@ -460,12 +551,17 @@ export default function PartnerOnboarding() {
                     {/* Brand vision */}
                     <div className="space-y-2 group">
                       <label className="text-xs font-bold text-slate-500 uppercase tracking-widest group-focus-within:text-emerald-600 transition-colors">
-                        Brand Vision <span className="text-slate-300 normal-case font-medium">(optional)</span>
+                        Brand Vision{' '}
+                        <span className="text-slate-300 normal-case font-medium">(optional)</span>
                       </label>
                       <textarea
                         value={brandVision}
                         onChange={(e) => setBrandVision(e.target.value)}
-                        placeholder={mainSector === 'stays' ? "Describe your property's vibe, story, or unique character..." : "Describe your fleet and what makes your rental experience special..."}
+                        placeholder={
+                          mainSector === 'stays'
+                            ? "Describe your property's vibe, story, or unique character..."
+                            : 'Describe your fleet and what makes your rental experience special...'
+                        }
                         className="w-full h-28 bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm font-medium text-slate-900 placeholder:text-slate-300 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition-all resize-none"
                       />
                     </div>
@@ -475,9 +571,18 @@ export default function PartnerOnboarding() {
                   <div className="flex justify-end pt-4 border-t border-slate-100">
                     <button
                       onClick={() => {
-                        if (!businessName.trim()) { showToast('Please enter your business name.', 'error'); return; }
-                        if (!subCategory) { showToast('Please select your category.', 'error'); return; }
-                        if (!msmeNumber.trim()) { showToast('MSME number is required to continue.', 'error'); return; }
+                        if (!businessName.trim()) {
+                          showToast('Please enter your business name.', 'error');
+                          return;
+                        }
+                        if (!subCategory) {
+                          showToast('Please select your category.', 'error');
+                          return;
+                        }
+                        if (!msmeNumber.trim()) {
+                          showToast('MSME number is required to continue.', 'error');
+                          return;
+                        }
                         setStep(2);
                       }}
                       className="flex items-center gap-3 h-12 px-8 bg-slate-900 text-white rounded-xl font-bold text-sm hover:bg-emerald-600 transition-all shadow-lg active:scale-95"
@@ -501,20 +606,26 @@ export default function PartnerOnboarding() {
                   <div>
                     <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-50 border border-emerald-100 rounded-full mb-4">
                       <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                      <span className="text-xs font-bold text-emerald-700 uppercase tracking-widest">Step 2 — Location</span>
+                      <span className="text-xs font-bold text-emerald-700 uppercase tracking-widest">
+                        Step 2 — Location
+                      </span>
                     </div>
                     <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight">
-                      Where are<br />
+                      Where are
+                      <br />
                       <span className="text-emerald-600">you based?</span>
                     </h1>
                     <p className="text-slate-500 text-sm font-medium mt-3 max-w-md leading-relaxed">
-                      Specify your geographic hub so guests can discover your {mainSector === 'stays' ? 'property' : 'vehicles'} through search and maps.
+                      Specify your geographic hub so guests can discover your{' '}
+                      {mainSector === 'stays' ? 'property' : 'vehicles'} through search and maps.
                     </p>
                   </div>
 
                   <div className="space-y-6">
                     <StyledInput
-                      label={mainSector === 'stays' ? 'Property Location' : 'Vehicle Hub / Base Location'}
+                      label={
+                        mainSector === 'stays' ? 'Property Location' : 'Vehicle Hub / Base Location'
+                      }
                       required
                       value={location}
                       onChange={setLocation}
@@ -524,9 +635,18 @@ export default function PartnerOnboarding() {
 
                     {/* Quick picks */}
                     <div className="space-y-3">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Quick Select — Popular Hubs</label>
+                      <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                        Quick Select — Popular Hubs
+                      </label>
                       <div className="flex flex-wrap gap-2">
-                        {['Varkala North Cliff', 'South Cliff Shore', 'Black Beach District', 'Edava Lakefront', 'Kovalam Beach', 'Alleppey'].map((h) => (
+                        {[
+                          'Varkala North Cliff',
+                          'South Cliff Shore',
+                          'Black Beach District',
+                          'Edava Lakefront',
+                          'Kovalam Beach',
+                          'Alleppey',
+                        ].map((h) => (
                           <button
                             key={h}
                             type="button"
@@ -549,7 +669,12 @@ export default function PartnerOnboarding() {
                         <div className="w-6 h-6 bg-slate-100 rounded-lg flex items-center justify-center">
                           <MapPin size={12} className="text-slate-400" />
                         </div>
-                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">GPS Coordinates <span className="text-slate-300 normal-case font-medium">(optional — for map pin)</span></p>
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">
+                          GPS Coordinates{' '}
+                          <span className="text-slate-300 normal-case font-medium">
+                            (optional — for map pin)
+                          </span>
+                        </p>
                       </div>
                       <div className="grid grid-cols-2 gap-3">
                         <StyledInput
@@ -573,12 +698,18 @@ export default function PartnerOnboarding() {
                   </div>
 
                   <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-                    <button onClick={() => setStep(1)} className="flex items-center gap-2 h-12 px-6 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-all active:scale-95">
+                    <button
+                      onClick={() => setStep(1)}
+                      className="flex items-center gap-2 h-12 px-6 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-all active:scale-95"
+                    >
                       <ArrowLeft size={16} /> Back
                     </button>
                     <button
                       onClick={() => {
-                        if (!location) { showToast('Please specify an operational location', 'error'); return; }
+                        if (!location) {
+                          showToast('Please specify an operational location', 'error');
+                          return;
+                        }
                         setStep(3);
                       }}
                       className="flex items-center gap-3 h-12 px-8 bg-slate-900 text-white rounded-xl font-bold text-sm hover:bg-emerald-600 transition-all shadow-lg active:scale-95"
@@ -602,10 +733,13 @@ export default function PartnerOnboarding() {
                   <div>
                     <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-50 border border-emerald-100 rounded-full mb-4">
                       <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                      <span className="text-xs font-bold text-emerald-700 uppercase tracking-widest">Step 3 — Inventory</span>
+                      <span className="text-xs font-bold text-emerald-700 uppercase tracking-widest">
+                        Step 3 — Inventory
+                      </span>
                     </div>
                     <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight">
-                      Set up your<br />
+                      Set up your
+                      <br />
                       <span className="text-emerald-600">first listing.</span>
                     </h1>
                     <p className="text-slate-500 text-sm font-medium mt-3 max-w-md leading-relaxed">
@@ -622,7 +756,11 @@ export default function PartnerOnboarding() {
                       required
                       value={listingName}
                       onChange={setListingName}
-                      placeholder={mainSector === 'stays' ? 'e.g. Oceanfront Cliff Suite' : 'e.g. Royal Enfield Classic 350'}
+                      placeholder={
+                        mainSector === 'stays'
+                          ? 'e.g. Oceanfront Cliff Suite'
+                          : 'e.g. Royal Enfield Classic 350'
+                      }
                       icon={mainSector === 'stays' ? <Building size={16} /> : <Bike size={16} />}
                     />
 
@@ -633,9 +771,17 @@ export default function PartnerOnboarding() {
                       </label>
                       <div className="flex flex-wrap gap-2">
                         {(mainSector === 'stays' ? stayRoomTypes : vehicleTypes).map((item) => {
-                          const isActive = mainSector === 'stays' ? roomType === item : vehicleType === item;
+                          const isActive =
+                            mainSector === 'stays' ? roomType === item : vehicleType === item;
                           const setter = mainSector === 'stays' ? setRoomType : setVehicleType;
-                          return <CategoryPill key={item} label={item} active={isActive} onClick={() => setter(item)} />;
+                          return (
+                            <CategoryPill
+                              key={item}
+                              label={item}
+                              active={isActive}
+                              onClick={() => setter(item)}
+                            />
+                          );
                         })}
                       </div>
                     </div>
@@ -646,7 +792,9 @@ export default function PartnerOnboarding() {
                         <div className="p-5 bg-amber-50 border border-amber-100 rounded-2xl space-y-4">
                           <div className="flex items-center gap-2">
                             <ShieldCheck size={14} className="text-amber-600" />
-                            <p className="text-xs font-bold text-amber-700 uppercase tracking-widest">Registration / Legal Category</p>
+                            <p className="text-xs font-bold text-amber-700 uppercase tracking-widest">
+                              Registration / Legal Category
+                            </p>
                           </div>
                           <div className="flex flex-wrap gap-2">
                             {registrationCategories.map((item) => (
@@ -676,7 +824,9 @@ export default function PartnerOnboarding() {
                             icon={<ShieldCheck size={16} />}
                           />
                           <div className="space-y-2">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Registration Date <span className="text-rose-400">*</span></label>
+                            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                              Registration Date <span className="text-rose-400">*</span>
+                            </label>
                             <input
                               type="date"
                               required
@@ -701,9 +851,13 @@ export default function PartnerOnboarding() {
                         icon={<Wallet size={16} />}
                       />
                       <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Est. Payout (88%)</label>
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                          Est. Payout (88%)
+                        </label>
                         <div className="h-12 bg-slate-900 rounded-xl px-4 flex items-center justify-between">
-                          <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest">Net Earning</span>
+                          <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest">
+                            Net Earning
+                          </span>
                           <span className="text-lg font-black text-white">
                             ₹{price ? (parseInt(price) * 0.88).toLocaleString() : '0'}
                           </span>
@@ -713,7 +867,9 @@ export default function PartnerOnboarding() {
 
                     {/* Cancellation policy */}
                     <div className="space-y-3">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Cancellation Policy</label>
+                      <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                        Cancellation Policy
+                      </label>
                       <div className="flex flex-wrap gap-2">
                         {cancellationPolicies.map((item) => (
                           <CategoryPill
@@ -728,19 +884,40 @@ export default function PartnerOnboarding() {
                   </div>
 
                   <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-                    <button onClick={() => setStep(2)} className="flex items-center gap-2 h-12 px-6 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-all active:scale-95">
+                    <button
+                      onClick={() => setStep(2)}
+                      className="flex items-center gap-2 h-12 px-6 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-all active:scale-95"
+                    >
                       <ArrowLeft size={16} /> Back
                     </button>
                     <button
                       onClick={() => {
-                        if (!listingName) { showToast('Please define the listing name', 'error'); return; }
-                        if (mainSector === 'vehicles') {
-                          if (!vehicleType) { showToast('Please select a vehicle type', 'error'); return; }
-                          if (!registrationCategory) { showToast('Please select a registration category', 'error'); return; }
-                          if (!licensePlate.trim()) { showToast('Please enter the vehicle license plate number', 'error'); return; }
-                          if (!registrationDate) { showToast('Please select the vehicle registration date', 'error'); return; }
+                        if (!listingName) {
+                          showToast('Please define the listing name', 'error');
+                          return;
                         }
-                        if (!price) { showToast('Base rate is required', 'error'); return; }
+                        if (mainSector === 'vehicles') {
+                          if (!vehicleType) {
+                            showToast('Please select a vehicle type', 'error');
+                            return;
+                          }
+                          if (!registrationCategory) {
+                            showToast('Please select a registration category', 'error');
+                            return;
+                          }
+                          if (!licensePlate.trim()) {
+                            showToast('Please enter the vehicle license plate number', 'error');
+                            return;
+                          }
+                          if (!registrationDate) {
+                            showToast('Please select the vehicle registration date', 'error');
+                            return;
+                          }
+                        }
+                        if (!price) {
+                          showToast('Base rate is required', 'error');
+                          return;
+                        }
                         setStep(4);
                       }}
                       className="flex items-center gap-3 h-12 px-8 bg-slate-900 text-white rounded-xl font-bold text-sm hover:bg-emerald-600 transition-all shadow-lg active:scale-95"
@@ -764,14 +941,18 @@ export default function PartnerOnboarding() {
                   <div>
                     <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-50 border border-emerald-100 rounded-full mb-4">
                       <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
-                      <span className="text-xs font-bold text-emerald-700 uppercase tracking-widest">Step 4 — Review</span>
+                      <span className="text-xs font-bold text-emerald-700 uppercase tracking-widest">
+                        Step 4 — Review
+                      </span>
                     </div>
                     <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight">
-                      Almost there.<br />
+                      Almost there.
+                      <br />
                       <span className="text-emerald-600">Review & submit.</span>
                     </h1>
                     <p className="text-slate-500 text-sm font-medium mt-3 max-w-md leading-relaxed">
-                      Your profile and first listing are configured. Submit for admin KYC review — you'll be notified within 24 hours.
+                      Your profile and first listing are configured. Submit for admin KYC review —
+                      you'll be notified within 24 hours.
                     </p>
                   </div>
 
@@ -780,19 +961,38 @@ export default function PartnerOnboarding() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {[
                         { label: 'Business', value: businessName, icon: <Building size={14} /> },
-                        { label: 'Sector', value: mainSector === 'stays' ? 'Stays' : 'Vehicles', icon: mainSector === 'stays' ? <Home size={14} /> : <Car size={14} /> },
+                        {
+                          label: 'Sector',
+                          value: mainSector === 'stays' ? 'Stays' : 'Vehicles',
+                          icon: mainSector === 'stays' ? <Home size={14} /> : <Car size={14} />,
+                        },
                         { label: 'Location', value: location, icon: <MapPin size={14} /> },
                         { label: 'Type', value: subCategory, icon: <Star size={14} /> },
-                        { label: 'First Listing', value: listingName, icon: <PlusCircle size={14} /> },
-                        { label: 'Base Rate', value: price ? `₹${Number(price).toLocaleString()}` : '—', icon: <Wallet size={14} /> },
+                        {
+                          label: 'First Listing',
+                          value: listingName,
+                          icon: <PlusCircle size={14} />,
+                        },
+                        {
+                          label: 'Base Rate',
+                          value: price ? `₹${Number(price).toLocaleString()}` : '—',
+                          icon: <Wallet size={14} />,
+                        },
                       ].map(({ label, value, icon }) => (
-                        <div key={label} className="flex items-center gap-3 p-4 bg-slate-50 border border-slate-100 rounded-xl">
+                        <div
+                          key={label}
+                          className="flex items-center gap-3 p-4 bg-slate-50 border border-slate-100 rounded-xl"
+                        >
                           <div className="w-8 h-8 bg-white rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 shrink-0">
                             {icon}
                           </div>
                           <div className="min-w-0">
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{label}</p>
-                            <p className="text-sm font-semibold text-slate-800 truncate mt-0.5">{value || '—'}</p>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                              {label}
+                            </p>
+                            <p className="text-sm font-semibold text-slate-800 truncate mt-0.5">
+                              {value || '—'}
+                            </p>
                           </div>
                         </div>
                       ))}
@@ -823,7 +1023,6 @@ export default function PartnerOnboarding() {
                   </div>
                 </motion.div>
               )}
-
             </AnimatePresence>
           </div>
         </div>

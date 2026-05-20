@@ -28,9 +28,7 @@ export default function BookingCard({
         <span className="text-4xl font-black text-slate-900 tracking-tight">
           ₹{basePrice.toLocaleString()}
         </span>
-        <span className="text-sm text-slate-400 font-medium">
-          / {isVehicle ? 'day' : 'night'}
-        </span>
+        <span className="text-sm text-slate-400 font-medium">/ {isVehicle ? 'day' : 'night'}</span>
       </div>
 
       {/* Rating */}
@@ -123,7 +121,8 @@ export default function BookingCard({
           <>
             <div className="flex justify-between text-sm text-slate-600">
               <span>
-                ₹{basePrice.toLocaleString()} × {nights} {isVehicle ? `day${nights > 1 ? 's' : ''}` : `night${nights > 1 ? 's' : ''}`}
+                ₹{basePrice.toLocaleString()} × {nights}{' '}
+                {isVehicle ? `day${nights > 1 ? 's' : ''}` : `night${nights > 1 ? 's' : ''}`}
               </span>
               <span>₹{(basePrice * nights).toLocaleString()}</span>
             </div>

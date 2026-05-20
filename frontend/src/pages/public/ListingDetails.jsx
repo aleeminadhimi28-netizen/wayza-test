@@ -615,7 +615,7 @@ export default function ListingDetails() {
                       Vehicle Specifications
                     </span>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-4">
                     {listing.vehicleType && (
                       <div className="flex items-start gap-4">
@@ -678,7 +678,10 @@ export default function ListingDetails() {
                             {(() => {
                               const d = new Date(listing.registrationDate);
                               if (isNaN(d.getTime())) return listing.registrationDate;
-                              return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+                              return d.toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                              });
                             })()}
                           </p>
                         </div>
