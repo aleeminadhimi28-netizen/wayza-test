@@ -16,6 +16,11 @@ import {
   CheckCircle,
   Shield,
   Calendar,
+  Car,
+  Bike,
+  FileText,
+  AlertCircle,
+  ArrowRight,
 } from 'lucide-react';
 import SEO from '../../components/SEO.jsx';
 import ListingConcierge from '../../components/ListingConcierge.jsx';
@@ -26,6 +31,7 @@ import { AMENITY_CATEGORIES, ALL_AMENITIES } from '../../utils/amenities.js';
 import ListingGallery from '../../components/listing/ListingGallery.jsx';
 import ListingReviews from '../../components/listing/ListingReviews.jsx';
 import BookingCard from '../../components/listing/BookingCard.jsx';
+import VehicleListingPage from '../../components/listing/VehicleListingPage.jsx';
 
 function getDatesInRange(startStr, endStr) {
   if (!startStr || !endStr) return [];
@@ -47,23 +53,16 @@ function getDatesInRange(startStr, endStr) {
 function calculatePriceForDates(listing, variantIndex, checkIn, checkOut) {
   const variant = listing?.variants?.[variantIndex];
   const basePrice = variant?.price || listing?.price || 0;
-  if (!checkIn || !checkOut) {
-    return { pricePerNight: basePrice, baseAmount: 0 };
-  }
+  if (!checkIn || !checkOut) return { pricePerNight: basePrice, baseAmount: 0 };
   const dates = getDatesInRange(checkIn, checkOut);
-  if (dates.length === 0) {
-    return { pricePerNight: basePrice, baseAmount: 0 };
-  }
+  if (dates.length === 0) return { pricePerNight: basePrice, baseAmount: 0 };
   const variantRules = Array.isArray(variant?.priceRules) ? variant.priceRules : [];
   let totalBaseAmount = 0;
   for (const dateStr of dates) {
     const matchedRule = variantRules.find((r) => r.date === dateStr);
     totalBaseAmount += matchedRule ? Number(matchedRule.price) : basePrice;
   }
-  return {
-    pricePerNight: totalBaseAmount / dates.length,
-    baseAmount: totalBaseAmount,
-  };
+  return { pricePerNight: totalBaseAmount / dates.length, baseAmount: totalBaseAmount };
 }
 
 function StarRow({ rating, size = 16, interactive = false, onSet }) {
@@ -94,7 +93,6 @@ export default function ListingDetails() {
   const { showToast } = useToast();
   const { formatPrice: _formatPrice } = useCurrency();
 
-  // 1. State definitions
   const [listing, setListing] = useState(null);
   const [error, setError] = useState(null);
   const [saved, setSaved] = useState(false);
@@ -108,21 +106,16 @@ export default function ListingDetails() {
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
   const [platformConfig, setPlatformConfig] = useState(null);
-  const [reserving, setReserving] = useState(false); // PART 4: loading state during price check
+  const [reserving, setReserving] = useState(false);
 
-  // 2. Callback and function definitions
   const loadReviews = useCallback(async () => {
     if (!id) return;
     try {
       const data = await api.getReviews(id);
       const rows = Array.isArray(data.data) ? data.data : [];
       setReviews(rows);
-      if (user?.email) {
-        setAlreadyReviewed(rows.some((r) => r.guestEmail === user.email));
-      }
-    } catch {
-      // Fail silently for reviews load
-    }
+      if (user?.email) setAlreadyReviewed(rows.some((r) => r.guestEmail === user.email));
+    } catch { /* fail silently */ }
   }, [id, user?.email]);
 
   async function submitReview() {
@@ -132,95 +125,62 @@ export default function ListingDetails() {
       const data = await api.postReview({ listingId: id, rating, comment });
       if (data.ok) {
         showToast('Review submitted. Thank you!', 'success');
-        setComment('');
-        setRating(5);
-        setAlreadyReviewed(true);
-        loadReviews();
+        setComment(''); setRating(5); setAlreadyReviewed(true); loadReviews();
       } else {
         showToast(data.message || 'Failed to submit review.', 'error');
       }
-    } catch {
-      showToast('Connection error. Please try again.', 'error');
-    }
+    } catch { showToast('Connection error. Please try again.', 'error'); }
     setSubmitting(false);
   }
 
   const toggleWishlist = async () => {
-    if (!user) {
-      navigate('/login', { state: { from: location } });
-      return;
-    }
+    if (!user) { navigate('/login', { state: { from: location } }); return; }
     try {
       const data = await api.toggleWishlist({ listingId: id });
       setSaved(data.saved);
       showToast(data.saved ? 'Saved to favorites!' : 'Removed from favorites', 'info');
-    } catch {
-      showToast('Failed to update saved list.', 'error');
-    }
+    } catch { showToast('Failed to update saved list.', 'error'); }
   };
 
-  // ─── PART 4: STALE DATA PREVENTION ───────────────────────────────────────
   const handleReserve = async () => {
-    if (!user) {
-      navigate('/login', { state: { from: location } });
-      return;
-    }
+    if (!user) { navigate('/login', { state: { from: location } }); return; }
     setReserving(true);
     try {
-      // Re-fetch the live listing price from the server before navigating
       const fresh = await api.getListing(id);
       if (fresh.ok && fresh.data) {
         const freshVariant = fresh.data.variants?.[selectedVariant];
         const freshPrice = Number(freshVariant?.price || fresh.data.price || 0);
         if (freshPrice !== variantBasePrice) {
-          // Partner changed the price while the user was browsing — refresh and notify
           setListing(fresh.data);
-          showToast(
-            `Price updated to ₹${freshPrice.toLocaleString()}/night. Please review before reserving.`,
-            'error'
-          );
+          showToast(`Price updated to ₹${freshPrice.toLocaleString()}/${isVehicle ? 'day' : 'night'}. Please review before reserving.`, 'error');
           setReserving(false);
           return;
         }
       }
-    } catch {
-      // Non-critical — if check fails, proceed. Backend has a second layer of validation.
-    }
-    // Pass the confirmed price as expectedPricePerNight for the backend's final snapshot guard
-    navigate(`/booking/${id}`, {
-      state: { variantIndex: selectedVariant, expectedPricePerNight: basePrice },
-    });
+    } catch { /* non-critical */ }
+    navigate(`/booking/${id}`, { state: { variantIndex: selectedVariant, expectedPricePerNight: basePrice } });
     setReserving(false);
   };
-  // ─────────────────────────────────────────────────────────────────────────
 
   const handleMobileReserve = () => {
     if (!checkIn || !checkOut) {
-      showToast('Please select your check-in and check-out dates first', 'error');
+      showToast(`Please select your ${isVehicle ? 'pick-up and drop-off' : 'check-in and check-out'} dates first`, 'error');
       document.getElementById('reservation-console')?.scrollIntoView({ behavior: 'smooth' });
       return;
     }
     handleReserve();
   };
 
-  // 3. Effects
   useEffect(() => {
     window.scrollTo(0, 0);
     if (!id) return;
-
-    api
-      .getListing(id)
+    api.getListing(id)
       .then((json) => {
-        if (json.ok && json.data) {
-          setListing(json.data);
-        } else {
-          setError(json.message || 'Property not found');
-        }
+        if (json.ok && json.data) setListing(json.data);
+        else setError(json.message || 'Property not found');
       })
       .catch(() => setError('Connection anomaly detected'));
-
     loadReviews();
-
     if (user) {
       api.getWishlist().then((json) => {
         const list = Array.isArray(json.data) ? json.data : [];
@@ -229,45 +189,30 @@ export default function ListingDetails() {
       api.getMyBookings().then((json) => {
         const bkgs = Array.isArray(json.data) ? json.data : [];
         const today = new Date();
-        setCanReview(
-          bkgs.some(
-            (b) =>
-              b.listingId === id && b.status === 'paid' && new Date(b.checkOut || b.endDate) < today // only after checkout
-          )
-        );
+        setCanReview(bkgs.some((b) => b.listingId === id && b.status === 'paid' && new Date(b.checkOut || b.endDate) < today));
       });
     }
   }, [id, user, loadReviews]);
 
   useEffect(() => {
-    api
-      .getPlatformConfig()
-      .then((res) => {
-        if (res.ok) setPlatformConfig(res.data);
-      })
-      .catch(() => {});
+    api.getPlatformConfig().then((res) => { if (res.ok) setPlatformConfig(res.data); }).catch(() => {});
   }, []);
 
-  // 4. Early returns
   if (error) {
     return (
       <WayzzaLayout noPadding>
-        <SEO title="Property Not Found" />
+        <SEO title="Not Found" />
         <div className="min-h-[70vh] flex flex-col items-center justify-center p-8 text-center">
-          <div className="bg-rose-50 p-6 rounded-3xl text-rose-500 mb-8">
-            <Sparkles size={48} />
+          <div className="w-20 h-20 bg-rose-50 rounded-3xl flex items-center justify-center text-rose-400 mb-6">
+            <AlertCircle size={36} />
           </div>
-          <h1 className="text-4xl font-black text-slate-900 uppercase tracking-tighter mb-4">
-            {error}
-          </h1>
-          <p className="text-slate-400 font-bold uppercase text-[11px] tracking-[0.4em] mb-12 max-w-md">
-            The requested sanctuary could not be synchronized with the current network protocol.
-          </p>
+          <h1 className="text-2xl font-black text-slate-900 mb-3">Listing not found</h1>
+          <p className="text-slate-500 text-sm font-medium mb-8 max-w-sm">{error}</p>
           <button
             onClick={() => navigate('/listings')}
-            className="h-16 px-12 bg-slate-900 text-white rounded-2xl font-black uppercase text-[11px] tracking-widest hover:bg-emerald-600 transition-all active:scale-95"
+            className="h-12 px-8 bg-slate-900 text-white rounded-xl font-semibold text-sm hover:bg-emerald-600 transition-all flex items-center gap-2"
           >
-            Explore Available Stays
+            Browse Listings <ArrowRight size={16} />
           </button>
         </div>
       </WayzzaLayout>
@@ -277,7 +222,7 @@ export default function ListingDetails() {
   if (!listing) {
     return (
       <WayzzaLayout noPadding>
-        <SEO title="Loading property..." />
+        <SEO title="Loading..." />
         <div className="max-w-[1200px] mx-auto py-8 px-4 sm:px-6 space-y-6">
           <WayzzaSkeleton className="h-8 w-2/3" />
           <WayzzaSkeleton className="h-[420px] w-full rounded-2xl" />
@@ -293,13 +238,11 @@ export default function ListingDetails() {
     );
   }
 
-  // 5. Derived values (guaranteed to have listing here)
+  // ── Derived values ──────────────────────────────────────────────────
   const images = (listing.images || []).map(fixImg);
   if (images.length === 0) images.push(fixImg(listing.image));
   while (images.length < 5)
-    images.push(
-      'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80'
-    );
+    images.push('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80');
 
   const avgRating = reviews.length
     ? (reviews.reduce((s, r) => s + (r.rating || 0), 0) / reviews.length).toFixed(1)
@@ -307,55 +250,122 @@ export default function ListingDetails() {
 
   const activeVariant = listing.variants?.[selectedVariant];
   const variantBasePrice = activeVariant?.price || listing.price || 0;
-
-  const { pricePerNight, baseAmount } = calculatePriceForDates(
-    listing,
-    selectedVariant,
-    checkIn,
-    checkOut
-  );
+  const { pricePerNight, baseAmount } = calculatePriceForDates(listing, selectedVariant, checkIn, checkOut);
   const basePrice = pricePerNight;
 
-  const nights =
-    checkIn && checkOut
-      ? Math.max(0, Math.ceil((new Date(checkOut) - new Date(checkIn)) / 86400000))
-      : 0;
-
   const isVehicle = listing.category === 'bike' || listing.category === 'car';
+  const isBike = listing.category === 'bike';
+  const isCar = listing.category === 'car';
+
+  const nights = checkIn && checkOut ? Math.max(0, Math.ceil((new Date(checkOut) - new Date(checkIn)) / 86400000)) : 0;
 
   const getCategoryPluralLabel = () => {
     if (isVehicle) return 'Vehicles';
     if (listing.category === 'experience') return 'Experiences';
     return 'Stays';
   };
-
   const getCategoryTerm = () => {
-    if (listing.category === 'bike') return 'ride';
-    if (listing.category === 'car') return 'vehicle';
+    if (isBike) return 'ride';
+    if (isCar) return 'vehicle';
     if (listing.category === 'experience') return 'experience';
     return 'stay';
   };
-
   const getCategoryNewLabel = () => {
-    if (listing.category === 'bike') return 'New Bike';
-    if (listing.category === 'car') return 'New Car';
+    if (isBike) return 'New Bike';
+    if (isCar) return 'New Car';
     if (listing.category === 'experience') return 'New Experience';
     return 'New Stay';
   };
 
   const gstRate = platformConfig?.gstRate ?? 0.12;
   const serviceFeeRate = platformConfig?.serviceFee ?? 99;
-
-  const gst =
-    !isVehicle && listing.ownerGstEnabled
-      ? Math.round((nights > 0 ? baseAmount : basePrice * nights) * gstRate)
-      : 0;
+  const gst = !isVehicle && listing.ownerGstEnabled ? Math.round((nights > 0 ? baseAmount : basePrice * nights) * gstRate) : 0;
   const serviceFee = nights > 0 ? serviceFeeRate : 0;
   const total = (nights > 0 ? baseAmount : basePrice * nights) + gst + serviceFee;
 
   const today = new Date().toISOString().split('T')[0];
   const canonicalUrl = `https://wayzza.live/listing/${id}`;
 
+  const vehicleIcon = isBike ? <Bike size={14} /> : <Car size={14} />;
+  const categoryColor = isVehicle ? 'emerald' : 'emerald';
+
+  const seoSchema = {
+    '@context': 'https://schema.org',
+    '@type': listing.category === 'hotel' ? 'LodgingBusiness' : 'Vehicle',
+    name: listing.title,
+    description: listing.description,
+    image: images.slice(0, 3),
+    url: canonicalUrl,
+    priceRange: `₹${basePrice.toLocaleString()}`,
+    address: { '@type': 'PostalAddress', addressLocality: listing.location || 'Varkala', addressRegion: 'Kerala', addressCountry: 'IN' },
+    brand: { '@type': 'Brand', name: 'Wayzza Verified' },
+    sku: listing._id,
+    offers: {
+      '@type': 'Offer',
+      priceCurrency: 'INR',
+      price: basePrice,
+      availability: 'https://schema.org/InStock',
+      url: canonicalUrl,
+      priceValidUntil: new Date(Date.now() + 2592000000).toISOString().split('T')[0],
+    },
+    aggregateRating: reviews.length > 0 ? { '@type': 'AggregateRating', ratingValue: avgRating, reviewCount: reviews.length } : undefined,
+  };
+
+  const seoBreadcrumb = [
+    { name: 'Home', url: 'https://wayzza.live' },
+    { name: getCategoryPluralLabel(), url: `https://wayzza.live/listings?category=${listing.category}` },
+    { name: listing.title, url: canonicalUrl },
+  ];
+
+  // ── VEHICLE LISTING — dedicated layout ──────────────────────────
+  if (isVehicle) {
+    return (
+      <WayzzaLayout noPadding>
+        <SEO
+          title={listing.title}
+          description={listing.description}
+          image={images[0]}
+          type="product"
+          schema={seoSchema}
+          breadcrumb={seoBreadcrumb}
+        />
+        <VehicleListingPage
+          listing={listing}
+          images={images}
+          isBike={isBike}
+          isCar={isCar}
+          avgRating={avgRating}
+          reviews={reviews}
+          canReview={canReview}
+          alreadyReviewed={alreadyReviewed}
+          rating={rating}
+          setRating={setRating}
+          comment={comment}
+          setComment={setComment}
+          submitting={submitting}
+          submitReview={submitReview}
+          saved={saved}
+          toggleWishlist={toggleWishlist}
+          showToast={showToast}
+          checkIn={checkIn}
+          setCheckIn={setCheckIn}
+          checkOut={checkOut}
+          setCheckOut={setCheckOut}
+          today={today}
+          handleReserve={handleReserve}
+          handleMobileReserve={handleMobileReserve}
+          nights={nights}
+          basePrice={basePrice}
+          serviceFee={serviceFee}
+          total={total}
+          reserving={reserving}
+          navigate={navigate}
+        />
+      </WayzzaLayout>
+    );
+  }
+
+  // ── ROOM / STAY LISTING — existing layout (unchanged) ───────────
   return (
     <WayzzaLayout noPadding>
       <SEO
@@ -363,325 +373,218 @@ export default function ListingDetails() {
         description={listing.description}
         image={images[0]}
         type="product"
-        schema={{
-          '@context': 'https://schema.org',
-          '@type': listing.category === 'hotel' ? 'LodgingBusiness' : 'Vehicle',
-          name: listing.title,
-          description: listing.description,
-          image: images.slice(0, 3),
-          url: canonicalUrl,
-          priceRange: `₹${basePrice.toLocaleString()}`,
-          address: {
-            '@type': 'PostalAddress',
-            addressLocality: listing.location || 'Varkala',
-            addressRegion: 'Kerala',
-            addressCountry: 'IN',
-          },
-          brand: {
-            '@type': 'Brand',
-            name: 'Wayzza Verified',
-          },
-          sku: listing._id,
-          offers: {
-            '@type': 'Offer',
-            priceCurrency: 'INR',
-            price: basePrice,
-            availability: 'https://schema.org/InStock',
-            url: canonicalUrl,
-            priceValidUntil: new Date(Date.now() + 2592000000).toISOString().split('T')[0], // 30 days from now
-          },
-          aggregateRating:
-            reviews.length > 0
-              ? {
-                  '@type': 'AggregateRating',
-                  ratingValue: avgRating,
-                  reviewCount: reviews.length,
-                }
-              : undefined,
-        }}
-        breadcrumb={[
-          { name: 'Home', url: 'https://wayzza.live' },
-          {
-            name: getCategoryPluralLabel(),
-            url: `https://wayzza.live/listings?category=${listing.category}`,
-          },
-          { name: listing.title, url: canonicalUrl },
-        ]}
+        schema={seoSchema}
+        breadcrumb={seoBreadcrumb}
       />
-      <div className="bg-white min-h-screen font-sans selection:bg-emerald-100 selection:text-emerald-900 pb-24 lg:pb-0">
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-12 py-8 lg:py-16">
-          {/* ─── BREADCRUMB ─── */}
-          <div className="flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.4em] text-slate-300 mb-8 lg:mb-10 overflow-x-auto no-scrollbar whitespace-nowrap">
-            <button
-              onClick={() => navigate('/')}
-              className="hover:text-emerald-600 transition-colors"
-            >
-              Home
-            </button>
-            <ChevronRight size={10} />
-            <button
-              onClick={() => navigate('/listings')}
-              className="hover:text-emerald-600 transition-colors"
-            >
-              {getCategoryPluralLabel()}
-            </button>
-            <ChevronRight size={10} />
-            <span className="text-slate-900 truncate max-w-[150px] md:max-w-[200px]">
-              {listing.title}
-            </span>
-          </div>
 
-          {/* ─── PACKAGE CONTEXT BANNER ─── */}
+      <div className="bg-slate-50 min-h-screen font-sans pb-24 lg:pb-0">
+        {/* ── BREADCRUMB ── */}
+        <div className="bg-white border-b border-slate-100">
+          <div className="max-w-[1280px] mx-auto px-5 md:px-10 py-3">
+            <div className="flex items-center gap-2 text-xs font-medium text-slate-400 overflow-x-auto whitespace-nowrap no-scrollbar">
+              <button onClick={() => navigate('/')} className="hover:text-emerald-600 transition-colors shrink-0">Home</button>
+              <ChevronRight size={12} />
+              <button onClick={() => navigate('/listings')} className="hover:text-emerald-600 transition-colors shrink-0">{getCategoryPluralLabel()}</button>
+              <ChevronRight size={12} />
+              <span className="text-slate-700 font-semibold truncate">{listing.title}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-[1280px] mx-auto px-5 md:px-10 py-8">
+
+          {/* ── PACKAGE CONTEXT BANNER ── */}
           {location.state?.fromPackage && (
-            <div className="mb-8 flex items-center gap-4 bg-emerald-50 border border-emerald-100 rounded-2xl px-5 py-4">
-              <div className="w-9 h-9 rounded-xl bg-emerald-500 flex items-center justify-center shrink-0">
+            <div className="mb-6 flex items-center gap-4 bg-emerald-50 border border-emerald-100 rounded-2xl px-5 py-4">
+              <div className="w-9 h-9 bg-emerald-500 rounded-xl flex items-center justify-center shrink-0">
                 <Sparkles size={16} className="text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[11px] font-black uppercase tracking-widest text-emerald-600 mb-0.5">
-                  Curated Package
-                </p>
-                <p className="text-sm font-bold text-slate-900 truncate">
+                <p className="text-[11px] font-bold text-emerald-600 uppercase tracking-widest mb-0.5">Curated Package</p>
+                <p className="text-sm font-semibold text-slate-900 truncate">
                   {location.state.fromPackage.name}
-                  <span className="text-slate-400 font-medium ml-2">
-                    — ₹{Number(location.state.fromPackage.price).toLocaleString('en-IN')} bundled
-                  </span>
+                  <span className="text-slate-400 font-medium ml-2">— ₹{Number(location.state.fromPackage.price).toLocaleString('en-IN')} bundled</span>
                 </p>
               </div>
-              <button
-                onClick={() => navigate('/packages')}
-                className="text-[11px] font-black text-emerald-600 uppercase tracking-widest hover:underline shrink-0"
-              >
-                ← Back to Packages
-              </button>
+              <button onClick={() => navigate('/packages')} className="text-xs font-semibold text-emerald-600 hover:underline shrink-0">← Packages</button>
             </div>
           )}
 
-          {/* ─── TITLE & ACTIONS ─── */}
-          <div className="flex flex-col lg:flex-row justify-between items-start gap-8 lg:gap-12 mb-12 lg:mb-16">
-            <div className="space-y-4 lg:space-y-6 max-w-4xl">
-              <div className="flex flex-wrap gap-2 lg:gap-4 items-center">
-                <div className="px-2 lg:px-3 py-1 bg-slate-950 text-white text-[11px] lg:text-[11px] font-black uppercase tracking-[0.4em] rounded-md">
-                  {listing.category || 'Estate'}
+          {/* ── HERO HEADER ── */}
+          <div className="bg-white rounded-3xl p-6 md:p-8 mb-6 border border-slate-100 shadow-sm">
+            <div className="flex flex-col lg:flex-row justify-between items-start gap-6">
+              <div className="flex-1 min-w-0">
+                {/* Category badge row */}
+                <div className="flex flex-wrap items-center gap-2 mb-4">
+                  <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-widest ${
+                    isBike ? 'bg-orange-100 text-orange-700' :
+                    isCar ? 'bg-blue-100 text-blue-700' :
+                    'bg-slate-100 text-slate-700'
+                  }`}>
+                    {isVehicle ? vehicleIcon : null}
+                    {listing.category || 'Stay'}
+                  </div>
+                  {listing.price > 8000 && (
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 border border-amber-100 rounded-lg text-xs font-bold text-amber-700 uppercase tracking-widest">
+                      <Sparkles size={11} /> Priority Asset
+                    </div>
+                  )}
+                  {listing.approved && (
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border border-emerald-100 rounded-lg text-xs font-bold text-emerald-700 uppercase tracking-widest">
+                      <Shield size={11} /> Verified
+                    </div>
+                  )}
                 </div>
-                {listing.price > 8000 && (
-                  <div className="flex items-center gap-2 text-amber-600 text-[11px] lg:text-[11px] font-black uppercase tracking-[0.4em]">
-                    <Sparkles size={12} /> Priority Asset
-                  </div>
-                )}
-              </div>
-              <h1 className="text-4xl md:text-6xl lg:text-8xl font-black text-slate-900 tracking-tighter uppercase leading-[0.9] lg:leading-[0.8]">
-                {listing.title}
-              </h1>
-              <div className="flex flex-wrap items-center gap-x-6 lg:gap-x-10 gap-y-4">
-                <div className="flex items-center gap-3 lg:gap-4">
-                  <div className="w-10 h-10 lg:w-12 lg:h-12 bg-emerald-50 flex items-center justify-center rounded-xl lg:rounded-2xl border border-emerald-100 font-black text-lg lg:text-xl text-emerald-600">
-                    {avgRating || '—'}
-                  </div>
-                  <div>
-                    <p className="text-[11px] lg:text-[11px] font-black uppercase tracking-widest text-slate-900">
-                      {avgRating
-                        ? avgRating >= 9
-                          ? 'Exceptional'
-                          : avgRating >= 8
-                            ? 'Excellent'
-                            : 'Great'
-                        : 'New'}
-                    </p>
-                    <p className="text-[11px] lg:text-[11px] font-bold text-slate-300 uppercase tracking-widest">
-                      {reviews.length > 0 ? `${reviews.length} Reviews` : getCategoryNewLabel()}
-                    </p>
-                  </div>
-                </div>
-                <div className="h-8 lg:h-10 w-px bg-slate-100 hidden md:block" />
-                {listing.latitude && listing.longitude ? (
-                  <a
-                    href={`https://www.google.com/maps?q=${listing.latitude},${listing.longitude}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 hover:bg-slate-50 p-1.5 -m-1.5 rounded-xl transition-colors"
-                  >
-                    <div className="w-9 h-9 lg:w-10 lg:h-10 bg-emerald-50 border border-emerald-100 flex items-center justify-center rounded-xl text-emerald-600 shadow-sm">
-                      <MapPin size={18} />
-                    </div>
-                    <div>
-                      <p className="text-[11px] lg:text-[11px] font-black uppercase tracking-widest text-slate-900">
-                        {listing.location || 'Kerala'}
-                      </p>
-                      <p className="text-[11px] lg:text-[11px] font-bold text-emerald-600 uppercase tracking-widest leading-none mt-0.5 lg:mt-1 hover:underline">
-                        Open Maps ↗
-                      </p>
-                    </div>
-                  </a>
-                ) : (
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 lg:w-10 lg:h-10 bg-slate-50 flex items-center justify-center rounded-xl text-slate-400">
-                      <MapPin size={18} />
-                    </div>
-                    <div>
-                      <p className="text-[11px] lg:text-[11px] font-black uppercase tracking-widest text-slate-900">
-                        {listing.location || 'Kerala'}
-                      </p>
-                      <p className="text-[11px] lg:text-[11px] font-bold text-emerald-600 uppercase tracking-widest leading-none mt-0.5 lg:mt-1">
-                        Prime Location
-                      </p>
-                    </div>
-                  </div>
-                )}
-                {listing.wifiSpeed > 0 && (
-                  <>
-                    <div className="h-8 lg:h-10 w-px bg-slate-100 hidden md:block" />
-                    <div className="flex items-center gap-3 bg-emerald-50 px-3 lg:px-4 py-1.5 lg:py-2 rounded-xl border border-emerald-100">
-                      <Wifi size={14} className="text-emerald-600" />
-                      <div>
-                        <p className="text-[11px] lg:text-[11px] font-black uppercase tracking-widest text-slate-900">
-                          Verified Wi-Fi
-                        </p>
-                        <p className="text-[11px] lg:text-[11px] font-black text-emerald-600 uppercase tracking-widest">
-                          {listing.wifiSpeed} MBPS
-                        </p>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
 
-            <div className="flex items-center gap-3 lg:gap-4 shrink-0 w-full lg:w-auto">
-              <button
-                onClick={toggleWishlist}
-                className={`flex-1 lg:flex-none h-14 lg:h-16 px-6 lg:px-10 rounded-xl lg:rounded-2xl font-black uppercase text-[11px] lg:text-[11px] tracking-[0.4em] transition-all border flex items-center justify-center gap-3 lg:gap-4 ${saved ? 'bg-rose-50 border-rose-100 text-rose-600' : 'bg-white border-slate-100 text-slate-900 hover:border-rose-200'}`}
-              >
-                <Heart size={18} className={saved ? 'fill-rose-600' : ''} />
-                {saved ? 'Saved' : 'Save'}
-              </button>
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(window.location.href);
-                  showToast('Link copied to clipboard!', 'success');
-                }}
-                className="w-14 h-14 lg:w-16 lg:h-16 bg-white border border-slate-100 rounded-xl lg:rounded-2xl flex items-center justify-center text-slate-900 hover:border-emerald-200 transition-all shadow-sm"
-              >
-                <Share2 size={20} />
-              </button>
-            </div>
-          </div>
+                {/* Title */}
+                <h1 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight mb-5">
+                  {listing.title}
+                </h1>
 
-          {/* GALLERY GRID */}
-          <ListingGallery images={images} title={listing.title} priority />
-
-          {/* ─── MAIN CONTENT ─── */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 items-start">
-            {/* LEFT: INFORMATION */}
-            <div className="lg:col-span-7 space-y-20">
-              {/* Narrative */}
-              <section className="space-y-6 lg:space-y-8">
-                <div className="flex items-center gap-4">
-                  <span className="h-px w-8 lg:w-12 bg-emerald-500" />
-                  <span className="text-[11px] lg:text-[11px] font-black uppercase tracking-[0.5em] text-emerald-600">
-                    Project Narrative
-                  </span>
-                </div>
-                <div className="flex items-center justify-between pb-6 lg:pb-8 border-b border-slate-100">
-                  <div>
-                    <h2 className="text-3xl lg:text-4xl font-black text-slate-900 uppercase tracking-tighter leading-none mb-3 lg:mb-4">
-                      The Experience.
-                    </h2>
-                    <p className="text-slate-400 font-bold uppercase text-[11px] lg:text-[11px] tracking-widest">
-                      Curated by Wayzza Network Architecture
-                    </p>
-                  </div>
-                  <div className="w-12 h-12 lg:w-16 lg:h-16 bg-slate-950 rounded-2xl lg:rounded-3xl flex items-center justify-center text-white font-black text-xl lg:text-2xl">
-                    {listing.title?.charAt(0)}
-                  </div>
-                </div>
-                <p className="text-xl lg:text-2xl text-slate-600 leading-relaxed font-medium">
-                  "
-                  {listing.description ||
-                    'An extraordinary sanctuary where serene architecture meets the rhythm of the coast, designed for those who seek more than just a place to rest.'}
-                  "
-                </p>
-              </section>
-
-              {/* Neighborhood Discovery */}
-              <NeighborhoodVibes location={listing.location} category={listing.category} />
-
-              {/* Vehicle Specifications */}
-              {isVehicle && (
-                <section className="space-y-8 bg-slate-50 border border-slate-100 rounded-[32px] p-8 md:p-10">
-                  <div className="flex items-center gap-4">
-                    <span className="h-px w-12 bg-slate-200" />
-                    <span className="text-[11px] font-black uppercase tracking-[0.5em] text-slate-300">
-                      Vehicle Specifications
+                {/* Meta row */}
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+                  {/* Rating */}
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
+                      <Star size={14} className="fill-amber-400 text-amber-400" />
+                      <span className="text-sm font-bold text-slate-900">{avgRating || 'New'}</span>
+                    </div>
+                    <span className="text-slate-400 text-sm">
+                      {reviews.length > 0 ? `· ${reviews.length} review${reviews.length !== 1 ? 's' : ''}` : `· ${getCategoryNewLabel()}`}
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-4">
+                  {/* Location */}
+                  <div className="flex items-center gap-1.5 text-sm text-slate-500">
+                    <MapPin size={14} className="text-emerald-500 shrink-0" />
+                    {listing.latitude && listing.longitude ? (
+                      <a
+                        href={`https://www.google.com/maps?q=${listing.latitude},${listing.longitude}`}
+                        target="_blank" rel="noopener noreferrer"
+                        className="hover:text-emerald-600 transition-colors font-medium"
+                      >
+                        {listing.location || 'Kerala'} · <span className="text-emerald-600">View map ↗</span>
+                      </a>
+                    ) : (
+                      <span className="font-medium">{listing.location || 'Kerala'}</span>
+                    )}
+                  </div>
+
+                  {/* WiFi */}
+                  {listing.wifiSpeed > 0 && (
+                    <div className="flex items-center gap-1.5 text-sm text-slate-500">
+                      <Wifi size={14} className="text-emerald-500" />
+                      <span className="font-medium text-emerald-700">{listing.wifiSpeed} Mbps Wi-Fi</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Action buttons */}
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={toggleWishlist}
+                  className={`flex items-center gap-2 h-10 px-4 rounded-xl font-semibold text-sm transition-all border ${
+                    saved ? 'bg-rose-50 border-rose-200 text-rose-600' : 'bg-white border-slate-200 text-slate-700 hover:border-rose-200 hover:text-rose-500'
+                  }`}
+                >
+                  <Heart size={15} className={saved ? 'fill-rose-500' : ''} />
+                  {saved ? 'Saved' : 'Save'}
+                </button>
+                <button
+                  onClick={() => { navigator.clipboard.writeText(window.location.href); showToast('Link copied!', 'success'); }}
+                  className="w-10 h-10 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-slate-600 hover:border-slate-300 transition-all"
+                >
+                  <Share2 size={15} />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* ── GALLERY ── */}
+          <div className="mb-6">
+            <ListingGallery images={images} title={listing.title} priority />
+          </div>
+
+          {/* ── MAIN CONTENT GRID ── */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+            {/* ── LEFT: Details ── */}
+            <div className="lg:col-span-7 space-y-5">
+
+              {/* Description card */}
+              <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-sm">
+                <div className="flex items-center gap-2 mb-5">
+                  <div className="h-0.5 w-6 bg-emerald-500 rounded-full" />
+                  <h2 className="text-xs font-bold text-emerald-600 uppercase tracking-widest">
+                    {isVehicle ? 'About this vehicle' : 'About this property'}
+                  </h2>
+                </div>
+                <p className="text-base text-slate-600 leading-relaxed font-medium">
+                  {listing.description ||
+                    (isVehicle
+                      ? 'A well-maintained vehicle available for self-drive rental through the Wayzza platform. Explore Kerala at your own pace with full flexibility.'
+                      : 'An extraordinary sanctuary where serene architecture meets the rhythm of the coast, designed for those who seek more than just a place to rest.')}
+                </p>
+              </div>
+
+              {/* ── Vehicle Specs card ── */}
+              {isVehicle && (
+                <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-sm">
+                  <div className="flex items-center gap-2 mb-6">
+                    <div className="h-0.5 w-6 bg-slate-300 rounded-full" />
+                    <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Vehicle Specifications</h2>
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-2 gap-5">
                     {listing.vehicleType && (
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-white rounded-xl border border-slate-100 flex items-center justify-center text-emerald-600 shadow-sm shrink-0">
-                          <CheckCircle size={18} />
+                      <div className="flex items-start gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                        <div className="w-9 h-9 bg-white rounded-xl border border-slate-200 flex items-center justify-center text-emerald-600 shrink-0 shadow-sm">
+                          {isBike ? <Bike size={16} /> : <Car size={16} />}
                         </div>
                         <div>
-                          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                            Vehicle Type
-                          </p>
-                          <p className="text-sm font-black text-slate-900 uppercase tracking-tight mt-0.5">
-                            {listing.vehicleType}
-                          </p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Vehicle Type</p>
+                          <p className="text-sm font-bold text-slate-900">{listing.vehicleType}</p>
                         </div>
                       </div>
                     )}
 
                     {listing.registrationCategory && (
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-white rounded-xl border border-slate-100 flex items-center justify-center text-emerald-600 shadow-sm shrink-0">
-                          <Shield size={18} />
+                      <div className="flex items-start gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                        <div className="w-9 h-9 bg-white rounded-xl border border-slate-200 flex items-center justify-center text-emerald-600 shrink-0 shadow-sm">
+                          <Shield size={16} />
                         </div>
                         <div>
-                          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                            Registration Category
-                          </p>
-                          <p className="text-sm font-black text-slate-900 uppercase tracking-tight mt-0.5">
-                            {listing.registrationCategory}
-                          </p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Registration</p>
+                          <p className="text-sm font-bold text-slate-900 leading-tight">{listing.registrationCategory}</p>
                         </div>
                       </div>
                     )}
 
                     {listing.licensePlate && (
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-white rounded-xl border border-slate-100 flex items-center justify-center text-emerald-600 shadow-sm shrink-0">
-                          <span className="font-black text-xs text-slate-700">#</span>
+                      <div className="flex items-start gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                        <div className="w-9 h-9 bg-white rounded-xl border border-slate-200 flex items-center justify-center text-emerald-600 shrink-0 shadow-sm">
+                          <FileText size={16} />
                         </div>
                         <div>
-                          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                            License Plate
-                          </p>
-                          <p className="text-sm font-black text-slate-900 uppercase tracking-tight mt-0.5">
-                            {listing.licensePlate}
-                          </p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">License Plate</p>
+                          <p className="text-sm font-bold text-slate-900 font-mono">{listing.licensePlate}</p>
                         </div>
                       </div>
                     )}
 
                     {listing.registrationDate && (
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-white rounded-xl border border-slate-100 flex items-center justify-center text-emerald-600 shadow-sm shrink-0">
-                          <Calendar size={18} />
+                      <div className="flex items-start gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                        <div className="w-9 h-9 bg-white rounded-xl border border-slate-200 flex items-center justify-center text-emerald-600 shrink-0 shadow-sm">
+                          <Calendar size={16} />
                         </div>
                         <div>
-                          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                            Registration Date
-                          </p>
-                          <p className="text-sm font-black text-slate-900 uppercase tracking-tight mt-0.5">
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Registered</p>
+                          <p className="text-sm font-bold text-slate-900">
                             {(() => {
                               const d = new Date(listing.registrationDate);
                               if (isNaN(d.getTime())) return listing.registrationDate;
-                              return d.toLocaleDateString('en-US', {
-                                year: 'numeric',
-                                month: 'long',
-                              });
+                              return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
                             })()}
                           </p>
                         </div>
@@ -690,61 +593,54 @@ export default function ListingDetails() {
                   </div>
 
                   {listing.cancellationPolicy && (
-                    <div className="border-t border-slate-200/60 pt-6 mt-6">
-                      <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                        Cancellation Policy
-                      </p>
-                      <p className="text-xs font-bold text-slate-600 mt-1 leading-relaxed">
-                        {listing.cancellationPolicy}
-                      </p>
+                    <div className="mt-5 flex items-start gap-3 p-4 bg-amber-50 border border-amber-100 rounded-2xl">
+                      <AlertCircle size={16} className="text-amber-600 shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-[10px] font-bold text-amber-700 uppercase tracking-widest mb-0.5">Cancellation Policy</p>
+                        <p className="text-sm font-semibold text-amber-900 capitalize">{listing.cancellationPolicy}</p>
+                      </div>
                     </div>
                   )}
-                </section>
+                </div>
               )}
 
-              {/* Artifacts (Amenities) */}
-              {listing.amenities && listing.amenities.length > 0 && (
-                <section className="space-y-12">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <span className="h-px w-12 bg-slate-200" />
-                      <span className="text-[11px] font-black uppercase tracking-[0.5em] text-slate-300">
-                        Available Utilities
-                      </span>
-                    </div>
+              {/* Neighborhood */}
+              <div className="bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm">
+                <div className="p-6 md:p-8 pb-0">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="h-0.5 w-6 bg-slate-300 rounded-full" />
+                    <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Neighbourhood</h2>
                   </div>
+                </div>
+                <NeighborhoodVibes location={listing.location} category={listing.category} />
+              </div>
 
-                  <div className="space-y-16">
+              {/* Amenities */}
+              {listing.amenities && listing.amenities.length > 0 && (
+                <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-sm">
+                  <div className="flex items-center gap-2 mb-6">
+                    <div className="h-0.5 w-6 bg-slate-300 rounded-full" />
+                    <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                      {isVehicle ? 'Inclusions & Features' : 'Amenities & Utilities'}
+                    </h2>
+                  </div>
+                  <div className="space-y-8">
                     {AMENITY_CATEGORIES.map((category) => {
-                      const presentInListing = category.amenities.filter((a) =>
-                        listing.amenities.includes(a.label)
-                      );
-                      if (presentInListing.length === 0) return null;
-
+                      const present = category.amenities.filter((a) => listing.amenities.includes(a.label));
+                      if (present.length === 0) return null;
                       return (
-                        <div key={category.id} className="space-y-8">
-                          <div className="space-y-1">
-                            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-900">
-                              {category.label}
-                            </h3>
-                            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                              {category.description}
-                            </p>
-                          </div>
-                          <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
-                            {presentInListing.map((a, i) => (
-                              <div key={i} className="flex items-center gap-5 group">
-                                <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center border border-slate-100 group-hover:bg-emerald-500 group-hover:text-white group-hover:border-emerald-500 transition-all duration-300">
-                                  <a.icon size={20} />
+                        <div key={category.id}>
+                          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">{category.label}</p>
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            {present.map((a, i) => (
+                              <div key={i} className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50/50 transition-all group">
+                                <div className="w-8 h-8 bg-white rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 group-hover:text-emerald-600 transition-colors shrink-0">
+                                  <a.icon size={15} />
                                 </div>
-                                <div className="space-y-0.5">
-                                  <span className="text-xs font-black uppercase tracking-widest text-slate-900 block">
-                                    {a.label}
-                                  </span>
+                                <div>
+                                  <span className="text-xs font-semibold text-slate-700 block">{a.label}</span>
                                   {a.id === 'wifi' && listing.wifiSpeed > 0 && (
-                                    <span className="text-[11px] font-bold text-emerald-600 uppercase tracking-widest">
-                                      Verified {listing.wifiSpeed} Mbps
-                                    </span>
+                                    <span className="text-[10px] font-bold text-emerald-600">{listing.wifiSpeed} Mbps</span>
                                   )}
                                 </div>
                               </div>
@@ -754,41 +650,37 @@ export default function ListingDetails() {
                       );
                     })}
                   </div>
-                </section>
+                </div>
               )}
 
-              {/* Variants Detail */}
+              {/* Variants (stays only) */}
               {!isVehicle && listing.variants?.length > 1 && (
-                <section className="space-y-10">
-                  <h2 className="text-[11px] font-black uppercase tracking-[0.5em] text-slate-300">
-                    Accommodation Options
-                  </h2>
-                  <div className="grid gap-6">
+                <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-sm">
+                  <div className="flex items-center gap-2 mb-6">
+                    <div className="h-0.5 w-6 bg-slate-300 rounded-full" />
+                    <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Room Options</h2>
+                  </div>
+                  <div className="space-y-3">
                     {listing.variants.map((v, i) => (
                       <div
                         key={i}
                         onClick={() => setSelectedVariant(i)}
-                        className={`p-6 md:p-10 rounded-[32px] md:rounded-[40px] border-2 transition-all cursor-pointer flex flex-col md:flex-row justify-between items-center gap-6 md:gap-8 ${selectedVariant === i ? 'border-emerald-500 bg-emerald-50/30' : 'border-slate-100 hover:border-emerald-200'}`}
+                        className={`p-5 rounded-2xl border-2 transition-all cursor-pointer flex justify-between items-center gap-4 ${
+                          selectedVariant === i
+                            ? 'border-emerald-500 bg-emerald-50/40'
+                            : 'border-slate-200 hover:border-emerald-200 bg-slate-50/50'
+                        }`}
                       >
-                        <div className="space-y-3">
-                          <h3 className="text-3xl font-black tracking-tighter text-slate-900 uppercase">
-                            {v.name}
-                          </h3>
-                          <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">
-                            {v.desc || 'Executive level residency'}
-                          </p>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-sm font-bold text-slate-900 mb-1">{v.name}</h3>
+                          <p className="text-xs text-slate-400 font-medium">{v.desc || 'Executive level residency'}</p>
                           {v.amenities && v.amenities.length > 0 && (
-                            <div className="flex flex-wrap gap-1.5 pt-1">
-                              {v.amenities.map((amenityLabel, idx) => {
-                                const amenityObj = ALL_AMENITIES.find(
-                                  (a) => a.label === amenityLabel
-                                );
+                            <div className="flex flex-wrap gap-1.5 mt-2">
+                              {v.amenities.slice(0, 4).map((amenityLabel, idx) => {
+                                const amenityObj = ALL_AMENITIES.find((a) => a.label === amenityLabel);
                                 if (!amenityObj) return null;
                                 return (
-                                  <span
-                                    key={idx}
-                                    className="inline-flex items-center gap-1 px-2.5 py-1 bg-white border border-slate-100 rounded-lg text-[9px] font-bold text-slate-500 uppercase tracking-wider shadow-sm"
-                                  >
+                                  <span key={idx} className="inline-flex items-center gap-1 px-2 py-1 bg-white border border-slate-100 rounded-md text-[10px] font-semibold text-slate-500">
                                     <amenityObj.icon size={9} className="text-emerald-500" />
                                     {amenityLabel}
                                   </span>
@@ -797,83 +689,60 @@ export default function ListingDetails() {
                             </div>
                           )}
                         </div>
-                        <div className="text-center md:text-right">
-                          <p className="text-4xl font-black text-slate-900 tracking-tighter">
-                            ₹{v.price.toLocaleString()}
-                          </p>
-                          <p className="text-[11px] font-black text-slate-300 uppercase tracking-widest">
-                            per cycle
-                          </p>
+                        <div className="text-right shrink-0">
+                          <p className="text-xl font-black text-slate-900">₹{v.price.toLocaleString()}</p>
+                          <p className="text-[11px] text-slate-400 font-medium">/ night</p>
                         </div>
                       </div>
                     ))}
                   </div>
-                </section>
+                </div>
               )}
 
-              {/* Audit (Reviews) */}
-              <ListingReviews reviews={reviews} avgRating={avgRating} />
+              {/* Reviews */}
+              <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-sm">
+                <ListingReviews reviews={reviews} avgRating={avgRating} />
+              </div>
 
-              {/* ─── REVIEW SUBMISSION ─── */}
+              {/* Review submission */}
               {canReview && !alreadyReviewed && (
-                <section className="space-y-8">
-                  <div className="flex items-center gap-4">
-                    <span className="h-px w-12 bg-slate-200" />
-                    <span className="text-[11px] font-black uppercase tracking-[0.5em] text-slate-300">
-                      Share Your Experience
-                    </span>
+                <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-sm">
+                  <div className="flex items-center gap-2 mb-5">
+                    <div className="h-0.5 w-6 bg-amber-400 rounded-full" />
+                    <h2 className="text-xs font-bold text-amber-600 uppercase tracking-widest">Leave a Review</h2>
                   </div>
-                  <div className="bg-amber-50 border border-amber-100 rounded-[32px] p-8 md:p-10 space-y-8">
-                    <div>
-                      <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">
-                        Rate your {getCategoryTerm()}
-                      </h3>
-                      <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1">
-                        Your feedback helps the Wayzza community
-                      </p>
-                    </div>
-                    <StarRow rating={rating} size={28} interactive onSet={setRating} />
-                    <div className="space-y-2">
-                      <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">
-                        Your feedback (optional)
-                      </label>
-                      <textarea
-                        value={comment}
-                        onChange={(e) => setComment(e.target.value)}
-                        placeholder={`Share details about your ${getCategoryTerm()}...`}
-                        rows={4}
-                        className="w-full bg-white border border-amber-200 p-4 rounded-2xl outline-none focus:border-amber-400 focus:ring-4 focus:ring-amber-400/10 transition-all text-sm resize-none"
-                      />
-                    </div>
-                    <button
-                      onClick={submitReview}
-                      disabled={submitting}
-                      className="h-14 px-10 bg-slate-950 hover:bg-amber-500 text-white rounded-xl font-black uppercase text-[11px] tracking-[0.3em] transition-all active:scale-95 disabled:opacity-50 flex items-center gap-3"
-                    >
-                      {submitting ? (
-                        <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      ) : (
-                        <Star size={14} className="fill-white" />
-                      )}
-                      Submit Review
-                    </button>
-                  </div>
-                </section>
+                  <h3 className="text-lg font-bold text-slate-900 mb-2">Rate your {getCategoryTerm()}</h3>
+                  <p className="text-sm text-slate-400 font-medium mb-5">Your feedback helps the Wayzza community make better choices.</p>
+                  <StarRow rating={rating} size={24} interactive onSet={setRating} />
+                  <textarea
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    placeholder={`Share details about your ${getCategoryTerm()}...`}
+                    rows={4}
+                    className="w-full mt-4 bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 transition-all resize-none font-medium"
+                  />
+                  <button
+                    onClick={submitReview}
+                    disabled={submitting}
+                    className="mt-4 h-11 px-6 bg-slate-900 text-white rounded-xl font-semibold text-sm hover:bg-emerald-600 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
+                  >
+                    {submitting ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Star size={14} className="fill-white" />}
+                    Submit Review
+                  </button>
+                </div>
               )}
+
               {alreadyReviewed && (
-                <div className="flex items-center gap-3 text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-2xl px-6 py-4">
+                <div className="flex items-center gap-3 text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-2xl px-5 py-4">
                   <CheckCircle size={16} />
-                  <span className="text-[11px] font-black uppercase tracking-widest">
-                    You&apos;ve reviewed this {getCategoryTerm()} — thank you!
-                  </span>
+                  <span className="text-sm font-semibold">You&apos;ve reviewed this {getCategoryTerm()} — thank you!</span>
                 </div>
               )}
             </div>
 
-            {/* RIGHT: RESERVATION CONSOLE */}
+            {/* ── RIGHT: Booking Console ── */}
             <div className="lg:col-span-5 relative">
-              <div className="sticky top-32 space-y-6" id="reservation-console">
-                {/* ─── White Airbnb-style Booking Card ─── */}
+              <div className="sticky top-24 space-y-4" id="reservation-console">
                 <BookingCard
                   basePrice={basePrice}
                   avgRating={avgRating}
@@ -893,48 +762,42 @@ export default function ListingDetails() {
                   reserving={reserving}
                 />
 
-                {/* Direct Inquiries */}
-                <div className="hidden lg:flex bg-slate-50 border border-slate-100 rounded-[32px] p-8 items-center gap-6 group hover:bg-white hover:shadow-xl transition-all duration-500">
-                  <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
-                    <MessageSquare size={20} className="text-emerald-600" />
+                {/* Direct inquiry */}
+                <div className="hidden lg:flex bg-white border border-slate-200 rounded-2xl p-5 items-center gap-4 hover:shadow-md transition-all cursor-pointer group">
+                  <div className="w-10 h-10 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform">
+                    <MessageSquare size={18} />
                   </div>
-                  <div className="space-y-1">
-                    <p className="text-sm font-black uppercase tracking-widest text-slate-900">
-                      Direct Inquiries
-                    </p>
-                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                      Connect with our Concierge
-                    </p>
+                  <div>
+                    <p className="text-sm font-bold text-slate-900">Direct Inquiries</p>
+                    <p className="text-xs text-slate-400 font-medium">Connect with our Concierge</p>
                   </div>
                   <ChevronRight size={16} className="ml-auto text-slate-300" />
                 </div>
               </div>
             </div>
+
           </div>
         </div>
 
-        {/* ─── MOBILE STICKY BOTTOM BAR ─── */}
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 p-4 z-[100] flex items-center justify-between shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+        {/* ── MOBILE STICKY BAR ── */}
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-5 py-3 z-[100] flex items-center justify-between shadow-lg">
           <div>
-            <p className="text-sm font-black text-slate-900">
-              ₹{basePrice.toLocaleString()}{' '}
-              <span className="text-slate-400 font-medium">/ night</span>
+            <p className="text-base font-black text-slate-900">
+              ₹{basePrice.toLocaleString()}
+              <span className="text-slate-400 font-medium text-sm ml-1">/ {isVehicle ? 'day' : 'night'}</span>
             </p>
             <button
-              onClick={() => {
-                const el = document.getElementById('reservation-console');
-                el?.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className="text-[11px] font-bold text-emerald-600 uppercase tracking-widest"
+              onClick={() => document.getElementById('reservation-console')?.scrollIntoView({ behavior: 'smooth' })}
+              className="text-xs font-bold text-emerald-600"
             >
-              {checkIn && checkOut ? `${nights} nights selected` : 'Select dates'}
+              {checkIn && checkOut ? `${nights} ${isVehicle ? 'days' : 'nights'} selected` : isVehicle ? 'Select dates' : 'Select dates'}
             </button>
           </div>
           <button
             onClick={handleMobileReserve}
-            className="px-8 py-4 bg-slate-950 text-white font-black uppercase text-[11px] tracking-[0.2em] rounded-xl shadow-lg active:scale-95"
+            className="px-7 py-3 bg-slate-900 text-white font-bold text-sm rounded-xl shadow-lg active:scale-95 hover:bg-emerald-600 transition-all"
           >
-            Reserve
+            {isVehicle ? 'Rent Now' : 'Reserve'}
           </button>
         </div>
 
