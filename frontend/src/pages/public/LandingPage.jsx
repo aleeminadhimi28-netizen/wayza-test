@@ -18,8 +18,6 @@ import {
   ChevronRight,
   Plus,
   Minus,
-  Bike,
-  Car,
 } from 'lucide-react';
 
 import { api } from '../../utils/api.js';
@@ -109,7 +107,6 @@ export default function LandingPage() {
       })
       .catch(() => setLoading(false));
 
-    // Bikes
     setBikesLoading(true);
     api
       .getTrendingListings(8, 'bike')
@@ -119,7 +116,6 @@ export default function LandingPage() {
       })
       .catch(() => setBikesLoading(false));
 
-    // Cars
     setCarsLoading(true);
     api
       .getTrendingListings(8, 'car')
@@ -501,8 +497,6 @@ export default function LandingPage() {
                           price: listing.price,
                           image: fixImg(listing.image),
                           wifiSpeed: listing.wifiSpeed || 0,
-                          featured: listing.featured || false,
-                          viewCount: listing.viewCount || 0,
                         }}
                       />
                     </div>
@@ -564,6 +558,72 @@ export default function LandingPage() {
                           price: listing.price,
                           image: fixImg(listing.image),
                           wifiSpeed: listing.wifiSpeed || 0,
+                        }}
+                      />
+                    </div>
+                  ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── BIKES ── */}
+        <section className="px-4 sm:px-6 max-w-7xl mx-auto space-y-8 pb-6 pt-2">
+          <div className="space-y-6">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div>
+                <h3 className="text-xl md:text-2xl font-black tracking-tight text-slate-950">
+                  Bikes for rent
+                </h3>
+                <p className="text-sm text-slate-500 font-medium">
+                  Royal Enfield, scooters &amp; more — ready to ride.
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => scrollCarousel('bikes-scroll', -1)}
+                  className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
+                  aria-label="Scroll bikes left"
+                >
+                  <ChevronLeft size={18} />
+                </button>
+                <button
+                  onClick={() => scrollCarousel('bikes-scroll', 1)}
+                  className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
+                  aria-label="Scroll bikes right"
+                >
+                  <ChevronRight size={18} />
+                </button>
+                <Link
+                  to="/listings?category=bike"
+                  className="hidden sm:block text-xs uppercase font-black tracking-[0.3em] text-slate-400 hover:text-slate-900 ml-2 transition-colors"
+                >
+                  View all
+                </Link>
+              </div>
+            </div>
+            <div
+              id="bikes-scroll"
+              className="flex gap-4 overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory scroll-smooth"
+            >
+              {bikesLoading
+                ? [1, 2, 3].map((i) => (
+                    <div key={i} className="min-w-[280px] snap-start">
+                      <WayzzaSkeleton className="h-[360px] rounded-[32px]" />
+                    </div>
+                  ))
+                : bikes.length === 0
+                  ? <p className="text-slate-300 text-sm font-bold uppercase tracking-widest py-12">No bikes listed yet</p>
+                  : bikes.map((listing) => (
+                    <div key={listing._id} className="min-w-[280px] snap-start">
+                      <WayzzaHotelItem
+                        perUnit="day"
+                        hotel={{
+                          id: listing._id,
+                          name: listing.title,
+                          location: listing.location || 'Varkala',
+                          price: listing.price,
+                          image: fixImg(listing.image),
+                          wifiSpeed: 0,
                           featured: listing.featured || false,
                           viewCount: listing.viewCount || 0,
                         }}
@@ -574,227 +634,75 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ── VEHICLE SECTIONS ── */}
-        <section className="px-4 sm:px-6 max-w-7xl mx-auto space-y-12 py-10">
-
-          {/* ── BIKES ── */}
-          <div className="rounded-[28px] md:rounded-[40px] bg-slate-950 overflow-hidden">
-            {/* Header strip */}
-            <div className="px-6 md:px-10 pt-8 pb-6 flex items-start justify-between gap-4 flex-wrap">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-                  <Bike size={22} className="text-emerald-400" />
-                </div>
-                <div>
-                  <h3 className="text-xl md:text-2xl font-black tracking-tight text-white">
-                    Bikes for rent
-                  </h3>
-                  <p className="text-sm text-white/40 font-medium">
-                    Royal Enfield, scooters &amp; more — ready to ride.
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => scrollCarousel('bikes-scroll', -1)}
-                  className="w-9 h-9 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-white/40 hover:text-white hover:border-white/30 transition-all"
-                  aria-label="Scroll bikes left"
-                >
-                  <ChevronLeft size={16} />
-                </button>
-                <button
-                  onClick={() => scrollCarousel('bikes-scroll', 1)}
-                  className="w-9 h-9 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-white/40 hover:text-white hover:border-white/30 transition-all"
-                  aria-label="Scroll bikes right"
-                >
-                  <ChevronRight size={16} />
-                </button>
-                <Link
-                  to="/listings?category=bike"
-                  className="hidden sm:flex items-center gap-1.5 text-xs uppercase font-black tracking-[0.3em] text-emerald-400 hover:text-emerald-300 ml-2 transition-colors"
-                >
-                  View all <ArrowRight size={12} />
-                </Link>
-              </div>
-            </div>
-
-            {/* Carousel */}
-            <div
-              id="bikes-scroll"
-              className="flex gap-4 overflow-x-auto pb-8 px-6 md:px-10 no-scrollbar snap-x snap-mandatory scroll-smooth"
-            >
-              {bikesLoading
-                ? [1, 2, 3].map((i) => (
-                    <div key={i} className="min-w-[240px] snap-start">
-                      <div className="h-[200px] rounded-[20px] bg-white/5 animate-pulse" />
-                    </div>
-                  ))
-                : bikes.length === 0
-                  ? (
-                    <div className="py-12 text-center w-full">
-                      <p className="text-white/20 text-sm font-bold uppercase tracking-widest">No bikes listed yet</p>
-                    </div>
-                  )
-                  : bikes.map((listing) => (
-                    <Link
-                      key={listing._id}
-                      to={`/listing/${listing._id}`}
-                      className="group min-w-[240px] snap-start block"
-                    >
-                      <div className="relative rounded-[20px] overflow-hidden bg-white/5 border border-white/10 hover:border-emerald-500/30 transition-all duration-300">
-                        {/* image */}
-                        <div className="relative h-[150px] overflow-hidden">
-                          <img
-                            src={fixImg(listing.image)}
-                            alt={listing.title}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                            loading="lazy"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                          {/* badge */}
-                          {listing.featured && (
-                            <span className="absolute top-3 left-3 bg-amber-400 text-slate-900 text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest">
-                              ★ Featured
-                            </span>
-                          )}
-                          {!listing.featured && (listing.viewCount || 0) >= 10 && (
-                            <span className="absolute top-3 left-3 bg-emerald-500 text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest">
-                              Trending
-                            </span>
-                          )}
-                        </div>
-                        {/* info */}
-                        <div className="p-4">
-                          <p className="font-black text-white text-sm truncate group-hover:text-emerald-400 transition-colors">
-                            {listing.title}
-                          </p>
-                          <p className="text-white/30 text-[11px] font-bold uppercase tracking-widest mt-0.5 truncate">
-                            {listing.location || 'Varkala'}
-                          </p>
-                          <div className="flex items-baseline gap-1 mt-3">
-                            <span className="text-[10px] text-white/30 font-bold uppercase tracking-widest">from</span>
-                            <span className="text-lg font-black text-white">
-                              ₹{(listing.price || 0).toLocaleString()}
-                            </span>
-                            <span className="text-[10px] font-bold text-white/30">/ day</span>
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
-            </div>
-          </div>
-
-          {/* ── CARS ── */}
-          <div className="rounded-[28px] md:rounded-[40px] bg-slate-950 overflow-hidden">
-            {/* Header strip */}
-            <div className="px-6 md:px-10 pt-8 pb-6 flex items-start justify-between gap-4 flex-wrap">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-                  <Car size={22} className="text-blue-400" />
-                </div>
-                <div>
-                  <h3 className="text-xl md:text-2xl font-black tracking-tight text-white">
-                    Cars for rent
-                  </h3>
-                  <p className="text-sm text-white/40 font-medium">
-                    Self-drive &amp; chauffeur-driven — explore Kerala in comfort.
-                  </p>
-                </div>
+        {/* ── CARS ── */}
+        <section className="px-4 sm:px-6 max-w-7xl mx-auto space-y-8 pb-10 pt-2">
+          <div className="space-y-6">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div>
+                <h3 className="text-xl md:text-2xl font-black tracking-tight text-slate-950">
+                  Cars for rent
+                </h3>
+                <p className="text-sm text-slate-500 font-medium">
+                  Self-drive &amp; chauffeur-driven — explore Kerala in comfort.
+                </p>
               </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => scrollCarousel('cars-scroll', -1)}
-                  className="w-9 h-9 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-white/40 hover:text-white hover:border-white/30 transition-all"
+                  className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
                   aria-label="Scroll cars left"
                 >
-                  <ChevronLeft size={16} />
+                  <ChevronLeft size={18} />
                 </button>
                 <button
                   onClick={() => scrollCarousel('cars-scroll', 1)}
-                  className="w-9 h-9 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-white/40 hover:text-white hover:border-white/30 transition-all"
+                  className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
                   aria-label="Scroll cars right"
                 >
-                  <ChevronRight size={16} />
+                  <ChevronRight size={18} />
                 </button>
                 <Link
                   to="/listings?category=car"
-                  className="hidden sm:flex items-center gap-1.5 text-xs uppercase font-black tracking-[0.3em] text-blue-400 hover:text-blue-300 ml-2 transition-colors"
+                  className="hidden sm:block text-xs uppercase font-black tracking-[0.3em] text-slate-400 hover:text-slate-900 ml-2 transition-colors"
                 >
-                  View all <ArrowRight size={12} />
+                  View all
                 </Link>
               </div>
             </div>
-
-            {/* Carousel */}
             <div
               id="cars-scroll"
-              className="flex gap-4 overflow-x-auto pb-8 px-6 md:px-10 no-scrollbar snap-x snap-mandatory scroll-smooth"
+              className="flex gap-4 overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory scroll-smooth"
             >
               {carsLoading
                 ? [1, 2, 3].map((i) => (
-                    <div key={i} className="min-w-[240px] snap-start">
-                      <div className="h-[200px] rounded-[20px] bg-white/5 animate-pulse" />
+                    <div key={i} className="min-w-[280px] snap-start">
+                      <WayzzaSkeleton className="h-[360px] rounded-[32px]" />
                     </div>
                   ))
                 : cars.length === 0
-                  ? (
-                    <div className="py-12 text-center w-full">
-                      <p className="text-white/20 text-sm font-bold uppercase tracking-widest">No cars listed yet</p>
-                    </div>
-                  )
+                  ? <p className="text-slate-300 text-sm font-bold uppercase tracking-widest py-12">No cars listed yet</p>
                   : cars.map((listing) => (
-                    <Link
-                      key={listing._id}
-                      to={`/listing/${listing._id}`}
-                      className="group min-w-[240px] snap-start block"
-                    >
-                      <div className="relative rounded-[20px] overflow-hidden bg-white/5 border border-white/10 hover:border-blue-500/30 transition-all duration-300">
-                        {/* image */}
-                        <div className="relative h-[150px] overflow-hidden">
-                          <img
-                            src={fixImg(listing.image)}
-                            alt={listing.title}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                            loading="lazy"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                          {/* badge */}
-                          {listing.featured && (
-                            <span className="absolute top-3 left-3 bg-amber-400 text-slate-900 text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest">
-                              ★ Featured
-                            </span>
-                          )}
-                          {!listing.featured && (listing.viewCount || 0) >= 10 && (
-                            <span className="absolute top-3 left-3 bg-blue-500 text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest">
-                              Trending
-                            </span>
-                          )}
-                        </div>
-                        {/* info */}
-                        <div className="p-4">
-                          <p className="font-black text-white text-sm truncate group-hover:text-blue-400 transition-colors">
-                            {listing.title}
-                          </p>
-                          <p className="text-white/30 text-[11px] font-bold uppercase tracking-widest mt-0.5 truncate">
-                            {listing.location || 'Varkala'}
-                          </p>
-                          <div className="flex items-baseline gap-1 mt-3">
-                            <span className="text-[10px] text-white/30 font-bold uppercase tracking-widest">from</span>
-                            <span className="text-lg font-black text-white">
-                              ₹{(listing.price || 0).toLocaleString()}
-                            </span>
-                            <span className="text-[10px] font-bold text-white/30">/ day</span>
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
+                    <div key={listing._id} className="min-w-[280px] snap-start">
+                      <WayzzaHotelItem
+                        perUnit="day"
+                        hotel={{
+                          id: listing._id,
+                          name: listing.title,
+                          location: listing.location || 'Varkala',
+                          price: listing.price,
+                          image: fixImg(listing.image),
+                          wifiSpeed: 0,
+                          featured: listing.featured || false,
+                          viewCount: listing.viewCount || 0,
+                        }}
+                      />
+                    </div>
                   ))}
             </div>
           </div>
-
         </section>
 
+        {/* ── DESTINATIONS MASONRY ── */}
         <section className="py-20 md:py-32 bg-slate-50 px-4 sm:px-6 relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-white to-transparent pointer-events-none" />
           <div className="max-w-7xl mx-auto">

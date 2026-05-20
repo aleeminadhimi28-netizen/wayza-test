@@ -2,9 +2,10 @@ import { Link } from 'react-router-dom';
 import { useCurrency } from '../../CurrencyContext.jsx';
 import { Wifi } from 'lucide-react';
 
-export function HotelItem({ hotel, isSaved, onToggleWishlist }) {
+export function HotelItem({ hotel, isSaved, onToggleWishlist, perUnit }) {
   const { formatPrice } = useCurrency();
   const isRare = hotel.price > 5000;
+  const unitLabel = perUnit || 'night';
 
   return (
     <div className="group relative">
@@ -101,7 +102,7 @@ export function HotelItem({ hotel, isSaved, onToggleWishlist }) {
                   {formatPrice(hotel.price)}
                 </span>
               </div>
-              <span className="text-[11px] md:text-xs font-bold text-slate-300">/ night</span>
+              <span className="text-[11px] md:text-xs font-bold text-slate-300">/ {unitLabel}</span>
             </div>
           </div>
         </div>
