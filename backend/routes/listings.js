@@ -104,8 +104,10 @@ router.get("/trending", async (req, res, next) => {
     try {
         const db = getDB();
         const limit = Math.min(Number(req.query.limit) || 8, 20);
+        const filter = { approved: true };
+        if (req.query.category) filter.category = req.query.category;
         const rows = await db.collection("listings")
-            .find({ approved: true })
+            .find(filter)
             .sort({ featured: -1, viewCount: -1, createdAt: -1 })
             .limit(limit)
             .toArray();

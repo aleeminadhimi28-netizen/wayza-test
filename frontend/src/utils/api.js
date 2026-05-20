@@ -184,8 +184,11 @@ export const api = {
       headers: getAuthHeaders(),
     }).then((r) => r.json()),
 
-  getTrendingListings: (limit = 8) =>
-    customFetch(`${API_URL}/listings/trending?limit=${limit}`).then((r) => r.json()),
+  getTrendingListings: (limit = 8, category = '') => {
+    const params = new URLSearchParams({ limit });
+    if (category) params.set('category', category);
+    return customFetch(`${API_URL}/listings/trending?${params.toString()}`).then((r) => r.json());
+  },
 
   trackView: (id) =>
     customFetch(`${API_URL}/listings/${id}/view`, { method: 'POST' }).then((r) => r.json()),
