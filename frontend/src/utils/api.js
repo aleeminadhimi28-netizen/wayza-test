@@ -633,4 +633,14 @@ export const api = {
   // Packages
   getPackages: () => customFetch(`${API_URL}/packages`).then((r) => r.json()),
   getPackage: (id) => customFetch(`${API_URL}/packages/${id}`).then((r) => r.json()),
+
+  // Image path fixer helper used across pages
+  fixImg: (img) => {
+    const DEFAULT_FALLBACK =
+      'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80';
+    if (!img) return DEFAULT_FALLBACK;
+    if (img.startsWith('http')) return img;
+    if (img.startsWith('uploads/')) return `${BASE_URL}/${img}`;
+    return `${BASE_URL}/uploads/${img}`;
+  },
 };

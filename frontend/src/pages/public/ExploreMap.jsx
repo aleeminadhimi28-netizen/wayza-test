@@ -516,7 +516,11 @@ export default function ExploreMap() {
                   <div className="flex gap-4">
                     <div className="w-24 h-24 rounded-2xl bg-slate-100 overflow-hidden shrink-0 border border-black/5">
                       {activeItem.image ? (
-                        <img src={activeItem.image} className="w-full h-full object-cover" alt="" />
+                        <img
+                          src={api.fixImg(activeItem.image)}
+                          className="w-full h-full object-cover"
+                          alt=""
+                        />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-slate-300 bg-slate-50">
                           <Home size={24} />
