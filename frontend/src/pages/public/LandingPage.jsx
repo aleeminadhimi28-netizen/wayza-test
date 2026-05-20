@@ -483,12 +483,12 @@ export default function LandingPage() {
             >
               {loading
                 ? [1, 2, 3].map((i) => (
-                    <div key={i} className="min-w-[280px] snap-start">
+                    <div key={i} className="w-[280px] shrink-0 snap-start">
                       <WayzzaSkeleton className="h-[360px] rounded-[32px]" />
                     </div>
                   ))
                 : trendingList.map((listing) => (
-                    <div key={listing._id} className="min-w-[280px] snap-start">
+                    <div key={listing._id} className="w-[280px] shrink-0 snap-start">
                       <WayzzaHotelItem
                         hotel={{
                           id: listing._id,
@@ -546,12 +546,12 @@ export default function LandingPage() {
             >
               {loading
                 ? [1, 2, 3].map((i) => (
-                    <div key={i} className="min-w-[280px] snap-start">
+                    <div key={i} className="w-[280px] shrink-0 snap-start">
                       <WayzzaSkeleton className="h-[360px] rounded-[32px]" />
                     </div>
                   ))
                 : trendingList.slice(0, 6).map((listing) => (
-                    <div key={listing._id} className="min-w-[280px] snap-start">
+                    <div key={listing._id} className="w-[280px] shrink-0 snap-start">
                       <WayzzaHotelItem
                         hotel={{
                           id: listing._id,
@@ -612,14 +612,14 @@ export default function LandingPage() {
             >
               {bikesLoading
                 ? [1, 2, 3].map((i) => (
-                    <div key={i} className="min-w-[280px] snap-start">
+                    <div key={i} className="w-[280px] shrink-0 snap-start">
                       <WayzzaSkeleton className="h-[360px] rounded-[32px]" />
                     </div>
                   ))
                 : bikes.length === 0
                   ? <p className="text-slate-300 text-sm font-bold uppercase tracking-widest py-12">No bikes listed yet</p>
                   : bikes.map((listing) => (
-                    <div key={listing._id} className="min-w-[280px] snap-start">
+                    <div key={listing._id} className="w-[280px] shrink-0 snap-start">
                       <WayzzaHotelItem
                         perUnit="day"
                         hotel={{
@@ -678,14 +678,14 @@ export default function LandingPage() {
             >
               {bikesLoading
                 ? [1, 2, 3].map((i) => (
-                    <div key={i} className="min-w-[280px] snap-start">
+                    <div key={i} className="w-[280px] shrink-0 snap-start">
                       <WayzzaSkeleton className="h-[360px] rounded-[32px]" />
                     </div>
                   ))
                 : bikes.length === 0
                   ? <p className="text-slate-300 text-sm font-bold uppercase tracking-widest py-12">No bikes listed yet</p>
                   : bikes.slice(0, 6).map((listing) => (
-                    <div key={listing._id} className="min-w-[280px] snap-start">
+                    <div key={listing._id} className="w-[280px] shrink-0 snap-start">
                       <WayzzaHotelItem
                         perUnit="day"
                         hotel={{
@@ -747,14 +747,14 @@ export default function LandingPage() {
             >
               {carsLoading
                 ? [1, 2, 3].map((i) => (
-                    <div key={i} className="min-w-[280px] snap-start">
+                    <div key={i} className="w-[280px] shrink-0 snap-start">
                       <WayzzaSkeleton className="h-[360px] rounded-[32px]" />
                     </div>
                   ))
                 : cars.length === 0
                   ? <p className="text-slate-300 text-sm font-bold uppercase tracking-widest py-12">No cars listed yet</p>
                   : cars.map((listing) => (
-                    <div key={listing._id} className="min-w-[280px] snap-start">
+                    <div key={listing._id} className="w-[280px] shrink-0 snap-start">
                       <WayzzaHotelItem
                         perUnit="day"
                         hotel={{
@@ -813,14 +813,14 @@ export default function LandingPage() {
             >
               {carsLoading
                 ? [1, 2, 3].map((i) => (
-                    <div key={i} className="min-w-[280px] snap-start">
+                    <div key={i} className="w-[280px] shrink-0 snap-start">
                       <WayzzaSkeleton className="h-[360px] rounded-[32px]" />
                     </div>
                   ))
                 : cars.length === 0
                   ? <p className="text-slate-300 text-sm font-bold uppercase tracking-widest py-12">No cars listed yet</p>
                   : cars.slice(0, 6).map((listing) => (
-                    <div key={listing._id} className="min-w-[280px] snap-start">
+                    <div key={listing._id} className="w-[280px] shrink-0 snap-start">
                       <WayzzaHotelItem
                         perUnit="day"
                         hotel={{
