@@ -178,7 +178,9 @@ export default function ListingDetails() {
     } catch {
       /* non-critical */
     }
-    navigate(`/booking/${id}`, {
+    const checkInParam = checkIn ? `&checkIn=${checkIn}` : '';
+    const checkOutParam = checkOut ? `&checkOut=${checkOut}` : '';
+    navigate(`/booking/${id}?variant=${selectedVariant}${checkInParam}${checkOutParam}`, {
       state: { variantIndex: selectedVariant, expectedPricePerNight: basePrice },
     });
     setReserving(false);

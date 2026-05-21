@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ShieldCheck,
@@ -54,6 +54,7 @@ function FloatingInput({ id, type = 'text', label, value, onChange, icon: Icon, 
 
 export default function Signup() {
   const navigate = useNavigate();
+  const reactLocation = useLocation(); // FIX #43: use React Router location, not window.location
   const { showToast } = useToast();
   const { login, user } = useAuth();
 
@@ -120,11 +121,12 @@ export default function Signup() {
     onSuccess: async (tokenResponse) => {
       setLoading(true);
       try {
-        const res = await api.googleAuth(tokenResponse.credential || tokenResponse.access_token);
+        // FIX #63: Use access_token for implicit flow (tokenResponse.credential is undefined here)
+        const res = await api.googleAuth(tokenResponse.access_token);
         if (res.ok) {
           login({ email: res.data.email, role: res.data.role });
           showToast('Google Authentication successful!', 'success');
-          navigate('/');
+          navigate(reactLocation.state?.from || '/', { replace: true });
         } else {
           showToast(res.message || 'Google Authentication failed.', 'error');
         }
@@ -147,12 +149,18 @@ export default function Signup() {
       showToast('Please complete all fields before signing up.', 'error');
       return;
     }
+    // FIX #66: Validate 10-digit Indian phone number (starts with 6-9)
+    if (!/^[6-9]\d{9}$/.test(phone.trim())) {
+      showToast('Please enter a valid 10-digit Indian mobile number.', 'error');
+      return;
+    }
     setLoading(true);
     try {
       const data = await api.signup({ name, phone, email, password });
       if (data.ok) {
-        showToast('Account created successfully!', 'success');
-        navigate('/login');
+        showToast('Account created! Logging you in...', 'success');
+        login({ email: data.data?.email || email, role: data.data?.role || 'guest' });
+        navigate(reactLocation.state?.from || '/', { replace: true });
       } else {
         showToast(data.message || 'Registration failed.', 'error');
       }

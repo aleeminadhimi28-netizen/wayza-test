@@ -19,7 +19,7 @@ export default function StaticPage({ title, children, icon }) {
       <SEO
         title={title}
         breadcrumb={[
-          { name: 'Home', url: 'https://wayza-app.vercel.app' },
+          { name: 'Home', url: 'https://wayzza.live' }, // FIX #53: production domain
           { name: title, url: window.location.href },
         ]}
       />

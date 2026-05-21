@@ -109,11 +109,15 @@ export default function VehicleRentalCard({
                     size={11}
                     className={checkIn ? 'text-emerald-500' : 'text-slate-400'}
                   />
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 cursor-pointer">
+                  <label
+                    htmlFor="vehicle-rental-check-in"
+                    className="text-[10px] font-bold uppercase tracking-widest text-slate-400 cursor-pointer"
+                  >
                     Pick-up
                   </label>
                 </div>
                 <input
+                  id="vehicle-rental-check-in"
                   type="date"
                   value={checkIn}
                   min={today}
@@ -138,11 +142,15 @@ export default function VehicleRentalCard({
                     size={11}
                     className={checkOut ? 'text-emerald-500' : 'text-slate-400'}
                   />
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 cursor-pointer">
+                  <label
+                    htmlFor="vehicle-rental-check-out"
+                    className="text-[10px] font-bold uppercase tracking-widest text-slate-400 cursor-pointer"
+                  >
                     Drop-off
                   </label>
                 </div>
                 <input
+                  id="vehicle-rental-check-out"
                   type="date"
                   value={checkOut}
                   min={checkIn || today}
@@ -197,6 +205,8 @@ export default function VehicleRentalCard({
         {/* TERMS */}
         <button
           onClick={() => setAgreed((v) => !v)}
+          role="checkbox"
+          aria-checked={agreed}
           className="w-full flex items-start gap-3 text-left group"
         >
           <div

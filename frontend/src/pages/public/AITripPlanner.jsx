@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
@@ -382,9 +382,18 @@ export default function TourPackager() {
   const dur = DURATIONS.find((d) => d.id === duration);
   const vib = VIBES.find((v) => v.id === vibe);
 
+  const mountedRef = useRef(true);
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
   const handleBook = () => {
     setSubmitted(true);
+    // FIX #76: Check mountedRef before navigating to prevent state update on unmounted component
     setTimeout(() => {
+      if (!mountedRef.current) return;
       navigate(`/listings?location=${encodeURIComponent(dest?.label || 'Varkala')}`, {
         state: {
           fromPackage: {
@@ -579,8 +588,9 @@ export default function TourPackager() {
               ))}
             </div>
 
+            {/* FIX #78: Replace with real Wayzza WhatsApp number before go-live */}
             <a
-              href="https://wa.me/919876543210?text=Hi%2C%20I%27d%20like%20help%20with%20a%20custom%20Kerala%20package"
+              href="https://wa.me/91XXXXXXXXXX?text=Hi%2C%20I%27d%20like%20help%20with%20a%20custom%20Kerala%20package"
               target="_blank"
               rel="noreferrer"
               className="flex items-center justify-center gap-2 w-full border-2 border-slate-200 rounded-[20px] py-3 text-sm font-bold text-slate-700 hover:border-emerald-400 hover:text-emerald-600 transition-all"

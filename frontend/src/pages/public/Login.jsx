@@ -43,6 +43,28 @@ function FloatingInput({
   );
 }
 
+// FIX #41: Module-scoped so it is not re-created on every Login render,
+// which would cause the password field to lose focus on each keystroke.
+function EyeBtn({ show, setShow }) {
+  return (
+    <button
+      type="button"
+      onClick={() => setShow(!show)}
+      aria-label="Toggle password visibility"
+      style={{
+        background: 'none',
+        border: 'none',
+        cursor: 'pointer',
+        color: 'rgba(255,255,255,.25)',
+        display: 'flex',
+        padding: 0,
+      }}
+    >
+      {show ? <EyeOff size={16} /> : <Eye size={16} />}
+    </button>
+  );
+}
+
 export default function Login() {
   const navigate = useNavigate();
   const { login, user } = useAuth();
@@ -112,11 +134,13 @@ export default function Login() {
     onSuccess: async (t) => {
       setLoading(true);
       try {
-        const res = await api.googleAuth(t.credential || t.access_token);
+        // FIX #34: Use access_token for implicit flow (t.credential is undefined here)
+        const res = await api.googleAuth(t.access_token);
         if (res.ok) {
           login({ email: res.data.email, role: res.data.role });
           showToast('Google Authentication successful!', 'success');
-          navigate('/');
+          // FIX #35: Honor redirect-after-login
+          navigate(location.state?.from || '/', { replace: true });
         } else showToast(res.message || 'Google Authentication failed.', 'error');
       } catch {
         showToast('Could not connect to server.', 'error');
@@ -169,7 +193,8 @@ export default function Login() {
         }
         login({ email: data.data.email, role: data.data.role });
         showToast('Welcome to Wayzza!', 'success');
-        navigate('/');
+        // FIX #35: Honor redirect-after-login for OTP flow
+        navigate(location.state?.from || '/', { replace: true });
       } catch {
         showToast('Server error.', 'error');
       }
@@ -196,7 +221,8 @@ export default function Login() {
       }
       login({ email: data.data.email, role: data.data.role });
       showToast('Welcome back to Wayzza!', 'success');
-      navigate('/');
+      // FIX #36: Honor redirect-after-login for password flow
+      navigate(location.state?.from || '/', { replace: true });
     } catch {
       showToast('Could not connect to server.', 'error');
     }
@@ -212,7 +238,7 @@ export default function Login() {
       if (data.ok && data.data) {
         login({ email: data.data.email, role: data.data.role });
         showToast('Secure connection established.', 'success');
-        navigate('/');
+        navigate(location.state?.from || '/', { replace: true });
       } else showToast(data.message || 'Invalid Authenticator code', 'error');
     } catch {
       showToast('2FA verification failed', 'error');
@@ -220,22 +246,7 @@ export default function Login() {
     setLoading(false);
   }
 
-  const EyeBtn = () => (
-    <button
-      type="button"
-      onClick={() => setShow(!show)}
-      style={{
-        background: 'none',
-        border: 'none',
-        cursor: 'pointer',
-        color: 'rgba(255,255,255,.25)',
-        display: 'flex',
-        padding: 0,
-      }}
-    >
-      {show ? <EyeOff size={16} /> : <Eye size={16} />}
-    </button>
-  );
+  // EyeBtn moved to module scope above — see FIX #41
 
   return (
     <>
@@ -406,7 +417,7 @@ export default function Login() {
                           onChange={(e) => setPassword(e.target.value)}
                           icon={Lock}
                           autoComplete="current-password"
-                          suffix={<EyeBtn />}
+                          suffix={<EyeBtn show={show} setShow={setShow} />}
                         />
                         <div
                           style={{
@@ -437,6 +448,7 @@ export default function Login() {
                               maxLength={6}
                               value={otp}
                               onChange={(e) => setOtp(e.target.value)}
+                              aria-label="One-time password code"
                               className="au-otp-input"
                               placeholder="000000"
                             />
@@ -493,6 +505,7 @@ export default function Login() {
                       autoFocus
                       value={twoFactorCode}
                       onChange={(e) => setTwoFactorCode(e.target.value.replace(/\D/g, ''))}
+                      aria-label="Two-factor authentication code"
                       className="au-otp-input"
                       placeholder="000000"
                       style={{ marginBottom: 0 }}

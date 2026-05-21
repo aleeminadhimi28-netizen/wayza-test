@@ -131,6 +131,7 @@ export default function Listings() {
   const [total, setTotal] = useState(0);
 
   const [searchInput, setSearchInput] = useState(params.get('location') || '');
+  const todayStr = new Date().toISOString().split('T')[0]; // FIX #19/#20
   const [checkInInput, setCheckInInput] = useState(params.get('start') || '');
   const [checkOutInput, setCheckOutInput] = useState(params.get('end') || '');
 
@@ -165,7 +166,11 @@ export default function Listings() {
       setRows(data.rows || []);
       setPages(data.pages || 1);
       setTotal(data.total || data.rows?.length || 0);
-    } catch {}
+    } catch {
+      // FIX #21: Show error state on network failure
+      setRows([]);
+      setTotal(0);
+    }
     setLoading(false);
   }, [location, minPrice, maxPrice, sort, category, page, start, end]);
 
@@ -200,11 +205,15 @@ export default function Listings() {
     setParams(p);
   }
 
+  // FIX #18: Separate wishlist from loadListings so it doesn't re-run on every filter change
+  useEffect(() => {
+    loadWishlist();
+  }, [loadWishlist]);
+
   useEffect(() => {
     loadListings();
-    loadWishlist();
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [loadListings, loadWishlist]);
+  }, [loadListings]);
 
   useEffect(() => {
     setPage(1);
@@ -276,6 +285,8 @@ export default function Listings() {
                   size={18}
                 />
                 <input
+                  id="explore-location"
+                  aria-label="Explore location"
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   placeholder={scrolled ? 'Search...' : 'Explore your next destination...'}
@@ -294,9 +305,16 @@ export default function Listings() {
                     size={16}
                   />
                   <input
+                    id="explore-check-in"
+                    aria-label="Check-in date"
                     type="date"
+                    min={todayStr} // FIX #19: prevent selecting past dates
                     value={checkInInput}
-                    onChange={(e) => setCheckInInput(e.target.value)}
+                    onChange={(e) => {
+                      setCheckInInput(e.target.value);
+                      // Clear checkout if it's now before check-in
+                      if (checkOutInput && e.target.value >= checkOutInput) setCheckOutInput('');
+                    }}
                     className="w-full h-10 lg:h-12 pl-12 pr-2 bg-transparent text-xs font-bold text-slate-900 focus:outline-none appearance-none cursor-pointer [color-scheme:light]"
                   />
                   <div className="absolute right-0 top-1/4 bottom-1/4 w-px bg-slate-200 hidden lg:block" />
@@ -307,7 +325,10 @@ export default function Listings() {
                     size={16}
                   />
                   <input
+                    id="explore-check-out"
+                    aria-label="Check-out date"
                     type="date"
+                    min={checkInInput || todayStr} // FIX #20: checkout always after check-in
                     value={checkOutInput}
                     onChange={(e) => setCheckOutInput(e.target.value)}
                     className="w-full h-10 lg:h-12 pl-12 pr-2 bg-transparent text-xs font-bold text-slate-900 focus:outline-none appearance-none cursor-pointer [color-scheme:light]"
@@ -345,7 +366,14 @@ export default function Listings() {
                 {CATEGORIES.map((cat) => (
                   <button
                     key={cat.id}
-                    onClick={() => setCategory(cat.id)}
+                    onClick={() => {
+                      // FIX #15: Sync category to URL params so refresh/share preserves selection
+                      const p = new URLSearchParams(params);
+                      p.set('category', cat.id);
+                      p.delete('page');
+                      setParams(p);
+                      setCategory(cat.id);
+                    }}
                     className={`group relative flex items-center gap-2 rounded-full font-bold transition-all whitespace-nowrap ${
                       category === cat.id
                         ? 'bg-slate-900 text-white shadow-xl translate-y-[-1px]'
@@ -365,8 +393,16 @@ export default function Listings() {
                 <div className="h-8 w-px bg-slate-200 hidden sm:block" />
                 <div className="relative group">
                   <select
+                    id="listings-sort"
+                    aria-label="Sort options"
                     value={sort}
-                    onChange={(e) => setSort(e.target.value)}
+                    onChange={(e) => {
+                      // FIX #16: Sync sort to URL params so refresh/share preserves selection
+                      const p = new URLSearchParams(params);
+                      p.set('sort', e.target.value);
+                      setParams(p);
+                      setSort(e.target.value);
+                    }}
                     className="h-10 pl-4 pr-10 text-xs font-bold text-slate-600 bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500 appearance-none cursor-pointer transition-all hover:bg-slate-50"
                   >
                     {SORT_OPTIONS.map((o) => (
@@ -409,6 +445,8 @@ export default function Listings() {
                             ₹
                           </span>
                           <input
+                            id="filter-min-price"
+                            aria-label="Minimum price"
                             type="number"
                             placeholder="Min"
                             value={minPriceInput}
@@ -422,6 +460,8 @@ export default function Listings() {
                             ₹
                           </span>
                           <input
+                            id="filter-max-price"
+                            aria-label="Maximum price"
                             type="number"
                             placeholder="Max"
                             value={maxPriceInput}
@@ -537,9 +577,14 @@ export default function Listings() {
                   <div className="pt-8">
                     <button
                       onClick={() => {
+                        // FIX #17: Also reset the input states so inputs don't show stale values
                         setMinPrice('');
                         setMaxPrice('');
-                        navigate(`/listings?category=${category}`);
+                        setMinPriceInput('');
+                        setMaxPriceInput('');
+                        const p = new URLSearchParams();
+                        p.set('category', category);
+                        setParams(p);
                       }}
                       className="px-10 h-14 bg-slate-900 text-white rounded-[24px] text-xs font-black uppercase tracking-[0.2em] hover:bg-emerald-600 transition-all shadow-xl active:scale-95 flex items-center gap-4 mx-auto"
                     >

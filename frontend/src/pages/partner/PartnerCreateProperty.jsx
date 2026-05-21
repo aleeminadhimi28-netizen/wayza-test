@@ -22,10 +22,10 @@ import { api } from '../../utils/api.js';
 import { AMENITY_CATEGORIES, VEHICLE_AMENITY_CATEGORIES } from '../../utils/amenities.js';
 
 const CATEGORIES = [
-  { value: 'hotel', label: 'ðŸ¨ Stays (Hotels, Villas, Houses)' },
-  { value: 'bike', label: 'ðŸï¸ Bikes (Rentals, Scooters)' },
-  { value: 'car', label: 'ðŸŽï¸ Cars (Luxury, Daily, SUVs)' },
-  { value: 'activity', label: 'ðŸŽ¯ Activities (Surfing, Tours, Yoga)' },
+  { value: 'hotel', label: '🏨 Stays (Hotels, Villas, Houses)' },
+  { value: 'bike', label: '🏍️ Bikes (Rentals, Scooters)' },
+  { value: 'car', label: '🚗 Cars (Luxury, Daily, SUVs)' },
+  { value: 'activity', label: '🎯 Activities (Surfing, Tours, Yoga)' },
 ];
 
 export default function PartnerCreateProperty() {
@@ -92,9 +92,13 @@ export default function PartnerCreateProperty() {
           setLocationLocked(true);
           showToast('GPS location captured successfully!', 'success');
         } catch (err) {
+          // #97: Distinguish geocoding failure from GPS failure — coordinates still valid
           setLocation(`${lat.toFixed(4)}, ${lng.toFixed(4)}`);
           setLocationLocked(true);
-          showToast("Got coordinates, but couldn't resolve address.", 'warning');
+          showToast(
+            'GPS coordinates captured. Address lookup failed — coordinates are still saved.',
+            'warning'
+          );
         }
         setLocationLoading(false);
       },
@@ -136,6 +140,18 @@ export default function PartnerCreateProperty() {
     e.preventDefault();
     if (!title || !location) {
       return showToast('Please fill in all required fields.', 'warning');
+    }
+
+    // #96: Validate vehicle-specific required fields before submission
+    if (isVehicle) {
+      if (!licensePlate.trim()) return showToast('License plate number is required.', 'warning');
+      if (!vehicleType) return showToast('Please select a vehicle type.', 'warning');
+      if (!registrationCategory)
+        return showToast('Please select a registration category.', 'warning');
+      if (!rcDoc)
+        return showToast('Registration Certificate (RC) document is required.', 'warning');
+      if (!insuranceDoc) return showToast('Insurance Policy document is required.', 'warning');
+      if (!pucDoc) return showToast('PUC Certificate is required.', 'warning');
     }
 
     setLoading(true);

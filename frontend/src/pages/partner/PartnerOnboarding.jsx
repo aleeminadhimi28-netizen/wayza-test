@@ -120,7 +120,11 @@ export default function PartnerOnboarding() {
   const { user, loading: authLoading } = useAuth();
 
   const [email, setEmail] = useState(null);
-  const [step, setStep] = useState(1);
+  // FIX #110: Persist current step in sessionStorage so partners can resume if they navigate away
+  const [step, setStep] = useState(() => {
+    const saved = sessionStorage.getItem('partner_onboarding_step');
+    return saved ? parseInt(saved, 10) : 1;
+  });
   const [loading, setLoading] = useState(false);
   const [mainSector, setMainSector] = useState('stays');
 
@@ -144,6 +148,12 @@ export default function PartnerOnboarding() {
   const [registrationCategory, setRegistrationCategory] = useState('');
   const [licensePlate, setLicensePlate] = useState('');
   const [registrationDate, setRegistrationDate] = useState('');
+
+  // Persist step changes to sessionStorage
+  const goToStep = (s) => {
+    sessionStorage.setItem('partner_onboarding_step', String(s));
+    setStep(s);
+  };
 
   useEffect(() => {
     if (authLoading) return;
@@ -221,7 +231,9 @@ export default function PartnerOnboarding() {
       const data = await api.partnerOnboard(payload);
       if (!data.ok) throw new Error();
       showToast('Onboarding submitted! Your account is pending admin approval.', 'success');
+      // FIX #110: Clear persisted step on successful submission
       sessionStorage.removeItem('partner_onboarded');
+      sessionStorage.removeItem('partner_onboarding_step');
       navigate('/partner', { replace: true });
     } catch (err) {
       showToast('Failed to finalize setup. Please try again.', 'error');
@@ -583,7 +595,7 @@ export default function PartnerOnboarding() {
                           showToast('MSME number is required to continue.', 'error');
                           return;
                         }
-                        setStep(2);
+                        goToStep(2);
                       }}
                       className="flex items-center gap-3 h-12 px-8 bg-slate-900 text-white rounded-xl font-bold text-sm hover:bg-emerald-600 transition-all shadow-lg active:scale-95"
                     >
@@ -699,7 +711,7 @@ export default function PartnerOnboarding() {
 
                   <div className="flex items-center justify-between pt-4 border-t border-slate-100">
                     <button
-                      onClick={() => setStep(1)}
+                      onClick={() => goToStep(1)}
                       className="flex items-center gap-2 h-12 px-6 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-all active:scale-95"
                     >
                       <ArrowLeft size={16} /> Back
@@ -710,7 +722,7 @@ export default function PartnerOnboarding() {
                           showToast('Please specify an operational location', 'error');
                           return;
                         }
-                        setStep(3);
+                        goToStep(3);
                       }}
                       className="flex items-center gap-3 h-12 px-8 bg-slate-900 text-white rounded-xl font-bold text-sm hover:bg-emerald-600 transition-all shadow-lg active:scale-95"
                     >
@@ -885,7 +897,7 @@ export default function PartnerOnboarding() {
 
                   <div className="flex items-center justify-between pt-4 border-t border-slate-100">
                     <button
-                      onClick={() => setStep(2)}
+                      onClick={() => goToStep(2)}
                       className="flex items-center gap-2 h-12 px-6 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-all active:scale-95"
                     >
                       <ArrowLeft size={16} /> Back
@@ -918,7 +930,7 @@ export default function PartnerOnboarding() {
                           showToast('Base rate is required', 'error');
                           return;
                         }
-                        setStep(4);
+                        goToStep(4);
                       }}
                       className="flex items-center gap-3 h-12 px-8 bg-slate-900 text-white rounded-xl font-bold text-sm hover:bg-emerald-600 transition-all shadow-lg active:scale-95"
                     >
@@ -1015,7 +1027,7 @@ export default function PartnerOnboarding() {
                       )}
                     </button>
                     <button
-                      onClick={() => setStep(3)}
+                      onClick={() => goToStep(3)}
                       className="w-full h-12 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
                     >
                       <ArrowLeft size={15} /> Go back and edit

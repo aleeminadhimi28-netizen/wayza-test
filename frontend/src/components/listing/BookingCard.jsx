@@ -43,10 +43,14 @@ export default function BookingCard({
       {/* Dates */}
       <div className="grid grid-cols-2 border border-slate-200 rounded-xl overflow-hidden mb-3">
         <div className="p-3 border-r border-slate-200 hover:bg-slate-50 transition-colors cursor-pointer">
-          <label className="block text-[11px] font-black uppercase tracking-widest text-slate-400 mb-1">
+          <label
+            htmlFor="booking-card-check-in"
+            className="block text-[11px] font-black uppercase tracking-widest text-slate-400 mb-1"
+          >
             {isVehicle ? 'Pick-up' : 'Check-in'}
           </label>
           <input
+            id="booking-card-check-in"
             type="date"
             value={checkIn}
             min={today}
@@ -55,10 +59,14 @@ export default function BookingCard({
           />
         </div>
         <div className="p-3 hover:bg-slate-50 transition-colors cursor-pointer">
-          <label className="block text-[11px] font-black uppercase tracking-widest text-slate-400 mb-1">
+          <label
+            htmlFor="booking-card-check-out"
+            className="block text-[11px] font-black uppercase tracking-widest text-slate-400 mb-1"
+          >
             {isVehicle ? 'Drop-off' : 'Check-out'}
           </label>
           <input
+            id="booking-card-check-out"
             type="date"
             value={checkOut}
             min={checkIn || today}
@@ -82,6 +90,7 @@ export default function BookingCard({
               <button
                 onClick={() => setGuests((g) => Math.max(1, g - 1))}
                 disabled={guests <= 1}
+                aria-label="Decrease guest count"
                 className="w-7 h-7 rounded-full border border-slate-200 flex items-center justify-center text-slate-600 hover:border-slate-400 disabled:opacity-30 transition-all"
               >
                 <Minus size={12} />
@@ -90,6 +99,7 @@ export default function BookingCard({
               <button
                 onClick={() => setGuests((g) => Math.min(16, g + 1))}
                 disabled={guests >= 16}
+                aria-label="Increase guest count"
                 className="w-7 h-7 rounded-full border border-slate-200 flex items-center justify-center text-slate-600 hover:border-slate-400 disabled:opacity-30 transition-all"
               >
                 <Plus size={12} />

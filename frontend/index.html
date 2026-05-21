@@ -10,8 +10,8 @@
   <link rel="apple-touch-icon" href="/images/logo-light.svg" />
   <link rel="manifest" href="/manifest.json" />
 
-  <!-- Viewport -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <!-- Viewport: FIX #122: removed maximum-scale and user-scalable which breaks pinch-zoom accessibility -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Theme -->
   <meta name="theme-color" content="#0a2618" />
@@ -89,6 +89,15 @@
 </head>
 
 <body style="margin:0;font-family:system-ui">
+  <!-- FIX #119: noscript fallback for JS-disabled browsers -->
+  <noscript>
+    <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:system-ui,sans-serif;background:#0a1f14;color:#fff;text-align:center;padding:2rem;">
+      <div>
+        <h1 style="font-size:1.5rem;font-weight:900;margin-bottom:0.5rem;">JavaScript Required</h1>
+        <p style="color:rgba(255,255,255,0.5);font-size:0.875rem;">Wayzza requires JavaScript to run. Please enable it in your browser settings.</p>
+      </div>
+    </div>
+  </noscript>
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
 </body>

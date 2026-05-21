@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -96,7 +96,7 @@ export default function ForgotPassword() {
         </div>
 
         <div className="relative z-10 text-[11px] font-bold text-slate-300 uppercase tracking-[0.4em]">
-          Wayzza Guest Security Network v4.2
+          Wayzza Secure Recovery
         </div>
       </div>
 
@@ -156,7 +156,10 @@ export default function ForgotPassword() {
 
                 <form onSubmit={handleSubmit} className="space-y-8">
                   <div className="space-y-3 group">
-                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within:text-emerald-600 transition-colors">
+                    <label
+                      htmlFor="forgot-password-email"
+                      className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within:text-emerald-600 transition-colors"
+                    >
                       Email Address
                     </label>
                     <div className="relative">
@@ -167,6 +170,7 @@ export default function ForgotPassword() {
                       <input
                         type="email"
                         required
+                        id="forgot-password-email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="email@example.com"

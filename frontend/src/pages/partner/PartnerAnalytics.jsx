@@ -61,20 +61,34 @@ export default function PartnerAnalytics() {
       .catch(() => setLoading(false));
   }, [user?.email]);
 
-  // Status breakdown
-  const statusMap = { paid: 0, pending: 0, cancelled: 0 };
+  // Status breakdown — FIX #76: include arrived/departed
+  const statusMap = { paid: 0, arrived: 0, departed: 0, pending: 0, cancelled: 0 };
   bookings.forEach((b) => {
     if (statusMap[b.status] !== undefined) statusMap[b.status]++;
   });
-  const pieData = Object.entries(statusMap).map(([name, value]) => ({
-    name: name === 'paid' ? 'Confirmed' : name === 'pending' ? 'Pending' : 'Cancelled',
-    value,
-  }));
+  const pieData = Object.entries(statusMap)
+    .filter(([, v]) => v > 0) // hide zero slices
+    .map(([name, value]) => ({
+      name:
+        name === 'paid'
+          ? 'Confirmed'
+          : name === 'arrived'
+            ? 'In-Stay'
+            : name === 'departed'
+              ? 'Completed'
+              : name === 'pending'
+                ? 'Pending'
+                : 'Cancelled',
+      value,
+    }));
   const occupancy = monthly.map((m) => ({ month: m.month, bookings: m.bookings || 0 }));
 
   // Derived insights
   const totalBookings = bookings.length;
-  const paidBookings = bookings.filter((b) => b.status === 'paid').length;
+  // FIX #76: count arrived/departed as confirmed for conversion rate
+  const paidBookings = bookings.filter((b) =>
+    ['paid', 'arrived', 'departed'].includes(b.status)
+  ).length;
   const conversionRate = totalBookings > 0 ? Math.round((paidBookings / totalBookings) * 100) : 0;
   const avgBookingValue =
     paidBookings > 0 ? Math.round((earnings?.totalRevenue || 0) / paidBookings) : 0;
@@ -545,7 +559,16 @@ export default function PartnerAnalytics() {
                   <span
                     className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide border ${b.status === 'paid' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : b.status === 'cancelled' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'}`}
                   >
-                    {b.status === 'paid' ? 'Confirmed' : b.status}
+                    {/* FIX #76: proper label for all statuses */}
+                    {b.status === 'paid'
+                      ? 'Confirmed'
+                      : b.status === 'arrived'
+                        ? 'In-Stay'
+                        : b.status === 'departed'
+                          ? 'Completed'
+                          : b.status === 'cancelled'
+                            ? 'Cancelled'
+                            : 'Pending'}
                   </span>
                   <span className="text-sm font-black text-white">
                     ₹{(b.netEarnings || b.totalPrice || 0).toLocaleString()}

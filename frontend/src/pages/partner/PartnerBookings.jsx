@@ -102,6 +102,9 @@ export default function PartnerBookings() {
     all: bookings.length,
     paid: bookings.filter((b) => b.status === 'paid').length,
     pending: bookings.filter((b) => b.status === 'pending').length,
+    // FIX #64: include arrived/departed in counts
+    arrived: bookings.filter((b) => b.status === 'arrived').length,
+    departed: bookings.filter((b) => b.status === 'departed').length,
     cancelled: bookings.filter((b) => b.status === 'cancelled').length,
   };
 
@@ -300,6 +303,9 @@ export default function PartnerBookings() {
               { key: 'all', label: 'All' },
               { key: 'paid', label: 'Confirmed' },
               { key: 'pending', label: 'Pending' },
+              // FIX #64: arrived & departed filter tabs
+              { key: 'arrived', label: 'In-Stay' },
+              { key: 'departed', label: 'Completed' },
               { key: 'cancelled', label: 'Cancelled' },
             ].map((tab) => (
               <button

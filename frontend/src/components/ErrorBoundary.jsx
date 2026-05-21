@@ -8,6 +8,12 @@ class ErrorBoundary extends React.Component {
     this.state = { hasError: false, error: null };
   }
 
+  componentDidMount() {
+    // FIX #62: Clear the chunk reload flag on every successful render/mount
+    // so the auto-reload guard fires correctly on subsequent chunk errors
+    sessionStorage.removeItem('wayzza_chunk_reload');
+  }
+
   static getDerivedStateFromError(error) {
     return { hasError: true, error };
   }

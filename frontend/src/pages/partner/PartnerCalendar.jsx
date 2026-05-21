@@ -616,6 +616,11 @@ export default function PartnerCalendar() {
                 <h3 className="text-sm font-black text-white uppercase tracking-[0.2em]">
                   Upcoming Arrivals
                 </h3>
+                {/* FIX #105: Webhook delay notice — Razorpay webhooks can take 30-60s to arrive.
+                    Partners should wait briefly before assuming a booking didn't process. */}
+                <p className="text-[10px] text-white/20 font-medium mt-1">
+                  New bookings may take up to 60 seconds to appear after payment.
+                </p>
               </div>
               <div className="divide-y divide-white/[0.02] max-h-[400px] overflow-y-auto">
                 {upcoming.length === 0 ? (

@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -201,7 +201,10 @@ export default function ResetPassword() {
                 <form onSubmit={handleSubmit} className="space-y-10">
                   <div className="space-y-6">
                     <div className="space-y-3 group">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within:text-emerald-600 transition-colors">
+                      <label
+                        htmlFor="reset-new-password"
+                        className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within:text-emerald-600 transition-colors"
+                      >
                         New Password
                       </label>
                       <div className="relative">
@@ -212,6 +215,7 @@ export default function ResetPassword() {
                         <input
                           type={showPw ? 'text' : 'password'}
                           required
+                          id="reset-new-password"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           placeholder="••••••••••••"
@@ -220,6 +224,7 @@ export default function ResetPassword() {
                         <button
                           type="button"
                           onClick={() => setShowPw(!showPw)}
+                          aria-label="Toggle password visibility"
                           className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-300 hover:text-emerald-600 transition-colors"
                         >
                           {showPw ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -249,7 +254,10 @@ export default function ResetPassword() {
                     </AnimatePresence>
 
                     <div className="space-y-3 group">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within:text-emerald-600 transition-colors">
+                      <label
+                        htmlFor="reset-confirm-password"
+                        className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1 group-focus-within:text-emerald-600 transition-colors"
+                      >
                         Confirm Password
                       </label>
                       <div className="relative">
@@ -260,6 +268,7 @@ export default function ResetPassword() {
                         <input
                           type={showPw ? 'text' : 'password'}
                           required
+                          id="reset-confirm-password"
                           value={confirm}
                           onChange={(e) => setConfirm(e.target.value)}
                           placeholder="••••••••••••"

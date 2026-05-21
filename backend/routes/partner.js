@@ -251,7 +251,11 @@ router.get("/monthly-revenue", requireAuth, requireRole(["partner", "admin"]), a
     try {
         const db = getDB();
         const bookings = db.collection("bookings");
-        const paid = await bookings.find({ ownerEmail: req.user.email, status: "paid" }).toArray();
+        // FIX #114: include arrived/departed (in-stay/completed) in revenue; sort by ISO key not label
+        const paid = await bookings.find({
+            ownerEmail: req.user.email,
+            status: { $in: ["paid", "arrived", "departed"] }
+        }).toArray();
         const map = {};
         paid.forEach(b => {
             const d = new Date(b.createdAt);
@@ -261,10 +265,14 @@ router.get("/monthly-revenue", requireAuth, requireRole(["partner", "admin"]), a
             map[key].revenue += b.totalPrice || 0;
             map[key].bookings += 1;
         });
-        const data = Object.values(map).sort((a, b) => a.month > b.month ? 1 : -1);
+        // FIX #114: sort by ISO key so cross-year data is ordered correctly
+        const data = Object.entries(map)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([, v]) => v);
         res.json({ ok: true, data });
     } catch (err) { next(err); }
 });
+
 
 /* ================= OWNER SPECIFIC ================= */
 

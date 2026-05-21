@@ -67,7 +67,16 @@ router.post("/book", requireAuth, async (req, res, next) => {
         if (!listing) return res.status(404).json({ ok: false, message: "Listing not found" });
         if (!listing.approved) return res.status(403).json({ ok: false, message: "This property is pending approval and cannot be booked yet." });
 
-        const variant = listing.variants?.[variantIndex || 0];
+        if (listing.category === "hotel" && (!listing.variants || listing.variants.length === 0)) {
+            return res.status(400).json({ ok: false, message: "This property is not ready to accept reservations yet." });
+        }
+
+        const requestedIndex = variantIndex || 0;
+        if (listing.variants && (requestedIndex < 0 || requestedIndex >= listing.variants.length)) {
+            return res.status(400).json({ ok: false, message: "The selected room or option is not available." });
+        }
+
+        const variant = listing.variants?.[requestedIndex];
         const nights = Math.ceil((new Date(checkOut) - new Date(checkIn)) / 86400000);
         const basePricePerNight = Number(variant?.price || listing.price || 0);
 
@@ -250,6 +259,15 @@ router.post("/confirm", requireAuth, async (req, res, next) => {
         const booking = await bookings.findOne({ _id: new ObjectId(bookingId) });
         if (!booking) return res.status(404).json({ ok: false, message: "Booking not found" });
 
+        // If already confirmed (e.g., by webhook)
+        if (booking.status === "paid") {
+            return res.json({ ok: true });
+        }
+
+        if (booking.status !== "pending") {
+            return res.status(400).json({ ok: false, message: `Booking cannot be confirmed from status: ${booking.status}` });
+        }
+
         const paymentId = razorpay_payment_id; // Map back to original variable for rest of logic
 
         const totalPrice = booking.totalPrice || 0;
@@ -280,8 +298,8 @@ router.post("/confirm", requireAuth, async (req, res, next) => {
 
         const passcode = Math.floor(100000 + Math.random() * 900000).toString();
 
-        await bookings.updateOne(
-            { _id: new ObjectId(bookingId) },
+        const updateResult = await bookings.updateOne(
+            { _id: new ObjectId(bookingId), status: "pending" },
             {
                 $set: {
                     status: "paid",
@@ -296,42 +314,44 @@ router.post("/confirm", requireAuth, async (req, res, next) => {
             }
         );
 
-        if (booking && transporter) {
-            const ownerPayout = netEarnings; // Payout accurately reflects absorption of discount
-            const emailData = {
-                guestEmail: booking.guestEmail,
-                ownerEmail: booking.ownerEmail,
-                title: booking.title || "Your booking",
-                checkIn: booking.checkIn,
-                checkOut: booking.checkOut,
-                nights: booking.nights || 1,
-                totalPrice: booking.totalPrice || 0,
-                ownerPayout,
-                bookingId: bookingId.toString()
-            };
+        if (updateResult.modifiedCount === 1) {
+            if (booking && transporter) {
+                const ownerPayout = netEarnings; // Payout accurately reflects absorption of discount
+                const emailData = {
+                    guestEmail: booking.guestEmail,
+                    ownerEmail: booking.ownerEmail,
+                    title: booking.title || "Your booking",
+                    checkIn: booking.checkIn,
+                    checkOut: booking.checkOut,
+                    nights: booking.nights || 1,
+                    totalPrice: booking.totalPrice || 0,
+                    ownerPayout,
+                    bookingId: bookingId.toString()
+                };
 
-            Promise.all([
-                transporter.sendMail(guestBookingEmail(emailData)).catch(e => console.error("Guest email error:", e)),
-                booking.ownerEmail
-                    ? transporter.sendMail(ownerBookingEmail(emailData)).catch(e => console.error("Owner email error:", e))
-                    : Promise.resolve()
-            ]);
+                Promise.all([
+                    transporter.sendMail(guestBookingEmail(emailData)).catch(e => console.error("Guest email error:", e)),
+                    booking.ownerEmail
+                        ? transporter.sendMail(ownerBookingEmail(emailData)).catch(e => console.error("Owner email error:", e))
+                        : Promise.resolve()
+                ]);
 
-            // WhatsApp Alert for Owner
-            // Check partners collection first (partner onboarding flow), then users
-            (async () => {
-                try {
-                    const owner =
-                        await db.collection("partners").findOne({ email: booking.ownerEmail }) ||
-                        await db.collection("users").findOne({ email: booking.ownerEmail });
-                    if (owner?.phone) {
-                        const message = formatWhatsAppBookingMsg(emailData);
-                        await sendWhatsAppAlert(owner.phone, message, [
-                            { title: "View Booking" }
-                        ]);
-                    }
-                } catch (e) { console.error("WhatsApp error:", e); }
-            })();
+                // WhatsApp Alert for Owner
+                // Check partners collection first (partner onboarding flow), then users
+                (async () => {
+                    try {
+                        const owner =
+                            await db.collection("partners").findOne({ email: booking.ownerEmail }) ||
+                            await db.collection("users").findOne({ email: booking.ownerEmail });
+                        if (owner?.phone) {
+                            const message = formatWhatsAppBookingMsg(emailData);
+                            await sendWhatsAppAlert(owner.phone, message, [
+                                { title: "View Booking" }
+                            ]);
+                        }
+                    } catch (e) { console.error("WhatsApp error:", e); }
+                })();
+            }
         }
 
         res.json({ ok: true });
@@ -352,18 +372,48 @@ router.post("/cancel", requireAuth, async (req, res, next) => {
         const booking = await bookings.findOne({ _id: new ObjectId(bookingId) });
         if (!booking) return res.status(404).json({ ok: false, message: "Booking not found" });
 
-        const allowed = booking.guestEmail === req.user.email || booking.ownerEmail === req.user.email;
-        if (!allowed) return res.status(403).json({ ok: false, message: "Not authorized to cancel this booking" });
+        const isGuest = booking.guestEmail === req.user.email;
+        const isOwner = booking.ownerEmail === req.user.email;
+        const isAdmin = req.user.role === "admin";
 
-        // Block cancellations within 24 hours of check-in
-        const hoursUntilCheckIn = (new Date(booking.checkIn) - new Date()) / (1000 * 60 * 60);
-        if (hoursUntilCheckIn <= 24)
-            return res.status(400).json({ ok: false, message: "Cancellations are not allowed within 24 hours of check-in." });
+        if (!isGuest && !isOwner && !isAdmin) {
+            return res.status(403).json({ ok: false, message: "Not authorized to cancel this booking" });
+        }
 
-        const updates = { status: "cancelled", cancelledAt: new Date() };
+        // FIX #56: Separate cancellation policies for guests vs partners
+        // - Guests: strict 24-hour cutoff before check-in; cannot cancel post-check-in
+        // - Partners/Owners: can cancel anytime (emergency/unavailability); guest gets a refund flag
+        // - Admins: unrestricted
+        if (isGuest && !isAdmin) {
+            const hoursUntilCheckIn = (new Date(booking.checkIn) - new Date()) / (1000 * 60 * 60);
+            if (hoursUntilCheckIn <= 24) {
+                return res.status(400).json({
+                    ok: false,
+                    message: "Cancellations are not allowed within 24 hours of check-in. Please contact support if you have an emergency."
+                });
+            }
+        }
+        // Partners can cancel any time but this triggers a priority refund for the guest
+        const cancellationReason = isOwner && !isAdmin
+            ? "cancelled_by_partner"
+            : isGuest
+                ? "cancelled_by_guest"
+                : "cancelled_by_admin";
+
+        const updates = {
+            status: "cancelled",
+            cancelledAt: new Date(),
+            cancellationReason,
+            cancelledBy: req.user.email
+        };
+
         if (booking.status === "paid") {
             updates.refundStatus = "pending";
             updates.payoutStatus = null;
+            // Partner-initiated cancellation gets priority refund processing flag
+            if (isOwner && !isAdmin) {
+                updates.refundPriority = "high";
+            }
         }
 
         await bookings.updateOne(
@@ -371,7 +421,7 @@ router.post("/cancel", requireAuth, async (req, res, next) => {
             { $set: updates }
         );
 
-        res.json({ ok: true });
+        res.json({ ok: true, reason: cancellationReason });
     } catch (err) { next(err); }
 });
 

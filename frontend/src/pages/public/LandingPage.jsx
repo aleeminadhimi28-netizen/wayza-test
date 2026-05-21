@@ -1071,9 +1071,9 @@ export default function LandingPage() {
                   </h5>
                   <ul className="space-y-3">
                     {[
-                      { name: 'Stays', to: '/listings' },
-                      { name: 'Mobility', to: '/listings' },
-                      { name: 'Secrets', to: '/experiences' },
+                      { name: 'Stays', to: '/listings?category=hotel' },
+                      { name: 'Mobility', to: '/listings?category=bike' },
+                      { name: 'Activities', to: '/listings?category=activity' },
                       { name: 'AI Planner', to: '/ai-trip-planner' },
                     ].map((link) => (
                       <li key={link.name}>

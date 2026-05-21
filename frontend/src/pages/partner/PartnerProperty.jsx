@@ -67,6 +67,7 @@ export default function PartnerProperty() {
   const navigate = useNavigate();
   const { showToast } = useToast();
   const [listing, setListing] = useState(null);
+  const [loadError, setLoadError] = useState(false);
 
   const [type, setType] = useState('Room');
   const [name, setName] = useState('');
@@ -109,11 +110,14 @@ export default function PartnerProperty() {
 
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, onConfirm: () => {} });
 
+  // FIX #98: Remove editIndex from deps — editing a variant should NOT re-fetch and
+  // overwrite form state. load() only needs to re-run when id or showToast changes.
   const load = useCallback(async () => {
     try {
       const data = await api.getListing(id);
       const l = data.data || data;
       setListing(l);
+      setLoadError(false);
       setMainTitle(l.title || '');
       setMainVideo(l.walkthroughVideo || '');
       setMainAmenities(l.amenities || []);
@@ -134,13 +138,15 @@ export default function PartnerProperty() {
       setPucFile(null);
       setPucPreview('');
 
+      // Only reset the variant type when not in edit mode
       if (editIndex === null) {
         setType(l.category === 'bike' || l.category === 'car' ? 'Vehicle' : 'Room');
       }
     } catch (err) {
+      setLoadError(true);
       showToast('Failed to load property. Please try again.', 'error');
     }
-  }, [id, editIndex, showToast]);
+  }, [id, showToast]); // editIndex intentionally removed from deps
 
   useEffect(() => {
     load();
@@ -175,6 +181,8 @@ export default function PartnerProperty() {
     const fd = new FormData();
     fd.append('image', file);
     const d = await api.uploadImage(fd);
+    // FIX #99: Return null on failure instead of undefined to avoid overwriting existing images
+    if (!d.ok || !d.filename) return null;
     return d.filename;
   }
 
@@ -345,13 +353,30 @@ export default function PartnerProperty() {
     setMainLoading(false);
   }
 
+  // FIX #101: Show error state instead of infinite spinner when listing fails to load
   if (!listing)
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 bg-[#050a08]">
-        <div className="w-10 h-10 border-2 border-white/10 border-t-emerald-500 rounded-full animate-spin" />
-        <p className="text-sm font-bold text-white/30 uppercase tracking-widest">
-          Loading property...
-        </p>
+        {loadError ? (
+          <>
+            <p className="text-sm font-bold text-rose-400 uppercase tracking-widest">
+              Failed to load property.
+            </p>
+            <button
+              onClick={load}
+              className="h-10 px-6 bg-emerald-500 text-slate-950 rounded-xl font-bold text-sm hover:bg-emerald-400 transition-all"
+            >
+              Retry
+            </button>
+          </>
+        ) : (
+          <>
+            <div className="w-10 h-10 border-2 border-white/10 border-t-emerald-500 rounded-full animate-spin" />
+            <p className="text-sm font-bold text-white/30 uppercase tracking-widest">
+              Loading property...
+            </p>
+          </>
+        )}
       </div>
     );
 
@@ -504,21 +529,24 @@ export default function PartnerProperty() {
                           className="w-full bg-[#050a08] border border-white/10 rounded-xl h-12 px-4 text-white font-bold text-sm outline-none focus:border-emerald-500 transition-all appearance-none cursor-pointer"
                         >
                           <option value="">Select Sub-Type</option>
+                          {/* FIX #102: Standardised vehicle sub-type options to match PartnerCreateProperty */}
                           {listing?.category === 'bike' ? (
                             <>
                               <option value="Scooter (Activa, Ntorq, etc.)">
                                 Scooter (Activa, Ntorq, etc.)
                               </option>
-                              <option value="Cruiser Bike">Cruiser Bike</option>
-                              <option value="Sport Bike">Sport Bike</option>
-                              <option value="Royal Enfield">Royal Enfield</option>
+                              <option value="Cruiser (Royal Enfield, etc.)">
+                                Cruiser (Royal Enfield, etc.)
+                              </option>
+                              <option value="Adventure / Tourer">Adventure / Tourer</option>
+                              <option value="Premium / Sports Bike">Premium / Sports Bike</option>
                             </>
                           ) : (
                             <>
-                              <option value="Hatchback Car">Hatchback Car</option>
-                              <option value="Sedan Car">Sedan Car</option>
-                              <option value="SUV Car">SUV Car</option>
-                              <option value="Luxury Car">Luxury Car</option>
+                              <option value="Hatchback / Sedan">Hatchback / Sedan</option>
+                              <option value="SUV / MUV">SUV / MUV</option>
+                              <option value="Luxury Sedan">Luxury Sedan</option>
+                              <option value="Off-Roader / 4x4">Off-Roader / 4x4</option>
                             </>
                           )}
                         </select>

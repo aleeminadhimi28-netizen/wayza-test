@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../AuthContext.jsx';
 import { useToast } from '../../ToastContext.jsx';
@@ -50,19 +50,30 @@ export default function AdminLogin() {
   const [focused, setFocused] = useState(null);
   const [tick, setTick] = useState(0);
 
+  // FIX #112: Client-side lockout after 5 failed attempts
+  const [failCount, setFailCount] = useState(0);
+  const [lockedUntil, setLockedUntil] = useState(null);
+  const isLocked = lockedUntil && Date.now() < lockedUntil;
+  const lockSecondsLeft = isLocked ? Math.ceil((lockedUntil - Date.now()) / 1000) : 0;
+
   // Live clock tick
   useEffect(() => {
     const id = setInterval(() => setTick((t) => t + 1), 1000);
     return () => clearInterval(id);
   }, []);
 
-  const now = new Date();
-  const timeStr = now.toLocaleTimeString('en-GB', { hour12: false });
-  const dateStr = now.toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
+  // FIX #83: derive time strings inside useMemo keyed on tick
+  const { timeStr, dateStr } = useMemo(
+    () => ({
+      timeStr: new Date().toLocaleTimeString('en-GB', { hour12: false }),
+      dateStr: new Date().toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      }),
+    }),
+    [tick]
+  );
 
   useEffect(() => {
     if (user && user.role === 'admin') navigate('/admin', { replace: true });
@@ -71,14 +82,37 @@ export default function AdminLogin() {
   async function login(e) {
     if (e) e.preventDefault();
     if (loading) return;
+
+    // FIX #112: Check client-side lockout
+    if (lockedUntil && Date.now() < lockedUntil) {
+      const secs = Math.ceil((lockedUntil - Date.now()) / 1000);
+      showToast(`Too many attempts. Try again in ${secs}s.`, 'error');
+      return;
+    }
+
     try {
       setLoading(true);
       const data = await api.adminLogin({ email, password });
       if (!data.ok) {
-        showToast(data.message || 'Invalid admin credentials.', 'error');
+        const newCount = failCount + 1;
+        setFailCount(newCount);
+        if (newCount >= 5) {
+          // Lock out for 30 seconds
+          setLockedUntil(Date.now() + 30000);
+          setFailCount(0);
+          showToast('Too many failed attempts. Locked for 30 seconds.', 'error');
+        } else {
+          showToast(
+            `${data.message || 'Invalid admin credentials.'} (${5 - newCount} attempts left)`,
+            'error'
+          );
+        }
         setLoading(false);
         return;
       }
+      // Successful login — reset counters
+      setFailCount(0);
+      setLockedUntil(null);
       setAuth({ email: data.email, role: 'admin' });
       showToast('Welcome back, Administrator.', 'success');
       navigate('/admin', { replace: true });
@@ -346,11 +380,11 @@ export default function AdminLogin() {
                 </p>
               </div>
 
-              {/* Submit */}
+              {/* Submit — FIX #112: Disabled and shows countdown when locked */}
               <div className="pt-2">
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || isLocked}
                   className="relative w-full h-13 rounded-xl font-black text-[11px] uppercase tracking-[0.4em] overflow-hidden group transition-all active:scale-[0.98] disabled:opacity-40 py-3.5"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-600 transition-opacity group-hover:opacity-90" />
@@ -360,6 +394,8 @@ export default function AdminLogin() {
                   <span className="relative flex items-center justify-center gap-3 text-white">
                     {loading ? (
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : isLocked ? (
+                      `Locked — wait ${lockSecondsLeft}s`
                     ) : (
                       <>
                         Authenticate

@@ -156,7 +156,10 @@ export default function PartnerLogin() {
 
             <form onSubmit={login} className="space-y-8">
               <div className="space-y-3 group/field">
-                <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] ml-2 group-focus-within/field:text-emerald-600 transition-colors">
+                <label
+                  htmlFor="partner-login-email"
+                  className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] ml-2 group-focus-within/field:text-emerald-600 transition-colors"
+                >
                   Credential Email
                 </label>
                 <div className="relative">
@@ -169,6 +172,7 @@ export default function PartnerLogin() {
                   <input
                     type="email"
                     required
+                    id="partner-login-email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="partner@wayzza.com"
@@ -178,7 +182,10 @@ export default function PartnerLogin() {
               </div>
 
               <div className="space-y-3 group/field">
-                <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] ml-2 group-focus-within/field:text-emerald-600 transition-colors">
+                <label
+                  htmlFor="partner-login-password"
+                  className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] ml-2 group-focus-within/field:text-emerald-600 transition-colors"
+                >
                   Access Password
                 </label>
                 <div className="relative">
@@ -191,6 +198,7 @@ export default function PartnerLogin() {
                   <input
                     type={show ? 'text' : 'password'}
                     required
+                    id="partner-login-password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••••••"
@@ -199,6 +207,7 @@ export default function PartnerLogin() {
                   <button
                     type="button"
                     onClick={() => setShow(!show)}
+                    aria-label="Toggle password visibility"
                     className="absolute right-8 top-1/2 -translate-y-1/2 text-slate-300 hover:text-emerald-600 transition-colors"
                   >
                     {show ? <EyeOff size={20} /> : <Eye size={20} />}

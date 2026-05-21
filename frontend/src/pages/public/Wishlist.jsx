@@ -37,15 +37,27 @@ export default function Wishlist() {
   }, []);
 
   useEffect(() => {
-    if (user?.email) load();
-    else if (!loading) {
-      navigate('/login');
+    // FIX #89: Wait for auth context loading to resolve before redirecting
+    if (user?.email) {
+      load();
+    } else if (!loading) {
+      navigate('/login', { state: { from: '/wishlist' } });
     }
   }, [user?.email, loading, load, navigate]);
 
   async function toggle(listingId) {
-    await api.toggleWishlist({ listingId });
+    // FIX #91: Only remove from UI if the API call succeeds
+    const originalRows = rows;
     setRows((r) => r.filter((x) => x._id !== listingId));
+    try {
+      const res = await api.toggleWishlist({ listingId });
+      if (!res.ok) {
+        // Revert on failure
+        setRows(originalRows);
+      }
+    } catch {
+      setRows(originalRows);
+    }
   }
 
   return (
@@ -179,11 +191,7 @@ export default function Wishlist() {
           </div>
         )}
 
-        <div className="py-20 text-center opacity-20 pointer-events-none select-none">
-          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.5em]">
-            Wayzza Selection Console v4.2
-          </p>
-        </div>
+        {/* FIX #92: Removed fake version watermark */}
       </div>
     </WayzzaLayout>
   );

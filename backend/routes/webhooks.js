@@ -66,8 +66,8 @@ router.post("/razorpay", async (req, res, next) => {
                 // ─────────────────────────────────────────────────────────────────────
 
                 const passcode = Math.floor(100000 + Math.random() * 900000).toString();
-                await bookings.updateOne(
-                    { _id: booking._id },
+                const updateResult = await bookings.updateOne(
+                    { _id: booking._id, status: "pending" },
                     {
                         $set: {
                             status: "paid",
@@ -82,24 +82,26 @@ router.post("/razorpay", async (req, res, next) => {
                     }
                 );
 
-                // Send Emails
-                const transporter = await getTransporter();
-                if (transporter) {
-                    const emailData = {
-                        guestEmail: booking.guestEmail,
-                        ownerEmail: booking.ownerEmail,
-                        bookingId: booking._id,
-                        title: booking.title,
-                        checkIn: booking.checkIn,
-                        checkOut: booking.checkOut,
-                        nights: booking.nights || 1,
-                        totalPrice: booking.totalPrice || 0,
-                        ownerPayout: netEarnings,
-                        passcode
-                    };
-                    transporter.sendMail(guestBookingEmail(emailData)).catch(e => console.error("Webhook Guest Email Error:", e));
-                    if (booking.ownerEmail) {
-                        transporter.sendMail(ownerBookingEmail(emailData)).catch(e => console.error("Webhook Owner Email Error:", e));
+                if (updateResult.modifiedCount === 1) {
+                    // Send Emails
+                    const transporter = await getTransporter();
+                    if (transporter) {
+                        const emailData = {
+                            guestEmail: booking.guestEmail,
+                            ownerEmail: booking.ownerEmail,
+                            bookingId: booking._id,
+                            title: booking.title,
+                            checkIn: booking.checkIn,
+                            checkOut: booking.checkOut,
+                            nights: booking.nights || 1,
+                            totalPrice: booking.totalPrice || 0,
+                            ownerPayout: netEarnings,
+                            passcode
+                        };
+                        transporter.sendMail(guestBookingEmail(emailData)).catch(e => console.error("Webhook Guest Email Error:", e));
+                        if (booking.ownerEmail) {
+                            transporter.sendMail(ownerBookingEmail(emailData)).catch(e => console.error("Webhook Owner Email Error:", e));
+                        }
                     }
                 }
             }

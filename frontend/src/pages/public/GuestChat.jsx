@@ -24,6 +24,13 @@ export default function GuestChat() {
   const [sending, setSending] = useState(false);
   const bottomRef = useRef(null);
 
+  // Keep a ref to the currently selected booking ID so the socket callback
+  // can always read the latest value without becoming stale.
+  const selectedIdRef = useRef(null);
+  useEffect(() => {
+    selectedIdRef.current = selected?._id ?? null;
+  }, [selected]);
+
   const loadMessages = useCallback(async () => {
     if (!selected) return;
     try {
@@ -35,40 +42,42 @@ export default function GuestChat() {
   async function send() {
     if (!text.trim() || !selected) return;
     const messageText = text.trim();
+    // Clear input immediately for better UX
+    setText('');
     setSending(true);
+
+    // Optimistic message — use a temp ID prefixed so we can identify it later
+    const tempId = `temp_${Date.now()}`;
+    const tempMsg = {
+      _id: tempId,
+      bookingId: selected._id,
+      senderEmail: user.email,
+      message: messageText,
+      createdAt: new Date().toISOString(),
+      _isTemp: true,
+    };
+    setMessages((prev) => [...prev, tempMsg]);
+
     try {
       const res = await api.sendChat(selected._id, messageText);
-      if (res.ok) {
-        // Manually add message to state for immediate feedback
-        const tempMsg = {
-          _id: Date.now().toString(),
-          bookingId: selected._id,
-          senderEmail: user.email,
-          message: messageText,
-          createdAt: new Date().toISOString(),
-        };
-        setMessages((prev) => [...prev, tempMsg]);
-        setText('');
+      if (res.ok && res.data) {
+        // Replace temp message with the real server message
+        setMessages((prev) =>
+          prev.map((m) => (m._id === tempId ? { ...res.data, _isTemp: false } : m))
+        );
+      } else if (!res.ok) {
+        // Remove the failed optimistic message
+        setMessages((prev) => prev.filter((m) => m._id !== tempId));
+        setText(messageText); // restore text so user can retry
       }
-    } catch (_) {}
+    } catch (_) {
+      setMessages((prev) => prev.filter((m) => m._id !== tempId));
+      setText(messageText);
+    }
     setSending(false);
   }
 
-  useEffect(() => {
-    initiateSocketConnection();
-    subscribeToMessages((err, msg) => {
-      if (err) return;
-      // Only add if it belongs to the selected booking
-      setMessages((prev) => {
-        const exists = prev.find((m) => m._id === msg._id);
-        if (exists) return prev;
-        return [...prev, msg];
-      });
-    });
-
-    return () => disconnectSocket();
-  }, []);
-
+  // Load bookings once on mount
   useEffect(() => {
     if (!user?.email) return;
     api
@@ -82,15 +91,51 @@ export default function GuestChat() {
       .catch(() => setLoading(false));
   }, [user?.email]);
 
+  // FIX #84: Socket connect/disconnect is scoped to the room-level effect so it
+  // reconnects properly on remount (React Strict Mode / HMR) and only disconnects
+  // when the chat page itself is fully unmounted — not on every room switch.
   useEffect(() => {
     if (!selected) return;
+
+    // Connect socket (idempotent — safe to call if already connected)
+    initiateSocketConnection();
+
     loadMessages();
     joinBookingRoom(selected._id);
 
+    // FIX #83: Filter incoming messages by the currently active booking so
+    // messages from other rooms don't bleed into the current conversation.
+    const unsubscribe = subscribeToMessages((err, msg) => {
+      if (err) return;
+      // Ignore messages not for the currently selected booking
+      if (msg.bookingId !== selectedIdRef.current) return;
+      setMessages((prev) => {
+        // Dedup: check both real IDs AND replace any matching temp message
+        const existsReal = prev.find((m) => !m._isTemp && m._id === msg._id);
+        if (existsReal) return prev;
+        // Replace a temp message that was for this exact text if server echoes back
+        const tempIdx = prev.findIndex((m) => m._isTemp && m.message === msg.message);
+        if (tempIdx !== -1) {
+          const updated = [...prev];
+          updated[tempIdx] = { ...msg, _isTemp: false };
+          return updated;
+        }
+        return [...prev, msg];
+      });
+    });
+
     return () => {
       leaveBookingRoom(selected._id);
+      if (typeof unsubscribe === 'function') unsubscribe();
     };
   }, [selected, loadMessages]);
+
+  // Disconnect socket when the entire chat page unmounts
+  useEffect(() => {
+    return () => {
+      disconnectSocket();
+    };
+  }, []);
 
   useEffect(() => {
     if (messages.length > 0) {
@@ -122,6 +167,7 @@ export default function GuestChat() {
             </div>
           </header>
 
+          {/* FIX #87: Proper empty state when user has no confirmed bookings */}
           {bookings.length === 0 ? (
             <div className="py-24 text-center border-2 border-dashed border-slate-100 rounded-[32px] flex flex-col items-center space-y-6">
               <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300">
@@ -215,7 +261,7 @@ export default function GuestChat() {
                           <motion.div
                             key={m._id || i}
                             initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
+                            animate={{ opacity: m._isTemp ? 0.6 : 1, y: 0 }}
                             className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}
                           >
                             <div
@@ -225,10 +271,12 @@ export default function GuestChat() {
                               <div
                                 className={`text-[11px] font-bold uppercase tracking-widest mt-2 opacity-40 ${isMe ? 'text-right' : 'text-left'}`}
                               >
-                                {new Date(m.createdAt).toLocaleTimeString([], {
-                                  hour: '2-digit',
-                                  minute: '2-digit',
-                                })}
+                                {m._isTemp
+                                  ? 'Sending…'
+                                  : new Date(m.createdAt).toLocaleTimeString([], {
+                                      hour: '2-digit',
+                                      minute: '2-digit',
+                                    })}
                               </div>
                             </div>
                           </motion.div>
@@ -239,13 +287,13 @@ export default function GuestChat() {
                   <div ref={bottomRef} />
                 </div>
 
-                {/* CHAT INPUT */}
+                {/* CHAT INPUT — FIX #85: Enter key sends message */}
                 <footer className="p-6 bg-white border-t border-slate-100">
                   <div className="flex gap-3 items-center bg-slate-50 border border-slate-100 p-2 rounded-2xl focus-within:bg-white focus-within:ring-4 focus-within:ring-emerald-500/5 transition-all">
                     <textarea
                       value={text}
                       onChange={(e) => setText(e.target.value)}
-                      placeholder="Write your message..."
+                      placeholder="Write your message… (Enter to send, Shift+Enter for new line)"
                       className="flex-1 bg-transparent border-none outline-none resize-none px-4 py-2 text-sm font-medium text-slate-900 h-10"
                       onKeyDown={(e) => {
                         if (e.key === 'Enter' && !e.shiftKey) {

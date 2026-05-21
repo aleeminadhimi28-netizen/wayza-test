@@ -27,7 +27,14 @@ export function ToastProvider({ children }) {
     };
   }, []);
 
-  const bg = toast?.type === 'success' ? '#16a34a' : toast?.type === 'error' ? '#dc2626' : '#111';
+  const bg =
+    toast?.type === 'success'
+      ? '#16a34a'
+      : toast?.type === 'error'
+        ? '#dc2626'
+        : toast?.type === 'warning'
+          ? '#d97706'
+          : '#111';
 
   return (
     <ToastContext.Provider value={{ showToast }}>

@@ -15,6 +15,7 @@ import {
   FileText,
   History,
   Navigation,
+  Loader2,
 } from 'lucide-react';
 
 import { api } from '../../utils/api.js';
@@ -65,6 +66,9 @@ const tabs = [
   { key: 'all', label: 'All Bookings', icon: History },
   { key: 'paid', label: 'Confirmed', icon: CheckCircle },
   { key: 'pending', label: 'Pending', icon: Clock },
+  // FIX #30: add arrived (In-Stay) and departed (Completed) filter tabs
+  { key: 'arrived', label: 'In-Stay', icon: CheckCircle },
+  { key: 'departed', label: 'Completed', icon: CheckCircle },
   { key: 'cancelled', label: 'Cancelled', icon: XCircle },
 ];
 
@@ -74,6 +78,7 @@ export default function MyBookings() {
 
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const { showToast } = useToast();
   const [cancellingId, setCancellingId] = useState(null);
   const [filterStatus, setFilterStatus] = useState('all');
@@ -81,8 +86,9 @@ export default function MyBookings() {
 
   const filtered = filterStatus === 'all' ? rows : rows.filter((b) => b.status === filterStatus);
 
-  // Review State
+  // Review State — track reviewed listing IDs to prevent duplicate reviews (#28)
   const [reviewModal, setReviewModal] = useState(null);
+  const [reviewedIds, setReviewedIds] = useState(new Set());
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
   const [submittingReview, setSubmittingReview] = useState(false);
@@ -97,8 +103,14 @@ export default function MyBookings() {
     }
     api
       .getMyBookings()
-      .then((data) => setRows(Array.isArray(data.data) ? data.data : []))
-      .catch(() => setRows([]))
+      .then((data) => {
+        setRows(Array.isArray(data.data) ? data.data : []);
+        setError(false);
+      })
+      .catch(() => {
+        setRows([]);
+        setError(true);
+      })
       .finally(() => setLoading(false));
   }, [user?.email]);
 
@@ -136,6 +148,8 @@ export default function MyBookings() {
       });
       if (res.ok) {
         showToast('Thank you for your review!', 'success');
+        // Mark this listing as reviewed so the button disappears (#28)
+        setReviewedIds((prev) => new Set([...prev, reviewModal.listingId]));
         setReviewModal(null);
         setComment('');
         setRating(5);
@@ -221,7 +235,12 @@ export default function MyBookings() {
                 <div class="footer-note">© ${new Date().getFullYear()} Wayzza Inc.</div>
             </div>
         </div></body></html>`;
+    // #29: Guard against popup blockers returning null
     const w = window.open('', '_blank', 'width=780,height=900');
+    if (!w) {
+      showToast('Popup blocked. Please allow popups to download invoices.', 'error');
+      return;
+    }
     w.document.write(html);
     w.document.close();
     setTimeout(() => w.print(), 500);
@@ -233,6 +252,30 @@ export default function MyBookings() {
         <div className="min-h-screen flex flex-col items-center justify-center bg-white gap-4 font-sans text-slate-400">
           <div className="w-10 h-10 border-4 border-slate-100 border-t-emerald-500 rounded-full animate-spin" />
           <p className="text-xs font-bold uppercase tracking-widest">Loading bookings...</p>
+        </div>
+      </WayzzaLayout>
+    );
+
+  // FIX #32: Show error state when API call fails instead of empty list
+  if (error)
+    return (
+      <WayzzaLayout noPadding>
+        <div className="min-h-screen flex flex-col items-center justify-center bg-white gap-6 font-sans text-slate-400 px-6">
+          <div className="w-16 h-16 bg-rose-50 rounded-2xl flex items-center justify-center">
+            <AlertCircle size={28} className="text-rose-400" />
+          </div>
+          <div className="text-center space-y-2">
+            <h2 className="text-xl font-bold text-slate-900">Failed to load bookings</h2>
+            <p className="text-sm text-slate-400">
+              Something went wrong. Please check your connection and try again.
+            </p>
+          </div>
+          <button
+            onClick={() => window.location.reload()}
+            className="h-12 px-8 bg-slate-900 text-white rounded-xl font-bold text-sm uppercase tracking-widest hover:bg-emerald-600 transition-all"
+          >
+            Retry
+          </button>
         </div>
       </WayzzaLayout>
     );
@@ -305,8 +348,11 @@ export default function MyBookings() {
                 animate={{ opacity: 1 }}
                 className="py-24 text-center"
               >
+                {/* FIX #31: show which filter tab has no results */}
                 <p className="text-slate-400 font-bold uppercase text-[11px] tracking-widest">
-                  No matching bookings found
+                  No{' '}
+                  {tabs.find((t) => t.key === filterStatus)?.label?.toLowerCase() || filterStatus}{' '}
+                  bookings found
                 </p>
               </motion.div>
             ) : (
@@ -405,7 +451,8 @@ export default function MyBookings() {
                               >
                                 <FileText size={14} /> Download invoice
                               </button>
-                              {!isFuture && (
+                              {/* #28: Only show review button if not already reviewed */}
+                              {!isFuture && !reviewedIds.has(b.listingId) && (
                                 <button
                                   onClick={() => setReviewModal(b)}
                                   className="h-10 w-full border border-amber-100 text-amber-700 bg-amber-50 rounded-xl font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-2 hover:bg-amber-500 hover:text-white transition-all mt-1"
@@ -475,8 +522,10 @@ export default function MyBookings() {
               <h3 className="text-2xl font-bold text-slate-900 tracking-tight uppercase mb-2">
                 Rate your stay
               </h3>
+              {/* #33: Fixed literal curly-quote rendering */}
               <p className="text-sm font-medium text-slate-500 mb-8">
-                "How was your experience at {reviewModal.title}?"
+                How was your experience at{' '}
+                <span className="font-semibold text-slate-700">{reviewModal?.title}</span>?
               </p>
 
               <div className="space-y-6">
@@ -564,7 +613,8 @@ export default function MyBookings() {
                       level="H"
                       includeMargin={false}
                       imageSettings={{
-                        src: 'https://wayzza.com/favicon.png', // Mock logo
+                        // #31: Use relative path to avoid 3rd-party domain dependency
+                        src: '/favicon.png',
                         x: undefined,
                         y: undefined,
                         height: 40,
@@ -621,21 +671,4 @@ export default function MyBookings() {
   );
 }
 
-function Loader2({ className }) {
-  return (
-    <svg
-      className={className}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-    </svg>
-  );
-}
+// #27: Loader2 is now imported from lucide-react above — local definition removed.

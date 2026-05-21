@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -24,12 +24,12 @@ import { useToast } from '../../ToastContext.jsx';
 import { api } from '../../utils/api.js';
 
 const CATEGORIES = [
-  { value: 'general', label: 'General Inquiry', icon: 'ðŸ’¬' },
-  { value: 'booking', label: 'Booking Issue', icon: 'ðŸ“‹' },
-  { value: 'payment', label: 'Payment Problem', icon: 'ðŸ’³' },
-  { value: 'account', label: 'Account Help', icon: 'ðŸ‘¤' },
-  { value: 'property', label: 'Property Report', icon: 'ðŸ ' },
-  { value: 'bug', label: 'Bug / Technical', icon: 'ðŸ›' },
+  { value: 'general', label: 'General Inquiry', icon: '💬' },
+  { value: 'booking', label: 'Booking Issue', icon: '📋' },
+  { value: 'payment', label: 'Payment Problem', icon: '💳' },
+  { value: 'account', label: 'Account Help', icon: '👤' },
+  { value: 'property', label: 'Property Report', icon: '🏠' },
+  { value: 'bug', label: 'Bug / Technical', icon: '🐛' },
 ];
 
 const STATUS_MAP = {
@@ -50,7 +50,7 @@ export default function CustomerSupport() {
   const [view, setView] = useState('list'); // list | new | detail
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [title, setTitle] = useState(''); // This seems unused in original but keeping for safety
+  // FIX #48: removed unused `title` state variable (dead code)
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
 
@@ -66,11 +66,14 @@ export default function CustomerSupport() {
   const [selected, setSelected] = useState(null);
 
   useEffect(() => {
+    // FIX #47: Only load tickets if the user is authenticated
+    if (!user) return;
     loadTickets();
-  }, []);
+  }, [user]);
   useEffect(() => {
     if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
-  }, [selected, selected?.replies]);
+    // FIX #49: depend on reply count and selected ID, not the whole object
+  }, [selected?._id, selected?.replies?.length]);
 
   async function loadTickets() {
     try {
@@ -247,12 +250,14 @@ export default function CustomerSupport() {
                         placeholder="Search tickets..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
+                        aria-label="Search tickets"
                         className="h-10 w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-4 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all"
                       />
                     </div>
                     <select
                       value={filterStatus}
                       onChange={(e) => setFilterStatus(e.target.value)}
+                      aria-label="Filter tickets by status"
                       className="h-10 bg-slate-50 border border-slate-200 rounded-lg px-3 text-sm font-medium text-slate-700 appearance-none cursor-pointer focus:border-emerald-500 outline-none"
                     >
                       <option value="all">All</option>
@@ -418,12 +423,16 @@ export default function CustomerSupport() {
 
                     {/* Subject */}
                     <div className="space-y-2">
-                      <label className="text-xs font-semibold text-slate-700">
+                      <label
+                        htmlFor="ticket-subject"
+                        className="text-xs font-semibold text-slate-700"
+                      >
                         Subject <span className="text-rose-400">*</span>
                       </label>
                       <input
                         required
                         type="text"
+                        id="ticket-subject"
                         placeholder="Brief summary of your issue"
                         value={subject}
                         onChange={(e) => setSubject(e.target.value)}
@@ -433,12 +442,16 @@ export default function CustomerSupport() {
 
                     {/* Message */}
                     <div className="space-y-2">
-                      <label className="text-xs font-semibold text-slate-700">
+                      <label
+                        htmlFor="ticket-message"
+                        className="text-xs font-semibold text-slate-700"
+                      >
                         Message <span className="text-rose-400">*</span>
                       </label>
                       <textarea
                         required
                         rows={5}
+                        id="ticket-message"
                         placeholder="Describe your issue in detail. Include booking IDs or screenshots if relevant."
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
@@ -623,6 +636,7 @@ export default function CustomerSupport() {
                               sendReply();
                             }
                           }}
+                          aria-label="Type your reply"
                           className="flex-1 bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition-all resize-none"
                         />
                         <button

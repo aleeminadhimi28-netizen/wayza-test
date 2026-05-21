@@ -38,7 +38,11 @@ export default function ListingConcierge({ listingId, listingTitle }) {
       const data = await response.json();
 
       if (data.ok) {
-        setMessages((prev) => [...prev, { role: 'bot', text: data.answer }]);
+        // FIX #85: cap messages array at 50 to prevent memory growth in long sessions
+        setMessages((prev) => {
+          const next = [...prev, { role: 'bot', text: data.answer }];
+          return next.length > 50 ? next.slice(next.length - 50) : next;
+        });
       } else {
         setMessages((prev) => [
           ...prev,
@@ -69,7 +73,7 @@ export default function ListingConcierge({ listingId, listingTitle }) {
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="bg-white rounded-[32px] shadow-3xl border border-slate-100 w-[380px] h-[550px] flex flex-col overflow-hidden mb-6"
+            className="bg-white rounded-[32px] shadow-3xl border border-slate-100 w-[calc(100vw-32px)] max-w-[380px] h-[550px] flex flex-col overflow-hidden mb-6"
           >
             {/* Header */}
             <div className="bg-slate-900 p-8 text-white relative flex items-center justify-between">
@@ -149,7 +153,7 @@ export default function ListingConcierge({ listingId, listingTitle }) {
                   type="text"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSend()} // FIX #84: onKeyPress is deprecated
                   placeholder="Ask about amenities, views, or area..."
                   className="w-full h-12 bg-slate-50 border border-slate-100 rounded-2xl px-4 pr-12 text-[13px] font-bold text-slate-900 focus:outline-none focus:border-emerald-500 transition-all"
                 />

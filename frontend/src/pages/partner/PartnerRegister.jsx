@@ -47,6 +47,7 @@ function OtpInput({ value, onChange }) {
           value={digits[i] || ''}
           onChange={(e) => handle(i, e.target.value)}
           onKeyDown={(e) => handleKey(i, e)}
+          aria-label={`Digit ${i + 1} of verification code`}
           className="w-12 h-14 text-center text-xl font-black text-slate-900 border-2 border-slate-100 rounded-2xl bg-slate-50/50 focus:bg-white focus:border-emerald-500 outline-none transition-all"
         />
       ))}
@@ -335,7 +336,10 @@ export default function PartnerRegister() {
                 <form onSubmit={handleSendOtp} className="space-y-8">
                   {/* Business Name */}
                   <div className="space-y-3 group/field">
-                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] ml-2 group-focus-within/field:text-emerald-600 transition-colors">
+                    <label
+                      htmlFor="partner-reg-business"
+                      className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] ml-2 group-focus-within/field:text-emerald-600 transition-colors"
+                    >
                       Business Name
                     </label>
                     <div className="relative">
@@ -348,6 +352,7 @@ export default function PartnerRegister() {
                       <input
                         type="text"
                         required
+                        id="partner-reg-business"
                         value={businessName}
                         onChange={(e) => setBusinessName(e.target.value)}
                         placeholder="AZURE CLIFF ESTATE"
@@ -358,7 +363,10 @@ export default function PartnerRegister() {
 
                   {/* Mobile Number */}
                   <div className="space-y-3 group/field">
-                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] ml-2 group-focus-within/field:text-emerald-600 transition-colors">
+                    <label
+                      htmlFor="partner-reg-phone"
+                      className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] ml-2 group-focus-within/field:text-emerald-600 transition-colors"
+                    >
                       Mobile Number <span className="text-rose-500">*</span>
                     </label>
                     <div className="relative">
@@ -374,6 +382,7 @@ export default function PartnerRegister() {
                       <input
                         type="tel"
                         required
+                        id="partner-reg-phone"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value.replace(/\D/, '').slice(0, 10))}
                         placeholder="9876543210"
@@ -384,7 +393,10 @@ export default function PartnerRegister() {
 
                   {/* Email */}
                   <div className="space-y-3 group/field">
-                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] ml-2 group-focus-within/field:text-emerald-600 transition-colors">
+                    <label
+                      htmlFor="partner-reg-email"
+                      className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] ml-2 group-focus-within/field:text-emerald-600 transition-colors"
+                    >
                       Credential Email
                     </label>
                     <div className="relative">
@@ -397,6 +409,7 @@ export default function PartnerRegister() {
                       <input
                         type="email"
                         required
+                        id="partner-reg-email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="partner@wayzza.com"
@@ -407,7 +420,10 @@ export default function PartnerRegister() {
 
                   {/* Password */}
                   <div className="space-y-3 group/field">
-                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] ml-2 group-focus-within/field:text-emerald-600 transition-colors">
+                    <label
+                      htmlFor="partner-reg-password"
+                      className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] ml-2 group-focus-within/field:text-emerald-600 transition-colors"
+                    >
                       Account Password
                     </label>
                     <div className="relative">
@@ -420,6 +436,7 @@ export default function PartnerRegister() {
                       <input
                         type={show ? 'text' : 'password'}
                         required
+                        id="partner-reg-password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="••••••••••••"
@@ -428,6 +445,7 @@ export default function PartnerRegister() {
                       <button
                         type="button"
                         onClick={() => setShow(!show)}
+                        aria-label="Toggle password visibility"
                         className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-emerald-600 transition-colors"
                       >
                         {show ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -500,19 +518,21 @@ export default function PartnerRegister() {
                   </div>
 
                   {/* Digital Agreement */}
-                  <label className="flex items-start gap-4 cursor-pointer group p-5 rounded-[20px] border border-slate-100 hover:border-emerald-200 transition-all bg-slate-50/30 hover:bg-emerald-50/20">
-                    <div
-                      className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center shrink-0 mt-0.5 transition-all ${agreed ? 'bg-emerald-500 border-emerald-500' : 'border-slate-200 bg-white'}`}
-                    >
-                      {agreed && <CheckCircle size={14} className="text-white" strokeWidth={3} />}
-                    </div>
+                  <div className="flex items-start gap-4 p-5 rounded-[20px] border border-slate-100 hover:border-emerald-200 transition-all bg-slate-50/30 hover:bg-emerald-50/20">
                     <input
+                      id="partner-reg-agreed"
                       type="checkbox"
                       className="sr-only"
                       checked={agreed}
                       onChange={(e) => setAgreed(e.target.checked)}
                     />
-                    <span className="text-sm font-semibold text-slate-600 leading-relaxed">
+                    <label
+                      htmlFor="partner-reg-agreed"
+                      className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center shrink-0 mt-0.5 cursor-pointer transition-all ${agreed ? 'bg-emerald-500 border-emerald-500' : 'border-slate-200 bg-white'}`}
+                    >
+                      {agreed && <CheckCircle size={14} className="text-white" strokeWidth={3} />}
+                    </label>
+                    <span className="text-sm font-semibold text-slate-600 leading-relaxed select-none">
                       I agree to Wayzza's{' '}
                       <button
                         type="button"
@@ -520,13 +540,13 @@ export default function PartnerRegister() {
                           e.preventDefault();
                           setShowTerms(true);
                         }}
-                        className="text-emerald-600 font-black hover:underline"
+                        className="text-emerald-600 font-black hover:underline inline"
                       >
                         Partner Terms & Conditions
                       </button>{' '}
                       including the platform commission structure and operational standards.
                     </span>
-                  </label>
+                  </div>
 
                   <button
                     type="submit"

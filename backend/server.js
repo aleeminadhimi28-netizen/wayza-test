@@ -50,8 +50,8 @@ const checkOrigin = (origin, callback) => {
   if (allowedOrigins.includes(origin) || (process.env.NODE_ENV === "development" && origin.includes("localhost"))) {
     return callback(null, true);
   }
-  // Allow only trusted Wayzza Vercel domains (production and previews)
-  const isVercelPreview = /^https:\/\/(?:[a-zA-Z0-9-]+\.)?wayzz?a(?:-[a-zA-Z0-9-]+)?\.vercel\.app$/i.test(origin);
+  // Allow only trusted Wayzza Vercel domains (production and previews) — must have double-z 'wayzza'
+  const isVercelPreview = /^https:\/\/(?:[a-zA-Z0-9-]+\.)?wayzza(?:-[a-zA-Z0-9-]+)?\.vercel\.app$/i.test(origin);
   if (isVercelPreview) {
     return callback(null, true);
   }
@@ -75,10 +75,11 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://us.i.posthog.com"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://us.i.posthog.com", "https://checkout.razorpay.com", "https://accounts.google.com"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      imgSrc: ["'self'", "data:", "https://res.cloudinary.com", "https://us.i.posthog.com"],
-      connectSrc: ["'self'", "wss:", "https://api.cloudinary.com", "https://*.onrender.com", "https://us.i.posthog.com", "https://*.vercel.app", "https://*.wayzza.live", "https://wayzza.live"],
+      frameSrc: ["'self'", "https://api.razorpay.com", "https://checkout.razorpay.com", "https://accounts.google.com"],
+      imgSrc: ["'self'", "data:", "https://res.cloudinary.com", "https://us.i.posthog.com", "https://images.unsplash.com", "https://lh3.googleusercontent.com"],
+      connectSrc: ["'self'", "wss:", "https://api.cloudinary.com", "https://*.onrender.com", "https://us.i.posthog.com", "https://*.vercel.app", "https://*.wayzza.live", "https://wayzza.live", "https://api.razorpay.com", "https://accounts.google.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       objectSrc: ["'none'"],
       upgradeInsecureRequests: [],

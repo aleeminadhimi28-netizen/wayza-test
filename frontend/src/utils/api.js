@@ -1,7 +1,22 @@
+/**
+ * @module api
+ * @description Central API client for Wayzza frontend.
+ *
+ * SECURITY NOTES (FIX #123):
+ * - Authentication: Cookie-based (httpOnly session cookie). The auth token is NOT
+ *   accessible to JavaScript, which eliminates the main XSS token-theft risk.
+ * - CSRF Protection: Uses the Double Submit Cookie pattern. The CSRF token IS readable
+ *   by JS (non-httpOnly by design) so it can be sent as a request header. This is the
+ *   known trade-off — if XSS occurs, the CSRF token can be read. Mitigations:
+ *   (1) Content Security Policy headers on the server, (2) all user-generated content
+ *   is sanitized before render, (3) the httpOnly session cookie cannot be stolen even
+ *   if the CSRF token is.
+ * - The 401 interceptor fires a 'wayzza:session-expired' event to auto-logout without
+ *   exposing session state to untrusted code.
+ */
 export const BASE_URL = import.meta.env.VITE_API_URL || '';
 const API_URL = `${BASE_URL}/api/v1`;
 let memoryCSRFToken = null;
-
 /**
  * Read the CSRF token from the csrf_token cookie
  */
@@ -68,7 +83,25 @@ const customFetch = async (url, options = {}) => {
     }
   }
 
-  return fetch(url, { ...options, credentials: 'include' });
+  const response = await fetch(url, { ...options, credentials: 'include' });
+
+  // FIX #124: 401 auto-logout interceptor
+  // When the server returns 401 (session expired / cookie invalid), clear the stale
+  // CSRF token and fire a global event that AuthContext listens to and auto-logs-out.
+  if (response.status === 401) {
+    // Avoid triggering on passive auth checks or login/csrf endpoints themselves to prevent redirect loops
+    const isPassiveOrAuth =
+      url.includes('/auth/login') ||
+      url.includes('/auth/csrf') ||
+      url.includes('/auth/me') ||
+      url.includes('/partner/status');
+    if (!isPassiveOrAuth) {
+      clearCSRFToken();
+      window.dispatchEvent(new CustomEvent('wayzza:session-expired'));
+    }
+  }
+
+  return response;
 };
 
 const getAuthHeaders = () => {

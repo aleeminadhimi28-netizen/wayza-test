@@ -101,13 +101,26 @@ export default function Profile() {
         } else if (activeTab === 'wishlist') {
           const d = await api.getWishlist();
           const saved = Array.isArray(d.data) ? d.data : [];
-          const detailed = await Promise.all(
-            saved.map(async (s) => {
-              const listing = await api.getListing(s.listingId);
-              return listing?.data ? { ...listing.data, savedId: s._id } : null;
-            })
-          );
-          setWishlist(detailed.filter(Boolean));
+
+          // FIX #69: If the wishlist entries already embed listing data (listingId is an object),
+          // use them directly to avoid N+1 getListing calls.
+          const hasEmbedded = saved.length > 0 && typeof saved[0]?.listingId === 'object';
+          if (hasEmbedded) {
+            setWishlist(
+              saved
+                .map((s) => (s.listingId ? { ...s.listingId, savedId: s._id } : null))
+                .filter(Boolean)
+            );
+          } else {
+            // Fallback: batch all getListing calls with Promise.all (still avoids waterfall)
+            const detailed = await Promise.all(
+              saved.map(async (s) => {
+                const listing = await api.getListing(s.listingId);
+                return listing?.data ? { ...listing.data, savedId: s._id } : null;
+              })
+            );
+            setWishlist(detailed.filter(Boolean));
+          }
         }
       } catch (err) {
         console.error(err);
@@ -209,7 +222,7 @@ export default function Profile() {
           <div className="max-w-6xl mx-auto px-6 py-8 md:py-12 flex flex-col sm:flex-row items-center sm:items-end gap-6">
             {/* Avatar */}
             <div className="relative group shrink-0">
-              <label className="cursor-pointer">
+              <label htmlFor="profile-avatar-upload" className="cursor-pointer">
                 <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-2xl md:text-3xl font-bold shadow-lg overflow-hidden relative">
                   {picture ? (
                     <img
@@ -233,8 +246,10 @@ export default function Profile() {
                 </div>
                 <input
                   type="file"
+                  id="profile-avatar-upload"
                   accept="image/*"
                   hidden
+                  aria-label="Upload profile photo"
                   onChange={(e) => handleAvatarUpload(e.target.files?.[0])}
                 />
               </label>
@@ -259,8 +274,9 @@ export default function Profile() {
             {/* Sign out */}
             <button
               onClick={() => {
+                // FIX #71: Navigate to /login to avoid AuthGuard flash on /
                 logout();
-                navigate('/');
+                navigate('/login');
               }}
               className="w-full sm:w-auto h-10 px-5 border border-slate-200 text-slate-500 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all shrink-0"
             >
@@ -328,7 +344,10 @@ export default function Profile() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div className="space-y-1.5">
-                        <label className="text-xs font-semibold text-slate-700 block">
+                        <label
+                          htmlFor="profile-full-name"
+                          className="text-xs font-semibold text-slate-700 block"
+                        >
                           Full Name
                         </label>
                         <div className="relative">
@@ -337,6 +356,7 @@ export default function Profile() {
                             size={15}
                           />
                           <input
+                            id="profile-full-name"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             placeholder="Enter your full name"
@@ -346,7 +366,10 @@ export default function Profile() {
                       </div>
 
                       <div className="space-y-1.5">
-                        <label className="text-xs font-semibold text-slate-700 block">
+                        <label
+                          htmlFor="profile-email"
+                          className="text-xs font-semibold text-slate-700 block"
+                        >
                           Email Address
                         </label>
                         <div className="relative opacity-60">
@@ -355,6 +378,7 @@ export default function Profile() {
                             size={15}
                           />
                           <input
+                            id="profile-email"
                             value={email}
                             disabled
                             className="h-11 w-full bg-slate-100 border border-slate-200 rounded-xl pl-9 pr-4 text-sm font-medium text-slate-500 cursor-not-allowed"
@@ -364,7 +388,10 @@ export default function Profile() {
                       </div>
 
                       <div className="space-y-1.5 md:col-span-2">
-                        <label className="text-xs font-semibold text-slate-700 block">
+                        <label
+                          htmlFor="profile-phone"
+                          className="text-xs font-semibold text-slate-700 block"
+                        >
                           Phone Number
                         </label>
                         <div className="relative">
@@ -373,6 +400,7 @@ export default function Profile() {
                             size={15}
                           />
                           <input
+                            id="profile-phone"
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
                             placeholder="+91 98765 43210"
@@ -695,6 +723,7 @@ export default function Profile() {
                                 placeholder="6-digit code"
                                 value={disableToken}
                                 onChange={(e) => setDisableToken(e.target.value.replace(/\D/g, ''))}
+                                aria-label="6-digit 2FA verification code"
                                 className="h-12 w-32 bg-white border border-emerald-100 rounded-xl text-center font-bold tracking-[0.2em] text-emerald-900 focus:border-emerald-500 outline-none transition-all"
                               />
                               <button

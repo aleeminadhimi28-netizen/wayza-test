@@ -132,6 +132,17 @@ export default function Payment() {
       };
 
       const rzp = new window.Razorpay(options);
+
+      // FIX #7: Handle payment failure events (bank decline, timeout, etc.)
+      rzp.on('payment.failed', function (response) {
+        const reason =
+          response?.error?.description ||
+          response?.error?.reason ||
+          'Payment failed. Please try again.';
+        showToast(reason, 'error');
+        setSubmitting(false);
+      });
+
       rzp.open();
     } catch (err) {
       console.error('Razorpay Error:', err);

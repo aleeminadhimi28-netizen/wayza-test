@@ -101,7 +101,11 @@ export default function AdminSettings() {
               <span>100%</span>
             </div>
             <p className="text-xs text-emerald-600 font-medium bg-emerald-50 border border-emerald-100 rounded-xl p-3 mt-2">
-              Historical math is safely isolated from live rate updates.
+              {/* FIX #120: Commission snapshot guarantee — each booking freezes the commission
+                  rate at creation time (platformCommissionAmount field). Changing this rate
+                  here ONLY affects future bookings; historical payouts are never recalculated. */}
+              ⚠️ Changes apply to <strong>future bookings only</strong>. Existing confirmed bookings
+              use their frozen commission snapshot and will not be affected.
             </p>
           </div>
         </div>

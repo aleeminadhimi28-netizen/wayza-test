@@ -99,8 +99,20 @@ export default function PartnerWallet() {
           type: 'success',
           text: `₹${Number(withdrawAmount).toLocaleString()} withdrawal request submitted!`,
         });
+        // FIX #68: optimistically reduce displayed available balance
+        setEarnings((prev) =>
+          prev
+            ? {
+                ...prev,
+                availableBalance: Math.max(
+                  0,
+                  (prev.availableBalance || 0) - Number(withdrawAmount)
+                ),
+              }
+            : prev
+        );
         setWithdrawAmount('');
-        // Refresh requests
+        // Refresh requests list
         const r = await api.getWithdrawalRequests();
         if (r.ok) setRequests(r.data || []);
       } else {

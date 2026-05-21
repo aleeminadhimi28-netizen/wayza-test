@@ -1,4 +1,4 @@
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../AuthContext.jsx';
 import { useToast } from '../../ToastContext.jsx';
@@ -53,20 +53,40 @@ export default function Booking() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const { showToast } = useToast();
 
   const [listing, setListing] = useState(null);
   const todayStr = new Date().toISOString().split('T')[0];
   const tomorrowStr = new Date(Date.now() + 86400000).toISOString().split('T')[0];
-  const [startDate, setStartDate] = useState(todayStr);
-  const [endDate, setEndDate] = useState(tomorrowStr);
+
+  const queryCheckIn = searchParams.get('checkIn');
+  const queryCheckOut = searchParams.get('checkOut');
+  const [startDate, setStartDate] = useState(queryCheckIn || todayStr);
+  const [endDate, setEndDate] = useState(queryCheckOut || tomorrowStr);
   const [blocked, setBlocked] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [reserving, setReserving] = useState(false); // FIX #25: loading state for Reserve button
 
   const [couponCode, setCouponCode] = useState('');
   const [discountInfo, setDiscountInfo] = useState(null);
   const [validatingCoupon, setValidatingCoupon] = useState(false);
+
+  // FIX #24: Clear stale coupon discount when dates change
+  const handleStartDateChange = (val) => {
+    setStartDate(val);
+    setDiscountInfo(null);
+    // FIX #23: Notify user when check-in changes and check-out is reset
+    if (endDate && val >= endDate) {
+      setEndDate('');
+      showToast('Check-in date changed — please re-select your check-out date.', 'warning');
+    }
+  };
+  const handleEndDateChange = (val) => {
+    setEndDate(val);
+    setDiscountInfo(null);
+  };
 
   const minStay = 1;
 
@@ -100,7 +120,9 @@ export default function Booking() {
     });
   }
 
-  const variantIndex = location.state?.variantIndex || 0;
+  const queryVariant = searchParams.get('variant');
+  const variantIndex =
+    queryVariant !== null ? parseInt(queryVariant, 10) : location.state?.variantIndex || 0;
   const variant = listing?.variants?.[variantIndex];
 
   const { pricePerNight, baseAmount: calculatedBaseAmount } = calculatePriceForDates(
@@ -181,6 +203,7 @@ export default function Booking() {
       return;
     }
 
+    setReserving(true); // FIX #25: show loading state on button
     try {
       const data = await api.bookListing({
         listingId: id,
@@ -190,7 +213,8 @@ export default function Booking() {
         checkIn: startDate,
         checkOut: endDate,
         couponCode: discountInfo ? discountInfo.code : undefined,
-        expectedPricePerNight: pricePerNight,
+        // FIX #23: Cast to Number so Zod's z.number() schema accepts it (URL params are strings)
+        expectedPricePerNight: Number(pricePerNight),
       });
 
       if (!data.ok) {
@@ -214,6 +238,8 @@ export default function Booking() {
       });
     } catch {
       showToast('Connection error. Please try again.', 'error');
+    } finally {
+      setReserving(false); // FIX #25: always clear loading state
     }
   }
 
@@ -257,7 +283,10 @@ export default function Booking() {
                 <h2 className="text-xl font-bold text-slate-900 mb-8">1. Your stay</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-3">
-                    <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">
+                    <label
+                      htmlFor="booking-confirm-check-in"
+                      className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1"
+                    >
                       Check-in
                     </label>
                     <div className="relative">
@@ -266,20 +295,23 @@ export default function Booking() {
                         size={18}
                       />
                       <input
+                        id="booking-confirm-check-in"
                         type="date"
                         min={todayStr}
                         value={startDate}
                         onChange={(e) => {
-                          const ns = e.target.value;
-                          setStartDate(ns);
-                          if (endDate && ns >= endDate) setEndDate('');
+                          // FIX #23: delegate to handler which also toasts if checkout is cleared
+                          handleStartDateChange(e.target.value);
                         }}
                         className="w-full h-14 bg-white border border-slate-200 rounded-2xl pl-12 pr-4 font-bold text-slate-900 focus:border-emerald-500 outline-none transition-all [color-scheme:light] appearance-none"
                       />
                     </div>
                   </div>
                   <div className="space-y-3">
-                    <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">
+                    <label
+                      htmlFor="booking-confirm-check-out"
+                      className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1"
+                    >
                       Check-out
                     </label>
                     <div className="relative">
@@ -288,6 +320,7 @@ export default function Booking() {
                         size={18}
                       />
                       <input
+                        id="booking-confirm-check-out"
                         type="date"
                         min={startDate || todayStr}
                         value={endDate}
@@ -312,11 +345,15 @@ export default function Booking() {
                 </AnimatePresence>
 
                 <div className="mt-8 pt-8 border-t border-slate-200/60">
-                  <label className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
+                  <label
+                    htmlFor="booking-confirm-promo-code"
+                    className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2"
+                  >
                     <Tag size={16} className="text-emerald-500" /> Have a promo code?
                   </label>
                   <div className="flex gap-3">
                     <input
+                      id="booking-confirm-promo-code"
                       type="text"
                       value={couponCode}
                       onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
@@ -347,20 +384,48 @@ export default function Booking() {
                 </div>
               </section>
 
-              {/* POLICIES */}
+              {/* POLICIES — FIX #27: category-aware rules */}
               <section className="space-y-6">
                 <h2 className="text-xl font-bold text-slate-900">2. Things to know</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {[
-                    { t: 'Check-in time', d: 'Standard arrival after 12:00 PM', i: <Clock /> },
-                    { t: 'Quiet hours', d: 'Please keep noise down after 10:00 PM', i: <Zap /> },
-                    { t: 'No smoking', d: 'A smoke-free environment for all', i: <Info /> },
-                    {
-                      t: 'House rules',
-                      d: 'Please respect the property and amenities',
-                      i: <CheckCircle />,
-                    },
-                  ].map((rule, i) => (
+                  {(isVehicle
+                    ? [
+                        {
+                          t: 'Pickup time',
+                          d: 'Collect your vehicle at the agreed pickup point',
+                          i: <Clock />,
+                        },
+                        {
+                          t: 'Valid licence',
+                          d: 'A valid driving licence is required at pickup',
+                          i: <Info />,
+                        },
+                        {
+                          t: 'Fuel policy',
+                          d: 'Return vehicle with same fuel level as received',
+                          i: <Zap />,
+                        },
+                        {
+                          t: 'No off-road use',
+                          d: 'Vehicle must be used on approved roads only',
+                          i: <CheckCircle />,
+                        },
+                      ]
+                    : [
+                        { t: 'Check-in time', d: 'Standard arrival after 12:00 PM', i: <Clock /> },
+                        {
+                          t: 'Quiet hours',
+                          d: 'Please keep noise down after 10:00 PM',
+                          i: <Zap />,
+                        },
+                        { t: 'No smoking', d: 'A smoke-free environment for all', i: <Info /> },
+                        {
+                          t: 'House rules',
+                          d: 'Please respect the property and amenities',
+                          i: <CheckCircle />,
+                        },
+                      ]
+                  ).map((rule, i) => (
                     <div
                       key={i}
                       className="flex gap-4 p-6 bg-white border border-slate-100 rounded-3xl shadow-sm"
@@ -446,10 +511,11 @@ export default function Booking() {
 
                   <button
                     onClick={reserve}
-                    disabled={blockedDates}
+                    disabled={blockedDates || reserving}
                     className="w-full h-16 bg-slate-900 hover:bg-emerald-600 text-white rounded-2xl font-bold text-sm uppercase tracking-widest transition-all disabled:bg-slate-200 disabled:cursor-not-allowed shadow-lg hover:shadow-emerald-500/20 active:scale-95"
                   >
-                    Reserve Now
+                    {/* FIX #25: show spinner during reservation */}
+                    {reserving ? 'Processing…' : 'Reserve Now'}
                   </button>
 
                   <div className="flex items-center justify-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-widest pt-2">

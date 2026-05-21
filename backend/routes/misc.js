@@ -4,6 +4,17 @@ import { getDB } from "../config/db.js";
 import { requireAuth } from "../middleware/auth.js";
 import { generateItinerary, answerListingQuery, generateNeighborhoodVibe } from "../utils/ai.js";
 import { z } from "zod";
+import rateLimit from "express-rate-limit";
+
+// FIX #115: Rate-limit the unauthenticated AI endpoints to prevent cost abuse
+const aiRateLimit = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 20,                   // 20 requests per IP per window
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { ok: false, message: "Too many requests. Please wait a moment before trying again." }
+});
+
 
 const reviewSchema = z.object({
     listingId: z.string().min(1),
@@ -129,7 +140,7 @@ router.post("/wishlist/toggle", requireAuth, async (req, res, next) => {
 
 /* ================= AI TRIP PLANNER ================= */
 
-router.post("/trip-planner", async (req, res, next) => {
+router.post("/trip-planner", aiRateLimit, async (req, res, next) => {
     try {
         const parsed = tripPlannerSchema.safeParse(req.body);
         if (!parsed.success) return res.status(400).json({ ok: false, message: "Destination is required", errors: parsed.error.flatten() });
@@ -337,7 +348,7 @@ const chatSchema = z.object({
     query: z.string().min(3).max(500)
 });
 
-router.post("/chat", async (req, res, next) => {
+router.post("/chat", aiRateLimit, async (req, res, next) => {
     try {
         const parsed = chatSchema.safeParse(req.body);
         if (!parsed.success) return res.status(400).json({ ok: false, message: "Listing ID and query are required" });

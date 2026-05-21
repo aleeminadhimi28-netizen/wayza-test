@@ -217,8 +217,8 @@ export default function ExploreMap() {
         title="Explore Varkala on Map"
         description="Discover and book stays, bikes, and cars in Varkala using our interactive discovery map."
         breadcrumb={[
-          { name: 'Home', url: 'https://wayza-app.vercel.app' },
-          { name: 'Explore Map', url: 'https://wayza-app.vercel.app/explore-map' },
+          { name: 'Home', url: 'https://wayzza.live' }, // FIX #53: production domain
+          { name: 'Explore Map', url: 'https://wayzza.live/explore-map' },
         ]}
       />
       <div className="h-screen flex flex-col pt-20 overflow-hidden font-sans">

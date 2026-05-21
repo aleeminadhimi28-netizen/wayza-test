@@ -134,7 +134,9 @@ export default function PartnerEarnings() {
               a.click();
               URL.revokeObjectURL(url);
             }}
-            className="h-11 px-5 bg-white/[0.05] border border-white/[0.1] rounded-xl text-white font-bold text-[11px] uppercase tracking-wider flex items-center gap-2 hover:bg-white/[0.08] transition-colors shadow-sm"
+            className="h-11 px-5 bg-white/[0.05] border border-white/[0.1] rounded-xl text-white font-bold text-[11px] uppercase tracking-wider flex items-center gap-2 hover:bg-white/[0.08] transition-colors shadow-sm disabled:opacity-30 disabled:cursor-not-allowed"
+            // FIX #73: hide/disable CSV export when there are no paid bookings to export
+            disabled={bookings.filter((b) => b.status === 'paid').length === 0}
           >
             <Download size={14} /> Export Report
           </button>
@@ -268,6 +270,7 @@ export default function PartnerEarnings() {
                     </td>
                     <td className="px-6 py-4 text-right font-black text-sm text-emerald-400">
                       ₹
+                      {/* FIX #70: guard against division-by-zero for new partners with no revenue */}
                       {Math.round(
                         (m.revenue || 0) *
                           (earnings?.totalRevenue > 0

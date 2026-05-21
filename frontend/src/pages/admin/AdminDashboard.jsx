@@ -80,14 +80,18 @@ export default function AdminDashboard() {
   const [withdrawals, setWithdrawals] = useState([]);
   const [tick, setTick] = useState(0);
 
-  // Live clock tick
+  // FIX #78: derive timeStr inside a useMemo keyed on tick so string updates
+  // every second without leaking a stale Date object into other renders
+  const timeStr = useMemo(() => {
+    return new Date().toLocaleTimeString('en-GB', { hour12: false });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tick]);
+
+  // Clock interval — separated so it only runs once
   useEffect(() => {
     const id = setInterval(() => setTick((t) => t + 1), 1000);
     return () => clearInterval(id);
   }, []);
-
-  const now = new Date();
-  const timeStr = now.toLocaleTimeString('en-GB', { hour12: false });
 
   const loadTickets = useCallback(async () => {
     setLoadingData(true);
@@ -363,6 +367,13 @@ export default function AdminDashboard() {
     return () => clearInterval(refreshId);
   }, []);
 
+  // FIX #49: Load tickets and withdrawals on mount so sidebar badge counts
+  // are populated immediately without requiring the user to visit those tabs first
+  useEffect(() => {
+    loadTickets();
+    loadWithdrawals();
+  }, [loadTickets, loadWithdrawals]);
+
   useEffect(() => {
     if (activeTab === 'support') loadTickets();
     else if (activeTab === 'withdrawals') loadWithdrawals();
@@ -567,12 +578,14 @@ export default function AdminDashboard() {
 
         <div className="p-8">
           <AnimatePresence mode="wait">
+            {/* FIX #53: Added key={activeTab} so AnimatePresence can detect tab changes and animate */}
             {activeTab === 'overview' && (
-              <AdminOverview stats={stats} setActiveTab={setActiveTab} />
+              <AdminOverview key="overview" stats={stats} setActiveTab={setActiveTab} />
             )}
 
             {activeTab === 'support' && (
               <AdminSupport
+                key="support"
                 tickets={tickets}
                 setTickets={setTickets}
                 loadTickets={loadTickets}
@@ -582,6 +595,7 @@ export default function AdminDashboard() {
 
             {activeTab === 'withdrawals' && (
               <AdminWithdrawals
+                key="withdrawals"
                 withdrawals={withdrawals}
                 setWithdrawals={setWithdrawals}
                 stats={stats}
@@ -589,15 +603,16 @@ export default function AdminDashboard() {
               />
             )}
 
-            {activeTab === 'settings' && <AdminSettings />}
+            {activeTab === 'settings' && <AdminSettings key="settings" />}
 
-            {activeTab === 'coupons' && <AdminCoupons />}
+            {activeTab === 'coupons' && <AdminCoupons key="coupons" />}
 
-            {activeTab === 'logs' && <AdminLogs />}
+            {activeTab === 'logs' && <AdminLogs key="logs" />}
 
             {/* DATA TABLE TABS (users, partners, listings, bookings) */}
             {['users', 'partners', 'listings', 'bookings'].includes(activeTab) && (
               <AdminDataTable
+                key={activeTab}
                 activeTab={activeTab}
                 loadingData={loadingData}
                 searchQuery={searchQuery}

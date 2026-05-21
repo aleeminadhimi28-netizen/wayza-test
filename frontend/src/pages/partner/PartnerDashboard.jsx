@@ -45,7 +45,11 @@ export default function PartnerDashboard() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
   const [loading, setLoading] = useState(true);
-  const [dismissedAlert, setDismissedAlert] = useState(false);
+  // FIX #60: Persist alert dismissal in sessionStorage so it survives page
+  // refreshes within the same browser session.
+  const [dismissedAlert, setDismissedAlert] = useState(
+    () => sessionStorage.getItem('pd_alert_dismissed') === '1'
+  );
   const [priceEdits, setPriceEdits] = useState({});
   const [chartFilter, setChartFilter] = useState('6m');
 
@@ -309,7 +313,10 @@ export default function PartnerDashboard() {
               </p>
             </div>
             <button
-              onClick={() => setDismissedAlert(true)}
+              onClick={() => {
+                setDismissedAlert(true);
+                sessionStorage.setItem('pd_alert_dismissed', '1'); // FIX #60
+              }}
               className="text-white/20 hover:text-white/60 transition-colors shrink-0"
             >
               <X size={16} />
