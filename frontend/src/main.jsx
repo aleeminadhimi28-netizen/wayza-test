@@ -13,7 +13,6 @@ import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 
-
 // Initialize PostHog
 if (typeof window !== 'undefined') {
   const phKey = import.meta.env.VITE_POSTHOG_KEY;
