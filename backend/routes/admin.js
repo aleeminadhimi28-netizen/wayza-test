@@ -38,7 +38,7 @@ router.post("/login", async (req, res, next) => {
             httpOnly: true,
             maxAge: 7 * 24 * 60 * 60 * 1000
         }));
-        res.json({ ok: true, email: user.email });
+        res.json({ ok: true, token, email: user.email });
     } catch (err) { next(err); }
 });
 

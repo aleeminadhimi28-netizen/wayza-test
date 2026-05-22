@@ -20,8 +20,29 @@ export function getCookieOptions(req, options = {}) {
     const origin = req.headers.origin || "";
     const referer = req.headers.referer || "";
     
-    // Check if the request is coming from our main production domain
-    const isSameSite = isProduction && (origin.includes("wayzza.live") || referer.includes("wayzza.live"));
+    const getHostname = (urlStr) => {
+        try {
+            if (!urlStr) return "";
+            const hasProtocol = urlStr.startsWith("http://") || urlStr.startsWith("https://");
+            const url = new URL(hasProtocol ? urlStr : `https://${urlStr}`);
+            return url.hostname;
+        } catch {
+            return "";
+        }
+    };
+    
+    const requestHost = req.hostname || "";
+    const originHost = getHostname(origin);
+    const refererHost = getHostname(referer);
+    const clientHost = originHost || refererHost;
+    
+    // Check if client host and request host are same or share registrable domain
+    const isSameSite = isProduction
+        ? (clientHost && requestHost && (
+            clientHost === requestHost ||
+            (clientHost.endsWith("wayzza.live") && requestHost.endsWith("wayzza.live"))
+          ))
+        : true;
     
     const cookieOptions = {
         httpOnly: options.httpOnly !== false,

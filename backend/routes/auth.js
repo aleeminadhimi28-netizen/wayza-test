@@ -97,8 +97,8 @@ router.post("/login", async (req, res, next) => {
         captureEvent(user.email, "User Logged In", { role: user.role });
 
         res.json({
-
             ok: true,
+            token,
             data: {
                 email: user.email,
                 role: user.role
@@ -174,6 +174,7 @@ router.post("/google", async (req, res, next) => {
 
         res.json({
             ok: true,
+            token,
             data: { email: user.email, role: user.role }
         });
     } catch (err) {
@@ -374,7 +375,7 @@ router.post("/verify-otp", async (req, res, next) => {
         const token = jwt.sign({ email: user.email, role: user.role }, SECRET, { expiresIn: JWT_EXPIRY });
 
         res.cookie("token", token, getCookieOptions(req, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 }));
-        res.json({ ok: true, data: { email: user.email, role: user.role } });
+        res.json({ ok: true, token, data: { email: user.email, role: user.role } });
     } catch (err) { next(err); }
 });
 
@@ -469,7 +470,7 @@ router.post("/2fa/verify", async (req, res, next) => {
         const token = jwt.sign({ email: user.email, role: user.role }, SECRET, { expiresIn: JWT_EXPIRY });
         res.cookie("token", token, getCookieOptions(req, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 }));
 
-        res.json({ ok: true, data: { email: user.email, role: user.role } });
+        res.json({ ok: true, token, data: { email: user.email, role: user.role } });
     } catch (err) { next(err); }
 });
 

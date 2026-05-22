@@ -46,6 +46,12 @@ export function validateCSRF(req, res, next) {
     // Skip webhook routes (they use their own signature verification)
     if (req.path.startsWith("/webhooks/")) return next();
 
+    // Bypass CSRF for requests authenticated via Bearer token (immune to CSRF)
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+        return next();
+    }
+
     const cookieToken = req.cookies?.[CSRF_COOKIE];
     const headerToken = req.headers?.[CSRF_HEADER];
 

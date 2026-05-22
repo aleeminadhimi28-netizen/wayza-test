@@ -71,6 +71,15 @@ const customFetch = async (url, options = {}) => {
   const method = (options.method || 'GET').toUpperCase();
   const isMutating = !['GET', 'HEAD', 'OPTIONS'].includes(method);
 
+  // Attach Bearer token from localStorage if present
+  const token = localStorage.getItem('wayzza_token');
+  if (token) {
+    options.headers = {
+      Authorization: `Bearer ${token}`,
+      ...options.headers,
+    };
+  }
+
   // Attach CSRF token header on mutating requests
   if (isMutating) {
     await ensureCSRFToken();
@@ -87,8 +96,11 @@ const customFetch = async (url, options = {}) => {
 
   // FIX #124: 401 auto-logout interceptor
   // When the server returns 401 (session expired / cookie invalid), clear the stale
-  // CSRF token and fire a global event that AuthContext listens to and auto-logs-out.
+  // token and CSRF token and fire a global event that AuthContext listens to.
   if (response.status === 401) {
+    localStorage.removeItem('wayzza_token');
+    clearCSRFToken();
+
     // Avoid triggering on passive auth checks or login/csrf endpoints themselves to prevent redirect loops
     const isPassiveOrAuth =
       url.includes('/auth/login') ||
@@ -96,7 +108,6 @@ const customFetch = async (url, options = {}) => {
       url.includes('/auth/me') ||
       url.includes('/partner/status');
     if (!isPassiveOrAuth) {
-      clearCSRFToken();
       window.dispatchEvent(new CustomEvent('wayzza:session-expired'));
     }
   }
@@ -116,7 +127,14 @@ export const api = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(credentials),
-    }).then((r) => r.json()),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.ok && data.token) {
+          localStorage.setItem('wayzza_token', data.token);
+        }
+        return data;
+      }),
 
   signup: (data) =>
     customFetch(`${API_URL}/auth/signup`, {
@@ -130,13 +148,21 @@ export const api = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ credential }),
-    }).then((r) => r.json()),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.ok && data.token) {
+          localStorage.setItem('wayzza_token', data.token);
+        }
+        return data;
+      }),
 
   logout: () =>
     customFetch(`${API_URL}/auth/logout`, {
       method: 'POST',
     }).then((r) => {
       clearCSRFToken(); // Invalidate cached token so next session fetches a fresh one
+      localStorage.removeItem('wayzza_token');
       return r.json();
     }),
 
@@ -178,7 +204,14 @@ export const api = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
-    }).then((r) => r.json()),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.ok && data.token) {
+          localStorage.setItem('wayzza_token', data.token);
+        }
+        return data;
+      }),
 
   // 2FA
   setup2FA: () =>
@@ -205,7 +238,14 @@ export const api = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
-    }).then((r) => r.json()),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.ok && data.token) {
+          localStorage.setItem('wayzza_token', data.token);
+        }
+        return data;
+      }),
 
   // Listings
   getListings: (params) => {
@@ -346,7 +386,14 @@ export const api = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(credentials),
-    }).then((r) => r.json()),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.ok && data.token) {
+          localStorage.setItem('wayzza_token', data.token);
+        }
+        return data;
+      }),
 
   partnerRegister: (data) =>
     customFetch(`${API_URL}/partner/register`, {
@@ -428,7 +475,14 @@ export const api = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(credentials),
-    }).then((r) => r.json()),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.ok && data.token) {
+          localStorage.setItem('wayzza_token', data.token);
+        }
+        return data;
+      }),
 
   adminStats: () =>
     customFetch(`${API_URL}/admin/stats`, {
