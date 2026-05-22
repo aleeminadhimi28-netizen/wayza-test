@@ -26,6 +26,9 @@ export default function Payment() {
   const title = location.state?.title || 'Premium Experience';
   const nights = location.state?.nights || 1;
   const couponCode = location.state?.couponCode;
+  const category = location.state?.category || '';
+  const isVehicle = category === 'bike' || category === 'car';
+  const isActivity = category === 'activity' || category === 'experience';
   // Full breakdown passed from Booking.jsx
   const baseAmount = location.state?.baseAmount ?? null;
   const discountAmount = location.state?.discountAmount ?? 0;
@@ -110,7 +113,7 @@ export default function Payment() {
             });
 
             if (confirmData.ok) {
-              showToast('Payment confirmed! Your stay is verified.', 'success');
+              showToast('Payment confirmed! Your booking is verified.', 'success');
               navigate('/payment-success');
             } else {
               showToast(confirmData.message || 'Payment verification failed.', 'error');
@@ -243,7 +246,15 @@ export default function Payment() {
                   </p>
                   <h3 className="text-lg font-black text-slate-900 leading-tight">{title}</h3>
                   <p className="text-sm text-slate-400 mt-1">
-                    {nights} night{nights > 1 ? 's' : ''} · Ref: WZ-
+                    {nights}{' '}
+                    {isVehicle || isActivity
+                      ? nights === 1
+                        ? 'day'
+                        : 'days'
+                      : nights === 1
+                        ? 'night'
+                        : 'nights'}{' '}
+                    · Ref: WZ-
                     {bookingId?.slice(-6).toUpperCase()}
                   </p>
                 </div>
@@ -257,7 +268,14 @@ export default function Payment() {
                     <>
                       <div className="flex justify-between text-sm text-slate-600">
                         <span>
-                          {nights} night{nights > 1 ? 's' : ''}
+                          {nights}{' '}
+                          {isVehicle || isActivity
+                            ? nights === 1
+                              ? 'day'
+                              : 'days'
+                            : nights === 1
+                              ? 'night'
+                              : 'nights'}
                         </span>
                         <span>&#x20B9;{baseAmount.toLocaleString()}</span>
                       </div>
@@ -285,7 +303,15 @@ export default function Payment() {
                   ) : (
                     <div className="flex justify-between text-sm text-slate-600">
                       <span>
-                        {nights} night{nights > 1 ? 's' : ''} (incl. taxes &amp; fees)
+                        {nights}{' '}
+                        {isVehicle || isActivity
+                          ? nights === 1
+                            ? 'day'
+                            : 'days'
+                          : nights === 1
+                            ? 'night'
+                            : 'nights'}{' '}
+                        (incl. taxes &amp; fees)
                       </span>
                       <span>&#x20B9;{price.toLocaleString()}</span>
                     </div>

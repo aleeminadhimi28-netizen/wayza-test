@@ -15,7 +15,8 @@ export default function SEO({
   qa = null,
   speakable = null,
   noindex = false,
-  googleVerification = 'VwzE_N_T2z_X_k_z_V_z_v_z_V_z_v_z_V_z_v_z_V_z_v_z_V_z_v',
+  itemList = null,
+  googleVerification = null, // Set via GSC: replace with actual verification token from Search Console
 }) {
   const currentUrl = url || (typeof window !== 'undefined' ? window.location.href : '');
   // Force Apex domain for canonicals to avoid www/apex split authority
@@ -63,14 +64,14 @@ export default function SEO({
     image: defaultImage,
     description:
       'Wayzza is a curated booking platform for premium clifftop villas, Royal Enfield bike rentals, luxury cars, and authentic local experiences in Varkala, Kerala, India.',
-    telephone: '+91 80892 22444',
+    telephone: '+91 99955 55444',
     email: 'stay@wayzza.live',
     priceRange: '₹₹₹',
     currenciesAccepted: 'INR, USD, EUR, GBP, AED',
     paymentAccepted: 'Cash, Credit Card, UPI, Net Banking',
     address: {
       '@type': 'PostalAddress',
-      streetAddress: 'Varkala North Cliff',
+      streetAddress: 'North Cliff, Varkala',
       addressLocality: 'Varkala',
       addressRegion: 'Kerala',
       postalCode: '695141',
@@ -239,6 +240,26 @@ export default function SEO({
       }
     : null;
 
+  // ── ItemList schema (for category/grid pages like Experiences) ──
+  const itemListSchema = itemList
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: itemList.name,
+        description: itemList.description,
+        url: itemList.url || canonicalUrl,
+        numberOfItems: itemList.items?.length || 0,
+        itemListElement: (itemList.items || []).map((item, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          name: item.name,
+          url: item.url || canonicalUrl,
+          description: item.description,
+          image: item.image,
+        })),
+      }
+    : null;
+
   // ── Compose all schemas ──
   const allSchemas = [webSiteSchema, defaultOrgSchema];
   if (breadcrumbSchema) allSchemas.push(breadcrumbSchema);
@@ -247,6 +268,7 @@ export default function SEO({
   if (qaSchema) allSchemas.push(qaSchema);
   if (howToSchema) allSchemas.push(howToSchema);
   if (speakableSchema) allSchemas.push(speakableSchema);
+  if (itemListSchema) allSchemas.push(itemListSchema);
   if (schema) allSchemas.push(schema);
 
   const schemaJson = allSchemas.length === 1 ? allSchemas[0] : allSchemas;

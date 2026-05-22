@@ -66,8 +66,8 @@ const tabs = [
   { key: 'all', label: 'All Bookings', icon: History },
   { key: 'paid', label: 'Confirmed', icon: CheckCircle },
   { key: 'pending', label: 'Pending', icon: Clock },
-  // FIX #30: add arrived (In-Stay) and departed (Completed) filter tabs
-  { key: 'arrived', label: 'In-Stay', icon: CheckCircle },
+  // FIX #30: add arrived (Ongoing) and departed (Completed) filter tabs
+  { key: 'arrived', label: 'Ongoing', icon: CheckCircle },
   { key: 'departed', label: 'Completed', icon: CheckCircle },
   { key: 'cancelled', label: 'Cancelled', icon: XCircle },
 ];
@@ -82,7 +82,13 @@ export default function MyBookings() {
   const { showToast } = useToast();
   const [cancellingId, setCancellingId] = useState(null);
   const [filterStatus, setFilterStatus] = useState('all');
-  const [confirmModal, setConfirmModal] = useState({ isOpen: false, onConfirm: () => {} });
+  const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
+    title: 'Cancel Reservation',
+    message: 'Are you sure you want to cancel this reservation?',
+    confirmText: 'Confirm Cancellation',
+    onConfirm: () => {},
+  });
 
   const filtered = filterStatus === 'all' ? rows : rows.filter((b) => b.status === filterStatus);
 
@@ -95,6 +101,10 @@ export default function MyBookings() {
 
   // Passport Modal
   const [passportModal, setPassportModal] = useState(null);
+
+  const reviewModalVehicle = reviewModal?.category === 'bike' || reviewModal?.category === 'car';
+  const reviewModalActivity =
+    reviewModal?.category === 'activity' || reviewModal?.category === 'experience';
 
   useEffect(() => {
     if (!user?.email) {
@@ -114,19 +124,25 @@ export default function MyBookings() {
       .finally(() => setLoading(false));
   }, [user?.email]);
 
-  const cancelBooking = (id) => {
+  const cancelBooking = (b) => {
+    const isVehicle = b.category === 'bike' || b.category === 'car';
+    const isActivity = b.category === 'activity' || b.category === 'experience';
+    const typeLabel = isVehicle ? 'rental' : isActivity ? 'experience' : 'stay';
     setConfirmModal({
       isOpen: true,
-      onConfirm: () => executeCancelBooking(id),
+      title: `Cancel ${isVehicle ? 'Rental' : isActivity ? 'Experience' : 'Reservation'}`,
+      message: `Are you sure you want to cancel this ${typeLabel}? This action cannot be undone and your plans will be removed.`,
+      confirmText: 'Confirm Cancellation',
+      onConfirm: () => executeCancelBooking(b._id, typeLabel),
     });
   };
 
-  async function executeCancelBooking(id) {
+  async function executeCancelBooking(id, typeLabel) {
     setCancellingId(id);
     try {
       const data = await api.cancelBooking({ bookingId: id });
       if (!data.ok) {
-        showToast(data.message || 'Failed to cancel reservation.', 'error');
+        showToast(data.message || `Failed to cancel ${typeLabel}.`, 'error');
         return;
       }
       setRows((prev) => prev.map((b) => (b._id === id ? { ...b, status: 'cancelled' } : b)));
@@ -165,6 +181,7 @@ export default function MyBookings() {
 
   function downloadInvoice(b) {
     const isVehicle = b.category === 'bike' || b.category === 'car';
+    const isActivity = b.category === 'activity' || b.category === 'experience';
     const gst =
       b.gst !== undefined
         ? b.gst
@@ -179,6 +196,37 @@ export default function MyBookings() {
       month: 'long',
       year: 'numeric',
     });
+
+    const checkInLabel = isVehicle ? 'Rental Start' : isActivity ? 'Start Date' : 'Check-In';
+    const checkOutLabel = isVehicle ? 'Rental End' : isActivity ? 'End Date' : 'Check-Out';
+    const durationUnit =
+      isVehicle || isActivity
+        ? b.nights === 1
+          ? 'Day'
+          : 'Days'
+        : b.nights === 1
+          ? 'Night'
+          : 'Nights';
+    const invoiceSub = isVehicle
+      ? 'Premium Rentals'
+      : isActivity
+        ? 'Premium Experiences'
+        : 'Premium Stays';
+    const descLabel = isVehicle ? 'Rental Fee' : isActivity ? 'Experience Fee' : 'Accommodation';
+    const durationUnitLower =
+      isVehicle || isActivity
+        ? b.nights === 1
+          ? 'day'
+          : 'days'
+        : b.nights === 1
+          ? 'night'
+          : 'nights';
+    const footerThankYou = isVehicle
+      ? 'Thank you for renting with Wayzza.'
+      : isActivity
+        ? 'Thank you for booking experiences with Wayzza.'
+        : 'Thank you for staying with Wayzza.';
+
     const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Invoice ${invoiceId}</title><style>
             *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,sans-serif;}
             body{background:#f8fafc;padding:40px;color:#0f172a;}
@@ -207,7 +255,7 @@ export default function MyBookings() {
             @media print{body{padding:0;background:#fff;}.card{box-shadow:none;border-radius:0;padding:32px;}}
         </style></head><body><div class="card">
             <div class="header">
-                <div class="brand"><div class="brand-icon">W</div><div><div class="brand-name">Wayzza</div><div class="brand-sub">Premium Stays</div></div></div>
+                <div class="brand"><div class="brand-icon">W</div><div><div class="brand-name">Wayzza</div><div class="brand-sub">${invoiceSub}</div></div></div>
                 <div class="invoice-meta"><div class="invoice-id">INVOICE #${invoiceId}</div><div class="invoice-date">${invoiceDate}</div></div>
             </div>
             <h2>${b.title}</h2>
@@ -215,15 +263,15 @@ export default function MyBookings() {
             <div class="details-grid">
                 <div class="detail-item"><div class="label">Guest</div><div class="value">${b.guestEmail}</div></div>
                 <div class="detail-item"><div class="label">Booking ID</div><div class="value">${invoiceId}</div></div>
-                <div class="detail-item"><div class="label">Check-In</div><div class="value">${b.checkIn}</div></div>
-                <div class="detail-item"><div class="label">Check-Out</div><div class="value">${b.checkOut}</div></div>
-                <div class="detail-item"><div class="label">Duration</div><div class="value">${b.nights} Night${b.nights !== 1 ? 's' : ''}</div></div>
+                <div class="detail-item"><div class="label">${checkInLabel}</div><div class="value">${b.checkIn}</div></div>
+                <div class="detail-item"><div class="label">${checkOutLabel}</div><div class="value">${b.checkOut}</div></div>
+                <div class="detail-item"><div class="label">Duration</div><div class="value">${b.nights} ${durationUnit}</div></div>
                 ${b.variantName ? `<div class="detail-item"><div class="label">Room Type</div><div class="value">${b.variantName}</div></div>` : ''}
             </div>
             <table>
                 <thead><tr><th>Description</th><th>Amount</th></tr></thead>
                 <tbody>
-                    <tr><td>Accommodation (₹${(b.pricePerNight || 0).toLocaleString()} × ${b.nights} night${b.nights !== 1 ? 's' : ''})</td><td>₹${baseAmount.toLocaleString()}</td></tr>
+                    <tr><td>${descLabel} (₹${(b.pricePerNight || 0).toLocaleString()} × ${b.nights} ${durationUnitLower})</td><td>₹${baseAmount.toLocaleString()}</td></tr>
                     <tr><td>GST${gst === 0 ? ' (Waived for Vehicles)' : ' @ 12%'}</td><td>${gst === 0 ? '<span style="color:#059669;font-weight:700;">Waived</span>' : `₹${gst.toLocaleString()}`}</td></tr>
                     <tr><td>Service & Platform Fee</td><td>₹${serviceFee.toLocaleString()}</td></tr>
                     <tr class="total-row"><td>Total Paid</td><td>₹${(b.totalPrice || 0).toLocaleString()}</td></tr>
@@ -231,7 +279,7 @@ export default function MyBookings() {
             </table>
             <div class="badge">✓ Payment Confirmed</div>
             <div class="footer">
-                <div class="footer-note">Thank you for staying with Wayzza.<br>For support: support@wayzza.com</div>
+                <div class="footer-note">${footerThankYou}<br>For support: support@wayzza.com</div>
                 <div class="footer-note">© ${new Date().getFullYear()} Wayzza Inc.</div>
             </div>
         </div></body></html>`;
@@ -290,7 +338,7 @@ export default function MyBookings() {
                 My Bookings
               </h1>
               <p className="text-slate-400 font-bold uppercase text-[11px] md:text-xs tracking-widest">
-                Manage your stays and travel history with Wayzza.
+                Manage your bookings and travel history with Wayzza.
               </p>
             </div>
 
@@ -331,14 +379,14 @@ export default function MyBookings() {
                 <div className="space-y-1">
                   <h3 className="text-xl font-bold text-slate-900">No bookings yet</h3>
                   <p className="text-slate-500 text-sm">
-                    Explore our collection of stays and start your journey.
+                    Explore our collection of properties, vehicles, and experiences.
                   </p>
                 </div>
                 <Link
                   to="/listings"
                   className="h-12 px-8 bg-slate-900 text-white rounded-xl font-bold uppercase text-[11px] tracking-widest hover:bg-emerald-600 transition-all flex items-center gap-2 mt-4"
                 >
-                  Discover Stays <ArrowRight size={14} />
+                  Discover Listings <ArrowRight size={14} />
                 </Link>
               </motion.div>
             ) : filtered.length === 0 ? (
@@ -362,6 +410,16 @@ export default function MyBookings() {
                   const end = b.checkOut || b.endDate;
                   const isFuture = start && new Date(start) > new Date();
                   const cfg = statusConfig[b.status] || statusConfig.pending;
+                  const isVehicle = b.category === 'bike' || b.category === 'car';
+                  const isActivity = b.category === 'activity' || b.category === 'experience';
+                  let displayStatusLabel = cfg.label;
+                  if (b.status === 'arrived') {
+                    displayStatusLabel = isVehicle
+                      ? 'Active Rental'
+                      : isActivity
+                        ? 'Active Experience'
+                        : 'Checked In';
+                  }
 
                   return (
                     <motion.div
@@ -376,7 +434,7 @@ export default function MyBookings() {
                           <span
                             className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-bold text-[11px] uppercase tracking-wider ${cfg.bg} ${cfg.color} border ${cfg.border}`}
                           >
-                            <cfg.icon size={12} strokeWidth={2.5} /> {cfg.label}
+                            <cfg.icon size={12} strokeWidth={2.5} /> {displayStatusLabel}
                           </span>
                           <span className="text-[11px] font-bold text-slate-300 uppercase tracking-widest">
                             ID: {b._id?.slice(-8).toUpperCase()}
@@ -429,7 +487,7 @@ export default function MyBookings() {
                                 <MessageCircle size={16} /> Chat with host
                               </button>
                               <button
-                                onClick={() => cancelBooking(b._id)}
+                                onClick={() => cancelBooking(b)}
                                 disabled={cancellingId === b._id}
                                 className="h-10 w-full text-slate-300 hover:text-rose-500 font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-2 transition-all disabled:opacity-50"
                               >
@@ -438,7 +496,7 @@ export default function MyBookings() {
                                 ) : (
                                   <XCircle size={14} />
                                 )}
-                                Cancel stay
+                                Cancel {isVehicle ? 'rental' : isActivity ? 'experience' : 'stay'}
                               </button>
                             </>
                           )}
@@ -486,7 +544,8 @@ export default function MyBookings() {
                               onClick={() => navigate(`/listing/${b.listingId}`)}
                               className="h-12 w-full bg-slate-50 text-slate-600 rounded-xl font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-2 hover:bg-slate-900 hover:text-white transition-all shadow-sm"
                             >
-                              <History size={16} /> Rebook stay
+                              <History size={16} /> Rebook{' '}
+                              {isVehicle ? 'rental' : isActivity ? 'experience' : 'stay'}
                             </button>
                           )}
                         </div>
@@ -520,7 +579,8 @@ export default function MyBookings() {
                 <Star size={24} />
               </div>
               <h3 className="text-2xl font-bold text-slate-900 tracking-tight uppercase mb-2">
-                Rate your stay
+                Rate your{' '}
+                {reviewModalVehicle ? 'rental' : reviewModalActivity ? 'experience' : 'stay'}
               </h3>
               {/* #33: Fixed literal curly-quote rendering */}
               <p className="text-sm font-medium text-slate-500 mb-8">
@@ -554,7 +614,7 @@ export default function MyBookings() {
                   <textarea
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
-                    placeholder="Share details about your stay..."
+                    placeholder={`Share details about your ${reviewModalVehicle ? 'rental' : reviewModalActivity ? 'experience' : 'stay'}...`}
                     rows={4}
                     className="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl outline-none focus:bg-white focus:border-amber-400 focus:ring-4 focus:ring-amber-400/10 transition-all text-sm resize-none"
                   />
@@ -578,93 +638,121 @@ export default function MyBookings() {
 
       {/* PASSPORT MODAL */}
       <AnimatePresence>
-        {passportModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-[40px] p-10 w-full max-w-sm shadow-2xl relative text-center overflow-hidden"
-            >
-              {/* Decorative background Elements */}
-              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-500" />
+        {passportModal &&
+          (() => {
+            const passportIsVehicle =
+              passportModal.category === 'bike' || passportModal.category === 'car';
+            const passportIsActivity =
+              passportModal.category === 'activity' || passportModal.category === 'experience';
+            return (
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="bg-white rounded-[40px] p-10 w-full max-w-sm shadow-2xl relative text-center overflow-hidden"
+                >
+                  {/* Decorative background Elements */}
+                  <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-500" />
 
-              <button
-                onClick={() => setPassportModal(null)}
-                className="absolute top-6 right-6 text-slate-400 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 p-2 rounded-full transition-all"
-              >
-                <XCircle size={20} />
-              </button>
+                  <button
+                    onClick={() => setPassportModal(null)}
+                    className="absolute top-6 right-6 text-slate-400 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 p-2 rounded-full transition-all"
+                  >
+                    <XCircle size={20} />
+                  </button>
 
-              <div className="flex flex-col items-center space-y-6">
-                <div className="space-y-1">
-                  <p className="text-[11px] font-black uppercase tracking-[0.4em] text-emerald-600">
-                    Verification Passport
-                  </p>
-                  <h3 className="text-xl font-black text-slate-900 uppercase">Check-in QR Code</h3>
-                </div>
+                  <div className="flex flex-col items-center space-y-6">
+                    <div className="space-y-1">
+                      <p className="text-[11px] font-black uppercase tracking-[0.4em] text-emerald-600">
+                        Verification Passport
+                      </p>
+                      <h3 className="text-xl font-black text-slate-900 uppercase">
+                        {passportIsVehicle
+                          ? 'Rental'
+                          : passportIsActivity
+                            ? 'Experience'
+                            : 'Check-in'}{' '}
+                        QR Code
+                      </h3>
+                    </div>
 
-                <div className="p-4 bg-slate-50 border-2 border-emerald-100 rounded-[32px] shadow-inner relative group">
-                  <div className="absolute inset-0 bg-emerald-500/5 blur-2xl group-hover:bg-emerald-500/10 transition-colors" />
-                  <div className="relative bg-white p-6 rounded-[24px] shadow-sm">
-                    <QRCodeCanvas
-                      value={`wayzza-verify://${passportModal._id}`}
-                      size={200}
-                      level="H"
-                      includeMargin={false}
-                      imageSettings={{
-                        // #31: Use relative path to avoid 3rd-party domain dependency
-                        src: '/favicon.png',
-                        x: undefined,
-                        y: undefined,
-                        height: 40,
-                        width: 40,
-                        excavate: true,
-                      }}
-                    />
-                  </div>
-                </div>
+                    <div className="p-4 bg-slate-50 border-2 border-emerald-100 rounded-[32px] shadow-inner relative group">
+                      <div className="absolute inset-0 bg-emerald-500/5 blur-2xl group-hover:bg-emerald-500/10 transition-colors" />
+                      <div className="relative bg-white p-6 rounded-[24px] shadow-sm">
+                        <QRCodeCanvas
+                          value={`wayzza-verify://${passportModal._id}`}
+                          size={200}
+                          level="H"
+                          includeMargin={false}
+                          imageSettings={{
+                            // #31: Use relative path to avoid 3rd-party domain dependency
+                            src: '/favicon.png',
+                            x: undefined,
+                            y: undefined,
+                            height: 40,
+                            width: 40,
+                            excavate: true,
+                          }}
+                        />
+                      </div>
+                    </div>
 
-                <div className="space-y-4 w-full">
-                  <div className="space-y-1">
-                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                      Manual Passcode
-                    </p>
-                    <div className="flex justify-center gap-2">
-                      {passportModal.checkInPasscode?.split('').map((char, i) => (
-                        <span
-                          key={i}
-                          className="w-10 h-12 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center text-xl font-black text-slate-900 shadow-sm"
-                        >
-                          {char}
-                        </span>
-                      )) || <span className="text-slate-300 text-sm">Awaiting sync...</span>}
+                    <div className="space-y-4 w-full">
+                      <div className="space-y-1">
+                        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                          Manual Passcode
+                        </p>
+                        <div className="flex justify-center gap-2">
+                          {passportModal.checkInPasscode?.split('').map((char, i) => (
+                            <span
+                              key={i}
+                              className="w-10 h-12 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center text-xl font-black text-slate-900 shadow-sm"
+                            >
+                              {char}
+                            </span>
+                          )) || <span className="text-slate-300 text-sm">Awaiting sync...</span>}
+                        </div>
+                      </div>
+
+                      <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-2xl flex items-start gap-4 text-left">
+                        <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shrink-0 text-emerald-600 shadow-sm">
+                          <Scan size={16} />
+                        </div>
+                        <p className="text-[11px] font-bold text-emerald-800 leading-relaxed uppercase tracking-wider">
+                          Present this QR to the staff at{' '}
+                          {passportIsVehicle
+                            ? 'pick-up'
+                            : passportIsActivity
+                              ? 'start'
+                              : 'check-in'}
+                          . This protocol verifies your identity and activates your{' '}
+                          {passportIsVehicle
+                            ? 'rental'
+                            : passportIsActivity
+                              ? 'experience'
+                              : 'stay'}
+                          .
+                        </p>
+                      </div>
                     </div>
                   </div>
-
-                  <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-2xl flex items-start gap-4 text-left">
-                    <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shrink-0 text-emerald-600 shadow-sm">
-                      <Scan size={16} />
-                    </div>
-                    <p className="text-[11px] font-bold text-emerald-800 leading-relaxed uppercase tracking-wider">
-                      Present this QR to the property staff at check-in. This protocol verifies your
-                      neural identity and activates your stay.
-                    </p>
-                  </div>
-                </div>
+                </motion.div>
               </div>
-            </motion.div>
-          </div>
-        )}
+            );
+          })()}
       </AnimatePresence>
 
       <ConfirmModal
         isOpen={confirmModal.isOpen}
         onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
         onConfirm={confirmModal.onConfirm}
-        title="Cancel Reservation"
-        message="Are you sure you want to cancel this reservation? This action cannot be undone and your travel plans will be removed."
-        confirmText="Confirm Cancellation"
+        title={confirmModal.title || 'Cancel Reservation'}
+        message={
+          confirmModal.message ||
+          'Are you sure you want to cancel this reservation? This action cannot be undone and your travel plans will be removed.'
+        }
+        confirmText={confirmModal.confirmText || 'Confirm Cancellation'}
         confirmVariant="rose"
       />
     </WayzzaLayout>

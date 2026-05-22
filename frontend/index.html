@@ -23,8 +23,8 @@
   <meta name="apple-mobile-web-app-title" content="Wayzza" />
 
   <!-- Primary Meta Tags -->
-  <title>Wayzza | Premium Varkala Stays & Luxury Mobility</title>
-  <meta name="title" content="Wayzza | Premium Varkala Stays & Luxury Mobility" />
+  <title>Wayzza — Luxury Clifftop Villas & Royal Enfield Rentals in Varkala</title>
+  <meta name="title" content="Wayzza — Luxury Clifftop Villas & Royal Enfield Rentals in Varkala" />
   <meta name="description"
     content="Access a verified collection of clifftop villas, high-performance rentals, and hidden local secrets in Varkala. Curated sanctuaries & elite mobility for the modern explorer." />
   <meta name="keywords"
@@ -35,7 +35,7 @@
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://wayzza.live/" />
-  <meta property="og:title" content="Wayzza | Premium Varkala Stays & Luxury Mobility" />
+  <meta property="og:title" content="Wayzza — Luxury Clifftop Villas & Royal Enfield Rentals in Varkala" />
   <meta property="og:description"
     content="Discover verified clifftop villas, luxury rentals, and hidden local secrets in Varkala. Wayzza curates premium sanctuaries for the modern explorer." />
   <meta property="og:image" content="https://wayzza.live/images/varkala_hero.png" />
@@ -47,7 +47,7 @@
   <!-- Twitter / X -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:url" content="https://wayzza.live/" />
-  <meta name="twitter:title" content="Wayzza | Premium Varkala Stays & Luxury Mobility" />
+  <meta name="twitter:title" content="Wayzza — Luxury Clifftop Villas & Royal Enfield Rentals in Varkala" />
   <meta name="twitter:description" content="Verified clifftop villas and luxury rentals in Varkala. Curated for the modern explorer." />
   <meta name="twitter:image" content="https://wayzza.live/images/varkala_hero.png" />
 
@@ -60,31 +60,80 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-  <!-- Structured Data (JSON-LD) -->
+  <!-- Structured Data (JSON-LD) — Static shell schema for crawlers before JS executes -->
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "TravelAgency",
-    "name": "Wayzza",
-    "url": "https://wayzza.live",
-    "logo": "https://wayzza.live/favicon.svg",
-    "description": "Curated sanctuaries and elite mobility for the modern explorer in Varkala, Kerala.",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Varkala",
-      "addressRegion": "Kerala",
-      "addressCountry": "IN"
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": ["LocalBusiness", "LodgingBusiness", "TravelAgency"],
+      "@id": "https://wayzza.live/#organization",
+      "name": "Wayzza",
+      "alternateName": "Wayzza Varkala",
+      "description": "Wayzza is Varkala's premier luxury travel brand — verified clifftop villas, Royal Enfield motorcycle rentals, premium car hire, and curated boutique experiences on the Kerala coast.",
+      "url": "https://wayzza.live",
+      "logo": "https://wayzza.live/favicon.svg",
+      "image": "https://wayzza.live/images/varkala_hero.webp",
+      "telephone": "+91 80892 22444",
+      "email": "stay@wayzza.live",
+      "priceRange": "\u20b9\u20b9\u20b9",
+      "currenciesAccepted": "INR, USD, EUR, GBP",
+      "paymentAccepted": "Cash, Credit Card, UPI, Net Banking",
+      "foundingDate": "2024",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Varkala North Cliff",
+        "addressLocality": "Varkala",
+        "addressRegion": "Kerala",
+        "postalCode": "695141",
+        "addressCountry": "IN"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 8.7379,
+        "longitude": 76.7163
+      },
+      "openingHoursSpecification": [{
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+        "opens": "00:00",
+        "closes": "23:59"
+      }],
+      "areaServed": [
+        {"@type": "City", "name": "Varkala"},
+        {"@type": "State", "name": "Kerala"}
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Wayzza Services",
+        "itemListElement": [
+          {"@type": "OfferCatalog", "name": "Luxury Clifftop Villas", "description": "Verified premium ocean-view villas on the Varkala Cliff."},
+          {"@type": "OfferCatalog", "name": "Royal Enfield Rentals", "description": "Classic 350, Thunderbird, and Himalayan available for daily hire in Varkala."},
+          {"@type": "OfferCatalog", "name": "Luxury Car Rentals", "description": "Chauffeur and self-drive luxury vehicles including airport transfers from TRV."},
+          {"@type": "OfferCatalog", "name": "Curated Experiences", "description": "Ayurveda, cliff yoga, sunset cruises, Kathakali, and seafood masterclasses."}
+        ]
+      },
+      "sameAs": [
+        "https://www.instagram.com/wayzza.live",
+        "https://www.twitter.com/wayzza",
+        "https://www.facebook.com/wayzza"
+      ]
     },
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "email": "hello@wayzza.live",
-      "contactType": "customer support"
-    },
-    "sameAs": [
-      "https://www.instagram.com/wayzza.live",
-      "https://www.twitter.com/wayzza"
-    ]
-  }
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": "https://wayzza.live/#website",
+      "name": "Wayzza",
+      "url": "https://wayzza.live",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://wayzza.live/listings?location={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+  ]
   </script>
 </head>
 

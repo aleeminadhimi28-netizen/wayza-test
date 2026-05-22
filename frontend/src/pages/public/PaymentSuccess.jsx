@@ -58,7 +58,7 @@ export default function PaymentSuccess() {
               Booking confirmed!
             </h1>
             <p className="text-slate-500 font-medium text-lg leading-relaxed">
-              Thank you for your reservation. Your stay is now officially booked and secured.
+              Thank you for your reservation. Your booking is now officially confirmed and secured.
             </p>
           </motion.div>
 

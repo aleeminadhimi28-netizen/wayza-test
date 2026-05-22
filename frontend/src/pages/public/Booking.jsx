@@ -80,7 +80,12 @@ export default function Booking() {
     // FIX #23: Notify user when check-in changes and check-out is reset
     if (endDate && val >= endDate) {
       setEndDate('');
-      showToast('Check-in date changed — please re-select your check-out date.', 'warning');
+      const checkInTerm = isVehicle ? 'Pick-up' : isActivity ? 'Start' : 'Check-in';
+      const checkOutTerm = isVehicle ? 'drop-off' : isActivity ? 'end' : 'check-out';
+      showToast(
+        `${checkInTerm} date changed — please re-select your ${checkOutTerm} date.`,
+        'warning'
+      );
     }
   };
   const handleEndDateChange = (val) => {
@@ -150,6 +155,9 @@ export default function Booking() {
 
   const baseAmount = nights > 0 ? calculatedBaseAmount : pricePerNight * nights;
   const isVehicle = listing?.category === 'bike' || listing?.category === 'car';
+  const isBike = listing?.category === 'bike';
+  const isCar = listing?.category === 'car';
+  const isActivity = listing?.category === 'activity' || listing?.category === 'experience';
   const gstRate = platformConfig?.gstRate ?? 0.12;
   const serviceFeeRate = platformConfig?.serviceFee ?? 99;
 
@@ -191,11 +199,15 @@ export default function Booking() {
       return;
     }
     if (!startDate || !endDate) {
-      showToast('Please select your stay duration.', 'error');
+      showToast(
+        `Please select your ${isVehicle ? 'rental' : isActivity ? 'experience' : 'stay'} duration.`,
+        'error'
+      );
       return;
     }
     if (stayInvalid) {
-      showToast(`The minimum stay is ${minStay} night.`, 'error');
+      const unit = isVehicle || isActivity ? 'day' : 'night';
+      showToast(`The minimum booking is ${minStay} ${unit}.`, 'error');
       return;
     }
     if (blockedDates) {
@@ -234,6 +246,7 @@ export default function Booking() {
           discountAmount,
           gst,
           serviceFee,
+          category: listing?.category,
         },
       });
     } catch {
@@ -271,7 +284,8 @@ export default function Booking() {
               Confirm your booking
             </h1>
             <p className="text-slate-500 font-medium">
-              Please review your stay details and complete the reservation.
+              Please review your {isVehicle ? 'rental' : isActivity ? 'experience' : 'stay'} details
+              and complete the reservation.
             </p>
           </header>
 
@@ -280,14 +294,17 @@ export default function Booking() {
             <div className="lg:col-span-7 space-y-12">
               {/* DATE SELECTION */}
               <section className="bg-slate-50 rounded-[32px] p-8 md:p-12 border border-slate-100">
-                <h2 className="text-xl font-bold text-slate-900 mb-8">1. Your stay</h2>
+                <h2 className="text-xl font-bold text-slate-900 mb-8">
+                  1.{' '}
+                  {isVehicle ? 'Rental duration' : isActivity ? 'Experience details' : 'Your stay'}
+                </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-3">
                     <label
                       htmlFor="booking-confirm-check-in"
                       className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1"
                     >
-                      Check-in
+                      {isVehicle ? 'Pick-up' : isActivity ? 'Start Date' : 'Check-in'}
                     </label>
                     <div className="relative">
                       <Calendar
@@ -312,7 +329,7 @@ export default function Booking() {
                       htmlFor="booking-confirm-check-out"
                       className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1"
                     >
-                      Check-out
+                      {isVehicle ? 'Drop-off' : isActivity ? 'End Date' : 'Check-out'}
                     </label>
                     <div className="relative">
                       <Calendar
@@ -411,20 +428,47 @@ export default function Booking() {
                           i: <CheckCircle />,
                         },
                       ]
-                    : [
-                        { t: 'Check-in time', d: 'Standard arrival after 12:00 PM', i: <Clock /> },
-                        {
-                          t: 'Quiet hours',
-                          d: 'Please keep noise down after 10:00 PM',
-                          i: <Zap />,
-                        },
-                        { t: 'No smoking', d: 'A smoke-free environment for all', i: <Info /> },
-                        {
-                          t: 'House rules',
-                          d: 'Please respect the property and amenities',
-                          i: <CheckCircle />,
-                        },
-                      ]
+                    : isActivity
+                      ? [
+                          {
+                            t: 'Start time',
+                            d: 'Please arrive 15 minutes before the scheduled start',
+                            i: <Clock />,
+                          },
+                          {
+                            t: 'Safety rules',
+                            d: 'Follow guide instructions at all times',
+                            i: <Zap />,
+                          },
+                          {
+                            t: 'Gear provided',
+                            d: 'All necessary safety equipment is included',
+                            i: <Info />,
+                          },
+                          {
+                            t: 'Weather policy',
+                            d: 'Reschedule or refund if weather is unsafe',
+                            i: <CheckCircle />,
+                          },
+                        ]
+                      : [
+                          {
+                            t: 'Check-in time',
+                            d: 'Standard arrival after 12:00 PM',
+                            i: <Clock />,
+                          },
+                          {
+                            t: 'Quiet hours',
+                            d: 'Please keep noise down after 10:00 PM',
+                            i: <Zap />,
+                          },
+                          { t: 'No smoking', d: 'A smoke-free environment for all', i: <Info /> },
+                          {
+                            t: 'House rules',
+                            d: 'Please respect the property and amenities',
+                            i: <CheckCircle />,
+                          },
+                        ]
                   ).map((rule, i) => (
                     <div
                       key={i}
@@ -459,7 +503,13 @@ export default function Booking() {
                         {listing.title}
                       </h3>
                       <p className="text-xs font-bold text-emerald-600 uppercase tracking-wider">
-                        {variant ? variant.name : 'Standard Stays'}
+                        {variant
+                          ? variant.name
+                          : isVehicle
+                            ? 'Standard'
+                            : isActivity
+                              ? 'Standard Experience'
+                              : 'Standard Stays'}
                       </p>
                     </div>
                   </div>
@@ -472,7 +522,14 @@ export default function Booking() {
                     <div className="space-y-3">
                       <div className="flex justify-between text-slate-600 font-medium">
                         <span>
-                          ₹{pricePerNight.toLocaleString()} x {nights || 0} nights
+                          ₹{pricePerNight.toLocaleString()} x {nights || 0}{' '}
+                          {isVehicle || isActivity
+                            ? nights === 1
+                              ? 'day'
+                              : 'days'
+                            : nights === 1
+                              ? 'night'
+                              : 'nights'}
                         </span>
                         <span>₹{baseAmount.toLocaleString()}</span>
                       </div>

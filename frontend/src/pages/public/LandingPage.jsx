@@ -145,8 +145,8 @@ export default function LandingPage() {
   return (
     <WayzzaLayout noPadding hideFooter>
       <SEO
-        title="Escape the Ordinary"
-        description="Handpicked clifftop villas, Royal Enfield rentals, and hidden local secrets curated for the modern explorer in Varkala, Kerala."
+        title="Luxury Clifftop Villas & Royal Enfield Rentals — Varkala, Kerala"
+        description="Discover verified luxury clifftop villas, Royal Enfield motorcycle rentals, and premium car hire in Varkala, Kerala. Curated boutique experiences for the modern traveller. Book direct — no OTA fees."
         breadcrumb={[{ name: 'Home', url: 'https://wayzza.live' }]}
         speakable={{ cssSelectors: ['.speakable-summary', 'h1', '.hero-description'] }}
         howTo={{
@@ -245,7 +245,7 @@ export default function LandingPage() {
             >
               <img
                 src="/images/varkala_hero.webp"
-                alt="Luxury Sanctuary in Varkala"
+                alt="Luxury clifftop villa with ocean view in Varkala, Kerala — Wayzza Premium Stays"
                 className="w-full h-full object-cover"
                 fetchPriority="high"
                 loading="eager"

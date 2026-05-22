@@ -11,14 +11,19 @@ const SITEMAP_PATH = path.join(PUBLIC_DIR, 'sitemap.xml');
 const staticRoutes = [
   { url: '/', priority: '1.0', changefreq: 'daily' },
   { url: '/listings', priority: '0.9', changefreq: 'daily' },
+  { url: '/listings?category=bike', priority: '0.95', changefreq: 'daily' },
+  { url: '/listings?category=car', priority: '0.90', changefreq: 'daily' },
   { url: '/experiences', priority: '0.9', changefreq: 'weekly' },
-  { url: '/explore-map', priority: '0.8', changefreq: 'weekly' },
+  { url: '/packages', priority: '0.85', changefreq: 'weekly' },
+  { url: '/ai-trip-planner', priority: '0.8', changefreq: 'weekly' },
+  { url: '/explore-map', priority: '0.75', changefreq: 'weekly' },
   { url: '/about', priority: '0.7', changefreq: 'monthly' },
   { url: '/privacy', priority: '0.3', changefreq: 'monthly' },
   { url: '/terms', priority: '0.3', changefreq: 'monthly' },
   { url: '/compliance', priority: '0.3', changefreq: 'monthly' },
-  { url: '/support', priority: '0.7', changefreq: 'weekly' },
+  { url: '/support', priority: '0.6', changefreq: 'weekly' },
 ];
+
 
 async function generateSitemap() {
   console.log('🚀 Starting sitemap generation...');

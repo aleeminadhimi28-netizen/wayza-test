@@ -242,7 +242,12 @@ export default function ListingDetails() {
   if (error) {
     return (
       <WayzzaLayout noPadding>
-        <SEO title="Not Found" />
+        <SEO
+          title="Listing Not Found"
+          description="This listing could not be found. Browse all available luxury stays and rentals in Varkala on Wayzza."
+          noindex={true}
+          url="https://wayzza.live/listings"
+        />
         <div className="min-h-[70vh] flex flex-col items-center justify-center p-8 text-center">
           <div className="w-20 h-20 bg-rose-50 rounded-3xl flex items-center justify-center text-rose-400 mb-6">
             <AlertCircle size={36} />
@@ -343,35 +348,171 @@ export default function ListingDetails() {
   const vehicleIcon = isBike ? <Bike size={14} /> : <Car size={14} />;
   const categoryColor = isVehicle ? 'emerald' : 'emerald';
 
-  const seoSchema = {
-    '@context': 'https://schema.org',
-    '@type': listing.category === 'hotel' ? 'LodgingBusiness' : 'Vehicle',
-    name: listing.title,
-    description: listing.description,
-    image: images.slice(0, 3),
-    url: canonicalUrl,
-    priceRange: `₹${basePrice.toLocaleString()}`,
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: listing.location || 'Varkala',
-      addressRegion: 'Kerala',
-      addressCountry: 'IN',
-    },
-    brand: { '@type': 'Brand', name: 'Wayzza Verified' },
-    sku: listing._id,
-    offers: {
-      '@type': 'Offer',
-      priceCurrency: 'INR',
-      price: basePrice,
-      availability: 'https://schema.org/InStock',
+  // ── SEO Schema: category-aware for rich results eligibility ──────────────────
+  const priceValidUntil = new Date(Date.now() + 2592000000).toISOString().split('T')[0];
+  const amenityFeatureList = (listing.amenities || []).slice(0, 12).map((a) => ({
+    '@type': 'LocationFeatureSpecification',
+    name: a,
+    value: true,
+  }));
+
+  let seoSchema;
+  if (listing.category === 'hotel') {
+    seoSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'BedAndBreakfast',
+      '@id': `${canonicalUrl}#accommodation`,
+      name: listing.title,
+      description:
+        listing.description ||
+        'A verified luxury clifftop villa in Varkala, Kerala. Curated and managed by Wayzza.',
+      image: images.slice(0, 5),
       url: canonicalUrl,
-      priceValidUntil: new Date(Date.now() + 2592000000).toISOString().split('T')[0],
-    },
-    aggregateRating:
-      reviews.length > 0
-        ? { '@type': 'AggregateRating', ratingValue: avgRating, reviewCount: reviews.length }
-        : undefined,
-  };
+      telephone: '+91 80892 22444',
+      email: 'stay@wayzza.live',
+      checkinTime: '14:00',
+      checkoutTime: '11:00',
+      starRating: { '@type': 'Rating', ratingValue: '4' },
+      priceRange: `₹${basePrice.toLocaleString('en-IN')}`,
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: listing.location || 'Varkala',
+        addressRegion: 'Kerala',
+        postalCode: '695141',
+        addressCountry: 'IN',
+      },
+      geo: listing.latitude && listing.longitude
+        ? { '@type': 'GeoCoordinates', latitude: listing.latitude, longitude: listing.longitude }
+        : { '@type': 'GeoCoordinates', latitude: 8.7379, longitude: 76.7163 },
+      brand: { '@type': 'Brand', name: 'Wayzza Verified' },
+      amenityFeature: amenityFeatureList,
+      offers: {
+        '@type': 'Offer',
+        priceCurrency: 'INR',
+        price: basePrice,
+        availability: 'https://schema.org/InStock',
+        url: canonicalUrl,
+        priceValidUntil,
+        description: 'Per night rate. Service fee and applicable taxes added at checkout.',
+      },
+      aggregateRating:
+        reviews.length > 0
+          ? {
+              '@type': 'AggregateRating',
+              ratingValue: avgRating,
+              reviewCount: reviews.length,
+              bestRating: '5',
+              worstRating: '1',
+            }
+          : undefined,
+    };
+  } else if (isBike) {
+    seoSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      '@id': `${canonicalUrl}#product`,
+      name: listing.title,
+      description:
+        listing.description ||
+        'Royal Enfield motorcycle available for daily rental in Varkala, Kerala. Helmet, insurance, and roadside assistance included.',
+      image: images.slice(0, 3),
+      sku: listing._id,
+      brand: {
+        '@type': 'Brand',
+        name:
+          listing.vehicleType?.toLowerCase().includes('enfield')
+            ? 'Royal Enfield'
+            : 'Wayzza Bikes',
+      },
+      additionalProperty: [
+        { '@type': 'PropertyValue', name: 'Vehicle Type', value: listing.vehicleType || 'Motorcycle' },
+        { '@type': 'PropertyValue', name: 'Rental Location', value: listing.location || 'Varkala, Kerala' },
+        { '@type': 'PropertyValue', name: 'Helmet Included', value: 'Yes' },
+        { '@type': 'PropertyValue', name: 'Insurance Included', value: 'Comprehensive' },
+        { '@type': 'PropertyValue', name: 'Minimum Rider Age', value: '21 years' },
+      ],
+      offers: {
+        '@type': 'Offer',
+        priceCurrency: 'INR',
+        price: basePrice,
+        availability: 'https://schema.org/InStock',
+        url: canonicalUrl,
+        priceValidUntil,
+        seller: { '@type': 'Organization', name: 'Wayzza', url: 'https://wayzza.live' },
+        description: 'Per day (24 hours) inclusive of helmet and comprehensive insurance.',
+      },
+      aggregateRating:
+        reviews.length > 0
+          ? {
+              '@type': 'AggregateRating',
+              ratingValue: avgRating,
+              reviewCount: reviews.length,
+              bestRating: '5',
+              worstRating: '1',
+            }
+          : undefined,
+    };
+  } else if (isCar) {
+    seoSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      '@id': `${canonicalUrl}#product`,
+      name: listing.title,
+      description:
+        listing.description ||
+        'Premium car available for chauffeur-driven or self-drive rental in Varkala, Kerala. Airport transfers from Trivandrum (TRV) available.',
+      image: images.slice(0, 3),
+      sku: listing._id,
+      brand: { '@type': 'Brand', name: listing.vehicleType || 'Wayzza Cars' },
+      additionalProperty: [
+        { '@type': 'PropertyValue', name: 'Vehicle Type', value: listing.vehicleType || 'Car' },
+        { '@type': 'PropertyValue', name: 'Rental Location', value: listing.location || 'Varkala, Kerala' },
+        { '@type': 'PropertyValue', name: 'Airport Transfer', value: 'Available from Trivandrum (TRV)' },
+        { '@type': 'PropertyValue', name: 'Chauffeur Option', value: 'Available' },
+      ],
+      offers: {
+        '@type': 'Offer',
+        priceCurrency: 'INR',
+        price: basePrice,
+        availability: 'https://schema.org/InStock',
+        url: canonicalUrl,
+        priceValidUntil,
+        seller: { '@type': 'Organization', name: 'Wayzza', url: 'https://wayzza.live' },
+        description: 'Per day rate. Fuel and driver charges may apply.',
+      },
+      aggregateRating:
+        reviews.length > 0
+          ? {
+              '@type': 'AggregateRating',
+              ratingValue: avgRating,
+              reviewCount: reviews.length,
+              bestRating: '5',
+              worstRating: '1',
+            }
+          : undefined,
+    };
+  } else {
+    seoSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      name: listing.title,
+      description: listing.description,
+      image: images.slice(0, 3),
+      url: canonicalUrl,
+      offers: {
+        '@type': 'Offer',
+        priceCurrency: 'INR',
+        price: basePrice,
+        availability: 'https://schema.org/InStock',
+        url: canonicalUrl,
+        priceValidUntil,
+      },
+      aggregateRating:
+        reviews.length > 0
+          ? { '@type': 'AggregateRating', ratingValue: avgRating, reviewCount: reviews.length }
+          : undefined,
+    };
+  }
 
   const seoBreadcrumb = [
     { name: 'Home', url: 'https://wayzza.live' },
