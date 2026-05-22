@@ -68,13 +68,34 @@ router.post("/register", async (req, res, next) => {
         const users = db.collection("users");
         const partners = db.collection("partners");
         const { email, password, businessName, phone, mainSector } = parsed.data;
+        const emailKey = email.toLowerCase().trim();
 
-        const exists = await users.findOne({ email });
-        if (exists) return res.status(400).json({ ok: false, message: "Email already registered" });
+        const exists = await users.findOne({ email: emailKey });
+        if (exists && (exists.role === "partner" || exists.role === "admin")) {
+            return res.status(400).json({ ok: false, message: "Email already registered" });
+        }
+
+        const partnerExists = await partners.findOne({ email: emailKey });
+        if (partnerExists) {
+            return res.status(400).json({ ok: false, message: "Email already registered" });
+        }
 
         const hash = await bcrypt.hash(password, BCRYPT_ROUNDS);
-        await users.insertOne({ email, password: hash, role: "partner", phone: phone || "", createdAt: new Date() });
-        await partners.insertOne({ email, businessName, mainSector, phone: phone || "", onboarded: false, createdAt: new Date() });
+
+        if (exists) {
+            await users.updateOne(
+                { email: emailKey },
+                { $set: { password: hash, role: "partner", phone: phone || "", updatedAt: new Date() } }
+            );
+        } else {
+            await users.insertOne({ email: emailKey, password: hash, role: "partner", phone: phone || "", createdAt: new Date() });
+        }
+
+        await partners.updateOne(
+            { email: emailKey },
+            { $set: { businessName, mainSector, phone: phone || "", onboarded: false, createdAt: new Date() } },
+            { upsert: true }
+        );
 
         res.json({ ok: true });
     } catch (err) { next(err); }
