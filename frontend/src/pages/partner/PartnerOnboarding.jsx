@@ -18,6 +18,7 @@ import {
   Sparkles,
   Globe,
   Star,
+  Navigation,
 } from 'lucide-react';
 import { useAuth } from '../../AuthContext.jsx';
 import { useToast } from '../../ToastContext.jsx';
@@ -174,6 +175,34 @@ export default function PartnerOnboarding() {
   const goToStep = (s) => {
     sessionStorage.setItem('partner_onboarding_step', String(s));
     setStep(s);
+  };
+
+  const [detectingLoc, setDetectingLoc] = useState(false);
+
+  const handleDetectLocation = () => {
+    if (!navigator.geolocation) {
+      showToast('Geolocation is not supported by your browser.', 'error');
+      return;
+    }
+    setDetectingLoc(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setListingLat(String(position.coords.latitude.toFixed(6)));
+        setListingLng(String(position.coords.longitude.toFixed(6)));
+        setDetectingLoc(false);
+        showToast('GPS coordinates fetched successfully!', 'success');
+      },
+      (error) => {
+        console.error(error);
+        setDetectingLoc(false);
+        let msg = 'Failed to detect location. Please type manually.';
+        if (error.code === error.PERMISSION_DENIED) {
+          msg = 'Location permission denied. Please grant permission or type manually.';
+        }
+        showToast(msg, 'error');
+      },
+      { enableHighAccuracy: true, timeout: 8000 }
+    );
   };
 
   // Save form fields to sessionStorage whenever they change
@@ -773,16 +802,31 @@ export default function PartnerOnboarding() {
 
                     {/* Coordinates grid */}
                     <div className="p-5 bg-white border border-slate-200 rounded-2xl space-y-4">
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 bg-slate-100 rounded-lg flex items-center justify-center">
-                          <MapPin size={12} className="text-slate-400" />
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 bg-slate-100 rounded-lg flex items-center justify-center">
+                            <MapPin size={12} className="text-slate-400" />
+                          </div>
+                          <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">
+                            GPS Coordinates{' '}
+                            <span className="text-slate-300 normal-case font-medium">
+                              (optional — for map pin)
+                            </span>
+                          </p>
                         </div>
-                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">
-                          GPS Coordinates{' '}
-                          <span className="text-slate-300 normal-case font-medium">
-                            (optional — for map pin)
-                          </span>
-                        </p>
+                        <button
+                          type="button"
+                          onClick={handleDetectLocation}
+                          disabled={detectingLoc}
+                          className="px-3 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 hover:text-emerald-800 disabled:opacity-50 text-[10px] font-black uppercase tracking-widest rounded-lg border border-emerald-200/50 flex items-center gap-1.5 transition-all"
+                        >
+                          {detectingLoc ? (
+                            <div className="w-3 h-3 border-2 border-emerald-600/20 border-t-emerald-600 rounded-full animate-spin" />
+                          ) : (
+                            <Navigation size={10} />
+                          )}
+                          <span>{detectingLoc ? 'Detecting...' : 'Detect GPS'}</span>
+                        </button>
                       </div>
                       <div className="grid grid-cols-2 gap-3">
                         <StyledInput
