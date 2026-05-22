@@ -13,21 +13,77 @@ export function withTimeout(promise, timeoutMs, errorMsg = "Operation timed out"
     ]);
 }
 
+const createResendHttpTransporter = (apiKey, defaultFrom) => {
+    return {
+        sendMail: async (mailOptions) => {
+            const { from, to, subject, html, text } = mailOptions;
+            
+            let fromEmail = from || defaultFrom;
+            if (fromEmail) {
+                const fromMatch = fromEmail.match(/<([^>]+)>/);
+                if (fromMatch && fromMatch[1]) {
+                    fromEmail = fromMatch[1];
+                } else {
+                    fromEmail = fromEmail.trim();
+                }
+            }
+            
+            const toArray = Array.isArray(to) ? to : [to];
+            
+            console.log(`[Resend HTTP] Sending email to ${toArray.join(", ")} via Resend REST API...`);
+            
+            const response = await fetch("https://api.resend.com/emails", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${apiKey.trim()}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    from: fromEmail || "onboarding@resend.dev",
+                    to: toArray,
+                    subject,
+                    html: html || text,
+                })
+            });
+            
+            const data = await response.json();
+            if (!response.ok) {
+                console.error("[Resend HTTP Error]:", data);
+                throw new Error(data.message || `Resend API returned status ${response.status}`);
+            }
+            
+            console.log(`[Resend HTTP Success] Message sent, ID: ${data.id}`);
+            return {
+                messageId: data.id,
+                response: "250 OK (Resend HTTP)"
+            };
+        }
+    };
+};
+
 if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
     const host = (process.env.SMTP_HOST || "smtp.resend.com").trim();
     const port = parseInt(process.env.SMTP_PORT || "465");
     const user = process.env.EMAIL_USER.trim();
     const pass = process.env.EMAIL_PASS.trim();
 
-    transporter = nodemailer.createTransport({
-        host,
-        port,
-        secure: port === 465,
-        auth: { user, pass },
-        connectionTimeout: 8000, // 8 seconds
-        greetingTimeout: 5000,   // 5 seconds
-        socketTimeout: 10000     // 10 seconds
-    });
+    const isResend = pass.startsWith("re_") || host.includes("resend");
+
+    if (isResend) {
+        console.log("✉️  Configured Resend HTTP Transporter (Bypassing SMTP port restrictions)");
+        transporter = createResendHttpTransporter(pass, process.env.SMTP_FROM || user);
+    } else {
+        console.log("✉️  Configured Nodemailer SMTP Transporter");
+        transporter = nodemailer.createTransport({
+            host,
+            port,
+            secure: port === 465,
+            auth: { user, pass },
+            connectionTimeout: 8000, // 8 seconds
+            greetingTimeout: 5000,   // 5 seconds
+            socketTimeout: 10000     // 10 seconds
+        });
+    }
 }
 
 export const getTransporter = async () => {
