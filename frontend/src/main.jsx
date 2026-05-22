@@ -11,6 +11,8 @@ import { ToastProvider } from './ToastContext.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
 import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
+
 
 // Initialize PostHog
 if (typeof window !== 'undefined') {
@@ -216,6 +218,7 @@ function Root() {
                 <ToastProvider>
                   <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
                     <AppContent />
+                    <SpeedInsights />
                   </GoogleOAuthProvider>
                 </ToastProvider>
               </CurrencyProvider>
