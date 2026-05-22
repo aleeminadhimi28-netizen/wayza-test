@@ -754,8 +754,6 @@ export default function PartnerOnboarding() {
                           'South Cliff Shore',
                           'Black Beach District',
                           'Edava Lakefront',
-                          'Kovalam Beach',
-                          'Alleppey',
                         ].map((h) => (
                           <button
                             key={h}
