@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ShieldCheck,
@@ -13,13 +13,20 @@ import {
 } from 'lucide-react';
 
 import { api } from '../../utils/api.js';
+import SEO from '../../components/SEO.jsx';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState('');
-  const navigate = useNavigate();
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   async function handleSubmit(e) {
     if (e) e.preventDefault();
@@ -33,20 +40,25 @@ export default function ForgotPassword() {
 
       const data = await api.forgotPassword(email);
 
+      if (!isMounted.current) return;
       if (data.ok) {
         setSent(true);
       } else {
         setError(data.message || "We couldn't process your request. Please try again later.");
       }
     } catch {
+      if (!isMounted.current) return;
       setError('Connection lost. Please check your network and try again.');
     }
 
-    setLoading(false);
+    if (isMounted.current) {
+      setLoading(false);
+    }
   }
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans flex flex-col md:flex-row overflow-hidden">
+      <SEO title="Reset Password — Wayzza" noindex={true} />
       {/* LEFT: REFINED BRANDING SIDEBAR */}
       <div className="hidden md:flex md:w-[45%] bg-white p-20 flex-col justify-between relative overflow-hidden border-r border-slate-200">
         <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.05),transparent)]" />
@@ -127,12 +139,12 @@ export default function ForgotPassword() {
                     . Please check your inbox.
                   </p>
                 </div>
-                <button
-                  onClick={() => navigate('/login')}
+                <Link
+                  to="/login"
                   className="w-full h-18 py-5 bg-slate-900 text-white rounded-3xl font-bold uppercase text-[11px] tracking-widest hover:bg-emerald-600 transition-all shadow-xl shadow-slate-900/10 flex items-center justify-center gap-3 active:scale-95"
                 >
                   Back to Login <ArrowRight size={18} />
-                </button>
+                </Link>
               </motion.div>
             ) : (
               <motion.div
@@ -195,7 +207,10 @@ export default function ForgotPassword() {
                     className="w-full h-18 py-5 bg-slate-900 text-white rounded-3xl font-bold uppercase text-[11px] tracking-widest transition-all hover:bg-emerald-600 shadow-xl shadow-slate-900/10 active:scale-95 flex items-center justify-center gap-3 disabled:opacity-50"
                   >
                     {loading ? (
-                      <div className="w-5 h-5 border-4 border-white/20 border-t-white rounded-full animate-spin" />
+                      <>
+                        <div className="w-5 h-5 border-4 border-white/20 border-t-white rounded-full animate-spin" />
+                        <span>Sending...</span>
+                      </>
                     ) : (
                       <>
                         <span>Send Reset Link</span>

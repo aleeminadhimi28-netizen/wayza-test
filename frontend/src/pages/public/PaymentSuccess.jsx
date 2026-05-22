@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
 import { CheckCircle, Home, Calendar, ShieldCheck, Loader2 } from 'lucide-react';
@@ -16,9 +16,11 @@ import SEO from '../../components/SEO.jsx';
 export default function PaymentSuccess() {
   const navigate = useNavigate();
   const [countdown, setCountdown] = useState(10);
+  const [isPaused, setIsPaused] = useState(false);
 
   // Auto-redirect to My Bookings after 10 seconds
   useEffect(() => {
+    if (isPaused) return;
     const timer = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
@@ -30,7 +32,7 @@ export default function PaymentSuccess() {
       });
     }, 1000);
     return () => clearInterval(timer);
-  }, [navigate]);
+  }, [navigate, isPaused]);
 
   return (
     <WayzzaLayout noPadding>
@@ -88,25 +90,37 @@ export default function PaymentSuccess() {
             transition={{ delay: 0.4 }}
             className="flex flex-col md:flex-row gap-4 w-full pt-4"
           >
-            <button
-              onClick={() => navigate('/my-bookings')}
+            <Link
+              to="/my-bookings"
               className="flex-1 h-14 bg-slate-900 text-white rounded-2xl font-bold text-sm uppercase tracking-widest hover:bg-emerald-600 transition-all active:scale-95 flex items-center justify-center gap-2"
             >
               <Calendar size={18} /> My Bookings
-            </button>
-            <button
-              onClick={() => navigate('/')}
+            </Link>
+            <Link
+              to="/"
               className="flex-1 h-14 bg-white border border-slate-200 text-slate-900 rounded-2xl font-bold text-sm uppercase tracking-widest hover:border-emerald-500 transition-all active:scale-95 flex items-center justify-center gap-2"
             >
               <Home size={18} /> Go Home
-            </button>
+            </Link>
           </motion.div>
 
           {/* Auto-redirect countdown */}
-          <p className="text-xs text-slate-400 font-medium flex items-center gap-1.5">
-            <Loader2 size={12} className="animate-spin" />
-            Redirecting to My Bookings in {countdown}s…
-          </p>
+          <div className="flex flex-col items-center gap-2 pt-2">
+            <p className="text-xs text-slate-400 font-medium flex items-center gap-1.5 justify-center">
+              <Loader2
+                size={12}
+                className={`animate-spin ${isPaused ? '[animation-play-state:paused]' : ''}`}
+              />
+              {isPaused ? 'Auto-redirect paused' : `Redirecting to My Bookings in ${countdown}s…`}
+            </p>
+            <button
+              type="button"
+              onClick={() => setIsPaused((p) => !p)}
+              className="text-[10px] text-emerald-600 hover:text-emerald-700 font-bold uppercase tracking-wider underline active:scale-95 transition-all"
+            >
+              {isPaused ? 'Resume Redirect' : 'Pause Redirect'}
+            </button>
+          </div>
 
           <p className="text-xs text-slate-400 font-medium pt-2">
             A confirmation email with all the details has been sent to your inbox.

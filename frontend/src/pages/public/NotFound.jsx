@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
 import { Map, ArrowLeft, Home, Compass } from 'lucide-react';
 import SEO from '../../components/SEO.jsx';
@@ -33,17 +33,18 @@ export default function NotFound() {
 
           <div className="pt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
+              type="button"
               onClick={() => navigate(-1)}
               className="w-full sm:w-auto px-8 h-14 rounded-2xl font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center justify-center gap-3"
             >
               <ArrowLeft size={18} /> Go Back
             </button>
-            <button
-              onClick={() => navigate('/')}
+            <Link
+              to="/"
               className="w-full sm:w-auto px-10 h-14 rounded-2xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-3"
             >
               <Home size={18} /> Back to Home
-            </button>
+            </Link>
           </div>
         </div>
       </div>

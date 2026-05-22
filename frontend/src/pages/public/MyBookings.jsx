@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
 import { useAuth } from '../../AuthContext.jsx';
@@ -71,6 +71,16 @@ const tabs = [
   { key: 'departed', label: 'Completed', icon: CheckCircle },
   { key: 'cancelled', label: 'Cancelled', icon: XCircle },
 ];
+
+function escapeHTML(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
 export default function MyBookings() {
   const navigate = useNavigate();
@@ -179,55 +189,56 @@ export default function MyBookings() {
     }
   }
 
-  function downloadInvoice(b) {
-    const isVehicle = b.category === 'bike' || b.category === 'car';
-    const isActivity = b.category === 'activity' || b.category === 'experience';
-    const gst =
-      b.gst !== undefined
-        ? b.gst
-        : isVehicle
-          ? 0
-          : Math.round((b.pricePerNight || 0) * (b.nights || 1) * 0.12);
-    const baseAmount = (b.pricePerNight || 0) * (b.nights || 1);
-    const serviceFee = b.serviceFee !== undefined ? b.serviceFee : 99;
-    const invoiceId = `WAY-${b._id?.slice(-8).toUpperCase() || 'XXXXXXXX'}`;
-    const invoiceDate = new Date(b.paidAt || b.createdAt).toLocaleDateString('en-IN', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric',
-    });
+  const downloadInvoice = useCallback(
+    (b) => {
+      const isVehicle = b.category === 'bike' || b.category === 'car';
+      const isActivity = b.category === 'activity' || b.category === 'experience';
+      const gst =
+        b.gst !== undefined
+          ? b.gst
+          : isVehicle
+            ? 0
+            : Math.round((b.pricePerNight || 0) * (b.nights || 1) * 0.12);
+      const baseAmount = (b.pricePerNight || 0) * (b.nights || 1);
+      const serviceFee = b.serviceFee !== undefined ? b.serviceFee : 99;
+      const invoiceId = `WAY-${b._id?.slice(-8).toUpperCase() || 'XXXXXXXX'}`;
+      const invoiceDate = new Date(b.paidAt || b.createdAt).toLocaleDateString('en-IN', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+      });
 
-    const checkInLabel = isVehicle ? 'Rental Start' : isActivity ? 'Start Date' : 'Check-In';
-    const checkOutLabel = isVehicle ? 'Rental End' : isActivity ? 'End Date' : 'Check-Out';
-    const durationUnit =
-      isVehicle || isActivity
-        ? b.nights === 1
-          ? 'Day'
-          : 'Days'
-        : b.nights === 1
-          ? 'Night'
-          : 'Nights';
-    const invoiceSub = isVehicle
-      ? 'Premium Rentals'
-      : isActivity
-        ? 'Premium Experiences'
-        : 'Premium Stays';
-    const descLabel = isVehicle ? 'Rental Fee' : isActivity ? 'Experience Fee' : 'Accommodation';
-    const durationUnitLower =
-      isVehicle || isActivity
-        ? b.nights === 1
-          ? 'day'
-          : 'days'
-        : b.nights === 1
-          ? 'night'
-          : 'nights';
-    const footerThankYou = isVehicle
-      ? 'Thank you for renting with Wayzza.'
-      : isActivity
-        ? 'Thank you for booking experiences with Wayzza.'
-        : 'Thank you for staying with Wayzza.';
+      const checkInLabel = isVehicle ? 'Rental Start' : isActivity ? 'Start Date' : 'Check-In';
+      const checkOutLabel = isVehicle ? 'Rental End' : isActivity ? 'End Date' : 'Check-Out';
+      const durationUnit =
+        isVehicle || isActivity
+          ? b.nights === 1
+            ? 'Day'
+            : 'Days'
+          : b.nights === 1
+            ? 'Night'
+            : 'Nights';
+      const invoiceSub = isVehicle
+        ? 'Premium Rentals'
+        : isActivity
+          ? 'Premium Experiences'
+          : 'Premium Stays';
+      const descLabel = isVehicle ? 'Rental Fee' : isActivity ? 'Experience Fee' : 'Accommodation';
+      const durationUnitLower =
+        isVehicle || isActivity
+          ? b.nights === 1
+            ? 'day'
+            : 'days'
+          : b.nights === 1
+            ? 'night'
+            : 'nights';
+      const footerThankYou = isVehicle
+        ? 'Thank you for renting with Wayzza.'
+        : isActivity
+          ? 'Thank you for booking experiences with Wayzza.'
+          : 'Thank you for staying with Wayzza.';
 
-    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Invoice ${invoiceId}</title><style>
+      const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Invoice ${invoiceId}</title><style>
             *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,sans-serif;}
             body{background:#f8fafc;padding:40px;color:#0f172a;}
             .card{background:#fff;border-radius:20px;padding:48px;max-width:680px;margin:0 auto;box-shadow:0 4px 40px rgba(0,0,0,0.06);}
@@ -258,15 +269,15 @@ export default function MyBookings() {
                 <div class="brand"><div class="brand-icon">W</div><div><div class="brand-name">Wayzza</div><div class="brand-sub">${invoiceSub}</div></div></div>
                 <div class="invoice-meta"><div class="invoice-id">INVOICE #${invoiceId}</div><div class="invoice-date">${invoiceDate}</div></div>
             </div>
-            <h2>${b.title}</h2>
+            <h2>${escapeHTML(b.title)}</h2>
             <p class="subtitle">Booking Confirmed &nbsp;•&nbsp; Paid via Wayzza Secure Checkout</p>
             <div class="details-grid">
-                <div class="detail-item"><div class="label">Guest</div><div class="value">${b.guestEmail}</div></div>
+                <div class="detail-item"><div class="label">Guest</div><div class="value">${escapeHTML(b.guestEmail)}</div></div>
                 <div class="detail-item"><div class="label">Booking ID</div><div class="value">${invoiceId}</div></div>
                 <div class="detail-item"><div class="label">${checkInLabel}</div><div class="value">${b.checkIn}</div></div>
                 <div class="detail-item"><div class="label">${checkOutLabel}</div><div class="value">${b.checkOut}</div></div>
                 <div class="detail-item"><div class="label">Duration</div><div class="value">${b.nights} ${durationUnit}</div></div>
-                ${b.variantName ? `<div class="detail-item"><div class="label">Room Type</div><div class="value">${b.variantName}</div></div>` : ''}
+                ${b.variantName ? `<div class="detail-item"><div class="label">Room Type</div><div class="value">${escapeHTML(b.variantName)}</div></div>` : ''}
             </div>
             <table>
                 <thead><tr><th>Description</th><th>Amount</th></tr></thead>
@@ -283,16 +294,18 @@ export default function MyBookings() {
                 <div class="footer-note">© ${new Date().getFullYear()} Wayzza Inc.</div>
             </div>
         </div></body></html>`;
-    // #29: Guard against popup blockers returning null
-    const w = window.open('', '_blank', 'width=780,height=900');
-    if (!w) {
-      showToast('Popup blocked. Please allow popups to download invoices.', 'error');
-      return;
-    }
-    w.document.write(html);
-    w.document.close();
-    setTimeout(() => w.print(), 500);
-  }
+      // #29: Guard against popup blockers returning null
+      const w = window.open('', '_blank', 'width=780,height=900');
+      if (!w) {
+        showToast('Popup blocked. Please allow popups to download invoices.', 'error');
+        return;
+      }
+      w.document.write(html);
+      w.document.close();
+      setTimeout(() => w.print(), 500);
+    },
+    [showToast]
+  );
 
   if (loading)
     return (
@@ -572,6 +585,7 @@ export default function MyBookings() {
               <button
                 onClick={() => setReviewModal(null)}
                 className="absolute top-6 right-6 text-slate-400 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 p-2 rounded-full transition-all"
+                aria-label="Close review modal"
               >
                 <XCircle size={20} />
               </button>
@@ -595,6 +609,7 @@ export default function MyBookings() {
                       key={s}
                       onClick={() => setRating(s)}
                       className="p-1 transition-transform hover:scale-110"
+                      aria-label={`Rate ${s} star${s === 1 ? '' : 's'}`}
                     >
                       <Star
                         size={32}

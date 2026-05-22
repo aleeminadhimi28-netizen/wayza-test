@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
 import { api } from '../../utils/api.js';
 import SEO from '../../components/SEO.jsx';
 import { Home, Bike, Sparkles, ArrowRight, CheckCircle2, Package } from 'lucide-react';
 
 function PackageCard({ pkg, index }) {
-  const navigate = useNavigate();
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -78,26 +76,28 @@ function PackageCard({ pkg, index }) {
               Package from
             </p>
             <p className="text-2xl font-black text-slate-950">
-              ₹{Number(pkg.price).toLocaleString('en-IN')}
+              ₹
+              {pkg.price !== undefined && !isNaN(Number(pkg.price))
+                ? Number(pkg.price).toLocaleString('en-IN')
+                : '0'}
               <span className="text-sm font-semibold text-slate-400 ml-1">/ stay</span>
             </p>
           </div>
-          <button
-            onClick={() => {
-              if (pkg.hotelId) {
-                // Navigate directly to the linked listing's booking flow
-                navigate(`/listing/${pkg.hotelId}`, {
-                  state: { fromPackage: { id: pkg._id, name: pkg.name, price: pkg.price } },
-                });
-              } else {
-                // Fallback: search listings by package name
-                navigate(`/listings?location=${encodeURIComponent(pkg.name)}`);
-              }
-            }}
+          <Link
+            to={
+              pkg.hotelId
+                ? `/listing/${pkg.hotelId}`
+                : `/listings?location=${encodeURIComponent(pkg.name)}`
+            }
+            state={
+              pkg.hotelId
+                ? { fromPackage: { id: pkg._id, name: pkg.name, price: pkg.price } }
+                : undefined
+            }
             className="flex items-center gap-2 bg-slate-950 text-white px-5 py-3 rounded-2xl text-xs font-black uppercase tracking-[0.25em] hover:bg-emerald-600 transition-all duration-300 active:scale-95"
           >
             View Stay <ArrowRight size={13} />
-          </button>
+          </Link>
         </div>
       </div>
     </motion.div>
@@ -124,9 +124,11 @@ export default function Packages() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    let active = true;
     api
       .getPackages()
       .then((data) => {
+        if (!active) return;
         if (data.ok && Array.isArray(data.rows)) {
           setPackages(data.rows);
         } else {
@@ -135,9 +137,13 @@ export default function Packages() {
         setLoading(false);
       })
       .catch(() => {
+        if (!active) return;
         setError('Network error. Please try again.');
         setLoading(false);
       });
+    return () => {
+      active = false;
+    };
   }, []);
 
   return (
