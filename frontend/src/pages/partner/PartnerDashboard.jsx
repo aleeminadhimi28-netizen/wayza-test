@@ -303,10 +303,19 @@ export default function PartnerDashboard() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-bold text-amber-200 text-sm">
-                {listings.filter((l) => !l.approved).length} {listings.filter((l) => !l.approved).length === 1 ? (mainSector === 'vehicles' ? 'vehicle' : 'listing') : (mainSector === 'vehicles' ? 'vehicles' : 'listings')} pending admin approval
+                {listings.filter((l) => !l.approved).length}{' '}
+                {listings.filter((l) => !l.approved).length === 1
+                  ? mainSector === 'vehicles'
+                    ? 'vehicle'
+                    : 'listing'
+                  : mainSector === 'vehicles'
+                    ? 'vehicles'
+                    : 'listings'}{' '}
+                pending admin approval
               </p>
               <p className="text-white/40 text-xs mt-0.5">
-                {mainSector === 'vehicles' ? 'Vehicles' : 'Properties'} must be approved before guests can book them.
+                {mainSector === 'vehicles' ? 'Vehicles' : 'Properties'} must be approved before
+                guests can book them.
                 {listings
                   .filter((l) => !l.approved)
                   .slice(0, 2)
@@ -343,7 +352,8 @@ export default function PartnerDashboard() {
               Welcome back, {partnerProfile?.businessName || user?.email?.split('@')?.[0]}
             </h1>
             <p className="text-white/30 text-sm font-medium">
-              Here's what's happening with your {mainSector === 'vehicles' ? 'vehicles' : 'properties'} today.
+              Here's what's happening with your{' '}
+              {mainSector === 'vehicles' ? 'vehicles' : 'properties'} today.
             </p>
           </div>
 
@@ -641,9 +651,9 @@ export default function PartnerDashboard() {
                                 : 'Current price'}
                           </span>
                           <span className={isDirty ? 'text-emerald-400' : 'text-white/30'}>
-                             {isDirty
-                               ? `Was ₹${(lst.price || 0).toLocaleString()}`
-                               : `₹${(lst.price || 0).toLocaleString()}/${mainSector === 'vehicles' ? 'day' : 'night'}`}
+                            {isDirty
+                              ? `Was ₹${(lst.price || 0).toLocaleString()}`
+                              : `₹${(lst.price || 0).toLocaleString()}/${mainSector === 'vehicles' ? 'day' : 'night'}`}
                           </span>
                         </div>
                       </div>
@@ -739,7 +749,9 @@ export default function PartnerDashboard() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-white/[0.01] border-b border-white/[0.05] text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">
-                  <th className="px-6 py-4">{mainSector === 'vehicles' ? 'Vehicle' : 'Property'} & Guest</th>
+                  <th className="px-6 py-4">
+                    {mainSector === 'vehicles' ? 'Vehicle' : 'Property'} & Guest
+                  </th>
                   <th className="px-6 py-4">Dates</th>
                   <th className="px-6 py-4">Status</th>
                   <th className="px-6 py-4 text-right">Payout</th>
@@ -761,7 +773,10 @@ export default function PartnerDashboard() {
                         </div>
                         <div>
                           <p className="font-bold text-white text-sm truncate max-w-[200px]">
-                            {b.title || (mainSector === 'vehicles' ? 'Untitled Vehicle' : 'Untitled Property')}
+                            {b.title ||
+                              (mainSector === 'vehicles'
+                                ? 'Untitled Vehicle'
+                                : 'Untitled Property')}
                           </p>
                           <p className="text-xs text-white/30 font-medium">
                             {b.guestEmail?.split('@')?.[0]}

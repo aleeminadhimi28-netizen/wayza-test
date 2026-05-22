@@ -307,11 +307,21 @@ export default function PartnerOnboarding() {
       showToast('Base rate must be a valid positive number.', 'error');
       return;
     }
-    if (!listingLat || isNaN(Number(listingLat)) || Number(listingLat) < -90 || Number(listingLat) > 90) {
+    if (
+      !listingLat ||
+      isNaN(Number(listingLat)) ||
+      Number(listingLat) < -90 ||
+      Number(listingLat) > 90
+    ) {
       showToast('Please provide a valid Latitude between -90 and 90.', 'error');
       return;
     }
-    if (!listingLng || isNaN(Number(listingLng)) || Number(listingLng) < -180 || Number(listingLng) > 180) {
+    if (
+      !listingLng ||
+      isNaN(Number(listingLng)) ||
+      Number(listingLng) < -180 ||
+      Number(listingLng) > 180
+    ) {
       showToast('Please provide a valid Longitude between -180 and 180.', 'error');
       return;
     }
@@ -772,25 +782,22 @@ export default function PartnerOnboarding() {
                         Quick Select — Popular Hubs
                       </label>
                       <div className="flex flex-wrap gap-2">
-                        {[
-                          'Kappil',
-                          'Sree Janardhanapuram',
-                          'North Cliff',
-                          'South Cliff',
-                        ].map((h) => (
-                          <button
-                            key={h}
-                            type="button"
-                            onClick={() => setLocation(h)}
-                            className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${
-                              location === h
-                                ? 'bg-emerald-600 text-white shadow-md'
-                                : 'bg-white border border-slate-200 text-slate-600 hover:border-emerald-300 hover:text-emerald-600'
-                            }`}
-                          >
-                            <Globe size={11} /> {h}
-                          </button>
-                        ))}
+                        {['Kappil', 'Sree Janardhanapuram', 'North Cliff', 'South Cliff'].map(
+                          (h) => (
+                            <button
+                              key={h}
+                              type="button"
+                              onClick={() => setLocation(h)}
+                              className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                                location === h
+                                  ? 'bg-emerald-600 text-white shadow-md'
+                                  : 'bg-white border border-slate-200 text-slate-600 hover:border-emerald-300 hover:text-emerald-600'
+                              }`}
+                            >
+                              <Globe size={11} /> {h}
+                            </button>
+                          )
+                        )}
                       </div>
                     </div>
 
@@ -868,7 +875,10 @@ export default function PartnerOnboarding() {
                           Number(listingLng) < -180 ||
                           Number(listingLng) > 180
                         ) {
-                          showToast('Please provide a valid Longitude between -180 and 180.', 'error');
+                          showToast(
+                            'Please provide a valid Longitude between -180 and 180.',
+                            'error'
+                          );
                           return;
                         }
                         goToStep(3);

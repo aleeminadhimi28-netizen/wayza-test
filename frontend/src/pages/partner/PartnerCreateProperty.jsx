@@ -14,8 +14,6 @@ import {
   ArrowRight,
   CheckCircle,
   Crosshair,
-  Loader2,
-  Check,
   Car,
 } from 'lucide-react';
 
@@ -41,7 +39,9 @@ export default function PartnerCreateProperty() {
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
   const [category, setCategory] = useState(() => {
-    return (sessionStorage.getItem('partner_main_sector') || 'stays') === 'vehicles' ? 'car' : 'hotel';
+    return (sessionStorage.getItem('partner_main_sector') || 'stays') === 'vehicles'
+      ? 'car'
+      : 'hotel';
   });
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
@@ -152,7 +152,12 @@ export default function PartnerCreateProperty() {
     if (!latitude || isNaN(Number(latitude)) || Number(latitude) < -90 || Number(latitude) > 90) {
       return showToast('Please enter a valid Latitude between -90 and 90.', 'warning');
     }
-    if (!longitude || isNaN(Number(longitude)) || Number(longitude) < -180 || Number(longitude) > 180) {
+    if (
+      !longitude ||
+      isNaN(Number(longitude)) ||
+      Number(longitude) < -180 ||
+      Number(longitude) > 180
+    ) {
       return showToast('Please enter a valid Longitude between -180 and 180.', 'warning');
     }
 
@@ -242,7 +247,10 @@ export default function PartnerCreateProperty() {
         );
         navigate(`/partner/property/${data.id}`);
       } else {
-        showToast(data.message || `Failed to create ${isVehicle ? 'vehicle' : 'property'}.`, 'error');
+        showToast(
+          data.message || `Failed to create ${isVehicle ? 'vehicle' : 'property'}.`,
+          'error'
+        );
       }
     } catch (error) {
       console.error('Listing error:', error);
@@ -340,7 +348,9 @@ export default function PartnerCreateProperty() {
                     <input
                       required
                       type="text"
-                      placeholder={isVehicle ? "e.g. Varkala Cliff, Kerala" : "e.g. Kovalam, Kerala"}
+                      placeholder={
+                        isVehicle ? 'e.g. Varkala Cliff, Kerala' : 'e.g. Kovalam, Kerala'
+                      }
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
                       className="h-11 w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-4 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition-all"
@@ -375,7 +385,9 @@ export default function PartnerCreateProperty() {
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Latitude *</label>
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        Latitude *
+                      </label>
                       <input
                         required
                         type="number"
@@ -387,7 +399,9 @@ export default function PartnerCreateProperty() {
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Longitude *</label>
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        Longitude *
+                      </label>
                       <input
                         required
                         type="number"

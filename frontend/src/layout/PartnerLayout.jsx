@@ -55,7 +55,8 @@ export default function PartnerLayout() {
 
   useEffect(() => {
     if (user?.role === 'partner') {
-      api.partnerStatus()
+      api
+        .partnerStatus()
         .then((res) => {
           if (res.mainSector) {
             setMainSector(res.mainSector);

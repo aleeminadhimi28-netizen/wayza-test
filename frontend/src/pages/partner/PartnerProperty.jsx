@@ -214,11 +214,19 @@ export default function PartnerProperty() {
 
       if (editIndex === null) {
         const data = await api.addVariant(id, payload);
-        if (data.ok) showToast(isVehicle ? 'Unit added successfully.' : 'Variant added successfully.', 'success');
+        if (data.ok)
+          showToast(
+            isVehicle ? 'Unit added successfully.' : 'Variant added successfully.',
+            'success'
+          );
         else showToast(isVehicle ? 'Failed to add unit.' : 'Failed to add variant.', 'error');
       } else {
         const data = await api.updateVariant(id, editIndex, payload);
-        if (data.ok) showToast(isVehicle ? 'Unit updated successfully.' : 'Variant updated successfully.', 'success');
+        if (data.ok)
+          showToast(
+            isVehicle ? 'Unit updated successfully.' : 'Variant updated successfully.',
+            'success'
+          );
         else showToast(isVehicle ? 'Failed to update unit.' : 'Failed to update variant.', 'error');
       }
 
@@ -396,9 +404,9 @@ export default function PartnerProperty() {
             <div>
               <h3 className="font-bold text-sm text-amber-900">Pending Admin Approval</h3>
               <p className="text-xs text-amber-700 mt-0.5">
-                This {isVehicle ? 'vehicle' : 'property'} is awaiting review by the Wayzza team. It will not appear in public
-                listings until approved. You can still add variants and configure details while you
-                wait.
+                This {isVehicle ? 'vehicle' : 'property'} is awaiting review by the Wayzza team. It
+                will not appear in public listings until approved. You can still add variants and
+                configure details while you wait.
               </p>
             </div>
           </div>
@@ -408,13 +416,15 @@ export default function PartnerProperty() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-emerald-600 font-bold text-xs uppercase tracking-wide">
-              {isVehicle ? <Car size={14} /> : <Settings2 size={14} />} {isVehicle ? 'Vehicle' : 'Property'} Configuration
+              {isVehicle ? <Car size={14} /> : <Settings2 size={14} />}{' '}
+              {isVehicle ? 'Vehicle' : 'Property'} Configuration
             </div>
             <h1 className="text-3xl font-bold text-slate-900">
               {listing.title} <span className="text-emerald-500">Variants</span>
             </h1>
             <p className="text-slate-500 text-sm">
-              Manage variants, options, or pricing tiers for this {isVehicle ? 'vehicle' : 'property'}.
+              Manage variants, options, or pricing tiers for this{' '}
+              {isVehicle ? 'vehicle' : 'property'}.
             </p>
           </div>
 
@@ -992,7 +1002,9 @@ export default function PartnerProperty() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-700 block">{isVehicle ? 'Vehicle' : 'Room'} Amenities</label>
+                <label className="text-xs font-semibold text-slate-700 block">
+                  {isVehicle ? 'Vehicle' : 'Room'} Amenities
+                </label>
                 <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto p-2 bg-slate-50 border border-slate-200 rounded-lg">
                   {ALL_AMENITIES.map((a) => {
                     const isSelected = variantAmenities.includes(a.label);
@@ -1117,7 +1129,9 @@ export default function PartnerProperty() {
                 <Database className="text-slate-300 mb-4" size={48} />
                 <h3 className="text-xl font-bold text-slate-900 mb-2">No Variants found</h3>
                 <p className="text-sm text-slate-500 max-w-sm">
-                  You haven't added any specific {isVehicle ? 'vehicles, tiers, or options' : 'rooms, tiers, or options'}. Add your first {isVehicle ? 'unit' : 'variant'} using the panel on the left.
+                  You haven't added any specific{' '}
+                  {isVehicle ? 'vehicles, tiers, or options' : 'rooms, tiers, or options'}. Add your
+                  first {isVehicle ? 'unit' : 'variant'} using the panel on the left.
                 </p>
               </div>
             ) : (
@@ -1242,8 +1256,12 @@ export default function PartnerProperty() {
           isOpen={confirmModal.isOpen}
           onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
           onConfirm={confirmModal.onConfirm}
-          title={isVehicle ? "Delete Unit" : "Delete Variant"}
-          message={isVehicle ? "Are you sure you want to delete this unit? This action cannot be undone." : "Are you sure you want to delete this variant? This action cannot be undone."}
+          title={isVehicle ? 'Delete Unit' : 'Delete Variant'}
+          message={
+            isVehicle
+              ? 'Are you sure you want to delete this unit? This action cannot be undone.'
+              : 'Are you sure you want to delete this variant? This action cannot be undone.'
+          }
           confirmText="Delete"
           confirmVariant="rose"
         />

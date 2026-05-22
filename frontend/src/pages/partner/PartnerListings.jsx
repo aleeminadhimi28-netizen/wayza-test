@@ -36,7 +36,8 @@ export default function PartnerListings() {
   });
 
   useEffect(() => {
-    api.partnerStatus()
+    api
+      .partnerStatus()
       .then((res) => {
         if (res.mainSector) {
           setMainSector(res.mainSector);
@@ -54,7 +55,10 @@ export default function PartnerListings() {
       const data = await api.getOwnerListings(user.email);
       setListings(Array.isArray(data) ? data : []);
     } catch {
-      showToast(`Failed to load ${mainSector === 'vehicles' ? 'vehicles' : 'properties'}. Please refresh.`, 'error');
+      showToast(
+        `Failed to load ${mainSector === 'vehicles' ? 'vehicles' : 'properties'}. Please refresh.`,
+        'error'
+      );
     }
     setLoading(false);
   }, [user?.email, showToast, mainSector]);
@@ -68,10 +72,16 @@ export default function PartnerListings() {
     try {
       const data = await api.deleteListing(id);
       if (data.ok) {
-        showToast(`${mainSector === 'vehicles' ? 'Vehicle' : 'Property'} deleted successfully.`, 'success');
+        showToast(
+          `${mainSector === 'vehicles' ? 'Vehicle' : 'Property'} deleted successfully.`,
+          'success'
+        );
         setListings((prev) => prev.filter((l) => l._id !== id));
       } else {
-        showToast(`Unable to delete ${mainSector === 'vehicles' ? 'vehicle' : 'property'}.`, 'error');
+        showToast(
+          `Unable to delete ${mainSector === 'vehicles' ? 'vehicle' : 'property'}.`,
+          'error'
+        );
       }
     } catch {
       showToast('Connection error.', 'error');
@@ -112,12 +122,20 @@ export default function PartnerListings() {
               <Sparkles size={12} /> {mainSector === 'vehicles' ? 'My Inventory' : 'My Properties'}
             </div>
             <h1 className="text-3xl font-black text-white uppercase tracking-tight">
-              {mainSector === 'vehicles' ? 'Vehicle' : 'Property'} <span className="text-emerald-400">Portfolio</span>
+              {mainSector === 'vehicles' ? 'Vehicle' : 'Property'}{' '}
+              <span className="text-emerald-400">Portfolio</span>
             </h1>
             <p className="text-white/30 text-sm font-medium">
               You are managing{' '}
               <span className="font-bold text-white">
-                {listings.length} {listings.length === 1 ? (mainSector === 'vehicles' ? 'vehicle' : 'property') : (mainSector === 'vehicles' ? 'vehicles' : 'properties')}
+                {listings.length}{' '}
+                {listings.length === 1
+                  ? mainSector === 'vehicles'
+                    ? 'vehicle'
+                    : 'property'
+                  : mainSector === 'vehicles'
+                    ? 'vehicles'
+                    : 'properties'}
               </span>{' '}
               on Wayzza.
             </p>
@@ -231,7 +249,8 @@ export default function PartnerListings() {
                           </p>
                           {listing.variants?.length > 0 && (
                             <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-wide mt-0.5">
-                              {listing.variants.length} {mainSector === 'vehicles' ? 'variant' : 'room type'}
+                              {listing.variants.length}{' '}
+                              {mainSector === 'vehicles' ? 'variant' : 'room type'}
                               {listing.variants.length > 1 ? 's' : ''}
                             </p>
                           )}
