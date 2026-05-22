@@ -15,6 +15,7 @@ import {
   ChevronRight,
   AlertCircle,
   Sparkles,
+  Car,
 } from 'lucide-react';
 
 import { api } from '../../utils/api.js';
@@ -30,6 +31,22 @@ export default function PartnerListings() {
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(null);
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, onConfirm: () => {} });
+  const [mainSector, setMainSector] = useState(() => {
+    return sessionStorage.getItem('partner_main_sector') || 'stays';
+  });
+
+  useEffect(() => {
+    api.partnerStatus()
+      .then((res) => {
+        if (res.mainSector) {
+          setMainSector(res.mainSector);
+          sessionStorage.setItem('partner_main_sector', res.mainSector);
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to fetch partner status in listings:', err);
+      });
+  }, []);
 
   const load = useCallback(async () => {
     if (!user?.email) return;
@@ -37,10 +54,10 @@ export default function PartnerListings() {
       const data = await api.getOwnerListings(user.email);
       setListings(Array.isArray(data) ? data : []);
     } catch {
-      showToast('Failed to load properties. Please refresh.', 'error');
+      showToast(`Failed to load ${mainSector === 'vehicles' ? 'vehicles' : 'properties'}. Please refresh.`, 'error');
     }
     setLoading(false);
-  }, [user?.email, showToast]);
+  }, [user?.email, showToast, mainSector]);
 
   useEffect(() => {
     load();
@@ -51,10 +68,10 @@ export default function PartnerListings() {
     try {
       const data = await api.deleteListing(id);
       if (data.ok) {
-        showToast('Property deleted successfully.', 'success');
+        showToast(`${mainSector === 'vehicles' ? 'Vehicle' : 'Property'} deleted successfully.`, 'success');
         setListings((prev) => prev.filter((l) => l._id !== id));
       } else {
-        showToast('Unable to delete property.', 'error');
+        showToast(`Unable to delete ${mainSector === 'vehicles' ? 'vehicle' : 'property'}.`, 'error');
       }
     } catch {
       showToast('Connection error.', 'error');
@@ -74,7 +91,7 @@ export default function PartnerListings() {
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 bg-[#050a08]">
         <div className="w-10 h-10 border-2 border-white/10 border-t-emerald-500 rounded-full animate-spin" />
         <p className="text-sm font-bold text-white/30 uppercase tracking-widest">
-          Loading your properties...
+          Loading your {mainSector === 'vehicles' ? 'vehicles' : 'properties'}...
         </p>
       </div>
     );
@@ -92,15 +109,15 @@ export default function PartnerListings() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white/[0.03] border border-white/[0.08] p-8 rounded-3xl backdrop-blur-xl">
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-emerald-400 font-black text-[10px] uppercase tracking-[0.4em]">
-              <Sparkles size={12} /> My Properties
+              <Sparkles size={12} /> {mainSector === 'vehicles' ? 'My Inventory' : 'My Properties'}
             </div>
             <h1 className="text-3xl font-black text-white uppercase tracking-tight">
-              Property <span className="text-emerald-400">Portfolio</span>
+              {mainSector === 'vehicles' ? 'Vehicle' : 'Property'} <span className="text-emerald-400">Portfolio</span>
             </h1>
             <p className="text-white/30 text-sm font-medium">
               You are managing{' '}
               <span className="font-bold text-white">
-                {listings.length} {listings.length === 1 ? 'property' : 'properties'}
+                {listings.length} {listings.length === 1 ? (mainSector === 'vehicles' ? 'vehicle' : 'property') : (mainSector === 'vehicles' ? 'vehicles' : 'properties')}
               </span>{' '}
               on Wayzza.
             </p>
@@ -110,7 +127,7 @@ export default function PartnerListings() {
             className="h-11 px-6 bg-emerald-500 text-[#050a08] rounded-xl font-bold text-[11px] uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/10 active:scale-95 whitespace-nowrap"
           >
             <Plus size={16} strokeWidth={2.5} />
-            <span>Add New Property</span>
+            <span>{mainSector === 'vehicles' ? 'Add New Vehicle' : 'Add New Property'}</span>
           </button>
         </div>
 
@@ -118,14 +135,16 @@ export default function PartnerListings() {
         {listings.length === 0 ? (
           <div className="bg-white/[0.02] border border-dashed border-white/[0.08] rounded-3xl py-24 text-center flex flex-col items-center gap-6 backdrop-blur-xl">
             <div className="w-16 h-16 bg-white/[0.05] rounded-2xl flex items-center justify-center text-white/20 border border-white/[0.05]">
-              <Home size={32} />
+              {mainSector === 'vehicles' ? <Car size={32} /> : <Home size={32} />}
             </div>
             <div className="space-y-2">
               <h2 className="text-xl font-black text-white uppercase tracking-tight">
-                No properties yet
+                {mainSector === 'vehicles' ? 'No vehicles yet' : 'No properties yet'}
               </h2>
               <p className="text-white/30 text-xs font-medium max-w-sm mx-auto">
-                Add your first property to start receiving bookings on Wayzza.
+                {mainSector === 'vehicles'
+                  ? 'Add your first vehicle to start receiving bookings on Wayzza.'
+                  : 'Add your first property to start receiving bookings on Wayzza.'}
               </p>
             </div>
             <button
@@ -212,7 +231,7 @@ export default function PartnerListings() {
                           </p>
                           {listing.variants?.length > 0 && (
                             <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-wide mt-0.5">
-                              {listing.variants.length} room type
+                              {listing.variants.length} {mainSector === 'vehicles' ? 'variant' : 'room type'}
                               {listing.variants.length > 1 ? 's' : ''}
                             </p>
                           )}
@@ -257,9 +276,13 @@ export default function PartnerListings() {
           isOpen={confirmModal.isOpen}
           onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
           onConfirm={confirmModal.onConfirm}
-          title="Delete Property"
-          message="Are you sure you want to delete this property? This action cannot be undone and all associated room variants will be removed."
-          confirmText="Delete Portfolio Item"
+          title={mainSector === 'vehicles' ? 'Delete Vehicle' : 'Delete Property'}
+          message={
+            mainSector === 'vehicles'
+              ? 'Are you sure you want to delete this vehicle? This action cannot be undone and all associated variants will be removed.'
+              : 'Are you sure you want to delete this property? This action cannot be undone and all associated room variants will be removed.'
+          }
+          confirmText={mainSector === 'vehicles' ? 'Delete Vehicle' : 'Delete Portfolio Item'}
           confirmVariant="rose"
         />
       </div>

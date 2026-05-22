@@ -16,6 +16,7 @@ import {
   Crosshair,
   Loader2,
   Check,
+  Car,
 } from 'lucide-react';
 
 import { api } from '../../utils/api.js';
@@ -33,9 +34,15 @@ export default function PartnerCreateProperty() {
   const { user } = useAuth();
   const { showToast } = useToast();
 
+  const [mainSector] = useState(() => {
+    return sessionStorage.getItem('partner_main_sector') || 'stays';
+  });
+
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
-  const [category, setCategory] = useState('hotel');
+  const [category, setCategory] = useState(() => {
+    return (sessionStorage.getItem('partner_main_sector') || 'stays') === 'vehicles' ? 'car' : 'hotel';
+  });
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
   const [walkthroughVideo, setWalkthroughVideo] = useState('');
@@ -235,7 +242,7 @@ export default function PartnerCreateProperty() {
         );
         navigate(`/partner/property/${data.id}`);
       } else {
-        showToast(data.message || 'Failed to create property.', 'error');
+        showToast(data.message || `Failed to create ${isVehicle ? 'vehicle' : 'property'}.`, 'error');
       }
     } catch (error) {
       console.error('Listing error:', error);
@@ -295,10 +302,17 @@ export default function PartnerCreateProperty() {
                     <span className="text-rose-400">*</span>
                   </label>
                   <div className="relative">
-                    <Building
-                      className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                      size={16}
-                    />
+                    {isVehicle ? (
+                      <Car
+                        className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                        size={16}
+                      />
+                    ) : (
+                      <Building
+                        className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                        size={16}
+                      />
+                    )}
                     <input
                       required
                       type="text"

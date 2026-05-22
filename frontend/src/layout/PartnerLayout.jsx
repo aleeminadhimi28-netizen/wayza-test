@@ -21,9 +21,11 @@ import {
   Menu,
   DollarSign,
   Sparkles,
+  Car,
 } from 'lucide-react';
 import { useNotifications } from '../hooks/useNotifications.jsx';
 import { NotificationDropdown } from '../components/ui/NotificationDropdown.jsx';
+import { api } from '../utils/api.js';
 
 const NAV = [
   { to: '/partner', label: 'Dashboard', icon: LayoutDashboard, end: true, detail: 'Overview' },
@@ -47,6 +49,25 @@ export default function PartnerLayout() {
   const { notifs, showNotifs, setShowNotifs, openNotifs } = useNotifications(user);
   const notifRef = useRef(null);
 
+  const [mainSector, setMainSector] = useState(() => {
+    return sessionStorage.getItem('partner_main_sector') || 'stays';
+  });
+
+  useEffect(() => {
+    if (user?.role === 'partner') {
+      api.partnerStatus()
+        .then((res) => {
+          if (res.mainSector) {
+            setMainSector(res.mainSector);
+            sessionStorage.setItem('partner_main_sector', res.mainSector);
+          }
+        })
+        .catch((err) => {
+          console.error('Failed to fetch partner status in layout:', err);
+        });
+    }
+  }, [user]);
+
   // Close mobile menu on route change
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -68,8 +89,20 @@ export default function PartnerLayout() {
     navigate('/');
   }
 
+  const navItems = NAV.map((item) => {
+    if (item.to === '/partner/properties' && mainSector === 'vehicles') {
+      return {
+        ...item,
+        label: 'My Inventory',
+        icon: Car,
+        detail: 'Vehicle Inventory',
+      };
+    }
+    return item;
+  });
+
   const unreadCount = notifs.filter((n) => !n.read).length;
-  const currentPage = NAV.find((n) => n.to === location.pathname);
+  const currentPage = navItems.find((n) => n.to === location.pathname);
 
   return (
     <div className="flex h-screen bg-[#050a08] font-sans text-white selection:bg-emerald-900/50 selection:text-emerald-200 overflow-hidden">
@@ -143,7 +176,7 @@ export default function PartnerLayout() {
               Management
             </span>
           )}
-          {NAV.map((item) => (
+          {navItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}

@@ -18,6 +18,7 @@ import {
   Cpu,
   Sparkles,
   History,
+  Car,
 } from 'lucide-react';
 import { useToast } from '../../ToastContext.jsx';
 
@@ -213,12 +214,12 @@ export default function PartnerProperty() {
 
       if (editIndex === null) {
         const data = await api.addVariant(id, payload);
-        if (data.ok) showToast('Variant added successfully.', 'success');
-        else showToast('Failed to add variant.', 'error');
+        if (data.ok) showToast(isVehicle ? 'Unit added successfully.' : 'Variant added successfully.', 'success');
+        else showToast(isVehicle ? 'Failed to add unit.' : 'Failed to add variant.', 'error');
       } else {
         const data = await api.updateVariant(id, editIndex, payload);
-        if (data.ok) showToast('Variant updated successfully.', 'success');
-        else showToast('Failed to update variant.', 'error');
+        if (data.ok) showToast(isVehicle ? 'Unit updated successfully.' : 'Variant updated successfully.', 'success');
+        else showToast(isVehicle ? 'Failed to update unit.' : 'Failed to update variant.', 'error');
       }
 
       resetForm();
@@ -270,10 +271,10 @@ export default function PartnerProperty() {
     try {
       const data = await api.deleteVariant(id, i);
       if (data.ok) {
-        showToast('Variant removed.', 'success');
+        showToast(isVehicle ? 'Unit removed.' : 'Variant removed.', 'success');
         load();
       } else {
-        showToast('Failed to delete variant.', 'error');
+        showToast(isVehicle ? 'Failed to delete unit.' : 'Failed to delete variant.', 'error');
       }
     } catch {
       showToast('Connection error. Please try again.', 'error');
@@ -353,6 +354,9 @@ export default function PartnerProperty() {
     setMainLoading(false);
   }
 
+  const cachedSector = sessionStorage.getItem('partner_main_sector');
+  const isSectorVehicle = cachedSector === 'vehicles';
+
   // FIX #101: Show error state instead of infinite spinner when listing fails to load
   if (!listing)
     return (
@@ -360,7 +364,7 @@ export default function PartnerProperty() {
         {loadError ? (
           <>
             <p className="text-sm font-bold text-rose-400 uppercase tracking-widest">
-              Failed to load property.
+              Failed to load {isSectorVehicle ? 'vehicle' : 'property'}.
             </p>
             <button
               onClick={load}
@@ -373,7 +377,7 @@ export default function PartnerProperty() {
           <>
             <div className="w-10 h-10 border-2 border-white/10 border-t-emerald-500 rounded-full animate-spin" />
             <p className="text-sm font-bold text-white/30 uppercase tracking-widest">
-              Loading property...
+              Loading {isSectorVehicle ? 'vehicle' : 'property'}...
             </p>
           </>
         )}
@@ -392,7 +396,7 @@ export default function PartnerProperty() {
             <div>
               <h3 className="font-bold text-sm text-amber-900">Pending Admin Approval</h3>
               <p className="text-xs text-amber-700 mt-0.5">
-                This property is awaiting review by the Wayzza team. It will not appear in public
+                This {isVehicle ? 'vehicle' : 'property'} is awaiting review by the Wayzza team. It will not appear in public
                 listings until approved. You can still add variants and configure details while you
                 wait.
               </p>
@@ -404,13 +408,13 @@ export default function PartnerProperty() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-emerald-600 font-bold text-xs uppercase tracking-wide">
-              <Settings2 size={14} /> Property Configuration
+              {isVehicle ? <Car size={14} /> : <Settings2 size={14} />} {isVehicle ? 'Vehicle' : 'Property'} Configuration
             </div>
             <h1 className="text-3xl font-bold text-slate-900">
               {listing.title} <span className="text-emerald-500">Variants</span>
             </h1>
             <p className="text-slate-500 text-sm">
-              Manage rooms, vehicles, or specific tiers for this property.
+              Manage variants, options, or pricing tiers for this {isVehicle ? 'vehicle' : 'property'}.
             </p>
           </div>
 
@@ -419,7 +423,7 @@ export default function PartnerProperty() {
             className="h-11 px-6 bg-slate-100 text-slate-900 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:bg-slate-200 transition-colors shadow-sm active:scale-95 whitespace-nowrap"
           >
             <ChevronLeft size={16} />
-            <span>Back to Properties</span>
+            <span>Back to {isVehicle ? 'Inventory' : 'Properties'}</span>
           </button>
         </div>
 
@@ -824,11 +828,11 @@ export default function PartnerProperty() {
             >
               <div className="flex items-center gap-6">
                 <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-emerald-50 group-hover:text-emerald-500 transition-all">
-                  <Target size={24} />
+                  {isVehicle ? <Car size={24} /> : <Target size={24} />}
                 </div>
                 <div>
                   <p className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-300">
-                    Property Identity
+                    {isVehicle ? 'Vehicle Identity' : 'Property Identity'}
                   </p>
                   <h2 className="text-xl font-bold text-slate-900">{listing.title}</h2>
                   {listing.walkthroughVideo ? (
@@ -941,7 +945,7 @@ export default function PartnerProperty() {
                     }}
                     className="h-10 w-full bg-slate-50 border border-slate-200 rounded-lg px-3 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-colors cursor-pointer"
                   >
-                    <option value="">Select room name...</option>
+                    <option value="">Select {isVehicle ? 'vehicle' : 'room'} name...</option>
                     {(type === 'Vehicle'
                       ? VEHICLE_NAME_OPTIONS
                       : type === 'Room'
@@ -988,7 +992,7 @@ export default function PartnerProperty() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-700 block">Room Amenities</label>
+                <label className="text-xs font-semibold text-slate-700 block">{isVehicle ? 'Vehicle' : 'Room'} Amenities</label>
                 <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto p-2 bg-slate-50 border border-slate-200 rounded-lg">
                   {ALL_AMENITIES.map((a) => {
                     const isSelected = variantAmenities.includes(a.label);
@@ -1113,8 +1117,7 @@ export default function PartnerProperty() {
                 <Database className="text-slate-300 mb-4" size={48} />
                 <h3 className="text-xl font-bold text-slate-900 mb-2">No Variants found</h3>
                 <p className="text-sm text-slate-500 max-w-sm">
-                  You haven't added any specific rooms, tiers, or options. Add your first variant
-                  using the panel on the left.
+                  You haven't added any specific {isVehicle ? 'vehicles, tiers, or options' : 'rooms, tiers, or options'}. Add your first {isVehicle ? 'unit' : 'variant'} using the panel on the left.
                 </p>
               </div>
             ) : (
@@ -1159,7 +1162,7 @@ export default function PartnerProperty() {
                               </div>
                               <div className="text-xs font-semibold text-slate-500">
                                 {listing.category === 'bike' || listing.category === 'car'
-                                  ? '/ session'
+                                  ? '/ day'
                                   : '/ night'}
                               </div>
                             </div>
@@ -1239,8 +1242,8 @@ export default function PartnerProperty() {
           isOpen={confirmModal.isOpen}
           onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
           onConfirm={confirmModal.onConfirm}
-          title="Delete Variant"
-          message="Are you sure you want to delete this variant? This action cannot be undone."
+          title={isVehicle ? "Delete Unit" : "Delete Variant"}
+          message={isVehicle ? "Are you sure you want to delete this unit? This action cannot be undone." : "Are you sure you want to delete this variant? This action cannot be undone."}
           confirmText="Delete"
           confirmVariant="rose"
         />
