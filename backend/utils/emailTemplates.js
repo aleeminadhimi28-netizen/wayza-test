@@ -5,6 +5,14 @@ dotenv.config();
 let transporter = null;
 let testAccount = null;
 
+// Helper to wrap a promise with a timeout
+export function withTimeout(promise, timeoutMs, errorMsg = "Operation timed out") {
+    return Promise.race([
+        promise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error(errorMsg)), timeoutMs))
+    ]);
+}
+
 if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
     const host = (process.env.SMTP_HOST || "smtp.resend.com").trim();
     const port = parseInt(process.env.SMTP_PORT || "465");
@@ -15,7 +23,10 @@ if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
         host,
         port,
         secure: port === 465,
-        auth: { user, pass }
+        auth: { user, pass },
+        connectionTimeout: 8000, // 8 seconds
+        greetingTimeout: 5000,   // 5 seconds
+        socketTimeout: 10000     // 10 seconds
     });
 }
 
@@ -23,25 +34,53 @@ export const getTransporter = async () => {
     if (transporter) return transporter;
     
     // Provide a FREE Ethereal setup automatically if no credentials are given
-    if (!testAccount) {
-        testAccount = await nodemailer.createTestAccount();
-        console.log("------------------------------------------");
-        console.log("FREE OTP/EMAIL SETUP: Created Ethereal Account");
-        console.log("Email:", testAccount.user);
-        console.log("Pass:", testAccount.pass);
-        console.log("Emails sent will be mock emails loggable via URLs.");
-        console.log("------------------------------------------");
-    }
-    
-    transporter = nodemailer.createTransport({
-        host: "smtp.ethereal.email",
-        port: 587,
-        secure: false, // true for 465, false for other ports
-        auth: {
-            user: testAccount.user,
-            pass: testAccount.pass
+    // Wrap it in a 4-second timeout to fall back to console logging if ethereal is down/blocked
+    try {
+        if (!testAccount) {
+            testAccount = await withTimeout(
+                nodemailer.createTestAccount(),
+                4000,
+                "Ethereal account creation timed out"
+            );
+            console.log("------------------------------------------");
+            console.log("FREE OTP/EMAIL SETUP: Created Ethereal Account");
+            console.log("Email:", testAccount.user);
+            console.log("Pass:", testAccount.pass);
+            console.log("Emails sent will be mock emails loggable via URLs.");
+            console.log("------------------------------------------");
         }
-    });
+        
+        transporter = nodemailer.createTransport({
+            host: "smtp.ethereal.email",
+            port: 587,
+            secure: false, // true for 465, false for other ports
+            auth: {
+                user: testAccount.user,
+                pass: testAccount.pass
+            },
+            connectionTimeout: 8000, // 8 seconds
+            greetingTimeout: 5000,   // 5 seconds
+            socketTimeout: 10000     // 10 seconds
+        });
+    } catch (err) {
+        console.warn("Nodemailer test account failed or timed out. Falling back to Console Logger Transporter:", err.message);
+        transporter = {
+            sendMail: async (mailOptions) => {
+                console.log("==========================================");
+                console.log("MOCK EMAIL SENT (Console Fallback):");
+                console.log("From:", mailOptions.from);
+                console.log("To:", mailOptions.to);
+                console.log("Subject:", mailOptions.subject);
+                console.log("HTML/Text Preview:");
+                console.log(mailOptions.text || mailOptions.html || "(No content)");
+                console.log("==========================================");
+                return {
+                    messageId: "mock-" + Date.now() + "-" + Math.random().toString(36).substr(2, 9),
+                    response: "250 OK (Console Logger)"
+                };
+            }
+        };
+    }
     return transporter;
 };
 

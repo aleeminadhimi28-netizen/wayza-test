@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import { getDB } from "../config/db.js";
 import { requireAuth } from "../middleware/auth.js";
-import { getTransporter } from "../utils/emailTemplates.js";
+import { getTransporter, withTimeout } from "../utils/emailTemplates.js";
 import { z } from "zod";
 import { BCRYPT_ROUNDS, JWT_EXPIRY } from "../config/constants.js";
 import { captureEvent } from "../utils/posthog.js";
@@ -232,19 +232,23 @@ router.post("/forgot-password", async (req, res, next) => {
         const resetUrl = `${frontendUrl}/reset-password?token=${token}&email=${encodeURIComponent(email)}`;
 
         if (transporter) {
-            const info = await transporter.sendMail({
-                from: process.env.SMTP_FROM || process.env.EMAIL_USER || "noreply@wayzza.com",
-                to: email,
-                subject: "Wayzza — Reset Your Password",
-                html: `
-                    <div style="font-family:system-ui;max-width:500px;margin:0 auto;padding:40px;background:#fff;">
-                        <h2 style="color:#0f172a;">Reset Your Password</h2>
-                        <p style="color:#64748b;">Click the button below to reset your Wayzza password. This link expires in 1 hour.</p>
-                        <a href="${resetUrl}" style="display:inline-block;padding:14px 32px;background:#059669;color:#fff;text-decoration:none;border-radius:12px;font-weight:bold;margin:24px 0;">Reset Password</a>
-                        <p style="color:#94a3b8;font-size:12px;">If you didn't request this, please ignore this email.</p>
-                    </div>
-                `
-            });
+            const info = await withTimeout(
+                transporter.sendMail({
+                    from: process.env.SMTP_FROM || process.env.EMAIL_USER || "noreply@wayzza.com",
+                    to: email,
+                    subject: "Wayzza — Reset Your Password",
+                    html: `
+                        <div style="font-family:system-ui;max-width:500px;margin:0 auto;padding:40px;background:#fff;">
+                            <h2 style="color:#0f172a;">Reset Your Password</h2>
+                            <p style="color:#64748b;">Click the button below to reset your Wayzza password. This link expires in 1 hour.</p>
+                            <a href="${resetUrl}" style="display:inline-block;padding:14px 32px;background:#059669;color:#fff;text-decoration:none;border-radius:12px;font-weight:bold;margin:24px 0;">Reset Password</a>
+                            <p style="color:#94a3b8;font-size:12px;">If you didn't request this, please ignore this email.</p>
+                        </div>
+                    `
+                }),
+                10000,
+                "Email delivery timed out"
+            );
             if (info.messageId) {
                 // If using free ethereal email setup, log the preview URL
                 const nodemailer = await import('nodemailer');
@@ -321,18 +325,22 @@ router.post("/send-otp", async (req, res, next) => {
         await otpRequests.insertOne({ email: emailKey, requestedAt: new Date() });
 
         const transporter = await getTransporter();
-        const info = await transporter.sendMail({
-            from: process.env.SMTP_FROM || process.env.EMAIL_USER || "noreply@wayzza.com",
-            to: email,
-            subject: "Your Wayzza Authentication Code",
-            html: `
-                <div style="font-family:system-ui;max-width:500px;margin:0 auto;padding:40px;background:#fff;text-align:center;">
-                    <h2 style="color:#0f172a;">Authentication Code</h2>
-                    <p style="color:#64748b;">Use the following 6-digit code to log in or sign up. It expires in 10 minutes.</p>
-                    <div style="font-size:32px;font-weight:900;letter-spacing:0.25em;color:#059669;margin:30px 0;">${otp}</div>
-                </div>
-            `
-        });
+        const info = await withTimeout(
+            transporter.sendMail({
+                from: process.env.SMTP_FROM || process.env.EMAIL_USER || "noreply@wayzza.com",
+                to: email,
+                subject: "Your Wayzza Authentication Code",
+                html: `
+                    <div style="font-family:system-ui;max-width:500px;margin:0 auto;padding:40px;background:#fff;text-align:center;">
+                        <h2 style="color:#0f172a;">Authentication Code</h2>
+                        <p style="color:#64748b;">Use the following 6-digit code to log in or sign up. It expires in 10 minutes.</p>
+                        <div style="font-size:32px;font-weight:900;letter-spacing:0.25em;color:#059669;margin:30px 0;">${otp}</div>
+                    </div>
+                `
+            }),
+            10000,
+            "Email delivery timed out"
+        );
 
         const nodemailer = await import('nodemailer');
         const previewUrl = nodemailer.getTestMessageUrl(info);
