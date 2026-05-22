@@ -8,14 +8,14 @@ import { z } from "zod";
 
 const createListingSchema = z.object({
     title: z.string().min(1),
-    location: z.string().optional(),
+    location: z.string().min(1),
     price: z.number().min(0).optional().default(0),
     description: z.string().optional(),
     image: z.string().optional(),
     images: z.array(z.string()).optional().default([]),
     category: z.string().optional().default("hotel"),
-    latitude: z.number().optional(),
-    longitude: z.number().optional(),
+    latitude: z.number().min(-90).max(90),
+    longitude: z.number().min(-180).max(180),
     walkthroughVideo: z.string().optional(),
     amenities: z.array(z.string()).optional().default([]),
     wifiSpeed: z.number().optional().default(0),
@@ -253,15 +253,28 @@ router.put("/:id", requireAuth, async (req, res, next) => {
             "licensePlate", "registrationDate", "vehicleType", "registrationCategory",
             "cancellationPolicy", "rcDoc", "insuranceDoc", "pucDoc"
         ];
-        fields.forEach(f => {
+        for (const f of fields) {
             if (req.body[f] !== undefined) {
-                if (["latitude", "longitude"].includes(f) && req.body[f] !== null) {
-                    updates[f] = Number(req.body[f]);
+                if (["latitude", "longitude"].includes(f)) {
+                    if (req.body[f] === null || req.body[f] === "") {
+                        return res.status(400).json({ ok: false, message: `${f} is required` });
+                    }
+                    const val = Number(req.body[f]);
+                    if (isNaN(val)) {
+                        return res.status(400).json({ ok: false, message: `Invalid value for ${f}` });
+                    }
+                    if (f === "latitude" && (val < -90 || val > 90)) {
+                        return res.status(400).json({ ok: false, message: "Latitude must be between -90 and 90" });
+                    }
+                    if (f === "longitude" && (val < -180 || val > 180)) {
+                        return res.status(400).json({ ok: false, message: "Longitude must be between -180 and 180" });
+                    }
+                    updates[f] = val;
                 } else {
                     updates[f] = req.body[f];
                 }
             }
-        });
+        }
 
         // ─── PART 1: ATOMIC PRICE FLOOR GUARD ───────────────────────────────────
         if (req.body.price !== undefined) {

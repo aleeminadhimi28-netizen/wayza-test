@@ -142,6 +142,13 @@ export default function PartnerCreateProperty() {
       return showToast('Please fill in all required fields.', 'warning');
     }
 
+    if (!latitude || isNaN(Number(latitude)) || Number(latitude) < -90 || Number(latitude) > 90) {
+      return showToast('Please enter a valid Latitude between -90 and 90.', 'warning');
+    }
+    if (!longitude || isNaN(Number(longitude)) || Number(longitude) < -180 || Number(longitude) > 180) {
+      return showToast('Please enter a valid Longitude between -180 and 180.', 'warning');
+    }
+
     // #96: Validate vehicle-specific required fields before submission
     if (isVehicle) {
       if (!licensePlate.trim()) return showToast('License plate number is required.', 'warning');
@@ -204,8 +211,8 @@ export default function PartnerCreateProperty() {
         price: 0,
         image: filename,
         ownerEmail: user?.email,
-        latitude: latitude ? Number(latitude) : null,
-        longitude: longitude ? Number(longitude) : null,
+        latitude: Number(latitude),
+        longitude: Number(longitude),
         walkthroughVideo,
         amenities: selectedAmenities,
         wifiSpeed: isVehicle ? 0 : Number(wifiSpeed) || 0,
@@ -311,85 +318,73 @@ export default function PartnerCreateProperty() {
                     <span className="text-rose-400">*</span>
                   </label>
 
-                  {!locationLocked ? (
-                    <>
-                      <button
-                        type="button"
-                        onClick={fetchGPSLocation}
-                        disabled={locationLoading}
-                        className="w-full h-20 bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-dashed border-emerald-200 rounded-xl flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:border-emerald-400 hover:from-emerald-100 hover:to-teal-100 transition-all group active:scale-[0.98] disabled:opacity-60 disabled:cursor-wait"
-                      >
-                        {locationLoading ? (
-                          <>
-                            <Loader2 size={20} className="text-emerald-600 animate-spin" />
-                            <span className="text-xs font-semibold text-emerald-700">
-                              Fetching GPS location...
-                            </span>
-                          </>
-                        ) : (
-                          <>
-                            <Crosshair
-                              size={20}
-                              className="text-emerald-600 group-hover:scale-110 transition-transform"
-                            />
-                            <span className="text-xs font-bold text-emerald-700">
-                              Use My GPS Location
-                            </span>
-                            <span className="text-[11px] text-emerald-500">
-                              Auto-detect your exact property coordinates
-                            </span>
-                          </>
-                        )}
-                      </button>
-                      <div className="relative flex items-center gap-3 my-1">
-                        <div className="flex-1 h-px bg-slate-200" />
-                        <span className="text-[11px] font-semibold text-slate-400 uppercase">
-                          or type manually
-                        </span>
-                        <div className="flex-1 h-px bg-slate-200" />
+                  <div className="relative">
+                    <MapPin
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                      size={16}
+                    />
+                    <input
+                      required
+                      type="text"
+                      placeholder={isVehicle ? "e.g. Varkala Cliff, Kerala" : "e.g. Kovalam, Kerala"}
+                      value={location}
+                      onChange={(e) => setLocation(e.target.value)}
+                      className="h-11 w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-4 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition-all"
+                    />
+                  </div>
+                </div>
+
+                {/* GPS Coordinates */}
+                <div className="p-5 bg-slate-50 border border-slate-200 rounded-2xl space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 bg-white rounded-lg flex items-center justify-center border border-slate-100">
+                        <MapPin size={12} className="text-slate-400" />
                       </div>
-                      <div className="relative">
-                        <MapPin
-                          className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                          size={16}
-                        />
-                        <input
-                          type="text"
-                          placeholder="e.g. Kovalam, Kerala"
-                          value={location}
-                          onChange={(e) => setLocation(e.target.value)}
-                          className="h-11 w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-4 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition-all"
-                        />
-                      </div>
-                    </>
-                  ) : (
-                    <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 space-y-3">
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-start gap-3">
-                          <div className="w-9 h-9 bg-emerald-100 text-emerald-700 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
-                            <Check size={16} strokeWidth={3} />
-                          </div>
-                          <div>
-                            <p className="font-bold text-sm text-emerald-900">{location}</p>
-                            <p className="text-xs text-emerald-600 mt-0.5 font-mono">
-                              {latitude}, {longitude}
-                            </p>
-                          </div>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={clearLocation}
-                          className="text-xs font-semibold text-emerald-700 hover:text-rose-500 transition-colors whitespace-nowrap"
-                        >
-                          Change
-                        </button>
-                      </div>
-                      <p className="text-[11px] text-emerald-600 flex items-center gap-1.5">
-                        <Crosshair size={11} /> GPS coordinates locked — your property will appear
-                        on the map
+                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">
+                        GPS Coordinates <span className="text-rose-500 font-bold">*</span>
                       </p>
                     </div>
-                  )}
+                    <button
+                      type="button"
+                      onClick={fetchGPSLocation}
+                      disabled={locationLoading}
+                      className="px-3 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 hover:text-emerald-800 disabled:opacity-50 text-[10px] font-black uppercase tracking-widest rounded-lg border border-emerald-200/50 flex items-center gap-1.5 transition-all cursor-pointer"
+                    >
+                      {locationLoading ? (
+                        <div className="w-3 h-3 border-2 border-emerald-600/20 border-t-emerald-600 rounded-full animate-spin" />
+                      ) : (
+                        <Crosshair size={10} />
+                      )}
+                      <span>{locationLoading ? 'Detecting...' : 'Detect GPS'}</span>
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Latitude *</label>
+                      <input
+                        required
+                        type="number"
+                        step="any"
+                        placeholder="e.g. 8.7379"
+                        value={latitude}
+                        onChange={(e) => setLatitude(e.target.value)}
+                        className="h-10 w-full bg-white border border-slate-200 rounded-lg px-3 text-sm font-medium text-slate-900 focus:border-emerald-500 outline-none transition-all"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Longitude *</label>
+                      <input
+                        required
+                        type="number"
+                        step="any"
+                        placeholder="e.g. 76.7163"
+                        value={longitude}
+                        onChange={(e) => setLongitude(e.target.value)}
+                        className="h-10 w-full bg-white border border-slate-200 rounded-lg px-3 text-sm font-medium text-slate-900 focus:border-emerald-500 outline-none transition-all"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-2">

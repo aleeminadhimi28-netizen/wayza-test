@@ -33,8 +33,8 @@ const onboardSchema = z.object({
     firstListing: z.object({
         title: z.string().min(1),
         price: z.number().positive().optional().nullable(),
-        latitude: z.number().min(-90).max(90).optional().nullable(),
-        longitude: z.number().min(-180).max(180).optional().nullable(),
+        latitude: z.number().min(-90).max(90),
+        longitude: z.number().min(-180).max(180),
         roomType: z.string().optional(),
         vehicleType: z.string().optional(),
         registrationCategory: z.string().optional(),

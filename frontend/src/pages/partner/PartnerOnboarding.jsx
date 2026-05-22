@@ -307,18 +307,12 @@ export default function PartnerOnboarding() {
       showToast('Base rate must be a valid positive number.', 'error');
       return;
     }
-    if (
-      listingLat &&
-      (isNaN(Number(listingLat)) || Number(listingLat) < -90 || Number(listingLat) > 90)
-    ) {
-      showToast('Latitude must be between -90 and 90.', 'error');
+    if (!listingLat || isNaN(Number(listingLat)) || Number(listingLat) < -90 || Number(listingLat) > 90) {
+      showToast('Please provide a valid Latitude between -90 and 90.', 'error');
       return;
     }
-    if (
-      listingLng &&
-      (isNaN(Number(listingLng)) || Number(listingLng) < -180 || Number(listingLng) > 180)
-    ) {
-      showToast('Longitude must be between -180 and 180.', 'error');
+    if (!listingLng || isNaN(Number(listingLng)) || Number(listingLng) < -180 || Number(listingLng) > 180) {
+      showToast('Please provide a valid Longitude between -180 and 180.', 'error');
       return;
     }
     if (mainSector === 'vehicles' && !registrationCategory) {
@@ -808,10 +802,7 @@ export default function PartnerOnboarding() {
                             <MapPin size={12} className="text-slate-400" />
                           </div>
                           <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">
-                            GPS Coordinates{' '}
-                            <span className="text-slate-300 normal-case font-medium">
-                              (optional — for map pin)
-                            </span>
+                            GPS Coordinates <span className="text-rose-500 font-bold">*</span>
                           </p>
                         </div>
                         <button
@@ -863,21 +854,21 @@ export default function PartnerOnboarding() {
                           return;
                         }
                         if (
-                          listingLat &&
-                          (isNaN(Number(listingLat)) ||
-                            Number(listingLat) < -90 ||
-                            Number(listingLat) > 90)
+                          !listingLat ||
+                          isNaN(Number(listingLat)) ||
+                          Number(listingLat) < -90 ||
+                          Number(listingLat) > 90
                         ) {
-                          showToast('Latitude must be between -90 and 90.', 'error');
+                          showToast('Please provide a valid Latitude between -90 and 90.', 'error');
                           return;
                         }
                         if (
-                          listingLng &&
-                          (isNaN(Number(listingLng)) ||
-                            Number(listingLng) < -180 ||
-                            Number(listingLng) > 180)
+                          !listingLng ||
+                          isNaN(Number(listingLng)) ||
+                          Number(listingLng) < -180 ||
+                          Number(listingLng) > 180
                         ) {
-                          showToast('Longitude must be between -180 and 180.', 'error');
+                          showToast('Please provide a valid Longitude between -180 and 180.', 'error');
                           return;
                         }
                         goToStep(3);
