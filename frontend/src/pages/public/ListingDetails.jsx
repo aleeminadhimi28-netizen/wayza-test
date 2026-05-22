@@ -381,9 +381,10 @@ export default function ListingDetails() {
         postalCode: '695141',
         addressCountry: 'IN',
       },
-      geo: listing.latitude && listing.longitude
-        ? { '@type': 'GeoCoordinates', latitude: listing.latitude, longitude: listing.longitude }
-        : { '@type': 'GeoCoordinates', latitude: 8.7379, longitude: 76.7163 },
+      geo:
+        listing.latitude && listing.longitude
+          ? { '@type': 'GeoCoordinates', latitude: listing.latitude, longitude: listing.longitude }
+          : { '@type': 'GeoCoordinates', latitude: 8.7379, longitude: 76.7163 },
       brand: { '@type': 'Brand', name: 'Wayzza Verified' },
       amenityFeature: amenityFeatureList,
       offers: {
@@ -419,14 +420,21 @@ export default function ListingDetails() {
       sku: listing._id,
       brand: {
         '@type': 'Brand',
-        name:
-          listing.vehicleType?.toLowerCase().includes('enfield')
-            ? 'Royal Enfield'
-            : 'Wayzza Bikes',
+        name: listing.vehicleType?.toLowerCase().includes('enfield')
+          ? 'Royal Enfield'
+          : 'Wayzza Bikes',
       },
       additionalProperty: [
-        { '@type': 'PropertyValue', name: 'Vehicle Type', value: listing.vehicleType || 'Motorcycle' },
-        { '@type': 'PropertyValue', name: 'Rental Location', value: listing.location || 'Varkala, Kerala' },
+        {
+          '@type': 'PropertyValue',
+          name: 'Vehicle Type',
+          value: listing.vehicleType || 'Motorcycle',
+        },
+        {
+          '@type': 'PropertyValue',
+          name: 'Rental Location',
+          value: listing.location || 'Varkala, Kerala',
+        },
         { '@type': 'PropertyValue', name: 'Helmet Included', value: 'Yes' },
         { '@type': 'PropertyValue', name: 'Insurance Included', value: 'Comprehensive' },
         { '@type': 'PropertyValue', name: 'Minimum Rider Age', value: '21 years' },
@@ -466,8 +474,16 @@ export default function ListingDetails() {
       brand: { '@type': 'Brand', name: listing.vehicleType || 'Wayzza Cars' },
       additionalProperty: [
         { '@type': 'PropertyValue', name: 'Vehicle Type', value: listing.vehicleType || 'Car' },
-        { '@type': 'PropertyValue', name: 'Rental Location', value: listing.location || 'Varkala, Kerala' },
-        { '@type': 'PropertyValue', name: 'Airport Transfer', value: 'Available from Trivandrum (TRV)' },
+        {
+          '@type': 'PropertyValue',
+          name: 'Rental Location',
+          value: listing.location || 'Varkala, Kerala',
+        },
+        {
+          '@type': 'PropertyValue',
+          name: 'Airport Transfer',
+          value: 'Available from Trivandrum (TRV)',
+        },
         { '@type': 'PropertyValue', name: 'Chauffeur Option', value: 'Available' },
       ],
       offers: {

@@ -301,7 +301,8 @@ export default function Experiences() {
         ]}
         itemList={{
           name: 'Best Curated Experiences in Varkala, Kerala',
-          description: 'Handpicked authentic experiences in Varkala \u2014 from cliff yoga and Ayurveda to sunset cruises and Kathakali. Verified and curated by the Wayzza team.',
+          description:
+            'Handpicked authentic experiences in Varkala \u2014 from cliff yoga and Ayurveda to sunset cruises and Kathakali. Verified and curated by the Wayzza team.',
           url: 'https://wayzza.live/experiences',
           items: EXPERIENCES.map((exp) => ({
             name: exp.title,
@@ -313,19 +314,24 @@ export default function Experiences() {
         faq={[
           {
             question: 'What experiences can I book in Varkala through Wayzza?',
-            answer: 'Wayzza curates 9+ verified experiences in Varkala including Sunrise Cliff Yoga, Backwater Kayaking, Kerala Seafood Masterclass, Sunset Catamaran Cruise, private Kathakali performances, Authentic Ayurveda Rituals, Golden Hour Photo Walks, beginner surf lessons, and Hidden Village Heritage Walks.',
+            answer:
+              'Wayzza curates 9+ verified experiences in Varkala including Sunrise Cliff Yoga, Backwater Kayaking, Kerala Seafood Masterclass, Sunset Catamaran Cruise, private Kathakali performances, Authentic Ayurveda Rituals, Golden Hour Photo Walks, beginner surf lessons, and Hidden Village Heritage Walks.',
           },
           {
             question: 'Are Wayzza experiences suitable for couples and honeymooners?',
-            answer: 'Yes. Several of our experiences are ideal for couples \u2014 particularly the Sunset Catamaran Cruise, the Authentic Ayurveda Ritual (couples package available), and the Golden Hour Photo Walk. These can be booked as standalone experiences or bundled with a clifftop villa stay for a complete honeymoon package.',
+            answer:
+              'Yes. Several of our experiences are ideal for couples \u2014 particularly the Sunset Catamaran Cruise, the Authentic Ayurveda Ritual (couples package available), and the Golden Hour Photo Walk. These can be booked as standalone experiences or bundled with a clifftop villa stay for a complete honeymoon package.',
           },
           {
-            question: 'Can I combine a Wayzza experience with a villa stay or Royal Enfield rental?',
-            answer: 'Absolutely. Wayzza is uniquely positioned to bundle experiences with stays and mobility. Use our AI Trip Planner to mix and match a clifftop villa, Royal Enfield rental, and curated experiences into one seamless package \u2014 at no extra booking fee.',
+            question:
+              'Can I combine a Wayzza experience with a villa stay or Royal Enfield rental?',
+            answer:
+              'Absolutely. Wayzza is uniquely positioned to bundle experiences with stays and mobility. Use our AI Trip Planner to mix and match a clifftop villa, Royal Enfield rental, and curated experiences into one seamless package \u2014 at no extra booking fee.',
           },
           {
             question: 'What is the best experience to do in Varkala as a first-time visitor?',
-            answer: 'For first-time visitors, we recommend the Sunrise Cliff Yoga (for the unbeatable ocean views at 6 AM) combined with the Sunset Catamaran Cruise in the evening. This combination gives you the full spectrum of Varkala\u2019s magic in a single day. Both experiences are among our highest-rated with 4.8\u20134.9 star average ratings.',
+            answer:
+              'For first-time visitors, we recommend the Sunrise Cliff Yoga (for the unbeatable ocean views at 6 AM) combined with the Sunset Catamaran Cruise in the evening. This combination gives you the full spectrum of Varkala\u2019s magic in a single day. Both experiences are among our highest-rated with 4.8\u20134.9 star average ratings.',
           },
         ]}
       />
