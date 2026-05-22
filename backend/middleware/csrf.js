@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import { getCookieOptions } from "../utils/cookie.js";
 
 /**
  * CSRF Protection Middleware — Double-Submit Cookie Pattern
@@ -24,16 +25,12 @@ const TOKEN_LENGTH = 32;
  */
 export function generateCSRFToken(req, res) {
     const token = crypto.randomBytes(TOKEN_LENGTH).toString("hex");
-    const isProduction = process.env.NODE_ENV === "production";
 
-    res.cookie(CSRF_COOKIE, token, {
-        httpOnly: false,                          // Must be readable by client JS
-        secure: isProduction,                     // HTTPS-only in production; allows HTTP in dev
-        sameSite: isProduction ? "none" : "lax", // cross-origin in prod, lax in dev
-        maxAge: 24 * 60 * 60 * 1000,             // 24 hours
-        path: "/",
-        domain: isProduction ? ".wayzza.live" : undefined
-    });
+    res.cookie(CSRF_COOKIE, token, getCookieOptions(req, {
+        httpOnly: false,
+        useDomain: true,
+        maxAge: 24 * 60 * 60 * 1000
+    }));
 
     res.json({ ok: true, csrfToken: token });
 }

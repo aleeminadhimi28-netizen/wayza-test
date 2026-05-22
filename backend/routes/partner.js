@@ -6,6 +6,7 @@ import { getDB } from "../config/db.js";
 import { requireAuth, requireRole } from "../middleware/auth.js";
 import { z } from "zod";
 import { BCRYPT_ROUNDS, JWT_EXPIRY } from "../config/constants.js";
+import { getCookieOptions } from "../utils/cookie.js";
 
 const registerSchema = z.object({
     email: z.string().email(),
@@ -95,12 +96,10 @@ router.post("/login", async (req, res, next) => {
         if (!ok) return res.status(401).json({ ok: false, message: "Invalid password" });
 
         const token = jwt.sign({ email: user.email, role: "partner" }, SECRET, { expiresIn: JWT_EXPIRY });
-        res.cookie("token", token, {
+        res.cookie("token", token, getCookieOptions(req, {
             httpOnly: true,
-            secure: true,
-            sameSite: "none",
             maxAge: 7 * 24 * 60 * 60 * 1000
-        });
+        }));
         res.json({ ok: true, email: user.email });
     } catch (err) { next(err); }
 });

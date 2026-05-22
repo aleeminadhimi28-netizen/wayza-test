@@ -10,6 +10,7 @@ import { BCRYPT_ROUNDS, JWT_EXPIRY } from "../config/constants.js";
 import { captureEvent } from "../utils/posthog.js";
 import { generateSecret, generateQRCode, verifyToken } from "../utils/twoFactor.js";
 import { OAuth2Client } from "google-auth-library";
+import { getCookieOptions } from "../utils/cookie.js";
 
 
 const signupSchema = z.object({
@@ -87,12 +88,10 @@ router.post("/login", async (req, res, next) => {
         if (!SECRET) throw new Error("JWT_SECRET is not configured");
         const token = jwt.sign({ email: user.email, role: user.role }, SECRET, { expiresIn: JWT_EXPIRY });
 
-        res.cookie("token", token, {
+        res.cookie("token", token, getCookieOptions(req, {
             httpOnly: true,
-            secure: true,
-            sameSite: "none",
             maxAge: 7 * 24 * 60 * 60 * 1000
-        });
+        }));
 
         // Track successful login in PostHog
         captureEvent(user.email, "User Logged In", { role: user.role });
@@ -168,12 +167,10 @@ router.post("/google", async (req, res, next) => {
         if (!SECRET) throw new Error("JWT_SECRET is not configured");
         const token = jwt.sign({ email: user.email, role: user.role }, SECRET, { expiresIn: JWT_EXPIRY });
 
-        res.cookie("token", token, {
+        res.cookie("token", token, getCookieOptions(req, {
             httpOnly: true,
-            secure: true,
-            sameSite: "none",
             maxAge: 7 * 24 * 60 * 60 * 1000
-        });
+        }));
 
         res.json({
             ok: true,
@@ -376,7 +373,7 @@ router.post("/verify-otp", async (req, res, next) => {
         if (!SECRET) throw new Error("JWT_SECRET is not configured");
         const token = jwt.sign({ email: user.email, role: user.role }, SECRET, { expiresIn: JWT_EXPIRY });
 
-        res.cookie("token", token, { httpOnly: true, secure: true, sameSite: "none", maxAge: 7 * 24 * 60 * 60 * 1000 });
+        res.cookie("token", token, getCookieOptions(req, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 }));
         res.json({ ok: true, data: { email: user.email, role: user.role } });
     } catch (err) { next(err); }
 });
@@ -470,7 +467,7 @@ router.post("/2fa/verify", async (req, res, next) => {
         if (!valid) return res.status(400).json({ ok: false, message: "Invalid code" });
 
         const token = jwt.sign({ email: user.email, role: user.role }, SECRET, { expiresIn: JWT_EXPIRY });
-        res.cookie("token", token, { httpOnly: true, secure: true, sameSite: "none", maxAge: 7 * 24 * 60 * 60 * 1000 });
+        res.cookie("token", token, getCookieOptions(req, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 }));
 
         res.json({ ok: true, data: { email: user.email, role: user.role } });
     } catch (err) { next(err); }

@@ -8,6 +8,7 @@ import { getTransporter, payoutSettledEmail, withdrawalStatusEmail, partnerAppro
 import { sendWhatsAppAlert, formatWhatsAppListingApproved, formatWhatsAppPartnerOnboarded } from "../utils/whatsapp.js";
 import { z } from "zod";
 import { JWT_EXPIRY, BCRYPT_ROUNDS } from "../config/constants.js";
+import { getCookieOptions } from "../utils/cookie.js";
 
 const loginSchema = z.object({
     email: z.string().email(),
@@ -33,12 +34,10 @@ router.post("/login", async (req, res, next) => {
         if (!ok) return res.status(401).json({ ok: false, message: "Invalid password" });
 
         const token = jwt.sign({ email: user.email, role: "admin" }, SECRET, { expiresIn: JWT_EXPIRY });
-        res.cookie("token", token, {
+        res.cookie("token", token, getCookieOptions(req, {
             httpOnly: true,
-            secure: true,
-            sameSite: "none",
             maxAge: 7 * 24 * 60 * 60 * 1000
-        });
+        }));
         res.json({ ok: true, email: user.email });
     } catch (err) { next(err); }
 });
