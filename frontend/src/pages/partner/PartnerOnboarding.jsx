@@ -114,6 +114,21 @@ function CategoryPill({ label, active, onClick }) {
    Main Component
 ───────────────────────────────────────────────────────── */
 
+const ONBOARDING_FORM_KEY = 'partner_onboarding_form';
+
+const getSavedField = (fieldName, defaultValue) => {
+  try {
+    const form = sessionStorage.getItem(ONBOARDING_FORM_KEY);
+    if (form) {
+      const parsed = JSON.parse(form);
+      if (parsed[fieldName] !== undefined) return parsed[fieldName];
+    }
+  } catch (e) {
+    console.error('Error parsing saved onboarding form:', e);
+  }
+  return defaultValue;
+};
+
 export default function PartnerOnboarding() {
   const navigate = useNavigate();
   const { showToast } = useToast();
@@ -126,34 +141,84 @@ export default function PartnerOnboarding() {
     return saved ? parseInt(saved, 10) : 1;
   });
   const [loading, setLoading] = useState(false);
-  const [mainSector, setMainSector] = useState('stays');
+  const [mainSector, setMainSector] = useState(() => getSavedField('mainSector', 'stays'));
 
-  const [businessName, setBusinessName] = useState('');
-  const [subCategory, setSubCategory] = useState('');
-  const [brandVision, setBrandVision] = useState('');
-  const [location, setLocation] = useState('');
+  const [businessName, setBusinessName] = useState(() => getSavedField('businessName', ''));
+  const [subCategory, setSubCategory] = useState(() => getSavedField('subCategory', ''));
+  const [brandVision, setBrandVision] = useState(() => getSavedField('brandVision', ''));
+  const [location, setLocation] = useState(() => getSavedField('location', ''));
 
-  const [msmeNumber, setMsmeNumber] = useState('');
-  const [gstNumber, setGstNumber] = useState('');
-  const [gstEnabled, setGstEnabled] = useState(false);
+  const [msmeNumber, setMsmeNumber] = useState(() => getSavedField('msmeNumber', ''));
+  const [gstNumber, setGstNumber] = useState(() => getSavedField('gstNumber', ''));
+  const [gstEnabled, setGstEnabled] = useState(() => getSavedField('gstEnabled', false));
 
-  const [listingName, setListingName] = useState('');
-  const [price, setPrice] = useState('');
-  const [listingLat, setListingLat] = useState('');
-  const [listingLng, setListingLng] = useState('');
-  const [cancellationPolicy, setCancellationPolicy] = useState('moderate');
+  const [listingName, setListingName] = useState(() => getSavedField('listingName', ''));
+  const [price, setPrice] = useState(() => getSavedField('price', ''));
+  const [listingLat, setListingLat] = useState(() => getSavedField('listingLat', ''));
+  const [listingLng, setListingLng] = useState(() => getSavedField('listingLng', ''));
+  const [cancellationPolicy, setCancellationPolicy] = useState(() =>
+    getSavedField('cancellationPolicy', 'moderate')
+  );
 
-  const [roomType, setRoomType] = useState('');
-  const [vehicleType, setVehicleType] = useState('');
-  const [registrationCategory, setRegistrationCategory] = useState('');
-  const [licensePlate, setLicensePlate] = useState('');
-  const [registrationDate, setRegistrationDate] = useState('');
+  const [roomType, setRoomType] = useState(() => getSavedField('roomType', ''));
+  const [vehicleType, setVehicleType] = useState(() => getSavedField('vehicleType', ''));
+  const [registrationCategory, setRegistrationCategory] = useState(() =>
+    getSavedField('registrationCategory', '')
+  );
+  const [licensePlate, setLicensePlate] = useState(() => getSavedField('licensePlate', ''));
+  const [registrationDate, setRegistrationDate] = useState(() =>
+    getSavedField('registrationDate', '')
+  );
 
   // Persist step changes to sessionStorage
   const goToStep = (s) => {
     sessionStorage.setItem('partner_onboarding_step', String(s));
     setStep(s);
   };
+
+  // Save form fields to sessionStorage whenever they change
+  useEffect(() => {
+    const formData = {
+      businessName,
+      subCategory,
+      brandVision,
+      location,
+      msmeNumber,
+      gstNumber,
+      gstEnabled,
+      listingName,
+      price,
+      listingLat,
+      listingLng,
+      cancellationPolicy,
+      roomType,
+      vehicleType,
+      registrationCategory,
+      licensePlate,
+      registrationDate,
+      mainSector,
+    };
+    sessionStorage.setItem(ONBOARDING_FORM_KEY, JSON.stringify(formData));
+  }, [
+    businessName,
+    subCategory,
+    brandVision,
+    location,
+    msmeNumber,
+    gstNumber,
+    gstEnabled,
+    listingName,
+    price,
+    listingLat,
+    listingLng,
+    cancellationPolicy,
+    roomType,
+    vehicleType,
+    registrationCategory,
+    licensePlate,
+    registrationDate,
+    mainSector,
+  ]);
 
   useEffect(() => {
     if (authLoading) return;
@@ -162,9 +227,23 @@ export default function PartnerOnboarding() {
     } else {
       setEmail(user.email);
       api.partnerStatus().then((res) => {
-        if (res.mainSector) setMainSector(res.mainSector);
-        if (res.mainSector === 'stays') setSubCategory('Resort / Hotel');
-        else if (res.mainSector === 'vehicles') setSubCategory('Individual / Peer-to-Peer Host');
+        if (res.onboarded || res.onboardingCompleted) {
+          navigate('/partner', { replace: true });
+          return;
+        }
+        // Only set default mainSector if not already saved in sessionStorage
+        const savedForm = sessionStorage.getItem(ONBOARDING_FORM_KEY);
+        let hasSavedSector = false;
+        if (savedForm) {
+          try {
+            hasSavedSector = JSON.parse(savedForm).mainSector !== undefined;
+          } catch (e) {}
+        }
+        if (!hasSavedSector && res.mainSector) {
+          setMainSector(res.mainSector);
+          if (res.mainSector === 'stays') setSubCategory('Resort / Hotel');
+          else if (res.mainSector === 'vehicles') setSubCategory('Individual / Peer-to-Peer Host');
+        }
       });
     }
   }, [user, authLoading, navigate]);
@@ -193,6 +272,24 @@ export default function PartnerOnboarding() {
     }
     if (!listingName || !price) {
       showToast('Please complete your first listing details before submitting.', 'error');
+      return;
+    }
+    if (isNaN(Number(price)) || Number(price) <= 0) {
+      showToast('Base rate must be a valid positive number.', 'error');
+      return;
+    }
+    if (
+      listingLat &&
+      (isNaN(Number(listingLat)) || Number(listingLat) < -90 || Number(listingLat) > 90)
+    ) {
+      showToast('Latitude must be between -90 and 90.', 'error');
+      return;
+    }
+    if (
+      listingLng &&
+      (isNaN(Number(listingLng)) || Number(listingLng) < -180 || Number(listingLng) > 180)
+    ) {
+      showToast('Longitude must be between -180 and 180.', 'error');
       return;
     }
     if (mainSector === 'vehicles' && !registrationCategory) {
@@ -234,6 +331,7 @@ export default function PartnerOnboarding() {
       // FIX #110: Clear persisted step on successful submission
       sessionStorage.removeItem('partner_onboarded');
       sessionStorage.removeItem('partner_onboarding_step');
+      sessionStorage.removeItem(ONBOARDING_FORM_KEY);
       navigate('/partner', { replace: true });
     } catch (err) {
       showToast('Failed to finalize setup. Please try again.', 'error');
@@ -722,6 +820,24 @@ export default function PartnerOnboarding() {
                           showToast('Please specify an operational location', 'error');
                           return;
                         }
+                        if (
+                          listingLat &&
+                          (isNaN(Number(listingLat)) ||
+                            Number(listingLat) < -90 ||
+                            Number(listingLat) > 90)
+                        ) {
+                          showToast('Latitude must be between -90 and 90.', 'error');
+                          return;
+                        }
+                        if (
+                          listingLng &&
+                          (isNaN(Number(listingLng)) ||
+                            Number(listingLng) < -180 ||
+                            Number(listingLng) > 180)
+                        ) {
+                          showToast('Longitude must be between -180 and 180.', 'error');
+                          return;
+                        }
                         goToStep(3);
                       }}
                       className="flex items-center gap-3 h-12 px-8 bg-slate-900 text-white rounded-xl font-bold text-sm hover:bg-emerald-600 transition-all shadow-lg active:scale-95"
@@ -928,6 +1044,10 @@ export default function PartnerOnboarding() {
                         }
                         if (!price) {
                           showToast('Base rate is required', 'error');
+                          return;
+                        }
+                        if (isNaN(Number(price)) || Number(price) <= 0) {
+                          showToast('Base rate must be a valid positive number.', 'error');
                           return;
                         }
                         goToStep(4);
