@@ -750,10 +750,10 @@ export default function PartnerOnboarding() {
                       </label>
                       <div className="flex flex-wrap gap-2">
                         {[
-                          'Varkala North Cliff',
-                          'South Cliff Shore',
-                          'Black Beach District',
-                          'Edava Lakefront',
+                          'Kappil',
+                          'Sree Janardhanapuram',
+                          'North Cliff',
+                          'South Cliff',
                         ].map((h) => (
                           <button
                             key={h}
