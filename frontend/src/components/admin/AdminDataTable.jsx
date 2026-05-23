@@ -12,6 +12,7 @@ import {
   FileText,
   ExternalLink,
   Star,
+  XCircle,
 } from 'lucide-react';
 import ConfirmModal from '../ui/ConfirmModal.jsx';
 import { fixImg } from '../../utils/image.js';
@@ -395,6 +396,20 @@ export default function AdminDataTable({
                                 </span>
                               );
                             })()
+                          ) : activeTab === 'users' ? (
+                            <span
+                              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide border w-fit ${item.muted ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'}`}
+                            >
+                              {item.muted ? (
+                                <>
+                                  <XCircle size={10} strokeWidth={2.5} /> Suspended
+                                </>
+                              ) : (
+                                <>
+                                  <CheckCircle size={10} strokeWidth={2.5} /> Active
+                                </>
+                              )}
+                            </span>
                           ) : (
                             <span
                               className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide border w-fit ${item.approved || item.onboarded ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : activeTab === 'partners' && !item.onboarded && !item.onboardingCompleted ? 'bg-white/[0.05] text-white/40 border-white/[0.05]' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'}`}
