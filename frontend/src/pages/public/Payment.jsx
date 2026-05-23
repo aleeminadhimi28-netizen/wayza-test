@@ -71,28 +71,12 @@ export default function Payment() {
       }
 
       // Build method pre-selection config for the Razorpay modal
-      const methodConfig =
-        preferredMethod === 'upi'
-          ? {
-              config: {
-                display: {
-                  blocks: { upi: { name: 'Pay via UPI', instruments: [{ method: 'upi' }] } },
-                  sequence: ['block.upi'],
-                  preferences: { show_default_blocks: false },
-                },
-              },
-            }
-          : preferredMethod === 'card'
-            ? {
-                config: {
-                  display: {
-                    blocks: { card: { name: 'Pay by Card', instruments: [{ method: 'card' }] } },
-                    sequence: ['block.card'],
-                    preferences: { show_default_blocks: false },
-                  },
-                },
-              }
-            : {};
+      const methodConfig = {
+        prefill: {
+          email: user?.email || '',
+          method: preferredMethod,
+        },
+      };
 
       const options = {
         key: razorpayKey,
