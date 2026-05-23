@@ -20,11 +20,13 @@ import {
 import { api } from '../../utils/api.js';
 import { AMENITY_CATEGORIES, VEHICLE_AMENITY_CATEGORIES } from '../../utils/amenities.js';
 
-const CATEGORIES = [
+const STAY_CATEGORIES = [
   { value: 'hotel', label: '🏨 Stays (Hotels, Villas, Houses)' },
+];
+
+const VEHICLE_CATEGORIES = [
   { value: 'bike', label: '🏍️ Bikes (Rentals, Scooters)' },
   { value: 'car', label: '🚗 Cars (Luxury, Daily, SUVs)' },
-  { value: 'activity', label: '🎯 Activities (Surfing, Tours, Yoga)' },
 ];
 
 export default function PartnerCreateProperty() {
@@ -436,7 +438,7 @@ export default function PartnerCreateProperty() {
                     onChange={(e) => setCategory(e.target.value)}
                     className="h-11 w-full bg-slate-50 border border-slate-200 rounded-lg px-4 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all appearance-none cursor-pointer"
                   >
-                    {CATEGORIES.map((c) => (
+                    {(mainSector === 'vehicles' ? VEHICLE_CATEGORIES : STAY_CATEGORIES).map((c) => (
                       <option key={c.value} value={c.value}>
                         {c.label}
                       </option>
