@@ -340,7 +340,7 @@ export default function PartnerEarnings() {
                             {b.title}
                           </p>
                           <p className="text-[10px] text-white/20 font-bold uppercase tracking-widest mt-0.5">
-                            #{b._id.slice(-8).toUpperCase()}
+                            #{b._id?.slice(-8).toUpperCase() || 'XXXXXXXX'}
                           </p>
                         </td>
                         <td className="px-6 py-4">
