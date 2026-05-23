@@ -78,6 +78,7 @@ export default function AdminDashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [tickets, setTickets] = useState([]);
   const [withdrawals, setWithdrawals] = useState([]);
+  const [adminBookings, setAdminBookings] = useState([]);
   const [tick, setTick] = useState(0);
 
   // FIX #78: derive timeStr inside a useMemo keyed on tick so string updates
@@ -108,11 +109,15 @@ export default function AdminDashboard() {
   const loadWithdrawals = useCallback(async () => {
     setLoadingData(true);
     try {
-      const d = await api.adminGetWithdrawals();
-      if (d.ok) setWithdrawals(d.data || []);
+      const [wRes, bRes] = await Promise.all([
+        api.adminGetWithdrawals(),
+        api.adminBookings(),
+      ]);
+      if (wRes.ok) setWithdrawals(wRes.data || []);
+      if (bRes.ok) setAdminBookings(bRes.data || []);
     } catch (err) {
-      console.error('Failed to load withdrawals:', err);
-      showToast('Failed to load withdrawal requests.', 'error');
+      console.error('Failed to load withdrawals or bookings:', err);
+      showToast('Failed to load financial details.', 'error');
     }
     setLoadingData(false);
   }, [showToast]);
@@ -598,6 +603,7 @@ export default function AdminDashboard() {
                 key="withdrawals"
                 withdrawals={withdrawals}
                 setWithdrawals={setWithdrawals}
+                bookings={adminBookings}
                 stats={stats}
                 loadingData={loadingData}
               />
