@@ -118,11 +118,7 @@
   border: 1px solid rgba(52, 211, 153, 0.25);
   border-radius: 100px;
   padding: 8px 18px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: #6ee7b7;
+  font-size: 12px;
   width: fit-content;
   margin-bottom: 32px;
   backdrop-filter: blur(8px);
@@ -160,11 +156,7 @@
   color: #34d399;
 }
 .au-stat-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.35);
+  font-size: 12px;
   margin-top: 2px;
 }
 
@@ -278,11 +270,7 @@
   background: rgba(255, 255, 255, 0.07);
 }
 .au-divider-text {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.2);
+  font-size: 12px;
 }
 
 /* Fields */
@@ -440,11 +428,7 @@
 
 /* Toggle link */
 .au-toggle {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #34d399;
+  font-size: 12px;
   background: none;
   border: none;
   cursor: pointer;
@@ -456,11 +440,7 @@
 
 /* Forgot */
 .au-forgot {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: rgba(255, 255, 255, 0.3);
+  font-size: 12px;
   text-decoration: none;
 }
 .au-forgot:hover {
@@ -545,7 +525,7 @@
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.08);
   color: rgba(255, 255, 255, 0.4);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -567,11 +547,7 @@
   border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 .au-security span {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.15);
+  font-size: 12px;
 }
 .au-dot {
   width: 5px;

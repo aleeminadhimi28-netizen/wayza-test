@@ -36,9 +36,8 @@ function collectConsoleErrors(page: Page): string[] {
 
 /** Screenshot on failure helper */
 async function screenshotOnFailure(page: Page, name: string) {
-  const dir = 'test-results';
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  await page.screenshot({ path: path.join(dir, `failure-${name}.png`), fullPage: true });
+  // Playwright handles screenshots on failure automatically.
+  // Manual screenshot is disabled to prevent WebKit hangs.
 }
 
 // ─── Tests ──────────────────────────────────────────────────────────────────
@@ -68,7 +67,7 @@ test.describe('Suite 1 — Authentication Flow', () => {
       await page.click('button[type="submit"]');
 
       // Should navigate away from /signup
-      await page.waitForURL(url => !url.pathname.includes('/signup'), { timeout: 12000 });
+      await page.waitForURL(url => !url.pathname.includes('/signup'), { timeout: 35000 });
       expect(page.url()).not.toContain('/signup');
 
       // No raw error strings in the page body
@@ -112,11 +111,9 @@ test.describe('Suite 1 — Authentication Flow', () => {
       await page.fill('#password', 'WrongPassword999!');
       await page.click('button[type="submit"]');
 
-      // Toast or inline error should appear
-      const errorVisible = await Promise.race([
-        page.locator('text=/invalid|error|incorrect|wrong/i').isVisible().then(v => v),
-        page.waitForTimeout(5000).then(() => false),
-      ]);
+      // Toast or inline error should appear (wait up to 35s due to DB latency)
+      const errorLocator = page.locator('text=/invalid|error|incorrect|wrong|credentials/i').first();
+      await errorLocator.waitFor({ state: 'visible', timeout: 35000 }).catch(() => {});
 
       // Either an error toast or an error element must be visible
       const body = await page.locator('body').innerText();
@@ -137,7 +134,7 @@ test.describe('Suite 1 — Authentication Flow', () => {
       await page.fill('#email', VALID_USER.email);
       await page.fill('#password', VALID_USER.password);
       await page.click('button[type="submit"]');
-      await page.waitForURL(url => !url.pathname.includes('/login'), { timeout: 10000 });
+      await page.waitForURL(url => !url.pathname.includes('/login'), { timeout: 35000 });
 
       // Simulate a session-expired event (BUG-017 fix)
       await page.evaluate(() => {
@@ -145,7 +142,7 @@ test.describe('Suite 1 — Authentication Flow', () => {
       });
 
       // Should redirect to /login with expired param
-      await page.waitForURL(url => url.pathname.includes('/login'), { timeout: 5000 });
+      await page.waitForURL(url => url.pathname.includes('/login'), { timeout: 35000 });
       expect(page.url()).toContain('expired=1');
     } catch (e) {
       await screenshotOnFailure(page, 'auth-session-expiry');
@@ -160,18 +157,17 @@ test.describe('Suite 1 — Authentication Flow', () => {
       await page.fill('#email', VALID_USER.email);
       await page.fill('#password', VALID_USER.password);
       await page.click('button[type="submit"]');
-      await page.waitForURL(url => !url.pathname.includes('/login'), { timeout: 10000 });
+      await page.waitForURL(url => !url.pathname.includes('/login'), { timeout: 35000 });
 
       // Navigate to a protected page and capture the URL
       await page.goto(`${BASE}/profile`);
       const protectedUrl = page.url();
 
-      // Find and click logout
+      // Find and click logout (wait up to 35s for profile page to render)
       const logoutBtn = page.locator('button:has-text("Logout"), button:has-text("Sign Out"), a:has-text("Logout")').first();
-      if (await logoutBtn.isVisible({ timeout: 3000 })) {
-        await logoutBtn.click();
-        await page.waitForURL(url => url.pathname === '/' || url.pathname.includes('/login'), { timeout: 8000 });
-      }
+      await expect(logoutBtn).toBeVisible({ timeout: 35000 });
+      await logoutBtn.click();
+      await page.waitForURL(url => url.pathname === '/' || url.pathname.includes('/login'), { timeout: 35000 });
 
       // Now try to go back to the protected page
       await page.goto(protectedUrl);

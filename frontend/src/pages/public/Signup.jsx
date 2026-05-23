@@ -255,7 +255,7 @@ export default function Signup() {
           border: 1px solid rgba(52,211,153,0.25);
           border-radius: 100px;
           padding: 8px 18px;
-          font-size: 10px;
+          font-size: 12px;
           font-weight: 700;
           letter-spacing: 0.2em;
           text-transform: uppercase;
@@ -294,7 +294,7 @@ export default function Signup() {
         }
         .su-stat-num span { color: #34d399; }
         .su-stat-label {
-          font-size: 10px;
+          font-size: 12px;
           font-weight: 700;
           letter-spacing: 0.15em;
           text-transform: uppercase;
@@ -399,7 +399,7 @@ export default function Signup() {
         }
         .su-divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.07); }
         .su-divider-text {
-          font-size: 10px;
+          font-size: 12px;
           font-weight: 700;
           letter-spacing: 0.2em;
           text-transform: uppercase;
@@ -558,7 +558,7 @@ export default function Signup() {
           border-top: 1px solid rgba(255,255,255,0.05);
         }
         .su-security span {
-          font-size: 10px;
+          font-size: 12px;
           font-weight: 700;
           letter-spacing: 0.15em;
           text-transform: uppercase;

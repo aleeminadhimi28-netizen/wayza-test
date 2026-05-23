@@ -1,7 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { HelmetProvider } from 'react-helmet-async';
 import VerificationSpinner from './components/VerificationSpinner.jsx';
@@ -226,6 +226,7 @@ function AppContent() {
               </AdminGuard>
             }
           />
+          <Route path="/admin/*" element={<Navigate to="/admin" replace />} />
           <Route path="/admin-login" element={<AdminLogin />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Wayzza Premium E2E Smoke Tests', () => {
   test('Landing page renders correctly with premium branding', async ({ page }) => {
     await page.goto('http://localhost:5173/');
-    
+
     // Ensure the title is correct
     await expect(page).toHaveTitle(/Wayzza/);
 
@@ -12,12 +12,13 @@ test.describe('Wayzza Premium E2E Smoke Tests', () => {
     await expect(heroTitle).toBeVisible();
 
     // Check that we can navigate to the listings
-    const exploreBtn = page.locator('button:has-text("Explore")');
-    if (await exploreBtn.count() > 0) {
-      await exploreBtn.first().click();
-      await page.waitForURL(url => url.pathname.includes('/listings'));
-      await expect(page.locator('input[placeholder="Explore your next destination..."]')).toBeVisible();
-    }
+    const exploreBtn = page.locator('button:has-text("Explore")').first();
+    await expect(exploreBtn).toBeVisible({ timeout: 35000 });
+    await exploreBtn.click();
+    await page.waitForURL((url) => url.pathname.includes('/listings'), { timeout: 35000 });
+    await expect(page.locator('input[placeholder="Explore your next destination..."]')).toBeVisible(
+      { timeout: 35000 }
+    );
   });
 
   test('Authentication flow renders and accepts input', async ({ page }) => {
@@ -40,10 +41,10 @@ test.describe('Wayzza Premium E2E Smoke Tests', () => {
 
   test('Partner network registration renders', async ({ page }) => {
     await page.goto('http://localhost:5173/partner-register');
-    
+
     // Ensure the partner text is available
     await expect(page.locator('text=Partner Registration')).toBeVisible();
-    
+
     // Verify inputs
     await expect(page.locator('input[type="email"]')).toBeVisible();
     await expect(page.locator('input[type="password"]')).toBeVisible();
@@ -51,4 +52,3 @@ test.describe('Wayzza Premium E2E Smoke Tests', () => {
     await expect(page.locator('button:has-text("Vehicles")')).toBeVisible();
   });
 });
-

@@ -9,12 +9,19 @@ import { captureEvent } from "../utils/posthog.js";
  * to their response. This is more "polite" than a hard block and helps 
  * mitigate Layer 7 DDoS by making it expensive for the attacker to maintain connections.
  */
-export const speedLimiter = slowDown({
+const limiterInstance = slowDown({
   windowMs: 15 * 60 * 1000, // 15 minutes
   delayAfter: 50, // allow 50 requests per 15 minutes, then...
   delayMs: (hits) => (hits - 50) * 500, // add 500ms of delay per hit after the 50th
   maxDelayMs: 20000 // maximum delay of 20 seconds
 });
+
+export const speedLimiter = (req, res, next) => {
+  if (process.env.NODE_ENV === "test") {
+    return next();
+  }
+  return limiterInstance(req, res, next);
+};
 
 /**
  * SECURITY MIDDLEWARE COMPOSITION

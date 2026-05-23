@@ -13,9 +13,8 @@ const BASE = 'http://localhost:5173';
 const API  = 'http://localhost:5000/api/v1';
 
 async function screenshotOnFailure(page: Page, name: string) {
-  const dir = 'test-results';
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  await page.screenshot({ path: path.join(dir, `failure-${name}.png`), fullPage: true });
+  // Playwright handles screenshots on failure automatically.
+  // Manual screenshot is disabled to prevent WebKit hangs.
 }
 
 // ─── Tests ──────────────────────────────────────────────────────────────────
@@ -28,11 +27,20 @@ test.describe('Suite 5 — Admin Flow', () => {
     try {
       for (const route of ['/admin', '/admin/dashboard', '/admin/users', '/admin/bookings']) {
         await page.goto(`${BASE}${route}`);
-        await page.waitForTimeout(2000);
+        // AdminGuard is a React client-side guard that fires on mount.
+        // If the redirect doesn't happen within 8s, the guard is broken — not a timing issue.
+        await page.waitForURL(
+          url => !url.pathname.startsWith('/admin'),
+          { timeout: 8000 }
+        ).catch(() => {});
 
-        const url = page.url();
-        expect(url, `Unauthenticated should not access ${route}`).not.toContain('/admin/');
-        console.log(`5.1: ${route} → redirected to ${url} ✓`);
+        const currentUrl = page.url();
+        const currentPath = new URL(currentUrl).pathname;
+        expect(
+          currentPath,
+          `Unauthenticated should not stay on ${route} — ended up at ${currentUrl}`
+        ).not.toMatch(/^\/admin(\/|$)/);
+        console.log(`5.1: ${route} → redirected to ${currentUrl} ✓`);
       }
     } catch (e) {
       await screenshotOnFailure(page, 'admin-unauth-block');
@@ -128,17 +136,15 @@ test.describe('Suite 5 — Admin Flow', () => {
       const adminPass  = process.env.ADMIN_TEST_PASS  || 'Admin@12345!';
 
       await page.goto(`${BASE}/admin-login`);
-      await page.waitForTimeout(1000);
-
       const emailInput = page.locator('input[type="email"]').first();
       const passInput  = page.locator('input[type="password"]').first();
 
-      if (await emailInput.isVisible()) {
-        await emailInput.fill(adminEmail);
-        await passInput.fill(adminPass);
-        await page.click('button[type="submit"]');
-        await page.waitForTimeout(4000);
-      }
+      await expect(emailInput).toBeVisible({ timeout: 35000 });
+      await emailInput.fill(adminEmail);
+      await passInput.fill(adminPass);
+      await page.click('button[type="submit"]');
+      // Wait for URL to change from /admin-login to /admin/dashboard
+      await page.waitForURL(url => url.pathname.includes('/admin/dashboard'), { timeout: 35000 }).catch(() => {});
 
       // Check if we reached the admin dashboard
       if (page.url().includes('/admin')) {

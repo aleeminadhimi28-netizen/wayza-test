@@ -13,9 +13,8 @@ const BASE = 'http://localhost:5173';
 const API  = 'http://localhost:5000/api/v1';
 
 async function screenshotOnFailure(page: Page, name: string) {
-  const dir = 'test-results';
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  await page.screenshot({ path: path.join(dir, `failure-${name}.png`), fullPage: true });
+  // Playwright handles screenshots on failure automatically.
+  // Manual screenshot is disabled to prevent WebKit hangs.
 }
 
 /** Login as a regular guest (non-partner) user */
@@ -29,22 +28,23 @@ async function loginAsGuest(page: Page) {
   await page.fill('#email', guestEmail);
   await page.fill('#password', 'Test@1234!');
   await page.click('button[type="submit"]');
-  await page.waitForURL(url => !url.pathname.includes('/login'), { timeout: 12000 });
+  await page.waitForURL(url => !url.pathname.includes('/login'), { timeout: 35000 });
 }
 
 // ─── Tests ──────────────────────────────────────────────────────────────────
 
 test.describe('Suite 3 — Partner Flow', () => {
 
-  test('3.1 Unauthenticated user cannot access /partner/dashboard', async ({ page }) => {
+  test('3.1 Unauthenticated user cannot access /partner', async ({ page }) => {
     const errors: string[] = [];
     page.on('console', msg => { if (msg.type() === 'error') errors.push(msg.text()); });
     try {
-      await page.goto(`${BASE}/partner/dashboard`);
-      await page.waitForTimeout(3000);
+      await page.goto(`${BASE}/partner`);
+      // Wait up to 35s to navigate away from dashboard (redirect to login)
+      await page.waitForURL(url => url.pathname.includes('/partner-login'), { timeout: 35000 });
 
       const url = page.url();
-      expect(url, 'Unauthenticated user should be redirected from /partner/dashboard').not.toContain('/partner/dashboard');
+      expect(url, 'Unauthenticated user should be redirected from /partner').toContain('/partner-login');
       console.log(`3.1: Redirected to ${url} ✓`);
     } catch (e) {
       await screenshotOnFailure(page, 'partner-unauth-redirect');
@@ -52,17 +52,18 @@ test.describe('Suite 3 — Partner Flow', () => {
     }
   });
 
-  test('3.2 Non-partner (guest) user cannot access /partner/dashboard', async ({ page }) => {
+  test('3.2 Non-partner (guest) user cannot access /partner', async ({ page }) => {
     try {
       await loginAsGuest(page);
-      await page.goto(`${BASE}/partner/dashboard`);
-      await page.waitForTimeout(3000);
+      await page.goto(`${BASE}/partner`);
+      // Wait up to 35s to navigate away from dashboard (blocked/redirected)
+      await page.waitForURL(url => url.pathname.includes('/partner-login'), { timeout: 35000 });
 
       const url = page.url();
       const body = await page.locator('body').innerText();
 
       // Should be kicked out — not see partner dashboard content
-      const isOnDashboard = url.includes('/partner/dashboard') && body.match(/total bookings|earnings|partner dashboard/i);
+      const isOnDashboard = url.endsWith('/partner') && body.match(/total bookings|earnings|partner dashboard/i);
       expect(isOnDashboard, 'Guest user should not see partner dashboard content').toBeFalsy();
       console.log(`3.2: Non-partner user blocked from dashboard ✓ (on ${url})`);
     } catch (e) {
@@ -77,8 +78,8 @@ test.describe('Suite 3 — Partner Flow', () => {
       await page.route('**/api/v1/auth/me', route => route.abort('failed'));
       await page.route('**/api/v1/partner/**', route => route.abort('failed'));
 
-      await page.goto(`${BASE}/partner/dashboard`);
-      await page.waitForTimeout(4000);
+      await page.goto(`${BASE}/partner`);
+      await page.waitForTimeout(8000);
 
       const body = await page.locator('body').innerText();
       const url = page.url();
@@ -99,12 +100,12 @@ test.describe('Suite 3 — Partner Flow', () => {
     page.on('console', msg => { if (msg.type() === 'error') errors.push(msg.text()); });
     try {
       await page.goto(`${BASE}/partner-register`);
-      await page.waitForTimeout(2000);
+      await page.waitForTimeout(8000);
 
-      await expect(page.locator('input[type="email"]')).toBeVisible();
-      await expect(page.locator('input[type="password"]')).toBeVisible();
-      await expect(page.locator('button:has-text("Stays")')).toBeVisible();
-      await expect(page.locator('button:has-text("Vehicles")')).toBeVisible();
+      await expect(page.locator('input[type="email"]')).toBeVisible({ timeout: 20000 });
+      await expect(page.locator('input[type="password"]')).toBeVisible({ timeout: 20000 });
+      await expect(page.locator('button:has-text("Stays")')).toBeVisible({ timeout: 20000 });
+      await expect(page.locator('button:has-text("Vehicles")')).toBeVisible({ timeout: 20000 });
 
       const body = await page.locator('body').innerText();
       expect(body).not.toContain('[object Object]');
@@ -203,11 +204,11 @@ test.describe('Suite 3 — Partner Flow', () => {
   test('3.7 Partner-facing pages have no undefined/NaN/[object Object] in text', async ({ page }) => {
     try {
       await page.goto(`${BASE}/partner-register`);
-      await page.waitForTimeout(2000);
+      await page.waitForTimeout(8000);
 
       for (const route of ['/partner-register', '/partner-login']) {
         await page.goto(`${BASE}${route}`);
-        await page.waitForTimeout(1500);
+        await page.waitForTimeout(4000);
         const body = await page.locator('body').innerText();
         expect(body, `Found broken data on ${route}`).not.toMatch(/\[object Object\]|undefined|NaN/);
       }

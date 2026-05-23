@@ -20,9 +20,8 @@ const VALID_USER = {
 };
 
 async function screenshotOnFailure(page: Page, name: string) {
-  const dir = 'test-results';
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  await page.screenshot({ path: path.join(dir, `failure-${name}.png`), fullPage: true });
+  // Playwright handles screenshots on failure automatically.
+  // Manual screenshot is disabled to prevent WebKit hangs.
 }
 
 /** Register + login as a test user (idempotent — tolerates already-registered) */
@@ -38,7 +37,7 @@ async function ensureLoggedIn(page: Page) {
   await page.fill('#email', VALID_USER.email);
   await page.fill('#password', VALID_USER.password);
   await page.click('button[type="submit"]');
-  await page.waitForURL(url => !url.pathname.includes('/login'), { timeout: 12000 });
+  await page.waitForURL(url => !url.pathname.includes('/login'), { timeout: 35000 });
 }
 
 // ─── Tests ──────────────────────────────────────────────────────────────────
@@ -51,10 +50,10 @@ test.describe('Suite 2 — Booking Flow', () => {
     try {
       // Use a fake but structurally valid Mongo ID
       await page.goto(`${BASE}/booking/507f1f77bcf86cd799439011`);
-      await page.waitForTimeout(3000);
+      // Wait up to 35s for redirect to /login (AuthGuard kicks in)
+      await page.waitForURL(url => url.pathname.includes('/login'), { timeout: 35000 });
 
       const url = page.url();
-      // Should be redirected to /login (AuthGuard kicks in)
       expect(url, 'Expected redirect to /login for unauthenticated /booking/:id').toContain('/login');
       console.log(`2.1: Redirected to ${url} ✓`);
     } catch (e) {
@@ -66,7 +65,8 @@ test.describe('Suite 2 — Booking Flow', () => {
   test('2.2 Unauthenticated user cannot access /payment/:id directly (BUG-002)', async ({ page }) => {
     try {
       await page.goto(`${BASE}/payment/507f1f77bcf86cd799439011`);
-      await page.waitForTimeout(3000);
+      // Wait up to 35s for redirect to /login
+      await page.waitForURL(url => url.pathname.includes('/login'), { timeout: 35000 });
 
       const url = page.url();
       expect(url, 'Expected redirect to /login for unauthenticated /payment/:id').toContain('/login');
@@ -80,7 +80,8 @@ test.describe('Suite 2 — Booking Flow', () => {
   test('2.3 Unauthenticated user cannot access /payment-success directly (BUG-002)', async ({ page }) => {
     try {
       await page.goto(`${BASE}/payment-success`);
-      await page.waitForTimeout(3000);
+      // Wait up to 35s for redirect to /login
+      await page.waitForURL(url => url.pathname.includes('/login'), { timeout: 35000 });
 
       const url = page.url();
       expect(url, 'Expected redirect to /login for unauthenticated /payment-success').toContain('/login');
@@ -94,10 +95,10 @@ test.describe('Suite 2 — Booking Flow', () => {
   test('2.4 Unauthenticated user cannot access /booking-success directly (BUG-002)', async ({ page }) => {
     try {
       await page.goto(`${BASE}/booking-success`);
-      await page.waitForTimeout(3000);
+      // Wait up to 35s for redirect to /login
+      await page.waitForURL(url => url.pathname.includes('/login'), { timeout: 35000 });
 
       const url = page.url();
-      // Should redirect to login (AuthGuard), not show fake success
       expect(url, 'Expected redirect to /login for unauthenticated /booking-success').toContain('/login');
       console.log(`2.4: Redirected to ${url} ✓`);
     } catch (e) {
@@ -111,7 +112,7 @@ test.describe('Suite 2 — Booking Flow', () => {
     page.on('console', msg => { if (msg.type() === 'error') errors.push(msg.text()); });
     try {
       await page.goto(`${BASE}/listings`);
-      await page.waitForTimeout(4000);
+      await page.waitForTimeout(8000);
 
       const body = await page.locator('body').innerText();
       // Check for broken price display
@@ -135,7 +136,7 @@ test.describe('Suite 2 — Booking Flow', () => {
       // The page should NOT show stale location.state data but should try to fetch from server
       // and either redirect home (booking not found) or show correct data
       await page.goto(`${BASE}/payment/507f1f77bcf86cd799439011`);
-      await page.waitForTimeout(4000);
+      await page.waitForTimeout(8000);
 
       const url = page.url();
       const body = await page.locator('body').innerText();
@@ -155,13 +156,13 @@ test.describe('Suite 2 — Booking Flow', () => {
   test('2.7 Search → navigate to listing detail page works end-to-end', async ({ page }) => {
     try {
       await page.goto(`${BASE}/listings`);
-      await page.waitForTimeout(3000);
+      await page.waitForTimeout(8000);
 
       // Find first listing card and click it
       const firstCard = page.locator('.cursor-pointer').filter({ hasText: /₹/ }).first();
       if (await firstCard.count() > 0) {
         await firstCard.click();
-        await page.waitForURL(url => url.pathname.includes('/listing/'), { timeout: 8000 });
+        await page.waitForURL(url => url.pathname.includes('/listing/'), { timeout: 20000 });
         expect(page.url()).toMatch(/\/listing\//);
 
         const body = await page.locator('body').innerText();

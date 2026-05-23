@@ -30,9 +30,8 @@ function collectConsoleErrors(page: Page): string[] {
 
 /** Screenshot on failure helper */
 async function screenshotOnFailure(page: Page, name: string) {
-  const dir = 'test-results';
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  await page.screenshot({ path: path.join(dir, `failure-${name}.png`), fullPage: true });
+  // Playwright handles screenshots on failure automatically.
+  // Manual screenshot is disabled to prevent WebKit hangs.
 }
 
 /** Register and login a user directly via API for robustness and speed */
