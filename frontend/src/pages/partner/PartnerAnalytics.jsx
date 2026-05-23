@@ -43,6 +43,7 @@ export default function PartnerAnalytics() {
   const [earnings, setEarnings] = useState(null);
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [mainSector, setMainSector] = useState('stays');
 
   useEffect(() => {
     if (!user?.email) return;
@@ -51,11 +52,13 @@ export default function PartnerAnalytics() {
       api.getPartnerMonthlyRevenue(),
       api.getPartnerEarnings(),
       api.getPartnerBookings(),
+      api.partnerStatus(),
     ])
-      .then(([m, e, b]) => {
+      .then(([m, e, b, s]) => {
         if (m.ok) setMonthly(m.data || []);
         if (e.ok) setEarnings(e);
         setBookings(Array.isArray(b) ? b : []);
+        if (s && s.mainSector) setMainSector(s.mainSector);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -73,7 +76,9 @@ export default function PartnerAnalytics() {
         name === 'paid'
           ? 'Confirmed'
           : name === 'arrived'
-            ? 'In-Stay'
+            ? mainSector === 'vehicles'
+              ? 'Picked Up'
+              : 'In-Stay'
             : name === 'departed'
               ? 'Completed'
               : name === 'pending'
@@ -563,7 +568,9 @@ export default function PartnerAnalytics() {
                     {b.status === 'paid'
                       ? 'Confirmed'
                       : b.status === 'arrived'
-                        ? 'In-Stay'
+                        ? mainSector === 'vehicles'
+                          ? 'Picked Up'
+                          : 'In-Stay'
                         : b.status === 'departed'
                           ? 'Completed'
                           : b.status === 'cancelled'

@@ -91,9 +91,21 @@ export default function PartnerBookings() {
       .catch(() => setLoading(false));
   }, []);
 
+  const [mainSector, setMainSector] = useState('stays');
+
   useEffect(() => {
     if (!user?.email) return;
     refresh();
+    api
+      .partnerStatus()
+      .then((res) => {
+        if (res && res.mainSector) {
+          setMainSector(res.mainSector);
+        }
+      })
+      .catch((err) => {
+        console.error('Error fetching partner status:', err);
+      });
   }, [user?.email, refresh]);
 
   const visible = bookings.filter((b) => {
@@ -352,8 +364,10 @@ export default function PartnerBookings() {
               { key: 'all', label: 'All' },
               { key: 'paid', label: 'Confirmed' },
               { key: 'pending', label: 'Pending' },
-              // FIX #64: arrived & departed filter tabs
-              { key: 'arrived', label: 'In-Stay' },
+              {
+                key: 'arrived',
+                label: mainSector === 'vehicles' ? 'Picked Up' : 'In-Stay',
+              },
               { key: 'departed', label: 'Completed' },
               { key: 'cancelled', label: 'Cancelled' },
             ].map((tab) => (
