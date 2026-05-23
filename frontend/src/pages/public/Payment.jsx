@@ -62,7 +62,7 @@ export default function Payment() {
         return;
       }
 
-      // 2. Configure Razorpay Options
+      // 2. Configure Razorpay Options (uses VITE_RAZORPAY_KEY_ID env variable)
       const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID;
       if (!razorpayKey) {
         showToast('Payment gateway misconfigured. Please contact support.', 'error');
