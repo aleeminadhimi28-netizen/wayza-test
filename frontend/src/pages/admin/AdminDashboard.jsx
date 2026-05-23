@@ -109,10 +109,7 @@ export default function AdminDashboard() {
   const loadWithdrawals = useCallback(async () => {
     setLoadingData(true);
     try {
-      const [wRes, bRes] = await Promise.all([
-        api.adminGetWithdrawals(),
-        api.adminBookings(),
-      ]);
+      const [wRes, bRes] = await Promise.all([api.adminGetWithdrawals(), api.adminBookings()]);
       if (wRes.ok) setWithdrawals(wRes.data || []);
       if (bRes.ok) setAdminBookings(bRes.data || []);
     } catch (err) {

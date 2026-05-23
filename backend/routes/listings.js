@@ -55,6 +55,10 @@ router.get("/", async (req, res, next) => {
             filter.category = category;
         }
         if (location) {
+            // BUG-016 fix: cap length to prevent ReDoS/slow-query via long regex strings
+            if (String(location).length > 200) {
+                return res.status(400).json({ ok: false, message: "Search query too long" });
+            }
             const escapedLocation = String(location).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             filter.$or = [
                 { title: { $regex: escapedLocation, $options: "i" } },
@@ -409,8 +413,11 @@ router.delete("/:id/variant/:index", requireAuth, async (req, res, next) => {
         const listing = await listings.findOne({ _id: new ObjectId(id) });
         if (!listing || (listing.ownerEmail !== req.user.email && req.user.role !== "admin")) return res.status(403).json({ ok: false });
         if (idx >= (listing.variants || []).length) return res.status(400).json({ ok: false, message: "Index out of bounds" });
-        await listings.updateOne({ _id: new ObjectId(id) }, { $unset: { ["variants." + idx]: 1 } });
-        await listings.updateOne({ _id: new ObjectId(id) }, { $pull: { variants: null } });
+
+        // BUG-023 fix: replace $unset+$pull (which leaves null holes on race conditions) with
+        // a filtered array written back atomically via $set
+        const filteredVariants = (listing.variants || []).filter((_, i) => i !== idx);
+        await listings.updateOne({ _id: new ObjectId(id) }, { $set: { variants: filteredVariants } });
         res.json({ ok: true });
     } catch (err) { next(err); }
 });
@@ -457,7 +464,8 @@ router.put("/:id/variant/:index/price-rules", requireAuth, async (req, res, next
         if (!variant) return res.status(404).json({ ok: false, message: "Variant not found" });
 
         const rules = Array.isArray(req.body.priceRules) ? req.body.priceRules : [];
-        const floor = listing.baseFloorPrice || 0;
+        // BUG-019 fix: use the variant's own floor, not the listing-level floor
+        const floor = variant.baseFloorPrice ?? listing.baseFloorPrice ?? 0;
         for (const rule of rules) {
             if (!rule.date || typeof rule.date !== "string") {
                 return res.status(400).json({ ok: false, message: "Each rule must have a valid date" });

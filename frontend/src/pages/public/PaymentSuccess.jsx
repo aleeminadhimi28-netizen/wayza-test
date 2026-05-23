@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
 import { CheckCircle, Home, Calendar, ShieldCheck, Loader2 } from 'lucide-react';
 import SEO from '../../components/SEO.jsx';
+import { useAuth } from '../../AuthContext.jsx';
 
 /**
  * PaymentSuccess.jsx — Pure display page.
@@ -15,8 +16,16 @@ import SEO from '../../components/SEO.jsx';
  */
 export default function PaymentSuccess() {
   const navigate = useNavigate();
+  const { state } = useLocation();
+  const { user } = useAuth();
   const [countdown, setCountdown] = useState(10);
   const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    if (!user || !state?.verified) {
+      navigate('/', { replace: true });
+    }
+  }, [user, state, navigate]);
 
   // Auto-redirect to My Bookings after 10 seconds
   useEffect(() => {

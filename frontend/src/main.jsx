@@ -110,10 +110,31 @@ function AppContent() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/listing/:id" element={<ListingDetails />} />
-          <Route path="/booking/:id" element={<Booking />} />
+          <Route
+            path="/booking/:id"
+            element={
+              <AuthGuard>
+                <Booking />
+              </AuthGuard>
+            }
+          />
           <Route path="/listings" element={<Listings />} />
-          <Route path="/payment/:id" element={<Payment />} />
-          <Route path="/payment-success" element={<PaymentSuccess />} />
+          <Route
+            path="/payment/:id"
+            element={
+              <AuthGuard>
+                <Payment />
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="/payment-success"
+            element={
+              <AuthGuard>
+                <PaymentSuccess />
+              </AuthGuard>
+            }
+          />
           <Route
             path="/my-bookings"
             element={
@@ -141,7 +162,14 @@ function AppContent() {
               </AuthGuard>
             }
           />
-          <Route path="/booking-success" element={<BookingSuccess />} />
+          <Route
+            path="/booking-success"
+            element={
+              <AuthGuard>
+                <BookingSuccess />
+              </AuthGuard>
+            }
+          />
           <Route
             path="/guest-chat"
             element={

@@ -4,7 +4,13 @@ import { CheckCircle, Clock, Banknote, XCircle } from 'lucide-react';
 import ConfirmModal from '../../components/ui/ConfirmModal.jsx';
 import { api } from '../../utils/api.js';
 
-export default function AdminWithdrawals({ withdrawals, setWithdrawals, bookings = [], stats, loadingData }) {
+export default function AdminWithdrawals({
+  withdrawals,
+  setWithdrawals,
+  bookings = [],
+  stats,
+  loadingData,
+}) {
   const [rejectingId, setRejectingId] = useState(null);
   const [rejectReason, setRejectReason] = useState('');
   const [confirmModal, setConfirmModal] = useState({
@@ -285,7 +291,10 @@ export default function AdminWithdrawals({ withdrawals, setWithdrawals, bookings
               <tbody className="divide-y divide-slate-50">
                 {credits.map((c, i) => {
                   const base = c.baseAmount || Math.round(c.totalPrice / 1.12);
-                  const commission = c.commissionAmount !== undefined ? c.commissionAmount : (99 + Math.round(base * 0.10));
+                  const commission =
+                    c.commissionAmount !== undefined
+                      ? c.commissionAmount
+                      : 99 + Math.round(base * 0.1);
                   const tcs = c.tcsAmount || 0;
                   const adminShare = commission + tcs;
                   return (
@@ -300,19 +309,24 @@ export default function AdminWithdrawals({ withdrawals, setWithdrawals, bookings
                         })}
                       </td>
                       <td className="px-6 py-4">
-                        <p className="font-semibold text-sm text-slate-900">{c.title || 'Stay/Vehicle'}</p>
+                        <p className="font-semibold text-sm text-slate-900">
+                          {c.title || 'Stay/Vehicle'}
+                        </p>
                         <p className="text-[11px] font-mono text-slate-400 mt-0.5">
                           #{(c._id || '').slice(-8).toUpperCase()}
                         </p>
                       </td>
-                      <td className="px-6 py-4 text-sm text-slate-600">
-                        {c.ownerEmail}
-                      </td>
+                      <td className="px-6 py-4 text-sm text-slate-600">{c.ownerEmail}</td>
                       <td className="px-6 py-4">
                         <div className="text-xs text-slate-500 space-y-0.5">
                           <p>Paid: ₹{Number(c.totalPrice).toLocaleString()}</p>
-                          <p>Partner Share: -₹{Number(c.netEarnings || (c.totalPrice - commission)).toLocaleString()}</p>
-                          {tcs > 0 && <p className="text-rose-500">TCS (1%): ₹{tcs.toLocaleString()}</p>}
+                          <p>
+                            Partner Share: -₹
+                            {Number(c.netEarnings || c.totalPrice - commission).toLocaleString()}
+                          </p>
+                          {tcs > 0 && (
+                            <p className="text-rose-500">TCS (1%): ₹{tcs.toLocaleString()}</p>
+                          )}
                         </div>
                       </td>
                       <td className="px-6 py-4 text-right font-black text-emerald-600">

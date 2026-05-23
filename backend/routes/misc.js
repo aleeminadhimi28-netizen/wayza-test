@@ -320,7 +320,16 @@ const couponValidateSchema = z.object({
     code: z.string().min(1)
 });
 
-router.post("/validate-coupon", async (req, res, next) => {
+const couponRateLimit = rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minute
+    max: 100,                 // 100 requests per IP per window
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { ok: false, message: "Too many coupon validation attempts. Please wait a moment." }
+});
+
+// BUG-004 fix: requireAuth prevents unauthenticated coupon code enumeration
+router.post("/validate-coupon", requireAuth, couponRateLimit, async (req, res, next) => {
     try {
         const parsed = couponValidateSchema.safeParse(req.body);
         if (!parsed.success) return res.status(400).json({ ok: false, message: "Coupon code is required" });
@@ -385,6 +394,8 @@ router.get("/neighborhood-vibe", async (req, res, next) => {
     try {
         const { location, category } = req.query;
         if (!location) return res.status(400).json({ ok: false, message: "Location is required" });
+        // BUG-020 fix: cap location length to prevent token abuse in AI calls
+        if (String(location).length > 300) return res.status(400).json({ ok: false, message: "Location query too long" });
 
         // Try AI generation
         if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== "your_gemini_api_key_here") {

@@ -41,6 +41,21 @@ router.get("/my-bookings", requireAuth, async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
+// BUG-011 fix: fetch a single booking by ID for the payment page
+// Must be placed before /:listingId to avoid routing conflict
+router.get("/single/:bookingId", requireAuth, async (req, res, next) => {
+    try {
+        const { bookingId } = req.params;
+        if (!ObjectId.isValid(bookingId)) return res.status(400).json({ ok: false, message: "Invalid booking ID" });
+        const db = getDB();
+        const booking = await db.collection("bookings").findOne({ _id: new ObjectId(bookingId) });
+        if (!booking) return res.status(404).json({ ok: false, message: "Booking not found" });
+        // Only the guest who made the booking can fetch it
+        if (booking.guestEmail !== req.user.email) return res.status(403).json({ ok: false, message: "Forbidden" });
+        res.json({ ok: true, data: booking });
+    } catch (err) { next(err); }
+});
+
 router.get("/:listingId", requireAuth, async (req, res, next) => {
     try {
         const db = getDB();

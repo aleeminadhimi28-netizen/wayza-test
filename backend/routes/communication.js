@@ -68,7 +68,24 @@ router.post("/chat/:bookingId", requireAuth, async (req, res, next) => {
 
         emitMessage(bookingId, newMessage);
 
-        res.json({ ok: true });
+        // BUG-006 fix: return the saved message so frontend can replace the optimistic temp message
+        res.json({ ok: true, data: newMessage });
+
+        // BUG-022 fix (fire-and-forget after response): insert a notification for the other party
+        // so they see a badge update even when not actively on the chat page
+        const recipientEmail = req.user.email === booking.guestEmail
+            ? booking.ownerEmail
+            : booking.guestEmail;
+        if (recipientEmail) {
+            db.collection("notifications").insertOne({
+                email: recipientEmail,
+                type: "new_message",
+                message: `New message in booking #${bookingId.slice(-6).toUpperCase()}`,
+                bookingId,
+                read: false,
+                createdAt: new Date()
+            }).catch(e => console.error("Notification insert error:", e));
+        }
     } catch (err) { next(err); }
 });
 
@@ -143,7 +160,8 @@ router.patch("/support-tickets/:id/reply", requireAuth, async (req, res, next) =
             update.$push = { replies: { message: reply, from: req.user.role === "admin" ? "admin" : "user", createdAt: new Date() } };
         }
         if (status && req.user.role === "admin") update.$set.status = status;
-        if (req.user.role !== "admin") update.$set.status = "open";
+        // BUG-003 fix: removed the line that was resetting status to "open" for all non-admin users.
+        // Non-admins cannot change ticket status — only admins control status transitions.
 
         await db.collection("support_tickets").updateOne({ _id: new ObjectId(req.params.id) }, update);
         res.json({ ok: true });

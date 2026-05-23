@@ -318,7 +318,8 @@ export default function AdminDataTable({
                             </p>
                             {activeTab === 'bookings' && (
                               <p className="text-[10px] text-emerald-400/80 font-bold uppercase tracking-wider mt-1 font-mono">
-                                Stay: {item.checkIn} → {item.checkOut} ({item.nights} {item.nights === 1 ? 'night' : 'nights'})
+                                Stay: {item.checkIn} → {item.checkOut} ({item.nights}{' '}
+                                {item.nights === 1 ? 'night' : 'nights'})
                               </p>
                             )}
                             {activeTab === 'listings' &&
@@ -473,7 +474,9 @@ export default function AdminDataTable({
                               <span className="w-1 h-1 bg-white/10 rounded-full" />
                               <span>Comm: ₹{(item.commissionAmount || 0).toLocaleString()}</span>
                               <span className="w-1 h-1 bg-white/10 rounded-full" />
-                              <span className="text-emerald-400">Net: ₹{(item.netEarnings || 0).toLocaleString()}</span>
+                              <span className="text-emerald-400">
+                                Net: ₹{(item.netEarnings || 0).toLocaleString()}
+                              </span>
                             </div>
                           </div>
                         ) : (

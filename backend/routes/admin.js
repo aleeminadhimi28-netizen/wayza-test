@@ -38,7 +38,8 @@ router.post("/login", async (req, res, next) => {
             httpOnly: true,
             maxAge: 7 * 24 * 60 * 60 * 1000
         }));
-        res.json({ ok: true, token, email: user.email });
+        // BUG-018 fix: do not return the JWT in the response body \u2014 cookie is the only transport
+        res.json({ ok: true, email: user.email });
     } catch (err) { next(err); }
 });
 
@@ -75,27 +76,40 @@ router.get("/stats", requireAuth, requireRole(["admin"]), async (req, res, next)
             bookings.find({ status: { $in: ["paid", "arrived", "departed"] } }).sort({ createdAt: -1 }).limit(5).toArray()
         ]);
 
-        const paid = await bookings.find({ status: { $in: ["paid", "arrived", "departed"] } }).toArray();
-        const totalRevenue = paid.reduce((s, b) => s + (b.totalPrice || 0), 0);
-        
-        // platformCommission stores: Service Fee + Commission - Discount
-        const platformCommission = paid.reduce((s, b) => s + (b.commissionAmount || (99 + Math.round((b.baseAmount || (b.totalPrice / 1.12)) * 0.10))), 0);
-        
-        // Total TCS collected
-        const totalTcs = paid.reduce((s, b) => s + (b.tcsAmount || 0), 0);
-        
-        // Total amount going to admin (Commission + TCS)
+        // BUG-007 fix: use MongoDB aggregation pipeline instead of loading all bookings into memory
+        const [revenueStats] = await bookings.aggregate([
+            { $match: { status: { $in: ["paid", "arrived", "departed"] } } },
+            { $group: {
+                _id: null,
+                totalRevenue: { $sum: "$totalPrice" },
+                platformCommission: { $sum: { $ifNull: ["$commissionAmount", 0] } },
+                totalTcs: { $sum: { $ifNull: ["$tcsAmount", 0] } }
+            }}
+        ]).toArray();
+
+        const totalRevenue = revenueStats?.totalRevenue || 0;
+        const platformCommission = revenueStats?.platformCommission || 0;
+        const totalTcs = revenueStats?.totalTcs || 0;
         const totalPlatformShare = platformCommission + totalTcs;
 
-        const revenueMap = {};
-        paid.forEach(b => {
-            const d = new Date(b.createdAt);
-            const key = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
-            const label = d.toLocaleString("default", { month: "short" });
-            if (!revenueMap[key]) revenueMap[key] = { name: label, rev: 0 };
-            revenueMap[key].rev += b.totalPrice || 0;
-        });
-        const monthlyRevenue = Object.values(revenueMap).sort((a, b) => a.name > b.name ? 1 : -1).slice(-6);
+        // Monthly revenue aggregation — also done in DB
+        const monthlyRaw = await bookings.aggregate([
+            { $match: { status: { $in: ["paid", "arrived", "departed"] } } },
+            { $group: {
+                _id: {
+                    year: { $year: "$createdAt" },
+                    month: { $month: "$createdAt" }
+                },
+                rev: { $sum: "$totalPrice" }
+            }},
+            { $sort: { "_id.year": 1, "_id.month": 1 } },
+            { $limit: 6 }
+        ]).toArray();
+
+        const monthlyRevenue = monthlyRaw.map(r => ({
+            name: new Date(r._id.year, r._id.month - 1).toLocaleString("default", { month: "short" }),
+            rev: r.rev
+        }));
 
         res.json({
             ok: true,
@@ -192,7 +206,8 @@ router.delete("/partners/:email", requireAuth, requireRole(["admin"]), async (re
             db.collection("partners").deleteOne({ email }),
             db.collection("users").deleteOne({ email }),
             db.collection("listings").deleteMany({ ownerEmail: email }),
-            db.collection("bookings").deleteMany({ ownerEmail: email }),
+            // BUG-008 fix: include guestEmail to prevent orphaned bookings
+            db.collection("bookings").deleteMany({ $or: [{ ownerEmail: email }, { guestEmail: email }] }),
             db.collection("partnerWallets").deleteOne({ email }),
             db.collection("withdrawalRequests").deleteMany({ email }),
         ]);

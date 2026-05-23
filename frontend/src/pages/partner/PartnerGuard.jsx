@@ -22,6 +22,7 @@ export default function PartnerGuard({ children }) {
   const { user, loading: authLoading, logout } = useAuth();
   const [checking, setChecking] = useState(true); // always start checking; resolved in useEffect after auth loads
   const [pendingApproval, setPendingApproval] = useState(false);
+  const [networkError, setNetworkError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
@@ -65,8 +66,8 @@ export default function PartnerGuard({ children }) {
       })
       .catch(() => {
         if (active) {
-          // Network error — don't kick the user out, show a retry prompt instead
-          setPendingApproval(false);
+          // Network error — do NOT grant access. Show a safe retry screen.
+          setNetworkError(true);
           setChecking(false);
         }
       });
@@ -76,11 +77,12 @@ export default function PartnerGuard({ children }) {
     };
   }, [user, authLoading, navigate, retryCount]);
 
-  // Reset cache on logout (user becomes null)
+  // Reset cache and networkError on logout (user becomes null)
   useEffect(() => {
     if (!authLoading && !user) {
       sessionStorage.removeItem('partner_onboarded');
       sessionStorage.removeItem('partner_onboarded_at');
+      setNetworkError(false);
     }
   }, [user, authLoading]);
 
@@ -188,6 +190,57 @@ export default function PartnerGuard({ children }) {
             </div>
           </div>
         </motion.div>
+      </div>
+    );
+  }
+
+  // ── NETWORK ERROR SCREEN (BUG-009 fix) ──
+  // Never grant access when we can't verify partner status.
+  if (networkError) {
+    return (
+      <div className="min-h-screen bg-white font-sans flex items-center justify-center p-6">
+        <div className="w-full max-w-md text-center space-y-6">
+          <div className="w-20 h-20 bg-rose-50 border-2 border-rose-200 text-rose-500 rounded-[28px] flex items-center justify-center mx-auto">
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+          </div>
+          <div>
+            <h2 className="text-2xl font-black text-slate-900 tracking-tight">Connection Error</h2>
+            <p className="text-slate-500 text-sm mt-2">
+              Unable to verify your partner status. Please check your connection and try again.
+            </p>
+          </div>
+          <div className="flex flex-col gap-3">
+            <button
+              onClick={() => {
+                sessionStorage.removeItem('partner_onboarded');
+                sessionStorage.removeItem('partner_onboarded_at');
+                setNetworkError(false);
+                setChecking(true);
+                setRetryCount((c) => c + 1);
+              }}
+              className="w-full h-14 bg-slate-950 text-white rounded-2xl font-bold text-sm uppercase tracking-widest hover:bg-emerald-600 transition-all"
+            >
+              Retry
+            </button>
+            <button
+              onClick={() => navigate('/partner-login')}
+              className="w-full h-12 bg-slate-50 text-slate-500 border border-slate-200 rounded-xl font-semibold text-xs uppercase tracking-wider hover:bg-slate-100 transition-colors"
+            >
+              Back to Login
+            </button>
+          </div>
+        </div>
       </div>
     );
   }

@@ -17,25 +17,9 @@ export default function Payment() {
   const [submitting, setSubmitting] = useState(false);
   const [phone, setPhone] = useState('');
   const [name, setName] = useState('');
-
-  useEffect(() => {
-    if (!user) {
-      navigate('/login', { state: { from: location.pathname } });
-    }
-  }, [user, navigate, location]);
-
-  const price = location.state?.price || 0;
-  const title = location.state?.title || 'Premium Experience';
-  const nights = location.state?.nights || 1;
-  const couponCode = location.state?.couponCode;
-  const category = location.state?.category || '';
-  const isVehicle = category === 'bike' || category === 'car';
-  const isActivity = category === 'activity' || category === 'experience';
-  // Full breakdown passed from Booking.jsx
-  const baseAmount = location.state?.baseAmount ?? null;
-  const discountAmount = location.state?.discountAmount ?? 0;
-  const gst = location.state?.gst ?? null;
-  const serviceFee = location.state?.serviceFee ?? null;
+  // BUG-011 fix: server-authoritative booking data (replaces location.state values)
+  const [bookingData, setBookingData] = useState(null);
+  const [bookingLoading, setBookingLoading] = useState(true);
 
   useEffect(() => {
     const script = document.createElement('script');
@@ -62,6 +46,40 @@ export default function Payment() {
         });
     }
   }, [user]);
+
+  // Use server-fetched booking data as the source of truth;
+  // fall back to location.state for immediate render before fetch completes
+  const price = bookingData?.totalPrice ?? location.state?.price ?? 0;
+  const title = bookingData?.title ?? location.state?.title ?? 'Premium Experience';
+  const nights = bookingData?.nights ?? location.state?.nights ?? 1;
+  const couponCode = bookingData?.couponCode ?? location.state?.couponCode;
+  const category = bookingData?.category ?? location.state?.category ?? '';
+  const isVehicle = category === 'bike' || category === 'car';
+  const isActivity = category === 'activity' || category === 'experience';
+  const baseAmount = bookingData?.baseAmount ?? location.state?.baseAmount ?? null;
+  const discountAmount = bookingData?.discountAmount ?? location.state?.discountAmount ?? 0;
+  const gst = bookingData?.gst ?? location.state?.gst ?? null;
+  const serviceFee = bookingData?.serviceFee ?? location.state?.serviceFee ?? null;
+
+  // BUG-011 fix: fetch authoritative booking details from server
+  useEffect(() => {
+    if (!bookingId || !user) return;
+    api
+      .getBooking(bookingId)
+      .then((res) => {
+        if (res.ok && res.data) {
+          setBookingData(res.data);
+        } else {
+          // Booking not found or forbidden — redirect away
+          showToast('Booking not found. Please try again.', 'error');
+          navigate('/');
+        }
+      })
+      .catch(() => {
+        showToast('Failed to load booking details.', 'error');
+      })
+      .finally(() => setBookingLoading(false));
+  }, [bookingId, user]);
 
   async function handlePayment(preferredMethod) {
     if (!bookingId) {
@@ -127,7 +145,7 @@ export default function Payment() {
 
             if (confirmData.ok) {
               showToast('Payment confirmed! Your booking is verified.', 'success');
-              navigate('/payment-success');
+              navigate('/payment-success', { state: { verified: true } });
             } else {
               showToast(confirmData.message || 'Payment verification failed.', 'error');
               setSubmitting(false);

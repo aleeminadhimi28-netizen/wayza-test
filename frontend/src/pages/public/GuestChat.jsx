@@ -23,6 +23,9 @@ export default function GuestChat() {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const bottomRef = useRef(null);
+  // BUG-013 fix: track whether we actually connected a socket so unmount
+  // only calls disconnectSocket when there's a matching initiateSocketConnection.
+  const socketConnected = useRef(false);
 
   // Keep a ref to the currently selected booking ID so the socket callback
   // can always read the latest value without becoming stale.
@@ -101,6 +104,7 @@ export default function GuestChat() {
 
     // Connect socket (idempotent — safe to call if already connected)
     initiateSocketConnection();
+    socketConnected.current = true; // BUG-013 fix: mark that we connected
 
     loadMessages();
     joinBookingRoom(selected._id);
@@ -133,9 +137,13 @@ export default function GuestChat() {
   }, [selected, loadMessages]);
 
   // Disconnect socket when the entire chat page unmounts
+  // BUG-013 fix: only disconnect if we actually called initiateSocketConnection()
   useEffect(() => {
     return () => {
-      disconnectSocket();
+      if (socketConnected.current) {
+        disconnectSocket();
+        socketConnected.current = false;
+      }
     };
   }, []);
 

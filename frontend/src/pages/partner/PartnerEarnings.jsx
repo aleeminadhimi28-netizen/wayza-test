@@ -32,7 +32,8 @@ export default function PartnerEarnings() {
       .then(([e, m, b]) => {
         if (e.ok) setEarnings(e);
         if (m.ok) setMonthly(m.data || []);
-        setBookings(Array.isArray(b) ? b : []);
+        // BUG-014 fix: getPartnerBookings now returns { ok, data } envelope
+        setBookings(Array.isArray(b.data) ? b.data : []);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -122,9 +123,11 @@ export default function PartnerEarnings() {
                 }));
               if (!rows.length) return;
               const headers = Object.keys(rows[0]);
+              // BUG-021 fix: escape embedded double quotes per RFC 4180 (double them)
+              const escapeCSV = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
               const csv = [
                 headers.join(','),
-                ...rows.map((r) => headers.map((h) => `"${r[h]}"`).join(',')),
+                ...rows.map((r) => headers.map((h) => escapeCSV(r[h])).join(',')),
               ].join('\n');
               const blob = new Blob([csv], { type: 'text/csv' });
               const url = URL.createObjectURL(blob);
@@ -273,13 +276,9 @@ export default function PartnerEarnings() {
                     </td>
                     <td className="px-6 py-4 text-right font-black text-sm text-emerald-400">
                       ₹
-                      {/* FIX #70: guard against division-by-zero for new partners with no revenue */}
-                      {Math.round(
-                        (m.revenue || 0) *
-                          (earnings?.totalRevenue > 0
-                            ? earnings.ownerPayout / earnings.totalRevenue
-                            : 0.9)
-                      ).toLocaleString()}
+                      {/* BUG-005 fix: use server-provided netRevenue (sum of stored netEarnings)
+                          instead of an approximated ownerPayout/totalRevenue ratio */}
+                      {(m.netRevenue || Math.round((m.revenue || 0) * 0.9)).toLocaleString()}
                     </td>
                   </tr>
                 ))}

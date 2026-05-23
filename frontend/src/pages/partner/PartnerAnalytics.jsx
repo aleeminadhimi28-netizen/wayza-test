@@ -57,7 +57,8 @@ export default function PartnerAnalytics() {
       .then(([m, e, b, s]) => {
         if (m.ok) setMonthly(m.data || []);
         if (e.ok) setEarnings(e);
-        setBookings(Array.isArray(b) ? b : []);
+        // BUG-014 fix: getPartnerBookings now returns { ok, data } envelope
+        setBookings(Array.isArray(b.data) ? b.data : []);
         if (s && s.mainSector) setMainSector(s.mainSector);
         setLoading(false);
       })

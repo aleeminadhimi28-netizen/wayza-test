@@ -29,7 +29,7 @@ export const globalLimiter = rateLimit({
 // Sensitive Routes Limiter (Login, Signup, Password Resets)
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  limit: 10, // Limit each IP to 10 requests per 15 mins for auth
+  limit: process.env.NODE_ENV === "test" || process.env.NODE_ENV === "development" ? 1000 : 10, // Limit each IP to 10 requests per 15 mins for auth (relaxed in dev/test)
   standardHeaders: true,
   legacyHeaders: false,
   skipSuccessfulRequests: false,

@@ -33,6 +33,7 @@ import {
 import { api } from '../../utils/api.js';
 import { fixImg } from '../../utils/image.js';
 import SEO from '../../components/SEO.jsx';
+import { useCurrency } from '../../CurrencyContext.jsx';
 
 const CATEGORIES = [
   { id: 'hotel', label: 'Stays', icon: Hotel },
@@ -112,6 +113,7 @@ export default function Listings() {
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { formatPrice, currency } = useCurrency();
 
   const [rows, setRows] = useState([]);
   const [saved, setSaved] = useState(new Set());
@@ -442,7 +444,7 @@ export default function Listings() {
                       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                         <div className="relative flex-1">
                           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-sm font-bold">
-                            ₹
+                            {currency.symbol}
                           </span>
                           <input
                             id="filter-min-price"
@@ -457,7 +459,7 @@ export default function Listings() {
                         <span className="hidden sm:block text-slate-200 self-center">/</span>
                         <div className="relative flex-1">
                           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-sm font-bold">
-                            ₹
+                            {currency.symbol}
                           </span>
                           <input
                             id="filter-max-price"
@@ -764,7 +766,7 @@ export default function Listings() {
                                           : 'Nightly rate from'}
                                     </p>
                                     <p className="text-3xl font-black text-slate-900 tracking-tighter">
-                                      ₹{minVariantPrice.toLocaleString()}
+                                      {formatPrice(minVariantPrice)}
                                     </p>
                                     <p className="text-[11px] font-bold text-emerald-600 uppercase tracking-widest mt-1">
                                       {isVehicle

@@ -271,7 +271,6 @@ router.get("/monthly-revenue", requireAuth, requireRole(["partner", "admin"]), a
     try {
         const db = getDB();
         const bookings = db.collection("bookings");
-        // FIX #114: include arrived/departed (in-stay/completed) in revenue; sort by ISO key not label
         const paid = await bookings.find({
             ownerEmail: req.user.email,
             status: { $in: ["paid", "arrived", "departed"] }
@@ -281,11 +280,12 @@ router.get("/monthly-revenue", requireAuth, requireRole(["partner", "admin"]), a
             const d = new Date(b.createdAt);
             const key = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
             const label = d.toLocaleString("default", { month: "short", year: "2-digit" });
-            if (!map[key]) map[key] = { month: label, revenue: 0, bookings: 0 };
+            if (!map[key]) map[key] = { month: label, revenue: 0, netRevenue: 0, bookings: 0 };
             map[key].revenue += b.totalPrice || 0;
+            // BUG-005 fix: include per-booking netEarnings so frontend can display accurate payout
+            map[key].netRevenue += b.netEarnings || 0;
             map[key].bookings += 1;
         });
-        // FIX #114: sort by ISO key so cross-year data is ordered correctly
         const data = Object.entries(map)
             .sort(([a], [b]) => a.localeCompare(b))
             .map(([, v]) => v);
@@ -311,7 +311,8 @@ router.get("/bookings", requireAuth, requireRole(["partner", "admin"]), async (r
         const db = getDB();
         const bookings = db.collection("bookings");
         const rows = await bookings.find({ ownerEmail: req.user.email }).sort({ createdAt: -1 }).toArray();
-        res.json(rows);
+        // BUG-014 fix: return consistent { ok, data } envelope (was returning a raw array)
+        res.json({ ok: true, data: rows });
     } catch (err) { next(err); }
 });
 
