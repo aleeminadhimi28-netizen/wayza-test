@@ -213,7 +213,7 @@ router.get("/earnings", requireAuth, requireRole(["partner", "admin"]), async (r
     try {
         const db = getDB();
         const bookings = db.collection("bookings");
-        const allPaid = await bookings.find({ ownerEmail: req.user.email, status: "paid" }).toArray();
+        const allPaid = await bookings.find({ ownerEmail: req.user.email, status: { $in: ["paid", "arrived", "departed"] } }).toArray();
 
         let totalRevenue = 0;
         let platformFee = 0;
@@ -354,7 +354,7 @@ router.post("/wallet/request", requireAuth, requireRole(["partner"]), async (req
 
         const bookings = db.collection("bookings");
         const now = new Date();
-        const allPaid = await bookings.find({ ownerEmail: req.user.email, status: "paid" }).toArray();
+        const allPaid = await bookings.find({ ownerEmail: req.user.email, status: { $in: ["paid", "arrived", "departed"] } }).toArray();
         const available = allPaid.reduce((sum, b) => {
             if (b.payoutStatus === "paid_out") return sum;
             if (new Date(b.checkIn) <= now) {

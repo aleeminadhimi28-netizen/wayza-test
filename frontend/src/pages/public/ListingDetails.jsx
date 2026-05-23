@@ -223,7 +223,9 @@ export default function ListingDetails() {
         setCanReview(
           bkgs.some(
             (b) =>
-              b.listingId === id && b.status === 'paid' && new Date(b.checkOut || b.endDate) < today
+              b.listingId === id &&
+              ['paid', 'arrived', 'departed'].includes(b.status) &&
+              new Date(b.checkOut || b.endDate) < today
           )
         );
       });

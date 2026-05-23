@@ -791,19 +791,39 @@ export default function PartnerDashboard() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-1.5">
-                        <span
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wide w-fit ${b.status === 'paid' ? 'bg-emerald-500/10 text-emerald-400' : b.status === 'cancelled' ? 'bg-rose-500/10 text-rose-400' : 'bg-amber-500/10 text-amber-400'}`}
-                        >
-                          <div
-                            className={`w-1.5 h-1.5 rounded-full ${b.status === 'paid' ? 'bg-emerald-400' : b.status === 'cancelled' ? 'bg-rose-400' : 'bg-amber-400'}`}
-                          />
-                          {b.status === 'paid'
-                            ? 'Confirmed'
-                            : b.status === 'cancelled'
-                              ? 'Cancelled'
-                              : 'Pending'}
-                        </span>
-                        {b.status === 'paid' && (
+                        {(() => {
+                          const isVehicle = mainSector === 'vehicles';
+                          let statusColor = 'bg-amber-500/10 text-amber-400';
+                          let dotColor = 'bg-amber-400';
+                          let statusText = 'Pending';
+
+                          if (b.status === 'paid') {
+                            statusColor = 'bg-emerald-500/10 text-emerald-400';
+                            dotColor = 'bg-emerald-400';
+                            statusText = 'Confirmed';
+                          } else if (b.status === 'arrived') {
+                            statusColor = 'bg-blue-500/10 text-blue-400';
+                            dotColor = 'bg-blue-400';
+                            statusText = isVehicle ? 'Picked Up' : 'In-Stay';
+                          } else if (b.status === 'departed') {
+                            statusColor = 'bg-white/[0.05] text-white/40';
+                            dotColor = 'bg-white/20';
+                            statusText = 'Completed';
+                          } else if (b.status === 'cancelled') {
+                            statusColor = 'bg-rose-500/10 text-rose-400';
+                            dotColor = 'bg-rose-400';
+                            statusText = 'Cancelled';
+                          }
+                          return (
+                            <span
+                              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wide w-fit ${statusColor}`}
+                            >
+                              <div className={`w-1.5 h-1.5 rounded-full ${dotColor}`} />
+                              {statusText}
+                            </span>
+                          );
+                        })()}
+                        {['paid', 'arrived', 'departed'].includes(b.status) && (
                           <span
                             className={`text-[9px] font-black uppercase tracking-wider ${b.payoutStatus === 'paid_out' ? 'text-blue-400' : 'text-amber-400'}`}
                           >

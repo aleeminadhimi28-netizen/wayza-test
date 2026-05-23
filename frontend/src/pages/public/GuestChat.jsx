@@ -83,7 +83,9 @@ export default function GuestChat() {
     api
       .getMyBookings()
       .then((res) => {
-        const paid = Array.isArray(res.data) ? res.data.filter((b) => b.status === 'paid') : [];
+        const paid = Array.isArray(res.data)
+          ? res.data.filter((b) => ['paid', 'arrived', 'departed'].includes(b.status))
+          : [];
         setBookings(paid);
         if (paid.length > 0) setSelected(paid[0]);
         setLoading(false);

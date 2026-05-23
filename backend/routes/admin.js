@@ -70,12 +70,12 @@ router.get("/stats", requireAuth, requireRole(["admin"]), async (req, res, next)
             users.countDocuments({ role: { $ne: "admin" } }),
             users.countDocuments({ role: "partner" }),
             listings.countDocuments(),
-            bookings.countDocuments({ status: "paid" }),
+            bookings.countDocuments({ status: { $in: ["paid", "arrived", "departed"] } }),
             listings.countDocuments({ approved: false }),
-            bookings.find({ status: "paid" }).sort({ createdAt: -1 }).limit(5).toArray()
+            bookings.find({ status: { $in: ["paid", "arrived", "departed"] } }).sort({ createdAt: -1 }).limit(5).toArray()
         ]);
 
-        const paid = await bookings.find({ status: "paid" }).toArray();
+        const paid = await bookings.find({ status: { $in: ["paid", "arrived", "departed"] } }).toArray();
         const totalRevenue = paid.reduce((s, b) => s + (b.totalPrice || 0), 0);
         
         // platformCommission stores: Service Fee + Commission - Discount
@@ -382,7 +382,7 @@ router.patch("/withdrawals/:id", requireAuth, requireRole(["admin"]), async (req
             // Fetch all past bookings for this partner (ownerEmail) which are paid but not paid_out
             const eligibleBookings = await bookingsCol.find({
                 ownerEmail: request.email,
-                status: "paid",
+                status: { $in: ["paid", "arrived", "departed"] },
                 payoutStatus: { $ne: "paid_out" }
             }).sort({ checkIn: 1 }).toArray();
 

@@ -47,7 +47,7 @@ router.get("/:listingId", requireAuth, async (req, res, next) => {
         const bookings = db.collection("bookings");
         const rows = await bookings.find({
             listingId: req.params.listingId,
-            status: { $in: ["pending", "paid"] }
+            status: { $in: ["pending", "paid", "arrived"] }
         }).project({ guestEmail: 0 }).toArray();
         res.json(rows);
     } catch (err) { next(err); }
@@ -190,7 +190,7 @@ router.post("/book", requireAuth, async (req, res, next) => {
             const conflictingBooking = await bookings.findOne({
                 listingId,
                 variantIndex: variantIndex || 0,
-                status: { $in: ["pending", "paid"] },
+                status: { $in: ["pending", "paid", "arrived"] },
                 checkIn: { $lt: checkOut },
                 checkOut: { $gt: checkIn }
             });

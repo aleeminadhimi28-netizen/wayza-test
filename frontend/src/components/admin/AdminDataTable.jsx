@@ -356,32 +356,69 @@ export default function AdminDataTable({
                       </td>
                       <td className="px-6 py-4 text-sm font-medium">
                         <div className="flex flex-col gap-1">
-                          <span
-                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide border w-fit ${item.status === 'paid' || item.approved || item.onboarded ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : activeTab === 'partners' && !item.onboarded && !item.onboardingCompleted ? 'bg-white/[0.05] text-white/40 border-white/[0.05]' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'}`}
-                          >
-                            {item.status === 'paid' || item.approved || item.onboarded ? (
-                              <>
-                                <CheckCircle size={10} strokeWidth={2.5} /> Active
-                              </>
-                            ) : activeTab === 'partners' &&
-                              !item.onboarded &&
-                              !item.onboardingCompleted ? (
-                              <>
-                                <Clock size={10} strokeWidth={2.5} /> Incomplete
-                              </>
-                            ) : (
-                              <>
-                                <Clock size={10} strokeWidth={2.5} /> Pending
-                              </>
-                            )}
-                          </span>
-                          {activeTab === 'bookings' && item.status === 'paid' && (
+                          {activeTab === 'bookings' ? (
+                            (() => {
+                              const isVehicle = item.category === 'bike' || item.category === 'car';
+                              const isActivity =
+                                item.category === 'activity' || item.category === 'experience';
+
+                              let colorClass = 'bg-amber-500/10 text-amber-400 border-amber-500/20';
+                              let statusLabel = 'Pending';
+                              if (item.status === 'paid') {
+                                colorClass =
+                                  'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+                                statusLabel = 'Confirmed';
+                              } else if (item.status === 'arrived') {
+                                colorClass = 'bg-blue-500/10 text-blue-400 border-blue-500/20';
+                                statusLabel = isVehicle
+                                  ? 'Picked Up'
+                                  : isActivity
+                                    ? 'Ongoing'
+                                    : 'In-Stay';
+                              } else if (item.status === 'departed') {
+                                colorClass = 'bg-white/[0.05] text-white/40 border-white/[0.05]';
+                                statusLabel = 'Completed';
+                              } else if (item.status === 'cancelled') {
+                                colorClass = 'bg-rose-500/10 text-rose-400 border-rose-500/20';
+                                statusLabel = 'Cancelled';
+                              }
+                              return (
+                                <span
+                                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide border w-fit ${colorClass}`}
+                                >
+                                  {statusLabel}
+                                </span>
+                              );
+                            })()
+                          ) : (
                             <span
-                              className={`text-[10px] font-black uppercase tracking-wide px-2 py-0.5 rounded w-fit ${item.payoutStatus === 'paid_out' ? 'text-emerald-400 bg-emerald-500/10' : 'text-amber-400 bg-amber-500/10'}`}
+                              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide border w-fit ${item.approved || item.onboarded ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : activeTab === 'partners' && !item.onboarded && !item.onboardingCompleted ? 'bg-white/[0.05] text-white/40 border-white/[0.05]' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'}`}
                             >
-                              Payout: {item.payoutStatus === 'paid_out' ? 'Settled' : 'Pending'}
+                              {item.approved || item.onboarded ? (
+                                <>
+                                  <CheckCircle size={10} strokeWidth={2.5} /> Active
+                                </>
+                              ) : activeTab === 'partners' &&
+                                !item.onboarded &&
+                                !item.onboardingCompleted ? (
+                                <>
+                                  <Clock size={10} strokeWidth={2.5} /> Incomplete
+                                </>
+                              ) : (
+                                <>
+                                  <Clock size={10} strokeWidth={2.5} /> Pending
+                                </>
+                              )}
                             </span>
                           )}
+                          {activeTab === 'bookings' &&
+                            ['paid', 'arrived', 'departed'].includes(item.status) && (
+                              <span
+                                className={`text-[10px] font-black uppercase tracking-wide px-2 py-0.5 rounded w-fit ${item.payoutStatus === 'paid_out' ? 'text-emerald-400 bg-emerald-500/10' : 'text-amber-400 bg-amber-500/10'}`}
+                              >
+                                Payout: {item.payoutStatus === 'paid_out' ? 'Settled' : 'Pending'}
+                              </span>
+                            )}
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -423,7 +460,7 @@ export default function AdminDataTable({
                       <td className="px-6 py-4 text-right">
                         <div className="flex justify-end gap-2 opacity-100 lg:opacity-40 lg:group-hover:opacity-100 transition-all">
                           {activeTab === 'bookings' &&
-                            item.status === 'paid' &&
+                            ['paid', 'arrived', 'departed'].includes(item.status) &&
                             item.payoutStatus !== 'paid_out' && (
                               <button
                                 onClick={() =>
