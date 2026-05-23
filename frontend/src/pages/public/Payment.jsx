@@ -15,6 +15,8 @@ export default function Payment() {
   const { showToast } = useToast();
   const { user } = useAuth();
   const [submitting, setSubmitting] = useState(false);
+  const [phone, setPhone] = useState('');
+  const [name, setName] = useState('');
 
   useEffect(() => {
     if (!user) {
@@ -45,6 +47,22 @@ export default function Payment() {
     };
   }, []);
 
+  useEffect(() => {
+    if (user) {
+      api
+        .getProfile()
+        .then((res) => {
+          if (res.ok && res.data) {
+            setPhone(res.data.phone || '');
+            setName(res.data.name || '');
+          }
+        })
+        .catch((err) => {
+          console.error('Error fetching profile in Payment:', err);
+        });
+    }
+  }, [user]);
+
   async function handlePayment(preferredMethod) {
     if (!bookingId) {
       showToast('Invalid transaction reference.', 'error');
@@ -70,13 +88,24 @@ export default function Payment() {
         return;
       }
 
+      // Detect if user is on mobile
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      );
+
       // Build method pre-selection config for the Razorpay modal
       const methodConfig = {
         prefill: {
+          name: name || '',
           email: user?.email || '',
-          method: preferredMethod,
+          contact: phone ? (phone.startsWith('+') ? phone : `+91${phone}`) : '',
         },
       };
+
+      // Only pre-select method if it's card (works on all platforms) or if it's mobile UPI (intent works)
+      if (preferredMethod === 'card' || (preferredMethod === 'upi' && isMobile)) {
+        methodConfig.prefill.method = preferredMethod;
+      }
 
       const options = {
         key: razorpayKey,
