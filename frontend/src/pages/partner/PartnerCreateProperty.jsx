@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../AuthContext.jsx';
 import { useToast } from '../../ToastContext.jsx';
@@ -66,6 +66,20 @@ export default function PartnerCreateProperty() {
   const [pucDoc, setPucDoc] = useState(null);
   const [pucDocPreview, setPucDocPreview] = useState(null);
   const isVehicle = category === 'bike' || category === 'car';
+
+  // Auto-fill location from the partner's first existing listing
+  useEffect(() => {
+    if (!user?.email) return;
+    api.getOwnerListings(user.email).then((listings) => {
+      const arr = Array.isArray(listings) ? listings : [];
+      const first = arr.find((l) => l.location);
+      if (first) {
+        setLocation((prev) => prev || first.location || '');
+        setLatitude((prev) => prev || (first.latitude != null ? String(first.latitude) : ''));
+        setLongitude((prev) => prev || (first.longitude != null ? String(first.longitude) : ''));
+      }
+    }).catch(() => {});
+  }, [user?.email]);
 
   const fetchGPSLocation = useCallback(async () => {
     if (!navigator.geolocation) {
