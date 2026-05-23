@@ -863,253 +863,12 @@ export default function PartnerProperty() {
           )}
         </AnimatePresence>
 
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
-          {/* FORM PANEL */}
-          <motion.div
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden sticky top-32 z-20"
-          >
-            <header className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
-              <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
-                {editIndex === null ? (
-                  <>
-                    <Plus size={16} className="text-emerald-600" /> <span>Add New Variant</span>
-                  </>
-                ) : (
-                  <>
-                    <Cpu size={16} className="text-emerald-600" /> <span>Edit Variant</span>
-                  </>
-                )}
-              </div>
-              {editIndex !== null && (
-                <button
-                  onClick={resetForm}
-                  className="text-xs font-semibold text-slate-400 hover:text-rose-500 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 transition-colors"
-                >
-                  Cancel
-                </button>
-              )}
-            </header>
+        {isVehicle ? (
+          /* ── VEHICLE: no add-form, just the variants list ── */
+          <div className="space-y-6">
 
-            <form onSubmit={save} className="p-6 space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-700 block">Class</label>
-                  <div className="relative">
-                    <Layers
-                      className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                      size={16}
-                    />
-                    <select
-                      value={type}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setType(val);
-                        setName('');
-                        setSelectedNameOption('');
-                      }}
-                      className="h-10 w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-8 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-colors appearance-none cursor-pointer"
-                    >
-                      {listing.category === 'bike' || listing.category === 'car' ? (
-                        <option value="Vehicle">Vehicle Unit</option>
-                      ) : (
-                        <option value="Room">Room</option>
-                      )}
-                      <option value="Other">Other</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-700 block">Price (₹)</label>
-                  <div className="relative">
-                    <Target
-                      className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                      size={16}
-                    />
-                    <input
-                      type="number"
-                      required
-                      placeholder="0.00"
-                      value={price}
-                      onChange={(e) => setPrice(e.target.value)}
-                      className="h-10 w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-4 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-colors"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-700 block">Name</label>
-                  <select
-                    value={selectedNameOption}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setSelectedNameOption(val);
-                      if (val === 'Custom') {
-                        setName('');
-                      } else {
-                        setName(val);
-                      }
-                    }}
-                    className="h-10 w-full bg-slate-50 border border-slate-200 rounded-lg px-3 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-colors cursor-pointer"
-                  >
-                    <option value="">Select {isVehicle ? 'vehicle' : 'room'} name...</option>
-                    {(type === 'Vehicle'
-                      ? VEHICLE_NAME_OPTIONS
-                      : type === 'Room'
-                        ? ROOM_NAME_OPTIONS
-                        : OTHER_NAME_OPTIONS
-                    ).map((opt) => (
-                      <option key={opt} value={opt}>
-                        {opt}
-                      </option>
-                    ))}
-                    <option value="Custom">Custom Name...</option>
-                  </select>
-                </div>
-
-                {selectedNameOption === 'Custom' && (
-                  <div className="space-y-2">
-                    <label className="text-xs font-semibold text-slate-700 block">
-                      Custom Name
-                    </label>
-                    <input
-                      required
-                      placeholder={
-                        type === 'Vehicle'
-                          ? 'e.g. Royal Enfield Himalayan'
-                          : 'e.g. Deluxe Double Room'
-                      }
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="h-10 w-full bg-slate-50 border border-slate-200 rounded-lg px-4 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-colors"
-                    />
-                  </div>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-700 block">Description</label>
-                <textarea
-                  placeholder="Features, amenities..."
-                  value={desc}
-                  onChange={(e) => setDesc(e.target.value)}
-                  rows={3}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-colors resize-none"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-700 block">
-                  {isVehicle ? 'Vehicle' : 'Room'} Amenities
-                </label>
-                <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto p-2 bg-slate-50 border border-slate-200 rounded-lg">
-                  {ALL_AMENITIES.map((a) => {
-                    const isSelected = variantAmenities.includes(a.label);
-                    return (
-                      <button
-                        type="button"
-                        key={a.id}
-                        onClick={() => {
-                          if (isSelected) {
-                            setVariantAmenities(variantAmenities.filter((x) => x !== a.label));
-                          } else {
-                            setVariantAmenities([...variantAmenities, a.label]);
-                          }
-                        }}
-                        className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
-                          isSelected
-                            ? 'bg-emerald-500 border border-emerald-500 text-white shadow-sm'
-                            : 'bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600'
-                        }`}
-                      >
-                        <a.icon size={12} />
-                        <span>{a.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-700 block">Image</label>
-                {!preview ? (
-                  <div className="relative h-32 bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center group/upload cursor-pointer hover:border-emerald-500/30 transition-colors">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFile}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                    />
-                    <ImageIcon
-                      className="text-slate-400 group-hover/upload:text-emerald-500 transition-colors mb-2"
-                      size={24}
-                    />
-                    <p className="text-xs font-semibold text-slate-500 group-hover/upload:text-emerald-600 transition-colors">
-                      Click to upload image
-                    </p>
-                  </div>
-                ) : (
-                  <div className="relative h-40 group/preview rounded-xl overflow-hidden border border-slate-200 shadow-sm">
-                    <img src={preview} className="w-full h-full object-cover" alt="Preview" />
-                    <button
-                      type="button"
-                      onClick={removeImage}
-                      className="absolute top-2 right-2 w-8 h-8 bg-white/90 backdrop-blur-md text-rose-500 flex items-center justify-center rounded-lg shadow-md hover:bg-rose-500 hover:text-white transition-colors z-20"
-                    >
-                      <X size={16} />
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              <label className="flex items-center gap-4 p-4 border border-slate-200 rounded-xl bg-slate-50 cursor-pointer hover:bg-white hover:border-emerald-200 transition-colors">
-                <div className="relative">
-                  <input
-                    type="checkbox"
-                    checked={available}
-                    onChange={(e) => setAvailable(e.target.checked)}
-                    className="hidden"
-                  />
-                  <div
-                    className={`w-11 h-6 rounded-full transition-colors flex items-center px-1 ${available ? 'bg-emerald-500' : 'bg-slate-300'}`}
-                  >
-                    <div
-                      className={`w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${available ? 'translate-x-5' : 'translate-x-0'}`}
-                    />
-                  </div>
-                </div>
-                <div className="flex flex-col">
-                  <span
-                    className={`text-sm font-semibold transition-colors ${available ? 'text-slate-900' : 'text-slate-500'}`}
-                  >
-                    Availability
-                  </span>
-                  <span className="text-xs text-slate-500">Show variant to customers</span>
-                </div>
-              </label>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className={`w-full h-11 bg-slate-900 border border-slate-900 text-white font-semibold text-sm rounded-xl transition-colors flex items-center justify-center gap-2 group/btn ${loading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-emerald-600 hover:border-emerald-600 active:scale-95'}`}
-              >
-                {loading ? (
-                  <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                ) : (
-                  <>
-                    <span>{editIndex === null ? 'Save Variant' : 'Update Variant'}</span>
-                    <Zap size={16} />
-                  </>
-                )}
-              </button>
-            </form>
-          </motion.div>
-
-          {/* VARIANTS LIST */}
-          <div className="xl:col-span-2 space-y-6">
+            {/* VARIANTS LIST */}
+            <div className="space-y-6">
             <div className="bg-white p-6 border border-slate-200 rounded-3xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
@@ -1250,8 +1009,380 @@ export default function PartnerProperty() {
                 </AnimatePresence>
               </div>
             )}
+            </div>
           </div>
-        </div>
+        ) : (
+          /* ── ROOM: original grid with add-form on the left ── */
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
+            {/* FORM PANEL */}
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden sticky top-32 z-20"
+            >
+              <header className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
+                  {editIndex === null ? (
+                    <>
+                      <Plus size={16} className="text-emerald-600" /> <span>Add New Variant</span>
+                    </>
+                  ) : (
+                    <>
+                      <Cpu size={16} className="text-emerald-600" /> <span>Edit Variant</span>
+                    </>
+                  )}
+                </div>
+                {editIndex !== null && (
+                  <button
+                    onClick={resetForm}
+                    className="text-xs font-semibold text-slate-400 hover:text-rose-500 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                )}
+              </header>
+
+              <form onSubmit={save} className="p-6 space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-slate-700 block">Class</label>
+                    <div className="relative">
+                      <Layers
+                        className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                        size={16}
+                      />
+                      <select
+                        value={type}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setType(val);
+                          setName('');
+                          setSelectedNameOption('');
+                        }}
+                        className="h-10 w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-8 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-colors appearance-none cursor-pointer"
+                      >
+                        <option value="Room">Room</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-slate-700 block">Price (₹)</label>
+                    <div className="relative">
+                      <Target
+                        className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                        size={16}
+                      />
+                      <input
+                        type="number"
+                        required
+                        placeholder="0.00"
+                        value={price}
+                        onChange={(e) => setPrice(e.target.value)}
+                        className="h-10 w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-4 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-colors"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-slate-700 block">Name</label>
+                    <select
+                      value={selectedNameOption}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setSelectedNameOption(val);
+                        if (val === 'Custom') {
+                          setName('');
+                        } else {
+                          setName(val);
+                        }
+                      }}
+                      className="h-10 w-full bg-slate-50 border border-slate-200 rounded-lg px-3 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-colors cursor-pointer"
+                    >
+                      <option value="">Select room name...</option>
+                      {(type === 'Room' ? ROOM_NAME_OPTIONS : OTHER_NAME_OPTIONS).map((opt) => (
+                        <option key={opt} value={opt}>
+                          {opt}
+                        </option>
+                      ))}
+                      <option value="Custom">Custom Name...</option>
+                    </select>
+                  </div>
+
+                  {selectedNameOption === 'Custom' && (
+                    <div className="space-y-2">
+                      <label className="text-xs font-semibold text-slate-700 block">
+                        Custom Name
+                      </label>
+                      <input
+                        required
+                        placeholder="e.g. Deluxe Double Room"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="h-10 w-full bg-slate-50 border border-slate-200 rounded-lg px-4 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-colors"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-slate-700 block">Description</label>
+                  <textarea
+                    placeholder="Features, amenities..."
+                    value={desc}
+                    onChange={(e) => setDesc(e.target.value)}
+                    rows={3}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-colors resize-none"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-slate-700 block">Room Amenities</label>
+                  <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto p-2 bg-slate-50 border border-slate-200 rounded-lg">
+                    {ALL_AMENITIES.map((a) => {
+                      const isSelected = variantAmenities.includes(a.label);
+                      return (
+                        <button
+                          type="button"
+                          key={a.id}
+                          onClick={() => {
+                            if (isSelected) {
+                              setVariantAmenities(variantAmenities.filter((x) => x !== a.label));
+                            } else {
+                              setVariantAmenities([...variantAmenities, a.label]);
+                            }
+                          }}
+                          className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                            isSelected
+                              ? 'bg-emerald-500 border border-emerald-500 text-white shadow-sm'
+                              : 'bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600'
+                          }`}
+                        >
+                          <a.icon size={12} />
+                          <span>{a.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-slate-700 block">Image</label>
+                  {!preview ? (
+                    <div className="relative h-32 bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center group/upload cursor-pointer hover:border-emerald-500/30 transition-colors">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFile}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                      />
+                      <ImageIcon
+                        className="text-slate-400 group-hover/upload:text-emerald-500 transition-colors mb-2"
+                        size={24}
+                      />
+                      <p className="text-xs font-semibold text-slate-500 group-hover/upload:text-emerald-600 transition-colors">
+                        Click to upload image
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="relative h-40 group/preview rounded-xl overflow-hidden border border-slate-200 shadow-sm">
+                      <img src={preview} className="w-full h-full object-cover" alt="Preview" />
+                      <button
+                        type="button"
+                        onClick={removeImage}
+                        className="absolute top-2 right-2 w-8 h-8 bg-white/90 backdrop-blur-md text-rose-500 flex items-center justify-center rounded-lg shadow-md hover:bg-rose-500 hover:text-white transition-colors z-20"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <label className="flex items-center gap-4 p-4 border border-slate-200 rounded-xl bg-slate-50 cursor-pointer hover:bg-white hover:border-emerald-200 transition-colors">
+                  <div className="relative">
+                    <input
+                      type="checkbox"
+                      checked={available}
+                      onChange={(e) => setAvailable(e.target.checked)}
+                      className="hidden"
+                    />
+                    <div
+                      className={`w-11 h-6 rounded-full transition-colors flex items-center px-1 ${available ? 'bg-emerald-500' : 'bg-slate-300'}`}
+                    >
+                      <div
+                        className={`w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${available ? 'translate-x-5' : 'translate-x-0'}`}
+                      />
+                    </div>
+                  </div>
+                  <div className="flex flex-col">
+                    <span
+                      className={`text-sm font-semibold transition-colors ${available ? 'text-slate-900' : 'text-slate-500'}`}
+                    >
+                      Availability
+                    </span>
+                    <span className="text-xs text-slate-500">Show variant to customers</span>
+                  </div>
+                </label>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className={`w-full h-11 bg-slate-900 border border-slate-900 text-white font-semibold text-sm rounded-xl transition-colors flex items-center justify-center gap-2 group/btn ${loading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-emerald-600 hover:border-emerald-600 active:scale-95'}`}
+                >
+                  {loading ? (
+                    <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <span>{editIndex === null ? 'Save Variant' : 'Update Variant'}</span>
+                      <Zap size={16} />
+                    </>
+                  )}
+                </button>
+              </form>
+            </motion.div>
+
+            {/* VARIANTS LIST */}
+            <div className="xl:col-span-2 space-y-6">
+              <div className="bg-white p-6 border border-slate-200 rounded-3xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
+                    <Database size={24} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-900">Current Variants</h3>
+                    <p className="text-sm text-slate-500">
+                      {listing.variants?.length || 0} active variants managing inventory
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {!listing.variants || listing.variants.length === 0 ? (
+                <div className="bg-white border text-center border-slate-200 border-dashed rounded-3xl py-24 px-6 flex flex-col items-center justify-center">
+                  <Database className="text-slate-300 mb-4" size={48} />
+                  <h3 className="text-xl font-bold text-slate-900 mb-2">No Variants found</h3>
+                  <p className="text-sm text-slate-500 max-w-sm">
+                    You haven't added any specific rooms, tiers, or options. Add your first variant
+                    using the panel on the left.
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-4">
+                  <AnimatePresence>
+                    {listing.variants.map((v, i) => (
+                      <motion.div
+                        key={i}
+                        layout
+                        initial={{ opacity: 0, scale: 0.98 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.98 }}
+                        className={`bg-white rounded-2xl border border-slate-200 transition-all overflow-hidden flex flex-col md:flex-row ${!v.available ? 'opacity-70' : 'shadow-sm hover:border-emerald-200'}`}
+                      >
+                        <div className="w-full md:w-64 h-48 md:h-auto shrink-0 relative">
+                          <img
+                            src={fixImg(v.image)}
+                            className="w-full h-full object-cover"
+                            alt={v.name}
+                          />
+                          <div className="absolute top-4 left-4">
+                            <div className="bg-slate-900/90 backdrop-blur-md px-3 py-1.5 rounded-lg text-white font-bold text-xs uppercase shadow-md">
+                              {v.type}
+                            </div>
+                          </div>
+                          {!v.available && (
+                            <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-[2px] flex items-center justify-center">
+                              <div className="bg-rose-500 text-white px-3 py-1 rounded-full font-bold text-xs">
+                                UNAVAILABLE
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="p-6 flex-1 flex flex-col justify-between">
+                          <div className="space-y-2 mb-6">
+                            <div className="flex justify-between items-start gap-4">
+                              <h4 className="text-xl font-bold text-slate-900">{v.name}</h4>
+                              <div className="text-right">
+                                <div className="text-xl font-bold text-emerald-600">
+                                  ₹{v.price.toLocaleString()}
+                                </div>
+                                <div className="text-xs font-semibold text-slate-500">/ night</div>
+                              </div>
+                            </div>
+                            <p className="text-sm text-slate-600 leading-relaxed line-clamp-2">
+                              {v.desc || (
+                                <span className="text-slate-400">No description provided.</span>
+                              )}
+                            </p>
+                            {v.amenities && v.amenities.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mt-3">
+                                {v.amenities.map((amenityLabel, idx) => {
+                                  const amenityObj = ALL_AMENITIES.find(
+                                    (a) => a.label === amenityLabel
+                                  );
+                                  if (!amenityObj) return null;
+                                  return (
+                                    <span
+                                      key={idx}
+                                      className="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-50 border border-slate-100 rounded-lg text-[10px] font-bold text-slate-500 uppercase tracking-wider"
+                                    >
+                                      <amenityObj.icon size={10} className="text-emerald-500" />
+                                      {amenityLabel}
+                                    </span>
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-slate-100 gap-4 mt-auto">
+                            <label className="flex items-center gap-3 cursor-pointer">
+                              <div className="relative">
+                                <input
+                                  type="checkbox"
+                                  className="hidden"
+                                  checked={v.available !== false}
+                                  onChange={() => toggleAvailable(i, v.available !== false)}
+                                />
+                                <div
+                                  className={`w-10 h-5 rounded-full transition-colors flex items-center px-0.5 ${v.available ? 'bg-emerald-500' : 'bg-slate-300'}`}
+                                >
+                                  <div
+                                    className={`w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${v.available ? 'translate-x-5' : 'translate-x-0'}`}
+                                  />
+                                </div>
+                              </div>
+                              <span className="text-sm font-semibold text-slate-700">
+                                {v.available ? 'Available' : 'Hidden'}
+                              </span>
+                            </label>
+
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => startEdit(v, i)}
+                                className="h-9 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-semibold text-xs flex items-center gap-2 transition-colors"
+                              >
+                                <Edit2 size={14} /> Edit
+                              </button>
+                              <button
+                                onClick={() => remove(i)}
+                                className="h-9 w-9 bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white rounded-lg flex items-center justify-center transition-colors"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
         <ConfirmModal
           isOpen={confirmModal.isOpen}
           onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
