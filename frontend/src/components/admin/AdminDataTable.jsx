@@ -315,6 +315,11 @@ export default function AdminDataTable({
                                 item.email ||
                                 `#${item._id?.slice(-8)?.toUpperCase()}`}
                             </p>
+                            {activeTab === 'bookings' && (
+                              <p className="text-[10px] text-emerald-400/80 font-bold uppercase tracking-wider mt-1 font-mono">
+                                Stay: {item.checkIn} → {item.checkOut} ({item.nights} {item.nights === 1 ? 'night' : 'nights'})
+                              </p>
+                            )}
                             {activeTab === 'listings' &&
                               (item.category === 'bike' || item.category === 'car') &&
                               (item.rcDoc || item.insuranceDoc || item.pucDoc) && (
@@ -443,17 +448,28 @@ export default function AdminDataTable({
                               </span>
                             )}
                           </div>
+                        ) : activeTab === 'bookings' ? (
+                          <div className="flex flex-col gap-1">
+                            <span className="text-xs font-bold text-white/70">
+                              Guest: {item.guestEmail}
+                            </span>
+                            <div className="flex flex-wrap items-center gap-2 text-[10px] text-white/30 font-bold uppercase tracking-wider mt-0.5">
+                              <span>Paid: ₹{(item.totalPrice || 0).toLocaleString()}</span>
+                              <span className="w-1 h-1 bg-white/10 rounded-full" />
+                              <span>Comm: ₹{(item.commissionAmount || 0).toLocaleString()}</span>
+                              <span className="w-1 h-1 bg-white/10 rounded-full" />
+                              <span className="text-emerald-400">Net: ₹{(item.netEarnings || 0).toLocaleString()}</span>
+                            </div>
+                          </div>
                         ) : (
                           <span className="text-sm font-bold text-white/70">
-                            {activeTab === 'bookings'
-                              ? item.guestEmail
-                              : item.price
-                                ? `₹${item.price.toLocaleString()}${
-                                    activeTab === 'listings' && item.viewCount
-                                      ? ` · 👁 ${item.viewCount.toLocaleString()} views`
-                                      : ''
-                                  }`
-                                : item.role || item.checkIn || '—'}
+                            {item.price
+                              ? `₹${item.price.toLocaleString()}${
+                                  activeTab === 'listings' && item.viewCount
+                                    ? ` · 👁 ${item.viewCount.toLocaleString()} views`
+                                    : ''
+                                }`
+                              : item.role || item.checkIn || '—'}
                           </span>
                         )}
                       </td>
