@@ -421,7 +421,9 @@ export default function MyBookings() {
                 {filtered.map((b, i) => {
                   const start = b.checkIn || b.startDate;
                   const end = b.checkOut || b.endDate;
-                  const isFuture = start && new Date(start) > new Date();
+                  const hoursUntilCheckIn = start
+                    ? (new Date(start) - new Date()) / (1000 * 60 * 60)
+                    : 0;
                   const cfg = statusConfig[b.status] || statusConfig.pending;
                   const isVehicle = b.category === 'bike' || b.category === 'car';
                   const isActivity = b.category === 'activity' || b.category === 'experience';
@@ -483,57 +485,66 @@ export default function MyBookings() {
                         </div>
 
                         <div className="flex flex-col w-full gap-2">
-                          {b.status !== 'cancelled' && isFuture && (
-                            <>
-                              {b.status === 'paid' && (
-                                <button
-                                  onClick={() => setPassportModal(b)}
-                                  className="h-12 w-full bg-emerald-600 text-white rounded-xl font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-2 hover:bg-slate-900 transition-all active:scale-95 shadow-md"
-                                >
-                                  <QrCode size={16} /> QR Passport
-                                </button>
-                              )}
-                              <button
-                                onClick={() => navigate('/guest-chat')}
-                                className="h-11 w-full text-slate-400 hover:text-emerald-600 font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-2 transition-all"
-                              >
-                                <MessageCircle size={16} /> Chat with host
-                              </button>
-                              <button
-                                onClick={() => cancelBooking(b)}
-                                disabled={cancellingId === b._id}
-                                className="h-10 w-full text-slate-300 hover:text-rose-500 font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-2 transition-all disabled:opacity-50"
-                              >
-                                {cancellingId === b._id ? (
-                                  <Loader2 className="w-3 h-3 animate-spin" />
-                                ) : (
-                                  <XCircle size={14} />
-                                )}
-                                Cancel {isVehicle ? 'rental' : isActivity ? 'experience' : 'stay'}
-                              </button>
-                            </>
-                          )}
-
+                          {/* QR Passport - for paid/confirmed bookings */}
                           {b.status === 'paid' && (
-                            <>
-                              <button
-                                onClick={() => downloadInvoice(b)}
-                                className="h-10 w-full border border-slate-100 text-slate-600 hover:bg-slate-50 rounded-xl font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-2 transition-all"
-                              >
-                                <FileText size={14} /> Download invoice
-                              </button>
-                              {/* #28: Only show review button if not already reviewed */}
-                              {!isFuture && !reviewedIds.has(b.listingId) && (
-                                <button
-                                  onClick={() => setReviewModal(b)}
-                                  className="h-10 w-full border border-amber-100 text-amber-700 bg-amber-50 rounded-xl font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-2 hover:bg-amber-500 hover:text-white transition-all mt-1"
-                                >
-                                  <Star size={14} /> Leave review
-                                </button>
-                              )}
-                            </>
+                            <button
+                              onClick={() => setPassportModal(b)}
+                              className="h-12 w-full bg-emerald-600 text-white rounded-xl font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-2 hover:bg-slate-900 transition-all active:scale-95 shadow-md"
+                            >
+                              <QrCode size={16} /> QR Passport
+                            </button>
                           )}
 
+                          {/* Chat with Host - for paid/confirmed or checked-in/ongoing bookings */}
+                          {(b.status === 'paid' || b.status === 'arrived') && (
+                            <button
+                              onClick={() => navigate('/guest-chat')}
+                              className="h-11 w-full text-slate-400 hover:text-emerald-600 font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-2 transition-all"
+                            >
+                              <MessageCircle size={16} /> Chat with host
+                            </button>
+                          )}
+
+                          {/* Download Invoice - for paid, arrived, or departed bookings */}
+                          {(b.status === 'paid' ||
+                            b.status === 'arrived' ||
+                            b.status === 'departed') && (
+                            <button
+                              onClick={() => downloadInvoice(b)}
+                              className="h-10 w-full border border-slate-100 text-slate-600 hover:bg-slate-50 rounded-xl font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-2 transition-all"
+                            >
+                              <FileText size={14} /> Download invoice
+                            </button>
+                          )}
+
+                          {/* Leave Review - only after completed check-out (departed) */}
+                          {b.status === 'departed' && !reviewedIds.has(b.listingId) && (
+                            <button
+                              onClick={() => setReviewModal(b)}
+                              className="h-10 w-full border border-amber-100 text-amber-700 bg-amber-50 rounded-xl font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-2 hover:bg-amber-500 hover:text-white transition-all mt-1"
+                            >
+                              <Star size={14} /> Leave review
+                            </button>
+                          )}
+
+                          {/* Cancel Reservation */}
+                          {(b.status === 'pending' ||
+                            (b.status === 'paid' && hoursUntilCheckIn > 24)) && (
+                            <button
+                              onClick={() => cancelBooking(b)}
+                              disabled={cancellingId === b._id}
+                              className="h-10 w-full text-slate-300 hover:text-rose-500 font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                            >
+                              {cancellingId === b._id ? (
+                                <Loader2 className="w-3 h-3 animate-spin" />
+                              ) : (
+                                <XCircle size={14} />
+                              )}
+                              Cancel {isVehicle ? 'rental' : isActivity ? 'experience' : 'stay'}
+                            </button>
+                          )}
+
+                          {/* Refund details (cancelled) */}
                           {b.status === 'cancelled' && (
                             <div className="space-y-2">
                               <div className="h-12 flex items-center justify-center gap-2 font-bold text-[11px] uppercase tracking-widest text-rose-500 bg-rose-50 rounded-xl border border-rose-100">
@@ -552,7 +563,8 @@ export default function MyBookings() {
                             </div>
                           )}
 
-                          {!isFuture && b.status !== 'cancelled' && (
+                          {/* Rebook Option - for completed or cancelled bookings */}
+                          {(b.status === 'departed' || b.status === 'cancelled') && (
                             <button
                               onClick={() => navigate(`/listing/${b.listingId}`)}
                               className="h-12 w-full bg-slate-50 text-slate-600 rounded-xl font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-2 hover:bg-slate-900 hover:text-white transition-all shadow-sm"

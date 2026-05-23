@@ -70,7 +70,14 @@ export default function PartnerBookings() {
   const [scanning, setScanning] = useState(false);
   const [manualCode, setManualCode] = useState('');
   const [scanResult, setScanResult] = useState(null); // { id, data, type: 'check-in' | 'check-out' }
-  const [confirmModal, setConfirmModal] = useState({ isOpen: false, onConfirm: () => {} });
+  const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    confirmText: '',
+    confirmVariant: 'emerald',
+    onConfirm: () => {},
+  });
   const scannerRef = useRef(null);
 
   const refresh = useCallback(() => {
@@ -175,25 +182,66 @@ export default function PartnerBookings() {
 
   const confirmAction = async () => {
     if (!scanResult) return;
-    try {
-      // Check-in only via scan
-      const res = await api.checkIn(scanResult._id, { passcode: scanResult.checkInPasscode });
+    await executeCheckIn(scanResult._id, scanResult.checkInPasscode);
+    setScannerActive(false);
+  };
 
+  const handleManualCheckIn = (b) => {
+    const isVehicle = b.category === 'bike' || b.category === 'car';
+    const isActivity = b.category === 'activity' || b.category === 'experience';
+    const actionLabel = isVehicle ? 'Confirm Pickup' : isActivity ? 'Confirm Start' : 'Check In';
+    const msg = isVehicle
+      ? 'Confirm that the customer has picked up the vehicle?'
+      : isActivity
+        ? 'Confirm that the customer has started the experience?'
+        : 'Confirm check-in for this guest?';
+
+    setConfirmModal({
+      isOpen: true,
+      title: actionLabel,
+      message: msg,
+      confirmText: actionLabel,
+      confirmVariant: 'emerald',
+      onConfirm: () => executeCheckIn(b._id, b.checkInPasscode),
+    });
+  };
+
+  async function executeCheckIn(id, passcode) {
+    try {
+      const res = await api.checkIn(id, { passcode });
       if (res.ok) {
-        setScannerActive(false);
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         refresh();
+        showToast('Check-in status updated successfully!', 'success');
       } else {
-        showToast(res.message || 'Failed to update stay status.', 'error');
+        showToast(res.message || 'Failed to update check-in status.', 'error');
       }
     } catch {
       showToast('Connection error.', 'error');
     }
-  };
+  }
 
-  const handleManualCheckOut = (id) => {
+  const handleManualCheckOut = (b) => {
+    const isVehicle = b.category === 'bike' || b.category === 'car';
+    const isActivity = b.category === 'activity' || b.category === 'experience';
+    const actionLabel = isVehicle
+      ? 'Complete Rental'
+      : isActivity
+        ? 'Complete Experience'
+        : 'Complete Stay';
+    const msg = isVehicle
+      ? 'Mark this rental as completed? This will verify the customer has returned the vehicle.'
+      : isActivity
+        ? 'Mark this experience as completed?'
+        : 'Mark this stay as completed? This will verify the guest has departed and update the reservation status.';
+
     setConfirmModal({
       isOpen: true,
-      onConfirm: () => executeCheckOut(id),
+      title: actionLabel,
+      message: msg,
+      confirmText: actionLabel,
+      confirmVariant: 'emerald',
+      onConfirm: () => executeCheckOut(b._id),
     });
   };
 
@@ -201,6 +249,7 @@ export default function PartnerBookings() {
     try {
       const res = await api.checkOut(id);
       if (res.ok) {
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         refresh();
       } else {
         showToast(res.message || 'Failed to complete stay.', 'error');
@@ -381,6 +430,13 @@ export default function PartnerBookings() {
                     {visible.map((b, i) => {
                       const cfg = STATUS_CONFIG[b.status] || STATUS_CONFIG.pending;
                       const StatusIcon = cfg.icon;
+                      const isVehicle = b.category === 'bike' || b.category === 'car';
+                      const isActivity = b.category === 'activity' || b.category === 'experience';
+                      let statusLabel = cfg.label;
+                      if (b.status === 'arrived') {
+                        if (isVehicle) statusLabel = 'Picked Up';
+                        else if (isActivity) statusLabel = 'Ongoing';
+                      }
                       return (
                         <motion.tr
                           key={b._id || i}
@@ -438,7 +494,7 @@ export default function PartnerBookings() {
                               className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide border ${cfg.color}`}
                             >
                               <StatusIcon size={10} strokeWidth={2.5} />
-                              {cfg.label}
+                              {statusLabel}
                             </span>
                           </td>
 
@@ -450,12 +506,30 @@ export default function PartnerBookings() {
                               <span className="text-[9px] font-black text-white/20 uppercase tracking-widest">
                                 Partner Share
                               </span>
-                              {b.status === 'arrived' && (
+                              {b.status === 'paid' && (
                                 <button
-                                  onClick={() => handleManualCheckOut(b._id)}
+                                  onClick={() => handleManualCheckIn(b)}
                                   className="text-[10px] font-black text-emerald-400 hover:text-white uppercase tracking-wider flex items-center gap-1 mt-1 transition-colors"
                                 >
-                                  <Shield size={10} /> Complete Stay
+                                  <Scan size={10} />{' '}
+                                  {isVehicle
+                                    ? 'Confirm Pickup'
+                                    : isActivity
+                                      ? 'Confirm Start'
+                                      : 'Check In'}
+                                </button>
+                              )}
+                              {b.status === 'arrived' && (
+                                <button
+                                  onClick={() => handleManualCheckOut(b)}
+                                  className="text-[10px] font-black text-emerald-400 hover:text-white uppercase tracking-wider flex items-center gap-1 mt-1 transition-colors"
+                                >
+                                  <Shield size={10} />{' '}
+                                  {isVehicle
+                                    ? 'Complete Rental'
+                                    : isActivity
+                                      ? 'Complete Experience'
+                                      : 'Complete Stay'}
                                 </button>
                               )}
                             </div>
@@ -640,10 +714,10 @@ export default function PartnerBookings() {
           isOpen={confirmModal.isOpen}
           onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
           onConfirm={confirmModal.onConfirm}
-          title="Complete Stay"
-          message="Mark this booking as completed? This will verify the guest has departed and update the reservation status."
-          confirmText="Complete Stay"
-          confirmVariant="emerald"
+          title={confirmModal.title || 'Confirm Action'}
+          message={confirmModal.message || 'Are you sure you want to perform this action?'}
+          confirmText={confirmModal.confirmText || 'Confirm'}
+          confirmVariant={confirmModal.confirmVariant || 'emerald'}
         />
       </div>
     </div>
