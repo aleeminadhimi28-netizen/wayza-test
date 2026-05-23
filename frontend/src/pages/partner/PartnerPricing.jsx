@@ -446,7 +446,7 @@ export default function PartnerPricing() {
                       <div className="mt-6 pt-6 border-t border-white/[0.03] space-y-4">
                         <div className="flex items-center gap-2 text-white/30 text-[10px] font-black uppercase tracking-wider">
                           <Layers size={12} />
-                          <span>Room / Accommodation Tiers</span>
+                          <span>{lst.category === 'bike' || lst.category === 'car' ? 'Vehicle Tiers' : 'Room / Accommodation Tiers'}</span>
                         </div>
                         <div className="grid gap-3">
                           {lst.variants.map((v, vIdx) => {
@@ -486,7 +486,7 @@ export default function PartnerPricing() {
                                       />
                                     ) : (
                                       <div className="w-10 h-10 bg-white/[0.05] rounded-lg flex items-center justify-center text-white/30 text-xs font-bold shrink-0">
-                                        Room
+                                        {lst.category === 'bike' || lst.category === 'car' ? 'Unit' : 'Room'}
                                       </div>
                                     )}
                                     <div className="min-w-0">
@@ -543,7 +543,7 @@ export default function PartnerPricing() {
                                       >
                                         {isDirty
                                           ? `Was ₹${(v.price || 0).toLocaleString()}`
-                                          : `₹${(v.price || 0).toLocaleString()}/night`}
+                                          : `₹${(v.price || 0).toLocaleString()}/${lst.category === 'bike' || lst.category === 'car' ? 'day' : 'night'}`}
                                       </span>
                                     </div>
                                   </div>
@@ -610,7 +610,7 @@ export default function PartnerPricing() {
                                 {vEdit.success && (
                                   <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-4 py-2">
                                     <CheckCircle size={12} strokeWidth={2.5} /> Price updated to ₹
-                                    {Number(vEdit.value).toLocaleString()}/night.
+                                    {Number(vEdit.value).toLocaleString()}/{lst.category === 'bike' || lst.category === 'car' ? 'day' : 'night'}.
                                   </div>
                                 )}
                               </div>
@@ -724,7 +724,7 @@ export default function PartnerPricing() {
               {modalRules.length === 0 ? (
                 <div className="text-center py-6 bg-white/[0.01] border border-dashed border-white/[0.05] rounded-2xl">
                   <p className="text-xs text-white/20 font-medium italic">
-                    No date overrides configured for this room tier.
+                    No date overrides configured for this {activeRulesModal && (listings.find(l => l._id === activeRulesModal.listingId)?.category === 'bike' || listings.find(l => l._id === activeRulesModal.listingId)?.category === 'car') ? 'vehicle tier' : 'room tier'}.
                   </p>
                 </div>
               ) : (
