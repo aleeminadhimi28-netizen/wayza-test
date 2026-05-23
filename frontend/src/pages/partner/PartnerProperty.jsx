@@ -866,149 +866,148 @@ export default function PartnerProperty() {
         {isVehicle ? (
           /* ── VEHICLE: no add-form, just the variants list ── */
           <div className="space-y-6">
-
             {/* VARIANTS LIST */}
             <div className="space-y-6">
-            <div className="bg-white p-6 border border-slate-200 rounded-3xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
-                  <Database size={24} />
+              <div className="bg-white p-6 border border-slate-200 rounded-3xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
+                    <Database size={24} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-900">Current Variants</h3>
+                    <p className="text-sm text-slate-500">
+                      {listing.variants?.length || 0} active variants managing inventory
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-lg font-bold text-slate-900">Current Variants</h3>
-                  <p className="text-sm text-slate-500">
-                    {listing.variants?.length || 0} active variants managing inventory
+              </div>
+
+              {!listing.variants || listing.variants.length === 0 ? (
+                <div className="bg-white border text-center border-slate-200 border-dashed rounded-3xl py-24 px-6 flex flex-col items-center justify-center">
+                  <Database className="text-slate-300 mb-4" size={48} />
+                  <h3 className="text-xl font-bold text-slate-900 mb-2">No Variants found</h3>
+                  <p className="text-sm text-slate-500 max-w-sm">
+                    You haven't added any specific{' '}
+                    {isVehicle ? 'vehicles, tiers, or options' : 'rooms, tiers, or options'}. Add
+                    your first {isVehicle ? 'unit' : 'variant'} using the panel on the left.
                   </p>
                 </div>
-              </div>
-            </div>
-
-            {!listing.variants || listing.variants.length === 0 ? (
-              <div className="bg-white border text-center border-slate-200 border-dashed rounded-3xl py-24 px-6 flex flex-col items-center justify-center">
-                <Database className="text-slate-300 mb-4" size={48} />
-                <h3 className="text-xl font-bold text-slate-900 mb-2">No Variants found</h3>
-                <p className="text-sm text-slate-500 max-w-sm">
-                  You haven't added any specific{' '}
-                  {isVehicle ? 'vehicles, tiers, or options' : 'rooms, tiers, or options'}. Add your
-                  first {isVehicle ? 'unit' : 'variant'} using the panel on the left.
-                </p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 gap-4">
-                <AnimatePresence>
-                  {listing.variants.map((v, i) => (
-                    <motion.div
-                      key={i}
-                      layout
-                      initial={{ opacity: 0, scale: 0.98 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.98 }}
-                      className={`bg-white rounded-2xl border border-slate-200 transition-all overflow-hidden flex flex-col md:flex-row ${!v.available ? 'opacity-70' : 'shadow-sm hover:border-emerald-200'}`}
-                    >
-                      <div className="w-full md:w-64 h-48 md:h-auto shrink-0 relative">
-                        <img
-                          src={fixImg(v.image)}
-                          className="w-full h-full object-cover"
-                          alt={v.name}
-                        />
-                        <div className="absolute top-4 left-4">
-                          <div className="bg-slate-900/90 backdrop-blur-md px-3 py-1.5 rounded-lg text-white font-bold text-xs uppercase shadow-md">
-                            {v.type}
-                          </div>
-                        </div>
-                        {!v.available && (
-                          <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-[2px] flex items-center justify-center">
-                            <div className="bg-rose-500 text-white px-3 py-1 rounded-full font-bold text-xs">
-                              UNAVAILABLE
+              ) : (
+                <div className="grid grid-cols-1 gap-4">
+                  <AnimatePresence>
+                    {listing.variants.map((v, i) => (
+                      <motion.div
+                        key={i}
+                        layout
+                        initial={{ opacity: 0, scale: 0.98 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.98 }}
+                        className={`bg-white rounded-2xl border border-slate-200 transition-all overflow-hidden flex flex-col md:flex-row ${!v.available ? 'opacity-70' : 'shadow-sm hover:border-emerald-200'}`}
+                      >
+                        <div className="w-full md:w-64 h-48 md:h-auto shrink-0 relative">
+                          <img
+                            src={fixImg(v.image)}
+                            className="w-full h-full object-cover"
+                            alt={v.name}
+                          />
+                          <div className="absolute top-4 left-4">
+                            <div className="bg-slate-900/90 backdrop-blur-md px-3 py-1.5 rounded-lg text-white font-bold text-xs uppercase shadow-md">
+                              {v.type}
                             </div>
                           </div>
-                        )}
-                      </div>
-
-                      <div className="p-6 flex-1 flex flex-col justify-between">
-                        <div className="space-y-2 mb-6">
-                          <div className="flex justify-between items-start gap-4">
-                            <h4 className="text-xl font-bold text-slate-900">{v.name}</h4>
-                            <div className="text-right">
-                              <div className="text-xl font-bold text-emerald-600">
-                                ₹{v.price.toLocaleString()}
+                          {!v.available && (
+                            <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-[2px] flex items-center justify-center">
+                              <div className="bg-rose-500 text-white px-3 py-1 rounded-full font-bold text-xs">
+                                UNAVAILABLE
                               </div>
-                              <div className="text-xs font-semibold text-slate-500">
-                                {listing.category === 'bike' || listing.category === 'car'
-                                  ? '/ day'
-                                  : '/ night'}
-                              </div>
-                            </div>
-                          </div>
-                          <p className="text-sm text-slate-600 leading-relaxed line-clamp-2">
-                            {v.desc || (
-                              <span className="text-slate-400">No description provided.</span>
-                            )}
-                          </p>
-                          {v.amenities && v.amenities.length > 0 && (
-                            <div className="flex flex-wrap gap-1 mt-3">
-                              {v.amenities.map((amenityLabel, idx) => {
-                                const amenityObj = ALL_AMENITIES.find(
-                                  (a) => a.label === amenityLabel
-                                );
-                                if (!amenityObj) return null;
-                                return (
-                                  <span
-                                    key={idx}
-                                    className="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-50 border border-slate-100 rounded-lg text-[10px] font-bold text-slate-500 uppercase tracking-wider"
-                                  >
-                                    <amenityObj.icon size={10} className="text-emerald-500" />
-                                    {amenityLabel}
-                                  </span>
-                                );
-                              })}
                             </div>
                           )}
                         </div>
 
-                        <div className="flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-slate-100 gap-4 mt-auto">
-                          <label className="flex items-center gap-3 cursor-pointer">
-                            <div className="relative">
-                              <input
-                                type="checkbox"
-                                className="hidden"
-                                checked={v.available !== false}
-                                onChange={() => toggleAvailable(i, v.available !== false)}
-                              />
-                              <div
-                                className={`w-10 h-5 rounded-full transition-colors flex items-center px-0.5 ${v.available ? 'bg-emerald-500' : 'bg-slate-300'}`}
-                              >
-                                <div
-                                  className={`w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${v.available ? 'translate-x-5' : 'translate-x-0'}`}
-                                />
+                        <div className="p-6 flex-1 flex flex-col justify-between">
+                          <div className="space-y-2 mb-6">
+                            <div className="flex justify-between items-start gap-4">
+                              <h4 className="text-xl font-bold text-slate-900">{v.name}</h4>
+                              <div className="text-right">
+                                <div className="text-xl font-bold text-emerald-600">
+                                  ₹{v.price.toLocaleString()}
+                                </div>
+                                <div className="text-xs font-semibold text-slate-500">
+                                  {listing.category === 'bike' || listing.category === 'car'
+                                    ? '/ day'
+                                    : '/ night'}
+                                </div>
                               </div>
                             </div>
-                            <span className="text-sm font-semibold text-slate-700">
-                              {v.available ? 'Available' : 'Hidden'}
-                            </span>
-                          </label>
+                            <p className="text-sm text-slate-600 leading-relaxed line-clamp-2">
+                              {v.desc || (
+                                <span className="text-slate-400">No description provided.</span>
+                              )}
+                            </p>
+                            {v.amenities && v.amenities.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mt-3">
+                                {v.amenities.map((amenityLabel, idx) => {
+                                  const amenityObj = ALL_AMENITIES.find(
+                                    (a) => a.label === amenityLabel
+                                  );
+                                  if (!amenityObj) return null;
+                                  return (
+                                    <span
+                                      key={idx}
+                                      className="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-50 border border-slate-100 rounded-lg text-[10px] font-bold text-slate-500 uppercase tracking-wider"
+                                    >
+                                      <amenityObj.icon size={10} className="text-emerald-500" />
+                                      {amenityLabel}
+                                    </span>
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </div>
 
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => startEdit(v, i)}
-                              className="h-9 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-semibold text-xs flex items-center gap-2 transition-colors"
-                            >
-                              <Edit2 size={14} /> Edit
-                            </button>
-                            <button
-                              onClick={() => remove(i)}
-                              className="h-9 w-9 bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white rounded-lg flex items-center justify-center transition-colors"
-                            >
-                              <Trash2 size={16} />
-                            </button>
+                          <div className="flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-slate-100 gap-4 mt-auto">
+                            <label className="flex items-center gap-3 cursor-pointer">
+                              <div className="relative">
+                                <input
+                                  type="checkbox"
+                                  className="hidden"
+                                  checked={v.available !== false}
+                                  onChange={() => toggleAvailable(i, v.available !== false)}
+                                />
+                                <div
+                                  className={`w-10 h-5 rounded-full transition-colors flex items-center px-0.5 ${v.available ? 'bg-emerald-500' : 'bg-slate-300'}`}
+                                >
+                                  <div
+                                    className={`w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${v.available ? 'translate-x-5' : 'translate-x-0'}`}
+                                  />
+                                </div>
+                              </div>
+                              <span className="text-sm font-semibold text-slate-700">
+                                {v.available ? 'Available' : 'Hidden'}
+                              </span>
+                            </label>
+
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => startEdit(v, i)}
+                                className="h-9 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-semibold text-xs flex items-center gap-2 transition-colors"
+                              >
+                                <Edit2 size={14} /> Edit
+                              </button>
+                              <button
+                                onClick={() => remove(i)}
+                                className="h-9 w-9 bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white rounded-lg flex items-center justify-center transition-colors"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </div>
-            )}
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
+              )}
             </div>
           </div>
         ) : (
@@ -1139,7 +1138,9 @@ export default function PartnerProperty() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-700 block">Room Amenities</label>
+                  <label className="text-xs font-semibold text-slate-700 block">
+                    Room Amenities
+                  </label>
                   <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto p-2 bg-slate-50 border border-slate-200 rounded-lg">
                     {ALL_AMENITIES.map((a) => {
                       const isSelected = variantAmenities.includes(a.label);

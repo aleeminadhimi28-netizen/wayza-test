@@ -20,9 +20,7 @@ import {
 import { api } from '../../utils/api.js';
 import { AMENITY_CATEGORIES, VEHICLE_AMENITY_CATEGORIES } from '../../utils/amenities.js';
 
-const STAY_CATEGORIES = [
-  { value: 'hotel', label: '🏨 Stays (Hotels, Villas, Houses)' },
-];
+const STAY_CATEGORIES = [{ value: 'hotel', label: '🏨 Stays (Hotels, Villas, Houses)' }];
 
 const VEHICLE_CATEGORIES = [
   { value: 'bike', label: '🏍️ Bikes (Rentals, Scooters)' },
@@ -72,15 +70,18 @@ export default function PartnerCreateProperty() {
   // Auto-fill location from the partner's first existing listing
   useEffect(() => {
     if (!user?.email) return;
-    api.getOwnerListings(user.email).then((listings) => {
-      const arr = Array.isArray(listings) ? listings : [];
-      const first = arr.find((l) => l.location);
-      if (first) {
-        setLocation((prev) => prev || first.location || '');
-        setLatitude((prev) => prev || (first.latitude != null ? String(first.latitude) : ''));
-        setLongitude((prev) => prev || (first.longitude != null ? String(first.longitude) : ''));
-      }
-    }).catch(() => {});
+    api
+      .getOwnerListings(user.email)
+      .then((listings) => {
+        const arr = Array.isArray(listings) ? listings : [];
+        const first = arr.find((l) => l.location);
+        if (first) {
+          setLocation((prev) => prev || first.location || '');
+          setLatitude((prev) => prev || (first.latitude != null ? String(first.latitude) : ''));
+          setLongitude((prev) => prev || (first.longitude != null ? String(first.longitude) : ''));
+        }
+      })
+      .catch(() => {});
   }, [user?.email]);
 
   const fetchGPSLocation = useCallback(async () => {
