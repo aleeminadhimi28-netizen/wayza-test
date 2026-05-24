@@ -23,6 +23,7 @@ import {
 import { useAuth } from '../../AuthContext.jsx';
 import { useToast } from '../../ToastContext.jsx';
 import { api } from '../../utils/api.js';
+import { AMENITY_CATEGORIES, VEHICLE_AMENITY_CATEGORIES } from '../../utils/amenities.js';
 
 /* ─────────────────────────────────────────────────────────
    Sub-components
@@ -170,6 +171,9 @@ export default function PartnerOnboarding() {
   const [registrationDate, setRegistrationDate] = useState(() =>
     getSavedField('registrationDate', '')
   );
+  const [selectedAmenities, setSelectedAmenities] = useState(() =>
+    getSavedField('selectedAmenities', [])
+  );
 
   // Persist step changes to sessionStorage
   const goToStep = (s) => {
@@ -226,6 +230,7 @@ export default function PartnerOnboarding() {
       licensePlate,
       registrationDate,
       mainSector,
+      selectedAmenities,
     };
     sessionStorage.setItem(ONBOARDING_FORM_KEY, JSON.stringify(formData));
   }, [
@@ -247,6 +252,7 @@ export default function PartnerOnboarding() {
     licensePlate,
     registrationDate,
     mainSector,
+    selectedAmenities,
   ]);
 
   useEffect(() => {
@@ -380,6 +386,7 @@ export default function PartnerOnboarding() {
               cancellationPolicy,
               licensePlate: mainSector === 'vehicles' ? licensePlate : undefined,
               registrationDate: mainSector === 'vehicles' ? registrationDate : undefined,
+              amenities: selectedAmenities,
             }
           : null,
       };
@@ -1075,6 +1082,57 @@ export default function PartnerOnboarding() {
                             active={cancellationPolicy === item.toLowerCase()}
                             onClick={() => setCancellationPolicy(item.toLowerCase())}
                           />
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Amenities Selection */}
+                    <div className="space-y-4 pt-4 border-t border-slate-100">
+                      <div>
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                          {mainSector === 'stays' ? 'Available Utilities / Amenities' : 'Vehicle Inclusions / Features'}
+                        </label>
+                        <p className="text-[11px] text-slate-400 font-semibold mt-1">
+                          Select the amenities included in your first listing.
+                        </p>
+                      </div>
+
+                      <div className="space-y-6">
+                        {(mainSector === 'stays' ? AMENITY_CATEGORIES : VEHICLE_AMENITY_CATEGORIES).map((cat) => (
+                          <div key={cat.id} className="space-y-2">
+                            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                              {cat.label}
+                            </h4>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              {cat.amenities.map((a) => {
+                                const isSelected = selectedAmenities.includes(a.label);
+                                return (
+                                  <button
+                                    key={a.id}
+                                    type="button"
+                                    onClick={() => {
+                                      if (isSelected) {
+                                        setSelectedAmenities(selectedAmenities.filter((x) => x !== a.label));
+                                      } else {
+                                        setSelectedAmenities([...selectedAmenities, a.label]);
+                                      }
+                                    }}
+                                    className={`h-11 px-4 rounded-xl text-[11px] font-bold uppercase tracking-widest border transition-all flex items-center gap-3 ${
+                                      isSelected
+                                        ? 'bg-emerald-500 border-emerald-500 text-slate-900 shadow-lg shadow-emerald-500/20'
+                                        : 'bg-white border-slate-200 text-slate-500 hover:border-emerald-200 hover:text-emerald-600 shadow-sm'
+                                    }`}
+                                  >
+                                    <a.icon
+                                      size={14}
+                                      className={isSelected ? 'text-slate-900' : 'text-slate-400'}
+                                    />
+                                    <span className="truncate">{a.label}</span>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
                         ))}
                       </div>
                     </div>
