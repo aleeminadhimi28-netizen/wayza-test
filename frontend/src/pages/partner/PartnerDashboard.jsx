@@ -53,6 +53,7 @@ export default function PartnerDashboard() {
     () => sessionStorage.getItem('pd_alert_dismissed') === '1'
   );
   const [priceEdits, setPriceEdits] = useState({});
+  const [variantPriceEdits, setVariantPriceEdits] = useState({});
   const [chartFilter, setChartFilter] = useState('6m');
   const [mainSector, setMainSector] = useState(() => {
     return sessionStorage.getItem('partner_main_sector') || 'stays';
