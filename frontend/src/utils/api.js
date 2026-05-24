@@ -673,6 +673,13 @@ export const api = {
       body: formData,
     }).then((r) => r.json()),
 
+  uploadImages: (formData) =>
+    customFetch(`${API_URL}/upload-multiple`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: formData,
+    }).then((r) => r.json()),
+
   // Packages
   getPackages: () => customFetch(`${API_URL}/packages`).then((r) => r.json()),
   getPackage: (id) => customFetch(`${API_URL}/packages/${id}`).then((r) => r.json()),

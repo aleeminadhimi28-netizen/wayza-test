@@ -134,9 +134,14 @@ app.get("/api/v1/auth/csrf-token", generateCSRFToken);
 
 // Apply upload specific rate limits
 app.post("/api/v1/upload", uploadLimiter, requireAuth, upload.single("image"), (req, res) => {
-
   if (!req.file) return res.status(400).json({ ok: false, message: "No file uploaded" });
   res.json({ ok: true, filename: req.file.path });
+});
+
+app.post("/api/v1/upload-multiple", uploadLimiter, requireAuth, upload.array("images", 5), (req, res) => {
+  if (!req.files || req.files.length === 0) return res.status(400).json({ ok: false, message: "No files uploaded" });
+  const filenames = req.files.map(file => file.path);
+  res.json({ ok: true, filenames });
 });
 
 // Apply stricter rate limiting to auth routes

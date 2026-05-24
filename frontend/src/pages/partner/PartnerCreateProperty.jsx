@@ -46,8 +46,8 @@ export default function PartnerCreateProperty() {
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
   const [walkthroughVideo, setWalkthroughVideo] = useState('');
-  const [image, setImage] = useState(null);
-  const [preview, setPreview] = useState(null);
+  const [images, setImages] = useState([]);
+  const [previews, setPreviews] = useState([]);
   const [loading, setLoading] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
   const [locationLocked, setLocationLocked] = useState(false);
@@ -144,20 +144,28 @@ export default function PartnerCreateProperty() {
     setLocationLocked(false);
   }
 
-  function handleFile(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    if (!file.type.startsWith('image/')) {
-      showToast('Please select a valid image file.', 'error');
+  function handleFiles(e) {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    
+    if (images.length + files.length > 5) {
+      showToast('You can only upload up to 5 photos.', 'warning');
       return;
     }
-    setImage(file);
-    setPreview(URL.createObjectURL(file));
+
+    const validFiles = files.filter(f => f.type.startsWith('image/'));
+    if (validFiles.length !== files.length) {
+      showToast('Some files were not valid images and were ignored.', 'warning');
+    }
+
+    setImages(prev => [...prev, ...validFiles]);
+    const newPreviews = validFiles.map(f => URL.createObjectURL(f));
+    setPreviews(prev => [...prev, ...newPreviews]);
   }
 
-  function removeImage() {
-    setImage(null);
-    setPreview(null);
+  function removeImage(index) {
+    setImages(prev => prev.filter((_, i) => i !== index));
+    setPreviews(prev => prev.filter((_, i) => i !== index));
   }
 
   async function create(e) {
@@ -191,18 +199,22 @@ export default function PartnerCreateProperty() {
     }
 
     setLoading(true);
-    let filename = null;
+    let filenames = [];
     let rcPath = '';
     let insPath = '';
     let pucPath = '';
 
     try {
-      if (image) {
-        const form = new FormData();
-        form.append('image', image);
-        const uploadRes = await api.uploadImage(form);
-        if (uploadRes.ok) {
-          filename = uploadRes.filename;
+      if (images.length > 0) {
+        const fd = new FormData();
+        images.forEach(img => fd.append('images', img));
+        const imgData = await api.uploadImages(fd);
+        if (imgData.ok) {
+          filenames = imgData.filenames;
+        } else {
+          showToast('Cover photos upload failed.', 'error');
+          setLoading(false);
+          return;
         }
       }
 
@@ -238,7 +250,8 @@ export default function PartnerCreateProperty() {
         location,
         category,
         price: 0,
-        image: filename,
+        image: filenames.length > 0 ? filenames[0] : null,
+        images: filenames,
         ownerEmail: user?.email,
         latitude: Number(latitude),
         longitude: Number(longitude),
@@ -792,42 +805,48 @@ export default function PartnerCreateProperty() {
                 </p>
               </div>
 
-              {!preview ? (
-                <div className="relative aspect-[4/3] bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:border-emerald-400 hover:bg-emerald-50/30 transition-all group/upload">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFile}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                  />
-                  <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-md mb-3 group-hover/upload:scale-110 transition-transform">
-                    <UploadCloud
-                      className="text-slate-400 group-hover/upload:text-emerald-500 transition-colors"
-                      size={24}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                {previews.map((src, index) => (
+                  <div key={index} className="relative aspect-square overflow-hidden rounded-2xl shadow-sm border border-slate-200 group/preview">
+                    <img
+                      src={src}
+                      alt={`Preview ${index + 1}`}
+                      className="w-full h-full object-cover group-hover/preview:scale-105 transition-transform duration-500"
                     />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      className="absolute top-2 right-2 w-7 h-7 bg-white text-rose-500 rounded-lg flex items-center justify-center shadow-md hover:bg-rose-500 hover:text-white transition-all z-20"
+                    >
+                      <X size={14} />
+                    </button>
+                    {index === 0 && (
+                      <div className="absolute bottom-2 left-2 bg-emerald-600/90 backdrop-blur-sm text-white px-2 py-1 rounded-md text-[9px] font-bold uppercase tracking-wider shadow-sm">
+                        Cover
+                      </div>
+                    )}
                   </div>
-                  <p className="font-semibold text-slate-700 text-sm">Click to upload a photo</p>
-                  <p className="text-xs text-slate-400 mt-1">JPEG, PNG or WebP — up to 10MB</p>
-                </div>
-              ) : (
-                <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-lg border border-slate-200 group/preview">
-                  <img
-                    src={preview}
-                    alt="Preview"
-                    className="w-full h-full object-cover group-hover/preview:scale-105 transition-transform duration-500"
-                  />
-                  <button
-                    type="button"
-                    onClick={removeImage}
-                    className="absolute top-3 right-3 w-9 h-9 bg-white text-rose-500 rounded-xl flex items-center justify-center shadow-md hover:bg-rose-500 hover:text-white transition-all z-20"
-                  >
-                    <X size={16} />
-                  </button>
-                  <div className="absolute bottom-3 left-3 bg-emerald-600/90 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg flex items-center gap-2 text-xs font-semibold shadow-md">
-                    <CheckCircle size={13} /> Photo uploaded
+                ))}
+                
+                {previews.length < 5 && (
+                  <div className="relative aspect-square bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:border-emerald-400 hover:bg-emerald-50/30 transition-all group/upload">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleFiles}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    />
+                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm mb-2 group-hover/upload:scale-110 transition-transform">
+                      <Plus
+                        className="text-slate-400 group-hover/upload:text-emerald-500 transition-colors"
+                        size={20}
+                      />
+                    </div>
+                    <p className="font-semibold text-slate-700 text-[10px] text-center px-2 leading-tight">Add Photos<br/><span className="font-normal text-slate-400">Up to 5</span></p>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
 
