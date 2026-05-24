@@ -283,6 +283,7 @@ export default function MyBookings() {
                 <thead><tr><th>Description</th><th>Amount</th></tr></thead>
                 <tbody>
                     <tr><td>${descLabel} (₹${(b.pricePerNight || 0).toLocaleString()} × ${b.nights} ${durationUnitLower})</td><td>₹${baseAmount.toLocaleString()}</td></tr>
+                    ${b.couponCode && b.discountAmount > 0 ? `<tr><td style="color:#059669;font-weight:700;">Coupon Discount (${escapeHTML(b.couponCode)})</td><td style="color:#059669;font-weight:700;">−₹${(b.discountAmount || 0).toLocaleString()}</td></tr>` : ''}
                     <tr><td>GST${gst === 0 ? ' (Waived for Vehicles)' : ' @ 12%'}</td><td>${gst === 0 ? '<span style="color:#059669;font-weight:700;">Waived</span>' : `₹${gst.toLocaleString()}`}</td></tr>
                     <tr><td>Service & Platform Fee</td><td>₹${serviceFee.toLocaleString()}</td></tr>
                     <tr class="total-row"><td>Total Paid</td><td>₹${(b.totalPrice || 0).toLocaleString()}</td></tr>
