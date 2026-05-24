@@ -52,7 +52,6 @@ export default function PartnerCreateProperty() {
   const [locationLoading, setLocationLoading] = useState(false);
   const [locationLocked, setLocationLocked] = useState(false);
   const [selectedAmenities, setSelectedAmenities] = useState([]);
-  const [price, setPrice] = useState('');
   const [wifiSpeed, setWifiSpeed] = useState('');
   // Vehicle fields
   const [licensePlate, setLicensePlate] = useState('');
@@ -238,7 +237,7 @@ export default function PartnerCreateProperty() {
         title,
         location,
         category,
-        price: Number(price) || 0,
+        price: 0,
         image: filename,
         ownerEmail: user?.email,
         latitude: Number(latitude),
@@ -431,34 +430,6 @@ export default function PartnerCreateProperty() {
                       />
                     </div>
                   </div>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <label className="text-xs font-semibold text-slate-700 block">
-                      Base Floor Price (₹) <span className="text-rose-400">*</span>
-                    </label>
-                    {price && (
-                      <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">
-                        Est. Payout: ₹{Math.round(Number(price) * 0.9).toLocaleString()}
-                      </span>
-                    )}
-                  </div>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">₹</span>
-                    <input
-                      required
-                      type="number"
-                      min={0}
-                      placeholder="e.g. 1500"
-                      value={price}
-                      onChange={(e) => setPrice(e.target.value)}
-                      className="h-11 w-full bg-slate-50 border border-slate-200 rounded-lg pl-8 pr-4 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition-all"
-                    />
-                  </div>
-                  <p className="text-[10px] text-slate-400 font-medium ml-1">
-                    This acts as your strict safety minimum. You cannot drop prices below this later.
-                  </p>
                 </div>
 
                 <div className="space-y-2">
