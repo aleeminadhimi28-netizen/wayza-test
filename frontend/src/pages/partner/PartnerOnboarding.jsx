@@ -263,15 +263,22 @@ export default function PartnerOnboarding() {
         // Only set default mainSector if not already saved in sessionStorage
         const savedForm = sessionStorage.getItem(ONBOARDING_FORM_KEY);
         let hasSavedSector = false;
+        let hasSavedName = false;
         if (savedForm) {
           try {
-            hasSavedSector = JSON.parse(savedForm).mainSector !== undefined;
+            const parsed = JSON.parse(savedForm);
+            hasSavedSector = parsed.mainSector !== undefined;
+            hasSavedName = parsed.businessName && parsed.businessName.trim() !== '';
           } catch (e) {}
         }
         if (!hasSavedSector && res.mainSector) {
           setMainSector(res.mainSector);
           if (res.mainSector === 'stays') setSubCategory('Resort / Hotel');
           else if (res.mainSector === 'vehicles') setSubCategory('Individual / Peer-to-Peer Host');
+        }
+        // Pre-fill businessName from registration if not already entered
+        if (!hasSavedName && res.businessName) {
+          setBusinessName(res.businessName);
         }
       });
     }

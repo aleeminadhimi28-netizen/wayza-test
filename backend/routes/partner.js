@@ -133,7 +133,8 @@ router.get("/status", requireAuth, async (req, res, next) => {
         res.json({
             onboarded: partner?.onboarded === true,
             onboardingCompleted: partner?.onboardingCompleted === true,
-            mainSector: partner?.mainSector || 'stays'
+            mainSector: partner?.mainSector || 'stays',
+            businessName: partner?.businessName || ''
         });
     } catch (err) { next(err); }
 });
