@@ -348,9 +348,11 @@ export default function PartnerPricing() {
                         </div>
                       </div>
 
-                      {/* Slider */}
-                      <div className="flex-1 space-y-2">
-                        <div className="flex justify-between items-center text-[10px] font-black text-white/30 uppercase tracking-wide">
+                      {/* Slider - ONLY SHOW IF NO VARIANTS */}
+                      {!(lst.variants && lst.variants.length > 0) && (
+                        <>
+                          <div className="flex-1 space-y-2">
+                            <div className="flex justify-between items-center text-[10px] font-black text-white/30 uppercase tracking-wide">
                           <span>
                             ₹{floor.toLocaleString()}{' '}
                             <span className="text-white/10 font-medium">(floor)</span>
@@ -432,15 +434,17 @@ export default function PartnerPricing() {
                           )}
                           {edit.saving ? 'Saving...' : edit.success ? 'Saved!' : 'Update'}
                         </button>
-                      </div>
+                          </div>
+                        </>
+                      )}
                     </div>
 
-                    {edit.error && (
+                    {!(lst.variants && lst.variants.length > 0) && edit.error && (
                       <div className="mt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-lg px-4 py-2">
                         <AlertCircle size={12} strokeWidth={2.5} /> {edit.error}
                       </div>
                     )}
-                    {edit.success && (
+                    {!(lst.variants && lst.variants.length > 0) && edit.success && (
                       <div className="mt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-4 py-2">
                         <CheckCircle size={12} strokeWidth={2.5} /> Price updated to ₹
                         {Number(edit.value).toLocaleString()}/night.
