@@ -3,19 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../AuthContext.jsx';
 import { useToast } from '../../ToastContext.jsx';
 import { motion } from 'framer-motion';
-import {
-  UploadCloud,
-  Building,
-  MapPin,
-  X,
-  Wifi,
-  Plus,
-  Info,
-  ArrowRight,
-  CheckCircle,
-  Crosshair,
-  Car,
-} from 'lucide-react';
+import { Building, MapPin, X, Wifi, Plus, Info, ArrowRight, Crosshair, Car } from 'lucide-react';
 
 import { api } from '../../utils/api.js';
 import { AMENITY_CATEGORIES, VEHICLE_AMENITY_CATEGORIES } from '../../utils/amenities.js';
@@ -147,25 +135,25 @@ export default function PartnerCreateProperty() {
   function handleFiles(e) {
     const files = Array.from(e.target.files);
     if (!files.length) return;
-    
+
     if (images.length + files.length > 5) {
       showToast('You can only upload up to 5 photos.', 'warning');
       return;
     }
 
-    const validFiles = files.filter(f => f.type.startsWith('image/'));
+    const validFiles = files.filter((f) => f.type.startsWith('image/'));
     if (validFiles.length !== files.length) {
       showToast('Some files were not valid images and were ignored.', 'warning');
     }
 
-    setImages(prev => [...prev, ...validFiles]);
-    const newPreviews = validFiles.map(f => URL.createObjectURL(f));
-    setPreviews(prev => [...prev, ...newPreviews]);
+    setImages((prev) => [...prev, ...validFiles]);
+    const newPreviews = validFiles.map((f) => URL.createObjectURL(f));
+    setPreviews((prev) => [...prev, ...newPreviews]);
   }
 
   function removeImage(index) {
-    setImages(prev => prev.filter((_, i) => i !== index));
-    setPreviews(prev => prev.filter((_, i) => i !== index));
+    setImages((prev) => prev.filter((_, i) => i !== index));
+    setPreviews((prev) => prev.filter((_, i) => i !== index));
   }
 
   async function create(e) {
@@ -207,7 +195,7 @@ export default function PartnerCreateProperty() {
     try {
       if (images.length > 0) {
         const fd = new FormData();
-        images.forEach(img => fd.append('images', img));
+        images.forEach((img) => fd.append('images', img));
         const imgData = await api.uploadImages(fd);
         if (imgData.ok) {
           filenames = imgData.filenames;
@@ -565,7 +553,6 @@ export default function PartnerCreateProperty() {
                       </select>
                     </div>
 
-
                     <div className="pt-4 border-t border-slate-200 space-y-4 col-span-1 sm:col-span-2">
                       <h5 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                         Required Verification Documents
@@ -807,7 +794,10 @@ export default function PartnerCreateProperty() {
 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {previews.map((src, index) => (
-                  <div key={index} className="relative aspect-square overflow-hidden rounded-2xl shadow-sm border border-slate-200 group/preview">
+                  <div
+                    key={index}
+                    className="relative aspect-square overflow-hidden rounded-2xl shadow-sm border border-slate-200 group/preview"
+                  >
                     <img
                       src={src}
                       alt={`Preview ${index + 1}`}
@@ -827,7 +817,7 @@ export default function PartnerCreateProperty() {
                     )}
                   </div>
                 ))}
-                
+
                 {previews.length < 5 && (
                   <div className="relative aspect-square bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:border-emerald-400 hover:bg-emerald-50/30 transition-all group/upload">
                     <input
@@ -843,7 +833,11 @@ export default function PartnerCreateProperty() {
                         size={20}
                       />
                     </div>
-                    <p className="font-semibold text-slate-700 text-[10px] text-center px-2 leading-tight">Add Photos<br/><span className="font-normal text-slate-400">Up to 5</span></p>
+                    <p className="font-semibold text-slate-700 text-[10px] text-center px-2 leading-tight">
+                      Add Photos
+                      <br />
+                      <span className="font-normal text-slate-400">Up to 5</span>
+                    </p>
                   </div>
                 )}
               </div>

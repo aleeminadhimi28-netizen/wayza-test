@@ -489,9 +489,15 @@ export default function PartnerProperty() {
                     onChange={(e) => setMainCancellationPolicy(e.target.value)}
                     className="w-full bg-white/5 border border-white/10 rounded-2xl h-14 px-6 text-white font-bold text-sm outline-none focus:border-emerald-500 transition-all appearance-none cursor-pointer"
                   >
-                    <option value="flexible" className="bg-slate-900 text-white">Flexible</option>
-                    <option value="moderate" className="bg-slate-900 text-white">Moderate</option>
-                    <option value="strict" className="bg-slate-900 text-white">Strict</option>
+                    <option value="flexible" className="bg-slate-900 text-white">
+                      Flexible
+                    </option>
+                    <option value="moderate" className="bg-slate-900 text-white">
+                      Moderate
+                    </option>
+                    <option value="strict" className="bg-slate-900 text-white">
+                      Strict
+                    </option>
                   </select>
                 </div>
 
@@ -1087,7 +1093,9 @@ export default function PartnerProperty() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold text-slate-700 block">Floor Price (₹)</label>
+                    <label className="text-xs font-semibold text-slate-700 block">
+                      Floor Price (₹)
+                    </label>
                     <div className="relative">
                       <Target
                         className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"

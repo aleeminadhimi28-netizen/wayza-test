@@ -353,87 +353,87 @@ export default function PartnerPricing() {
                         <>
                           <div className="flex-1 space-y-2">
                             <div className="flex justify-between items-center text-[10px] font-black text-white/30 uppercase tracking-wide">
-                          <span>
-                            ₹{floor.toLocaleString()}{' '}
-                            <span className="text-white/10 font-medium">(floor)</span>
-                          </span>
-                          <span>₹{sliderMax.toLocaleString()}</span>
-                        </div>
-                        <div className="relative h-1.5">
-                          <div className="absolute inset-0 rounded-full bg-white/[0.05]" />
-                          <div
-                            className={`absolute left-0 top-0 h-full rounded-full transition-all ${
-                              isBelowFloor ? 'bg-rose-500' : 'bg-emerald-500'
-                            }`}
-                            style={{ width: `${Math.max(0, pct)}%` }}
-                          />
-                          <input
-                            type="range"
-                            min={floor}
-                            max={sliderMax}
-                            step={50}
-                            value={Number(edit.value)}
-                            onChange={(e) => setPriceField(lst._id, e.target.value)}
-                            className="absolute inset-0 w-full opacity-0 cursor-pointer h-full"
-                          />
-                        </div>
-                        <div className="flex justify-between text-[10px] font-black uppercase tracking-wide">
-                          <span className={isBelowFloor ? 'text-rose-400' : 'text-white/20'}>
-                            {isBelowFloor
-                              ? '⚠ Below floor price'
-                              : isDirty
-                                ? '● Price changed'
-                                : 'Current price'}
-                          </span>
-                          <span className={isDirty ? 'text-emerald-400' : 'text-white/20'}>
-                            {isDirty
-                              ? `Was ₹${(lst.price || 0).toLocaleString()}`
-                              : `₹${(lst.price || 0).toLocaleString()}/night`}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-wide mt-2 pt-2 border-t border-white/[0.05]">
-                          <span className="text-emerald-400/70">Estimated Payout</span>
-                          <span className="text-emerald-400 text-xs">
-                            ₹{Math.round(Number(edit.value) * 0.9).toLocaleString()}
-                          </span>
-                        </div>
-                      </div>
+                              <span>
+                                ₹{floor.toLocaleString()}{' '}
+                                <span className="text-white/10 font-medium">(floor)</span>
+                              </span>
+                              <span>₹{sliderMax.toLocaleString()}</span>
+                            </div>
+                            <div className="relative h-1.5">
+                              <div className="absolute inset-0 rounded-full bg-white/[0.05]" />
+                              <div
+                                className={`absolute left-0 top-0 h-full rounded-full transition-all ${
+                                  isBelowFloor ? 'bg-rose-500' : 'bg-emerald-500'
+                                }`}
+                                style={{ width: `${Math.max(0, pct)}%` }}
+                              />
+                              <input
+                                type="range"
+                                min={floor}
+                                max={sliderMax}
+                                step={50}
+                                value={Number(edit.value)}
+                                onChange={(e) => setPriceField(lst._id, e.target.value)}
+                                className="absolute inset-0 w-full opacity-0 cursor-pointer h-full"
+                              />
+                            </div>
+                            <div className="flex justify-between text-[10px] font-black uppercase tracking-wide">
+                              <span className={isBelowFloor ? 'text-rose-400' : 'text-white/20'}>
+                                {isBelowFloor
+                                  ? '⚠ Below floor price'
+                                  : isDirty
+                                    ? '● Price changed'
+                                    : 'Current price'}
+                              </span>
+                              <span className={isDirty ? 'text-emerald-400' : 'text-white/20'}>
+                                {isDirty
+                                  ? `Was ₹${(lst.price || 0).toLocaleString()}`
+                                  : `₹${(lst.price || 0).toLocaleString()}/night`}
+                              </span>
+                            </div>
+                            <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-wide mt-2 pt-2 border-t border-white/[0.05]">
+                              <span className="text-emerald-400/70">Estimated Payout</span>
+                              <span className="text-emerald-400 text-xs">
+                                ₹{Math.round(Number(edit.value) * 0.9).toLocaleString()}
+                              </span>
+                            </div>
+                          </div>
 
-                      {/* Input + Save */}
-                      <div className="flex items-center gap-3 shrink-0">
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20 font-bold text-sm">
-                            ₹
-                          </span>
-                          <input
-                            type="number"
-                            min={floor}
-                            step={100}
-                            value={edit.value}
-                            onChange={(e) => setPriceField(lst._id, e.target.value)}
-                            className={`w-32 h-11 pl-7 pr-3 bg-white/[0.03] border rounded-lg text-sm font-bold text-white outline-none transition-all ${
-                              isBelowFloor
-                                ? 'border-rose-500 focus:border-rose-500'
-                                : isDirty
-                                  ? 'border-emerald-500 focus:border-emerald-500'
-                                  : 'border-white/[0.08] focus:border-white/[0.2]'
-                            }`}
-                          />
-                        </div>
-                        <button
-                          onClick={() => updatePrice(lst)}
-                          disabled={edit.saving || !isDirty || isBelowFloor}
-                          className="h-11 px-5 bg-emerald-500 hover:bg-emerald-600 disabled:bg-white/[0.05] disabled:text-white/20 text-[#050a08] disabled:border-transparent rounded-lg font-bold text-[11px] uppercase tracking-wider flex items-center gap-2 transition-all active:scale-95 disabled:cursor-not-allowed whitespace-nowrap shadow-lg shadow-emerald-500/10 disabled:shadow-none"
-                        >
-                          {edit.saving ? (
-                            <span className="w-4 h-4 border-2 border-[#050a08]/30 border-t-[#050a08] rounded-full animate-spin" />
-                          ) : edit.success ? (
-                            <CheckCircle size={14} strokeWidth={2.5} />
-                          ) : (
-                            <Save size={14} strokeWidth={2.5} />
-                          )}
-                          {edit.saving ? 'Saving...' : edit.success ? 'Saved!' : 'Update'}
-                        </button>
+                          {/* Input + Save */}
+                          <div className="flex items-center gap-3 shrink-0">
+                            <div className="relative">
+                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20 font-bold text-sm">
+                                ₹
+                              </span>
+                              <input
+                                type="number"
+                                min={floor}
+                                step={100}
+                                value={edit.value}
+                                onChange={(e) => setPriceField(lst._id, e.target.value)}
+                                className={`w-32 h-11 pl-7 pr-3 bg-white/[0.03] border rounded-lg text-sm font-bold text-white outline-none transition-all ${
+                                  isBelowFloor
+                                    ? 'border-rose-500 focus:border-rose-500'
+                                    : isDirty
+                                      ? 'border-emerald-500 focus:border-emerald-500'
+                                      : 'border-white/[0.08] focus:border-white/[0.2]'
+                                }`}
+                              />
+                            </div>
+                            <button
+                              onClick={() => updatePrice(lst)}
+                              disabled={edit.saving || !isDirty || isBelowFloor}
+                              className="h-11 px-5 bg-emerald-500 hover:bg-emerald-600 disabled:bg-white/[0.05] disabled:text-white/20 text-[#050a08] disabled:border-transparent rounded-lg font-bold text-[11px] uppercase tracking-wider flex items-center gap-2 transition-all active:scale-95 disabled:cursor-not-allowed whitespace-nowrap shadow-lg shadow-emerald-500/10 disabled:shadow-none"
+                            >
+                              {edit.saving ? (
+                                <span className="w-4 h-4 border-2 border-[#050a08]/30 border-t-[#050a08] rounded-full animate-spin" />
+                              ) : edit.success ? (
+                                <CheckCircle size={14} strokeWidth={2.5} />
+                              ) : (
+                                <Save size={14} strokeWidth={2.5} />
+                              )}
+                              {edit.saving ? 'Saving...' : edit.success ? 'Saved!' : 'Update'}
+                            </button>
                           </div>
                         </>
                       )}
@@ -531,7 +531,11 @@ export default function PartnerPricing() {
                                                   : 'bg-rose-400'
                                             }`}
                                           />
-                                          {!lst.approved ? 'Pending' : v.available !== false ? 'Live' : 'Disabled'}
+                                          {!lst.approved
+                                            ? 'Pending'
+                                            : v.available !== false
+                                              ? 'Live'
+                                              : 'Disabled'}
                                         </span>
                                       </div>
                                     </div>

@@ -694,74 +694,74 @@ export default function PartnerDashboard() {
                       {!(lst.variants && lst.variants.length > 0) && (
                         <>
                           <div className="flex-1 space-y-2">
-                        <div className="flex justify-between items-center text-[10px] font-bold text-white/20 uppercase tracking-wide">
-                          <span>₹{floor.toLocaleString()}</span>
-                          <span>₹{sliderMax.toLocaleString()}</span>
-                        </div>
-                        <div className="relative h-2">
-                          <div className="absolute inset-0 rounded-full bg-white/[0.05]" />
-                          <div
-                            className={`absolute left-0 top-0 h-full rounded-full transition-all ${isBelowFloor ? 'bg-rose-500' : 'bg-emerald-500'}`}
-                            style={{ width: `${Math.max(0, pct)}%` }}
-                          />
-                          <input
-                            type="range"
-                            min={floor}
-                            max={sliderMax}
-                            step={50}
-                            value={Number(edit.value)}
-                            onChange={(e) => setPriceField(lst._id, e.target.value)}
-                            className="absolute inset-0 w-full opacity-0 cursor-pointer h-full"
-                          />
-                        </div>
-                        <div className="flex justify-between text-[10px] font-bold uppercase tracking-wide">
-                          <span className={isBelowFloor ? 'text-rose-400' : 'text-white/20'}>
-                            {isBelowFloor
-                              ? '⚠ Below floor price'
-                              : isDirty
-                                ? '● Price changed'
-                                : 'Current price'}
-                          </span>
-                          <span className={isDirty ? 'text-emerald-400' : 'text-white/30'}>
-                            {isDirty
-                              ? `Was ₹${(lst.price || 0).toLocaleString()}`
-                              : `₹${(lst.price || 0).toLocaleString()}/${mainSector === 'vehicles' ? 'day' : 'night'}`}
-                          </span>
-                        </div>
-                      </div>
+                            <div className="flex justify-between items-center text-[10px] font-bold text-white/20 uppercase tracking-wide">
+                              <span>₹{floor.toLocaleString()}</span>
+                              <span>₹{sliderMax.toLocaleString()}</span>
+                            </div>
+                            <div className="relative h-2">
+                              <div className="absolute inset-0 rounded-full bg-white/[0.05]" />
+                              <div
+                                className={`absolute left-0 top-0 h-full rounded-full transition-all ${isBelowFloor ? 'bg-rose-500' : 'bg-emerald-500'}`}
+                                style={{ width: `${Math.max(0, pct)}%` }}
+                              />
+                              <input
+                                type="range"
+                                min={floor}
+                                max={sliderMax}
+                                step={50}
+                                value={Number(edit.value)}
+                                onChange={(e) => setPriceField(lst._id, e.target.value)}
+                                className="absolute inset-0 w-full opacity-0 cursor-pointer h-full"
+                              />
+                            </div>
+                            <div className="flex justify-between text-[10px] font-bold uppercase tracking-wide">
+                              <span className={isBelowFloor ? 'text-rose-400' : 'text-white/20'}>
+                                {isBelowFloor
+                                  ? '⚠ Below floor price'
+                                  : isDirty
+                                    ? '● Price changed'
+                                    : 'Current price'}
+                              </span>
+                              <span className={isDirty ? 'text-emerald-400' : 'text-white/30'}>
+                                {isDirty
+                                  ? `Was ₹${(lst.price || 0).toLocaleString()}`
+                                  : `₹${(lst.price || 0).toLocaleString()}/${mainSector === 'vehicles' ? 'day' : 'night'}`}
+                              </span>
+                            </div>
+                          </div>
 
-                      {/* Input + Save */}
-                      <div className="flex items-center gap-3 shrink-0">
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20 font-bold text-sm">
-                            ₹
-                          </span>
-                          <input
-                            type="number"
-                            min={floor}
-                            step={100}
-                            value={edit.value}
-                            onChange={(e) => setPriceField(lst._id, e.target.value)}
-                            className={`w-32 h-11 pl-7 pr-3 bg-white/[0.03] border rounded-xl text-sm font-bold outline-none transition-all ${isBelowFloor ? 'border-rose-500/50 focus:ring-1 focus:ring-rose-500' : isDirty ? 'border-emerald-500/50 focus:ring-1 focus:ring-emerald-500' : 'border-white/[0.08] focus:border-white/[0.2]'}`}
-                          />
-                        </div>
-                        <button
-                          onClick={() => updatePrice(lst)}
-                          disabled={edit.saving || !isDirty || isBelowFloor}
-                          className="h-11 px-5 bg-white text-[#050a08] hover:bg-emerald-400 disabled:bg-white/10 disabled:text-white/20 rounded-xl font-bold text-[11px] uppercase tracking-wider flex items-center gap-2 transition-all active:scale-[0.98] shadow-sm"
-                        >
-                          {edit.saving ? (
-                            <span className="w-4 h-4 border-2 border-[#050a08]/30 border-t-[#050a08] rounded-full animate-spin" />
-                          ) : edit.success ? (
-                            <CheckCircle size={14} />
-                          ) : (
-                            <Save size={14} />
-                          )}
-                          {edit.saving ? 'Saving' : edit.success ? 'Saved' : 'Update'}
-                        </button>
-                      </div>
-                      </>
-                    )}
+                          {/* Input + Save */}
+                          <div className="flex items-center gap-3 shrink-0">
+                            <div className="relative">
+                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20 font-bold text-sm">
+                                ₹
+                              </span>
+                              <input
+                                type="number"
+                                min={floor}
+                                step={100}
+                                value={edit.value}
+                                onChange={(e) => setPriceField(lst._id, e.target.value)}
+                                className={`w-32 h-11 pl-7 pr-3 bg-white/[0.03] border rounded-xl text-sm font-bold outline-none transition-all ${isBelowFloor ? 'border-rose-500/50 focus:ring-1 focus:ring-rose-500' : isDirty ? 'border-emerald-500/50 focus:ring-1 focus:ring-emerald-500' : 'border-white/[0.08] focus:border-white/[0.2]'}`}
+                              />
+                            </div>
+                            <button
+                              onClick={() => updatePrice(lst)}
+                              disabled={edit.saving || !isDirty || isBelowFloor}
+                              className="h-11 px-5 bg-white text-[#050a08] hover:bg-emerald-400 disabled:bg-white/10 disabled:text-white/20 rounded-xl font-bold text-[11px] uppercase tracking-wider flex items-center gap-2 transition-all active:scale-[0.98] shadow-sm"
+                            >
+                              {edit.saving ? (
+                                <span className="w-4 h-4 border-2 border-[#050a08]/30 border-t-[#050a08] rounded-full animate-spin" />
+                              ) : edit.success ? (
+                                <CheckCircle size={14} />
+                              ) : (
+                                <Save size={14} />
+                              )}
+                              {edit.saving ? 'Saving' : edit.success ? 'Saved' : 'Update'}
+                            </button>
+                          </div>
+                        </>
+                      )}
                     </div>
 
                     {!(lst.variants && lst.variants.length > 0) && edit.error && (
@@ -796,11 +796,15 @@ export default function PartnerDashboard() {
                               success: false,
                             };
                             const isDirty = Number(vEdit.value) !== v.price;
-                            const vFloor = v.baseFloorPrice !== undefined ? v.baseFloorPrice : v.price || 0;
+                            const vFloor =
+                              v.baseFloorPrice !== undefined ? v.baseFloorPrice : v.price || 0;
                             const vSliderMax = Math.max((v.price || 0) * 3, 5000);
                             const vPct =
                               vSliderMax > vFloor
-                                ? Math.min(100, ((Number(vEdit.value) - vFloor) / (vSliderMax - vFloor)) * 100)
+                                ? Math.min(
+                                    100,
+                                    ((Number(vEdit.value) - vFloor) / (vSliderMax - vFloor)) * 100
+                                  )
                                 : 0;
                             const isVBelowFloor = Number(vEdit.value) < vFloor;
                             return (
@@ -816,11 +820,15 @@ export default function PartnerDashboard() {
                                       />
                                     ) : (
                                       <div className="w-10 h-10 bg-white/[0.05] rounded-lg flex items-center justify-center text-white/30 text-xs font-bold shrink-0">
-                                        {lst.category === 'bike' || lst.category === 'car' ? 'Unit' : 'Room'}
+                                        {lst.category === 'bike' || lst.category === 'car'
+                                          ? 'Unit'
+                                          : 'Room'}
                                       </div>
                                     )}
                                     <div className="min-w-0">
-                                      <p className="font-bold text-white text-xs truncate">{v.name}</p>
+                                      <p className="font-bold text-white text-xs truncate">
+                                        {v.name}
+                                      </p>
                                       <p className="text-[10px] text-white/30 font-semibold truncate mt-0.5">
                                         {v.desc || 'No description provided.'}
                                       </p>
@@ -843,7 +851,11 @@ export default function PartnerDashboard() {
                                                   : 'bg-rose-400'
                                             }`}
                                           />
-                                          {!lst.approved ? 'Pending' : v.available !== false ? 'Live' : 'Disabled'}
+                                          {!lst.approved
+                                            ? 'Pending'
+                                            : v.available !== false
+                                              ? 'Live'
+                                              : 'Disabled'}
                                         </span>
                                       </div>
                                     </div>
@@ -852,7 +864,10 @@ export default function PartnerDashboard() {
                                   {/* Slider */}
                                   <div className="flex-1 space-y-2">
                                     <div className="flex justify-between items-center text-[10px] font-bold text-white/30 uppercase tracking-wide">
-                                      <span>₹{vFloor.toLocaleString()} <span className="text-white/10 font-medium">(floor)</span></span>
+                                      <span>
+                                        ₹{vFloor.toLocaleString()}{' '}
+                                        <span className="text-white/10 font-medium">(floor)</span>
+                                      </span>
                                       <span>₹{vSliderMax.toLocaleString()}</span>
                                     </div>
                                     <div className="relative h-1.5">
@@ -872,11 +887,23 @@ export default function PartnerDashboard() {
                                       />
                                     </div>
                                     <div className="flex justify-between text-[10px] font-bold uppercase tracking-wide">
-                                      <span className={isVBelowFloor ? 'text-rose-400' : 'text-white/20'}>
-                                        {isVBelowFloor ? '⚠ Below floor price' : isDirty ? '● Price changed' : 'Current price'}
+                                      <span
+                                        className={
+                                          isVBelowFloor ? 'text-rose-400' : 'text-white/20'
+                                        }
+                                      >
+                                        {isVBelowFloor
+                                          ? '⚠ Below floor price'
+                                          : isDirty
+                                            ? '● Price changed'
+                                            : 'Current price'}
                                       </span>
-                                      <span className={isDirty ? 'text-emerald-400' : 'text-white/20'}>
-                                        {isDirty ? `Was ₹${(v.price || 0).toLocaleString()}` : `₹${(v.price || 0).toLocaleString()}/night`}
+                                      <span
+                                        className={isDirty ? 'text-emerald-400' : 'text-white/20'}
+                                      >
+                                        {isDirty
+                                          ? `Was ₹${(v.price || 0).toLocaleString()}`
+                                          : `₹${(v.price || 0).toLocaleString()}/night`}
                                       </span>
                                     </div>
                                   </div>
@@ -884,7 +911,9 @@ export default function PartnerDashboard() {
                                   {/* Input + Save */}
                                   <div className="flex items-center gap-3 shrink-0">
                                     <div className="relative">
-                                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20 font-bold text-sm">₹</span>
+                                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20 font-bold text-sm">
+                                        ₹
+                                      </span>
                                       <input
                                         type="number"
                                         min={vFloor}
@@ -899,8 +928,18 @@ export default function PartnerDashboard() {
                                       disabled={vEdit.saving || !isDirty || isVBelowFloor}
                                       className="h-11 px-5 bg-emerald-500 hover:bg-emerald-600 disabled:bg-white/[0.05] disabled:text-white/20 text-[#050a08] disabled:border-transparent rounded-lg font-bold text-[11px] uppercase tracking-wider flex items-center gap-2 transition-all active:scale-95 disabled:cursor-not-allowed whitespace-nowrap shadow-lg shadow-emerald-500/10 disabled:shadow-none"
                                     >
-                                      {vEdit.saving ? <span className="w-4 h-4 border-2 border-[#050a08]/30 border-t-[#050a08] rounded-full animate-spin" /> : vEdit.success ? <CheckCircle size={14} strokeWidth={2.5} /> : <Save size={14} strokeWidth={2.5} />}
-                                      {vEdit.saving ? 'Saving...' : vEdit.success ? 'Saved!' : 'Update'}
+                                      {vEdit.saving ? (
+                                        <span className="w-4 h-4 border-2 border-[#050a08]/30 border-t-[#050a08] rounded-full animate-spin" />
+                                      ) : vEdit.success ? (
+                                        <CheckCircle size={14} strokeWidth={2.5} />
+                                      ) : (
+                                        <Save size={14} strokeWidth={2.5} />
+                                      )}
+                                      {vEdit.saving
+                                        ? 'Saving...'
+                                        : vEdit.success
+                                          ? 'Saved!'
+                                          : 'Update'}
                                     </button>
                                   </div>
                                 </div>
@@ -912,7 +951,8 @@ export default function PartnerDashboard() {
                                 )}
                                 {vEdit.success && (
                                   <div className="mt-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-4 py-2">
-                                    <CheckCircle size={12} strokeWidth={2.5} /> Price updated to ₹{Number(vEdit.value).toLocaleString()}/night.
+                                    <CheckCircle size={12} strokeWidth={2.5} /> Price updated to ₹
+                                    {Number(vEdit.value).toLocaleString()}/night.
                                   </div>
                                 )}
                               </div>

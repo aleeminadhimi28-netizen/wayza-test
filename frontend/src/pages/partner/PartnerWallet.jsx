@@ -135,7 +135,7 @@ export default function PartnerWallet() {
   const available = earnings?.availableBalance || 0;
   const pending = earnings?.pendingBalance || 0;
   const alreadyPaid = earnings?.alreadyPaid || 0;
-  const total = earnings?.ownerPayout || 0;  // net earnings after commission & TCS (not gross)
+  const total = earnings?.ownerPayout || 0; // net earnings after commission & TCS (not gross)
 
   const balanceCards = [
     {

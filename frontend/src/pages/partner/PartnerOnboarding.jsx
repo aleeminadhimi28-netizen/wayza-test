@@ -1090,7 +1090,9 @@ export default function PartnerOnboarding() {
                     <div className="space-y-4 pt-4 border-t border-slate-100">
                       <div>
                         <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">
-                          {mainSector === 'stays' ? 'Available Utilities / Amenities' : 'Vehicle Inclusions / Features'}
+                          {mainSector === 'stays'
+                            ? 'Available Utilities / Amenities'
+                            : 'Vehicle Inclusions / Features'}
                         </label>
                         <p className="text-[11px] text-slate-400 font-semibold mt-1">
                           Select the amenities included in your first listing.
@@ -1098,7 +1100,10 @@ export default function PartnerOnboarding() {
                       </div>
 
                       <div className="space-y-6">
-                        {(mainSector === 'stays' ? AMENITY_CATEGORIES : VEHICLE_AMENITY_CATEGORIES).map((cat) => (
+                        {(mainSector === 'stays'
+                          ? AMENITY_CATEGORIES
+                          : VEHICLE_AMENITY_CATEGORIES
+                        ).map((cat) => (
                           <div key={cat.id} className="space-y-2">
                             <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
                               {cat.label}
@@ -1112,7 +1117,9 @@ export default function PartnerOnboarding() {
                                     type="button"
                                     onClick={() => {
                                       if (isSelected) {
-                                        setSelectedAmenities(selectedAmenities.filter((x) => x !== a.label));
+                                        setSelectedAmenities(
+                                          selectedAmenities.filter((x) => x !== a.label)
+                                        );
                                       } else {
                                         setSelectedAmenities([...selectedAmenities, a.label]);
                                       }

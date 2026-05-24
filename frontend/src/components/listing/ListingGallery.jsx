@@ -66,8 +66,11 @@ export default function ListingGallery({ images, title, priority = false }) {
         {images[1] && (
           <div
             className={`hidden lg:block relative overflow-hidden cursor-pointer group ${
-              images.length === 2 ? 'lg:col-span-2 lg:row-span-2' :
-              images.length === 3 ? 'lg:col-span-2 lg:row-span-1' : ''
+              images.length === 2
+                ? 'lg:col-span-2 lg:row-span-2'
+                : images.length === 3
+                  ? 'lg:col-span-2 lg:row-span-1'
+                  : ''
             }`}
             onClick={() => openAt(1)}
           >
