@@ -75,6 +75,7 @@ export default function PartnerProperty() {
   const [selectedNameOption, setSelectedNameOption] = useState('');
   const [variantAmenities, setVariantAmenities] = useState([]);
   const [price, setPrice] = useState('');
+  const [floorPrice, setFloorPrice] = useState('');
   const [desc, setDesc] = useState('');
   const [available, setAvailable] = useState(true);
 
@@ -159,6 +160,7 @@ export default function PartnerProperty() {
     setSelectedNameOption('');
     setVariantAmenities([]);
     setPrice('');
+    setFloorPrice('');
     setDesc('');
     setAvailable(true);
     setFile(null);
@@ -206,6 +208,7 @@ export default function PartnerProperty() {
         type,
         name,
         price: Number(price) || 0,
+        baseFloorPrice: floorPrice !== '' ? Number(floorPrice) : undefined,
         desc,
         available,
         amenities: variantAmenities,
@@ -260,6 +263,7 @@ export default function PartnerProperty() {
 
     setVariantAmenities(v.amenities || []);
     setPrice(v.price || '');
+    setFloorPrice(v.baseFloorPrice !== undefined ? v.baseFloorPrice : '');
     setDesc(v.desc || '');
     setAvailable(v.available !== false);
     const BASE = BASE_URL;
@@ -1042,7 +1046,7 @@ export default function PartnerProperty() {
               </header>
 
               <form onSubmit={save} className="p-6 space-y-6">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <label className="text-xs font-semibold text-slate-700 block">Class</label>
                     <div className="relative">
@@ -1078,6 +1082,22 @@ export default function PartnerProperty() {
                         placeholder="0.00"
                         value={price}
                         onChange={(e) => setPrice(e.target.value)}
+                        className="h-10 w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-4 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-colors"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-slate-700 block">Floor Price (₹)</label>
+                    <div className="relative">
+                      <Target
+                        className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                        size={16}
+                      />
+                      <input
+                        type="number"
+                        placeholder="e.g. 1500"
+                        value={floorPrice}
+                        onChange={(e) => setFloorPrice(e.target.value)}
                         className="h-10 w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-4 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-colors"
                       />
                     </div>

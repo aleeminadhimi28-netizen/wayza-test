@@ -343,7 +343,7 @@ router.post("/:id/variant", requireAuth, async (req, res, next) => {
         const listing = await listings.findOne({ _id: new ObjectId(req.params.id) });
         if (!listing || (listing.ownerEmail !== req.user.email && req.user.role !== "admin")) return res.status(403).json({ ok: false, message: "Not authorized" });
 
-        const { name, type, price, qty, desc, available, image, amenities } = parsed.data;
+        const { name, type, price, baseFloorPrice, qty, desc, available, image, amenities } = parsed.data;
         await listings.updateOne(
             { _id: new ObjectId(req.params.id) },
             {
@@ -351,7 +351,7 @@ router.post("/:id/variant", requireAuth, async (req, res, next) => {
                     variants: {
                         name, type,
                         price: Number(price) || 0,
-                        baseFloorPrice: Number(price) || 0,
+                        baseFloorPrice: baseFloorPrice !== undefined ? Number(baseFloorPrice) : (Number(price) || 0),
                         qty: Number(qty) || 1,
                         desc,
                         available: available !== false,
@@ -389,12 +389,12 @@ router.put("/:id/variant/:index", requireAuth, async (req, res, next) => {
         }
 
         const updates = {};
-        ["name", "type", "price", "qty", "desc", "available", "image", "amenities"].forEach(f => {
+        ["name", "type", "price", "baseFloorPrice", "qty", "desc", "available", "image", "amenities"].forEach(f => {
             if (req.body[f] !== undefined) updates["variants." + idx + "." + f] = req.body[f];
         });
 
         // Initialize baseFloorPrice for legacy variant if not present
-        if (variant.baseFloorPrice === undefined) {
+        if (variant.baseFloorPrice === undefined && updates["variants." + idx + ".baseFloorPrice"] === undefined) {
             updates["variants." + idx + ".baseFloorPrice"] = currentFloor;
         }
 
