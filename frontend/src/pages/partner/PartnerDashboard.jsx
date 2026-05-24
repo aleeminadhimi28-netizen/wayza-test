@@ -316,18 +316,26 @@ export default function PartnerDashboard() {
               <p className="text-white/40 text-xs mt-0.5">
                 {mainSector === 'vehicles' ? 'Vehicles' : 'Properties'} must be approved before
                 guests can book them.
-                {listings
-                  .filter((l) => !l.approved)
-                  .slice(0, 2)
-                  .map((l) => (
-                    <a
-                      key={l._id}
-                      href={`/partner/property/${l._id}`}
-                      className="ml-1 underline font-semibold hover:text-amber-400 transition-colors"
-                    >
-                      {l.title}
-                    </a>
-                  ))}
+                {listings.some((l) => !l.approved) && (
+                  <span className="ml-1">
+                    Pending:{' '}
+                    {listings
+                      .filter((l) => !l.approved)
+                      .slice(0, 2)
+                      .map((l, i) => (
+                        <span key={l._id}>
+                          {i > 0 && ', '}
+                          <a
+                            href={`/partner/property/${l._id}`}
+                            className="underline font-semibold hover:text-amber-400 transition-colors"
+                          >
+                            {l.title}
+                          </a>
+                        </span>
+                      ))}
+                    {listings.filter((l) => !l.approved).length > 2 && '...'}
+                  </span>
+                )}
               </p>
             </div>
             <button

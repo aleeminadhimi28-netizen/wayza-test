@@ -43,7 +43,9 @@ export default function ListingGallery({ images, title, priority = false }) {
       <div className="grid grid-cols-1 lg:grid-cols-4 lg:grid-rows-2 gap-2 h-[340px] md:h-[460px] lg:h-[540px] rounded-2xl lg:rounded-3xl overflow-hidden">
         {/* Hero image — spans 2 rows on desktop */}
         <div
-          className="lg:col-span-2 lg:row-span-2 relative overflow-hidden cursor-pointer group"
+          className={`${
+            images.length === 1 ? 'lg:col-span-4' : 'lg:col-span-2'
+          } lg:row-span-2 relative overflow-hidden cursor-pointer group`}
           onClick={() => openAt(0)}
         >
           <img
@@ -63,7 +65,10 @@ export default function ListingGallery({ images, title, priority = false }) {
         {/* Top-right */}
         {images[1] && (
           <div
-            className="hidden lg:block relative overflow-hidden cursor-pointer group"
+            className={`hidden lg:block relative overflow-hidden cursor-pointer group ${
+              images.length === 2 ? 'lg:col-span-2 lg:row-span-2' :
+              images.length === 3 ? 'lg:col-span-2 lg:row-span-1' : ''
+            }`}
             onClick={() => openAt(1)}
           >
             <img
@@ -79,7 +84,9 @@ export default function ListingGallery({ images, title, priority = false }) {
         {/* Top-far-right */}
         {images[2] && (
           <div
-            className="hidden lg:block relative overflow-hidden cursor-pointer group"
+            className={`hidden lg:block relative overflow-hidden cursor-pointer group ${
+              images.length === 3 ? 'lg:col-span-2 lg:row-span-1' : ''
+            }`}
             onClick={() => openAt(2)}
           >
             <img
@@ -95,7 +102,9 @@ export default function ListingGallery({ images, title, priority = false }) {
         {/* Bottom-right */}
         {images[3] && (
           <div
-            className="hidden lg:block relative overflow-hidden cursor-pointer group"
+            className={`hidden lg:block relative overflow-hidden cursor-pointer group ${
+              images.length === 4 ? 'lg:col-span-2 lg:row-span-1' : ''
+            }`}
             onClick={() => openAt(3)}
           >
             <img

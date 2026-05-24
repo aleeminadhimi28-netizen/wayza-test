@@ -289,10 +289,6 @@ export default function ListingDetails() {
   // ── Derived values ──────────────────────────────────────────────────
   const images = (listing.images || []).map(fixImg);
   if (images.length === 0) images.push(fixImg(listing.image));
-  while (images.length < 5)
-    images.push(
-      'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80'
-    );
 
   const avgRating = reviews.length
     ? (reviews.reduce((s, r) => s + (r.rating || 0), 0) / reviews.length).toFixed(1)
