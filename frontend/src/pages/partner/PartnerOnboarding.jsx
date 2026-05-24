@@ -264,11 +264,20 @@ export default function PartnerOnboarding() {
         const savedForm = sessionStorage.getItem(ONBOARDING_FORM_KEY);
         let hasSavedSector = false;
         let hasSavedName = false;
+        let hasSavedListingName = false;
         if (savedForm) {
           try {
             const parsed = JSON.parse(savedForm);
             hasSavedSector = parsed.mainSector !== undefined;
             hasSavedName = parsed.businessName && parsed.businessName.trim() !== '';
+            hasSavedListingName = parsed.listingName && parsed.listingName.trim() !== '';
+          } catch (e) {}
+        }
+        let targetSector = res.mainSector || 'stays';
+        if (hasSavedSector) {
+          try {
+            const form = JSON.parse(savedForm);
+            targetSector = form.mainSector;
           } catch (e) {}
         }
         if (!hasSavedSector && res.mainSector) {
@@ -277,8 +286,18 @@ export default function PartnerOnboarding() {
           else if (res.mainSector === 'vehicles') setSubCategory('Individual / Peer-to-Peer Host');
         }
         // Pre-fill businessName from registration if not already entered
+        let targetBusinessName = res.businessName || '';
         if (!hasSavedName && res.businessName) {
           setBusinessName(res.businessName);
+        } else if (hasSavedName) {
+          try {
+            const form = JSON.parse(savedForm);
+            targetBusinessName = form.businessName;
+          } catch (e) {}
+        }
+        // Pre-fill listingName for stays with businessName if not already entered
+        if (!hasSavedListingName && targetSector === 'stays' && targetBusinessName) {
+          setListingName(targetBusinessName);
         }
       });
     }
