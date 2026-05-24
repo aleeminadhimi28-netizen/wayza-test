@@ -571,7 +571,7 @@ export default function AdminDataTable({
                           )}
                           {activeTab === 'partners' &&
                             !item.onboarded &&
-                            item.onboardingCompleted && (
+                            (item.onboardingCompleted || item.businessName) && (
                               <button
                                 onClick={() =>
                                   triggerConfirm({
@@ -589,7 +589,8 @@ export default function AdminDataTable({
                             )}
                           {activeTab === 'partners' &&
                             !item.onboarded &&
-                            !item.onboardingCompleted && (
+                            !item.onboardingCompleted &&
+                            !item.businessName && (
                               <span className="text-[10px] font-bold text-white/20 uppercase tracking-wide flex items-center gap-1 mr-2 px-2">
                                 Awaiting Details
                               </span>

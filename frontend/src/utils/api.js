@@ -463,19 +463,19 @@ export const api = {
     }).then((r) => r.json()),
 
   adminDeleteUser: (email) =>
-    customFetch(`${API_URL}/admin/users/${email}`, {
+    customFetch(`${API_URL}/admin/users/${encodeURIComponent(email)}`, {
       method: 'DELETE',
       headers: getAuthHeaders(),
     }).then((r) => r.json()),
 
   adminDeletePartner: (email) =>
-    customFetch(`${API_URL}/admin/partners/${email}`, {
+    customFetch(`${API_URL}/admin/partners/${encodeURIComponent(email)}`, {
       method: 'DELETE',
       headers: getAuthHeaders(),
     }).then((r) => r.json()),
 
   adminApprovePartner: (email) =>
-    customFetch(`${API_URL}/admin/partners/${email}/approve`, {
+    customFetch(`${API_URL}/admin/partners/${encodeURIComponent(email)}/approve`, {
       method: 'PATCH',
       headers: getAuthHeaders(),
     }).then((r) => r.json()),
