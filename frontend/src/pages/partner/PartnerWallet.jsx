@@ -135,7 +135,7 @@ export default function PartnerWallet() {
   const available = earnings?.availableBalance || 0;
   const pending = earnings?.pendingBalance || 0;
   const alreadyPaid = earnings?.alreadyPaid || 0;
-  const total = earnings?.totalRevenue || 0;
+  const total = earnings?.ownerPayout || 0;  // net earnings after commission & TCS (not gross)
 
   const balanceCards = [
     {
@@ -160,11 +160,11 @@ export default function PartnerWallet() {
       desc: 'Transferred to bank',
     },
     {
-      label: 'Total Earned',
+      label: 'Total Net Earnings',
       value: total,
       icon: TrendingUp,
       bg: 'from-slate-700 to-slate-900',
-      desc: 'All time gross',
+      desc: 'After platform fees',
     },
   ];
 
