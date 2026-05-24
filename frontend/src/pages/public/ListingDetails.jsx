@@ -939,7 +939,7 @@ export default function ListingDetails() {
               )}
 
               {/* Variants (stays only) */}
-              {!isVehicle && listing.variants?.length > 1 && (
+              {!isVehicle && listing.variants?.length > 0 && (
                 <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-sm">
                   <div className="flex items-center gap-2 mb-6">
                     <div className="h-0.5 w-6 bg-slate-300 rounded-full" />
