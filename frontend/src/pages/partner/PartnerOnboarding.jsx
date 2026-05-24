@@ -295,8 +295,8 @@ export default function PartnerOnboarding() {
             targetBusinessName = form.businessName;
           } catch (e) {}
         }
-        // Pre-fill listingName for stays with businessName if not already entered
-        if (!hasSavedListingName && targetSector === 'stays' && targetBusinessName) {
+        // Pre-fill listingName with businessName if not already entered (for both stays & vehicles)
+        if (!hasSavedListingName && targetBusinessName) {
           setListingName(targetBusinessName);
         }
       });
