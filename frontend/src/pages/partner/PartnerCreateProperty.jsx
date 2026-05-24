@@ -249,7 +249,7 @@ export default function PartnerCreateProperty() {
         registrationDate: isVehicle ? registrationDate : undefined,
         vehicleType: isVehicle ? vehicleType : undefined,
         registrationCategory: isVehicle ? registrationCategory : undefined,
-        cancellationPolicy: isVehicle ? cancellationPolicy : undefined,
+        cancellationPolicy: cancellationPolicy,
         rcDoc: isVehicle ? rcPath : undefined,
         insuranceDoc: isVehicle ? insPath : undefined,
         pucDoc: isVehicle ? pucPath : undefined,
@@ -447,6 +447,22 @@ export default function PartnerCreateProperty() {
                   </select>
                 </div>
 
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-slate-700 block">
+                    Cancellation Policy <span className="text-rose-400">*</span>
+                  </label>
+                  <select
+                    required
+                    value={cancellationPolicy}
+                    onChange={(e) => setCancellationPolicy(e.target.value)}
+                    className="h-11 w-full bg-slate-50 border border-slate-200 rounded-lg px-4 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 outline-none transition-all appearance-none cursor-pointer"
+                  >
+                    <option value="flexible">Flexible</option>
+                    <option value="moderate">Moderate</option>
+                    <option value="strict">Strict</option>
+                  </select>
+                </div>
+
                 {isVehicle && (
                   <div className="p-6 bg-slate-50 rounded-2xl border border-slate-200 space-y-4">
                     <h4 className="text-xs font-bold text-slate-700 uppercase tracking-widest">
@@ -536,21 +552,6 @@ export default function PartnerCreateProperty() {
                       </select>
                     </div>
 
-                    <div className="space-y-2">
-                      <label className="text-xs font-semibold text-slate-700 block">
-                        Cancellation Policy <span className="text-rose-400">*</span>
-                      </label>
-                      <select
-                        required
-                        value={cancellationPolicy}
-                        onChange={(e) => setCancellationPolicy(e.target.value)}
-                        className="h-10 w-full bg-white border border-slate-200 rounded-lg px-3 text-sm font-medium text-slate-900 focus:border-emerald-500 outline-none transition-all appearance-none cursor-pointer"
-                      >
-                        <option value="flexible">Flexible</option>
-                        <option value="moderate">Moderate</option>
-                        <option value="strict">Strict</option>
-                      </select>
-                    </div>
 
                     <div className="pt-4 border-t border-slate-200 space-y-4 col-span-1 sm:col-span-2">
                       <h5 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">

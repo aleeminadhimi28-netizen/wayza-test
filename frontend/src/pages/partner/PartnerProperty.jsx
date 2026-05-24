@@ -329,13 +329,13 @@ export default function PartnerProperty() {
         title: mainTitle,
         walkthroughVideo: mainVideo,
         amenities: mainAmenities,
+        cancellationPolicy: mainCancellationPolicy,
         ...(isVehicle
           ? {
               licensePlate: mainLicensePlate,
               registrationDate: mainRegistrationDate,
               vehicleType: mainVehicleType,
               registrationCategory: mainRegistrationCategory,
-              cancellationPolicy: mainCancellationPolicy,
               rcDoc: rcPath,
               insuranceDoc: insPath,
               pucDoc: pucPath,
@@ -476,6 +476,20 @@ export default function PartnerProperty() {
                     className="w-full bg-white/5 border border-white/10 rounded-2xl h-14 px-6 text-white font-bold text-sm outline-none focus:border-emerald-500 transition-all font-mono"
                   />
                 </div>
+                <div className="space-y-2">
+                  <label className="text-[11px] font-black uppercase tracking-widest text-white/40 ml-2">
+                    Cancellation Policy
+                  </label>
+                  <select
+                    value={mainCancellationPolicy}
+                    onChange={(e) => setMainCancellationPolicy(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl h-14 px-6 text-white font-bold text-sm outline-none focus:border-emerald-500 transition-all appearance-none cursor-pointer"
+                  >
+                    <option value="flexible" className="bg-slate-900 text-white">Flexible</option>
+                    <option value="moderate" className="bg-slate-900 text-white">Moderate</option>
+                    <option value="strict" className="bg-slate-900 text-white">Strict</option>
+                  </select>
+                </div>
 
                 <div className="md:col-span-2 space-y-6 pt-6 border-t border-white/10">
                   <div className="flex items-center justify-between">
@@ -584,20 +598,6 @@ export default function PartnerProperty() {
                           <option value="Commercial Transport (Yellow Plate / Black Text)">
                             Commercial Transport (Yellow Plate / Black Text)
                           </option>
-                        </select>
-                      </div>
-                      <div className="space-y-2 col-span-1 md:col-span-2">
-                        <label className="text-[11px] font-black uppercase tracking-widest text-white/40 ml-2">
-                          Cancellation Policy
-                        </label>
-                        <select
-                          value={mainCancellationPolicy}
-                          onChange={(e) => setMainCancellationPolicy(e.target.value)}
-                          className="w-full bg-[#050a08] border border-white/10 rounded-xl h-12 px-4 text-white font-bold text-sm outline-none focus:border-emerald-500 transition-all appearance-none cursor-pointer"
-                        >
-                          <option value="flexible">Flexible</option>
-                          <option value="moderate">Moderate</option>
-                          <option value="strict">Strict</option>
                         </select>
                       </div>
 
