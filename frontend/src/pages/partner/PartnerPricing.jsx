@@ -389,6 +389,12 @@ export default function PartnerPricing() {
                               : `₹${(lst.price || 0).toLocaleString()}/night`}
                           </span>
                         </div>
+                        <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-wide mt-2 pt-2 border-t border-white/[0.05]">
+                          <span className="text-emerald-400/70">Estimated Payout</span>
+                          <span className="text-emerald-400 text-xs">
+                            ₹{Math.round(Number(edit.value) * 0.9).toLocaleString()}
+                          </span>
+                        </div>
                       </div>
 
                       {/* Input + Save */}
@@ -550,6 +556,12 @@ export default function PartnerPricing() {
                                         {isDirty
                                           ? `Was ₹${(v.price || 0).toLocaleString()}`
                                           : `₹${(v.price || 0).toLocaleString()}/${lst.category === 'bike' || lst.category === 'car' ? 'day' : 'night'}`}
+                                      </span>
+                                    </div>
+                                    <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-wide mt-2 pt-2 border-t border-white/[0.05]">
+                                      <span className="text-emerald-400/70">Estimated Payout</span>
+                                      <span className="text-emerald-400 text-xs">
+                                        ₹{Math.round(Number(vEdit.value) * 0.9).toLocaleString()}
                                       </span>
                                     </div>
                                   </div>
