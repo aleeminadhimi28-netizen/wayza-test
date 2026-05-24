@@ -512,6 +512,28 @@ export default function PartnerPricing() {
                                       <p className="text-[10px] text-white/30 font-semibold truncate mt-0.5">
                                         {v.desc || 'No description provided.'}
                                       </p>
+                                      <div className="mt-1.5">
+                                        <span
+                                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wide border ${
+                                            !lst.approved
+                                              ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                                              : v.available !== false
+                                                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                                                : 'bg-rose-500/10 text-rose-400 border-rose-500/20'
+                                          }`}
+                                        >
+                                          <div
+                                            className={`w-1 h-1 rounded-full ${
+                                              !lst.approved
+                                                ? 'bg-amber-400'
+                                                : v.available !== false
+                                                  ? 'bg-emerald-400'
+                                                  : 'bg-rose-400'
+                                            }`}
+                                          />
+                                          {!lst.approved ? 'Pending' : v.available !== false ? 'Live' : 'Disabled'}
+                                        </span>
+                                      </div>
                                     </div>
                                   </div>
 
