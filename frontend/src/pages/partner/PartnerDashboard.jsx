@@ -30,6 +30,7 @@ import {
   Lock,
   Save,
   Car,
+  Layers,
 } from 'lucide-react';
 import VerificationSpinner from '../../components/VerificationSpinner.jsx';
 import { api } from '../../utils/api.js';
@@ -89,6 +90,7 @@ export default function PartnerDashboard() {
           const listingArr = Array.isArray(lRes.value) ? lRes.value : [];
           setListings(listingArr);
           const initEdits = {};
+          const initVarEdits = {};
           listingArr.forEach((lst) => {
             initEdits[lst._id] = {
               value: lst.price || 0,
@@ -96,8 +98,17 @@ export default function PartnerDashboard() {
               error: null,
               success: false,
             };
+            (lst.variants || []).forEach((v, idx) => {
+              initVarEdits[`${lst._id}-${idx}`] = {
+                value: v.price || 0,
+                saving: false,
+                error: null,
+                success: false,
+              };
+            });
           });
           setPriceEdits(initEdits);
+          setVariantPriceEdits(initVarEdits);
         }
 
         if (profileRes.status === 'fulfilled' && profileRes.value?.ok) {
@@ -137,6 +148,56 @@ export default function PartnerDashboard() {
       ...prev,
       [id]: { ...prev[id], value, error: null, success: false },
     }));
+
+  const setVariantPriceField = (key, value) =>
+    setVariantPriceEdits((prev) => ({
+      ...prev,
+      [key]: { ...prev[key], value, error: null, success: false },
+    }));
+
+  const updateVariantPrice = async (listingId, variantIdx) => {
+    const key = `${listingId}-${variantIdx}`;
+    const edit = variantPriceEdits[key];
+    if (!edit) return;
+    const newPrice = Number(edit.value);
+
+    setVariantPriceEdits((prev) => ({
+      ...prev,
+      [key]: { ...prev[key], saving: true, error: null },
+    }));
+    try {
+      const res = await api.updateVariant(listingId, variantIdx, { price: newPrice });
+      if (res.ok) {
+        setListings((prev) =>
+          prev.map((l) => {
+            if (l._id === listingId) {
+              const updatedVariants = [...l.variants];
+              updatedVariants[variantIdx] = { ...updatedVariants[variantIdx], price: newPrice };
+              return { ...l, variants: updatedVariants };
+            }
+            return l;
+          })
+        );
+        setVariantPriceEdits((prev) => ({
+          ...prev,
+          [key]: { value: newPrice, saving: false, error: null, success: true },
+        }));
+        setTimeout(() => {
+          setVariantPriceEdits((prev) => ({
+            ...prev,
+            [key]: { ...prev[key], success: false },
+          }));
+        }, 3000);
+      } else {
+        throw new Error(res.message || 'Update failed');
+      }
+    } catch (err) {
+      setVariantPriceEdits((prev) => ({
+        ...prev,
+        [key]: { ...prev[key], saving: false, error: err.message },
+      }));
+    }
+  };
 
   const updatePrice = async (listing) => {
     const edit = priceEdits[listing._id];
@@ -628,8 +689,10 @@ export default function PartnerDashboard() {
                         </div>
                       </div>
 
-                      {/* Slider */}
-                      <div className="flex-1 space-y-2">
+                      {/* Slider - ONLY SHOW IF NO VARIANTS */}
+                      {!(lst.variants && lst.variants.length > 0) && (
+                        <>
+                          <div className="flex-1 space-y-2">
                         <div className="flex justify-between items-center text-[10px] font-bold text-white/20 uppercase tracking-wide">
                           <span>₹{floor.toLocaleString()}</span>
                           <span>₹{sliderMax.toLocaleString()}</span>
@@ -696,16 +759,165 @@ export default function PartnerDashboard() {
                           {edit.saving ? 'Saving' : edit.success ? 'Saved' : 'Update'}
                         </button>
                       </div>
+                      </>
+                    )}
                     </div>
 
-                    {edit.error && (
+                    {!(lst.variants && lst.variants.length > 0) && edit.error && (
                       <div className="mt-3 flex items-center gap-2 text-xs font-bold text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2">
                         <AlertCircle size={13} /> {edit.error}
                       </div>
                     )}
-                    {edit.success && (
+                    {!(lst.variants && lst.variants.length > 0) && edit.success && (
                       <div className="mt-3 flex items-center gap-2 text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-3 py-2">
                         <CheckCircle size={13} /> Price updated successfully.
+                      </div>
+                    )}
+
+                    {/* List of Variants (if any exist) */}
+                    {lst.variants && lst.variants.length > 0 && (
+                      <div className="mt-6 pt-6 border-t border-white/[0.03] space-y-4">
+                        <div className="flex items-center gap-2 text-white/30 text-[10px] font-black uppercase tracking-wider">
+                          <Layers size={12} />
+                          <span>
+                            {lst.category === 'bike' || lst.category === 'car'
+                              ? 'Vehicle Tiers'
+                              : 'Room / Accommodation Tiers'}
+                          </span>
+                        </div>
+                        <div className="grid gap-3">
+                          {lst.variants.map((v, vIdx) => {
+                            const key = `${lst._id}-${vIdx}`;
+                            const vEdit = variantPriceEdits[key] || {
+                              value: v.price || 0,
+                              saving: false,
+                              error: null,
+                              success: false,
+                            };
+                            const isDirty = Number(vEdit.value) !== v.price;
+                            const vFloor = v.baseFloorPrice !== undefined ? v.baseFloorPrice : v.price || 0;
+                            const vSliderMax = Math.max((v.price || 0) * 3, 5000);
+                            const vPct =
+                              vSliderMax > vFloor
+                                ? Math.min(100, ((Number(vEdit.value) - vFloor) / (vSliderMax - vFloor)) * 100)
+                                : 0;
+                            const isVBelowFloor = Number(vEdit.value) < vFloor;
+                            return (
+                              <div key={vIdx} className="space-y-2">
+                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-4 bg-white/[0.01] border border-white/[0.04] rounded-2xl hover:border-white/[0.08] transition-all">
+                                  {/* Variant Info */}
+                                  <div className="flex items-center gap-3 min-w-0 md:w-56 shrink-0">
+                                    {v.image ? (
+                                      <img
+                                        src={v.image.startsWith('http') ? v.image : `${v.image}`}
+                                        className="w-10 h-10 object-cover rounded-lg border border-white/[0.05] shrink-0"
+                                        alt={v.name}
+                                      />
+                                    ) : (
+                                      <div className="w-10 h-10 bg-white/[0.05] rounded-lg flex items-center justify-center text-white/30 text-xs font-bold shrink-0">
+                                        {lst.category === 'bike' || lst.category === 'car' ? 'Unit' : 'Room'}
+                                      </div>
+                                    )}
+                                    <div className="min-w-0">
+                                      <p className="font-bold text-white text-xs truncate">{v.name}</p>
+                                      <p className="text-[10px] text-white/30 font-semibold truncate mt-0.5">
+                                        {v.desc || 'No description provided.'}
+                                      </p>
+                                      <div className="mt-1.5">
+                                        <span
+                                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wide border ${
+                                            !lst.approved
+                                              ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                                              : v.available !== false
+                                                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                                                : 'bg-rose-500/10 text-rose-400 border-rose-500/20'
+                                          }`}
+                                        >
+                                          <div
+                                            className={`w-1 h-1 rounded-full ${
+                                              !lst.approved
+                                                ? 'bg-amber-400'
+                                                : v.available !== false
+                                                  ? 'bg-emerald-400'
+                                                  : 'bg-rose-400'
+                                            }`}
+                                          />
+                                          {!lst.approved ? 'Pending' : v.available !== false ? 'Live' : 'Disabled'}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Slider */}
+                                  <div className="flex-1 space-y-2">
+                                    <div className="flex justify-between items-center text-[10px] font-bold text-white/30 uppercase tracking-wide">
+                                      <span>₹{vFloor.toLocaleString()} <span className="text-white/10 font-medium">(floor)</span></span>
+                                      <span>₹{vSliderMax.toLocaleString()}</span>
+                                    </div>
+                                    <div className="relative h-1.5">
+                                      <div className="absolute inset-0 rounded-full bg-white/[0.05]" />
+                                      <div
+                                        className={`absolute left-0 top-0 h-full rounded-full transition-all ${isVBelowFloor ? 'bg-rose-500' : 'bg-emerald-500'}`}
+                                        style={{ width: `${Math.max(0, vPct)}%` }}
+                                      />
+                                      <input
+                                        type="range"
+                                        min={Math.min(vFloor, Number(vEdit.value))}
+                                        max={vSliderMax}
+                                        step={50}
+                                        value={Number(vEdit.value)}
+                                        onChange={(e) => setVariantPriceField(key, e.target.value)}
+                                        className="absolute inset-0 w-full opacity-0 cursor-pointer h-full"
+                                      />
+                                    </div>
+                                    <div className="flex justify-between text-[10px] font-bold uppercase tracking-wide">
+                                      <span className={isVBelowFloor ? 'text-rose-400' : 'text-white/20'}>
+                                        {isVBelowFloor ? '⚠ Below floor price' : isDirty ? '● Price changed' : 'Current price'}
+                                      </span>
+                                      <span className={isDirty ? 'text-emerald-400' : 'text-white/20'}>
+                                        {isDirty ? `Was ₹${(v.price || 0).toLocaleString()}` : `₹${(v.price || 0).toLocaleString()}/night`}
+                                      </span>
+                                    </div>
+                                  </div>
+
+                                  {/* Input + Save */}
+                                  <div className="flex items-center gap-3 shrink-0">
+                                    <div className="relative">
+                                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20 font-bold text-sm">₹</span>
+                                      <input
+                                        type="number"
+                                        min={vFloor}
+                                        step={100}
+                                        value={vEdit.value}
+                                        onChange={(e) => setVariantPriceField(key, e.target.value)}
+                                        className={`w-32 h-11 pl-7 pr-3 bg-white/[0.03] border rounded-lg text-sm font-bold text-white outline-none transition-all ${isVBelowFloor ? 'border-rose-500 focus:border-rose-500' : isDirty ? 'border-emerald-500 focus:border-emerald-500' : 'border-white/[0.08] focus:border-white/[0.2]'}`}
+                                      />
+                                    </div>
+                                    <button
+                                      onClick={() => updateVariantPrice(lst._id, vIdx)}
+                                      disabled={vEdit.saving || !isDirty || isVBelowFloor}
+                                      className="h-11 px-5 bg-emerald-500 hover:bg-emerald-600 disabled:bg-white/[0.05] disabled:text-white/20 text-[#050a08] disabled:border-transparent rounded-lg font-bold text-[11px] uppercase tracking-wider flex items-center gap-2 transition-all active:scale-95 disabled:cursor-not-allowed whitespace-nowrap shadow-lg shadow-emerald-500/10 disabled:shadow-none"
+                                    >
+                                      {vEdit.saving ? <span className="w-4 h-4 border-2 border-[#050a08]/30 border-t-[#050a08] rounded-full animate-spin" /> : vEdit.success ? <CheckCircle size={14} strokeWidth={2.5} /> : <Save size={14} strokeWidth={2.5} />}
+                                      {vEdit.saving ? 'Saving...' : vEdit.success ? 'Saved!' : 'Update'}
+                                    </button>
+                                  </div>
+                                </div>
+
+                                {vEdit.error && (
+                                  <div className="mt-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-lg px-4 py-2">
+                                    <AlertCircle size={12} strokeWidth={2.5} /> {vEdit.error}
+                                  </div>
+                                )}
+                                {vEdit.success && (
+                                  <div className="mt-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-4 py-2">
+                                    <CheckCircle size={12} strokeWidth={2.5} /> Price updated to ₹{Number(vEdit.value).toLocaleString()}/night.
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
                     )}
                   </div>
