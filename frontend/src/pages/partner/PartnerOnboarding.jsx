@@ -1056,14 +1056,14 @@ export default function PartnerOnboarding() {
                       />
                       <div className="space-y-2">
                         <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">
-                          Est. Payout (88%)
+                          Est. Payout (89%)
                         </label>
                         <div className="h-12 bg-slate-900 rounded-xl px-4 flex items-center justify-between">
                           <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest">
                             Net Earning
                           </span>
                           <span className="text-lg font-black text-white">
-                            ₹{price ? (parseInt(price) * 0.88).toLocaleString() : '0'}
+                            ₹{price ? (parseInt(price) * 0.89).toLocaleString() : '0'}
                           </span>
                         </div>
                       </div>
