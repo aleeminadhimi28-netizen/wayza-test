@@ -34,22 +34,53 @@ async function screenshotOnFailure(page: Page, name: string) {
   // Manual screenshot is disabled to prevent WebKit hangs.
 }
 
+/** Fetch CSRF token and return it (also sets the csrf_token cookie in page.request context) */
+async function fetchCSRFToken(page: Page): Promise<string> {
+  const res = await page.request.get(`${API}/auth/csrf-token`);
+  const data = await res.json();
+  return data.csrfToken as string;
+}
+
 /** Register and login a user directly via API for robustness and speed */
 async function ensureLoggedIn(page: Page, userCreds: any) {
+  // Fetch CSRF token first — sets csrf_token cookie in page.request context
+  // and returns the token to include in X-CSRF-Token header (double-submit pattern)
+  const csrfToken = await fetchCSRFToken(page);
+
   // Register first via API (graceful if already registered)
   await page.request.post(`${API}/auth/signup`, {
     data: { name: userCreds.name, phone: userCreds.phone, email: userCreds.email, password: userCreds.password },
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
   }).catch(() => {});
 
-  // Log in via API to set the HttpOnly cookie in the browser context
-  const loginRes = await page.request.post(`${API}/auth/login`, {
-    data: { email: userCreds.email, password: userCreds.password },
-    headers: { 'Content-Type': 'application/json' },
-  });
-  expect(loginRes.ok()).toBe(true);
+  // Small wait to let the speed limiter cool down between tests
+  await page.waitForTimeout(1000);
 
-  // Navigate to home to establish session and confirm state
+  // Log in via API to set the HttpOnly cookie in the browser context
+  // Retry once on failure to handle transient delays
+  let loginRes = await page.request.post(`${API}/auth/login`, {
+    data: { email: userCreds.email, password: userCreds.password },
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+  });
+
+  if (!loginRes.ok()) {
+    // Re-fetch CSRF and retry (token may have expired or signup triggered new cookie)
+    console.warn(`ensureLoggedIn: first login attempt returned ${loginRes.status()} for ${userCreds.email}, retrying...`);
+    await page.waitForTimeout(3000);
+    const csrfToken2 = await fetchCSRFToken(page);
+    loginRes = await page.request.post(`${API}/auth/login`, {
+      data: { email: userCreds.email, password: userCreds.password },
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken2 },
+    });
+  }
+
+  if (!loginRes.ok()) {
+    const body = await loginRes.json().catch(() => ({}));
+    console.error(`ensureLoggedIn: login failed with status ${loginRes.status()}`, body);
+  }
+  expect(loginRes.ok(), `Login failed (status ${loginRes.status()}) for ${userCreds.email}`).toBe(true);
+
+  // Navigate to home to establish session cookie in browser context
   await page.goto(`${BASE}/`);
   await page.waitForTimeout(2000);
 }

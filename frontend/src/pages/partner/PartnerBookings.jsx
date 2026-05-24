@@ -85,7 +85,9 @@ export default function PartnerBookings() {
     api
       .getPartnerBookings()
       .then((data) => {
-        setBookings(Array.isArray(data) ? data : []);
+        // API returns { ok: true, data: [...] } envelope (BUG-014 fix in backend)
+        const rows = Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : [];
+        setBookings(rows);
         setLoading(false);
       })
       .catch(() => setLoading(false));

@@ -152,20 +152,33 @@ test.describe('Suite 1 — Authentication Flow', () => {
 
   test('1.6 Logout clears session → back button does NOT return to protected page', async ({ page }) => {
     try {
-      // Login
-      await page.goto(`${BASE}/login`);
-      await page.fill('#email', VALID_USER.email);
-      await page.fill('#password', VALID_USER.password);
-      await page.click('button[type="submit"]');
-      await page.waitForURL(url => !url.pathname.includes('/login'), { timeout: 35000 });
+      // Use API login to bypass the speed limiter that slows down the UI form by test 1.6
+      // Must fetch CSRF token first (double-submit cookie pattern required by backend)
+      const csrfRes = await page.request.get(`${API}/auth/csrf-token`);
+      const { csrfToken } = await csrfRes.json();
+
+      await page.request.post(`${API}/auth/signup`, {
+        data: { name: VALID_USER.name, phone: VALID_USER.phone, email: VALID_USER.email, password: VALID_USER.password },
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+      }).catch(() => {}); // Ignore if already registered from test 1.2
+
+      const loginRes = await page.request.post(`${API}/auth/login`, {
+        data: { email: VALID_USER.email, password: VALID_USER.password },
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+      });
+      expect(loginRes.ok(), 'API login must succeed for test 1.6').toBe(true);
+
+      // Navigate to home to establish session cookie in browser context
+      await page.goto(`${BASE}/`);
+      await page.waitForTimeout(2000);
 
       // Navigate to a protected page and capture the URL
       await page.goto(`${BASE}/profile`);
       const protectedUrl = page.url();
 
-      // Find and click logout (wait up to 35s for profile page to render)
-      const logoutBtn = page.locator('button:has-text("Logout"), button:has-text("Sign Out"), a:has-text("Logout")').first();
-      await expect(logoutBtn).toBeVisible({ timeout: 35000 });
+      // Find and click logout (wait up to 60s — speed limiter can add up to 20s delay per request)
+      const logoutBtn = page.locator('button:has-text("Sign Out"), button:has-text("Logout"), a:has-text("Sign Out"), a:has-text("Logout")').first();
+      await expect(logoutBtn).toBeVisible({ timeout: 60000 });
       await logoutBtn.click();
       await page.waitForURL(url => url.pathname === '/' || url.pathname.includes('/login'), { timeout: 35000 });
 
