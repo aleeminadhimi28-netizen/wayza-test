@@ -950,7 +950,9 @@ export default function ListingDetails() {
                           Choose Your Room
                         </h2>
                         <p className="text-[11px] text-slate-400 font-medium mt-0.5">
-                          {listing.variants.length} room {listing.variants.length === 1 ? 'type' : 'types'} · select to update pricing
+                          {listing.variants.length} room{' '}
+                          {listing.variants.length === 1 ? 'type' : 'types'} · select to update
+                          pricing
                         </p>
                       </div>
                     </div>
@@ -1009,10 +1011,14 @@ export default function ListingDetails() {
                             </div>
 
                             {/* Content area */}
-                            <div className={`flex-1 flex flex-col p-5 md:p-6 transition-colors duration-200 ${isSelected ? 'bg-emerald-50/40' : 'bg-white group-hover:bg-slate-50/50'}`}>
+                            <div
+                              className={`flex-1 flex flex-col p-5 md:p-6 transition-colors duration-200 ${isSelected ? 'bg-emerald-50/40' : 'bg-white group-hover:bg-slate-50/50'}`}
+                            >
                               {/* Name row */}
                               <div className="mb-2">
-                                <h3 className={`text-lg font-black leading-tight transition-colors duration-200 ${isSelected ? 'text-emerald-700' : 'text-slate-900 group-hover:text-slate-800'}`}>
+                                <h3
+                                  className={`text-lg font-black leading-tight transition-colors duration-200 ${isSelected ? 'text-emerald-700' : 'text-slate-900 group-hover:text-slate-800'}`}
+                                >
                                   {v.name}
                                 </h3>
                                 {v.desc && (
@@ -1026,7 +1032,9 @@ export default function ListingDetails() {
                               {v.amenities && v.amenities.length > 0 && (
                                 <div className="flex flex-wrap gap-1.5 my-3">
                                   {v.amenities.slice(0, 5).map((amenityLabel, idx) => {
-                                    const amenityObj = ALL_AMENITIES.find(a => a.label === amenityLabel);
+                                    const amenityObj = ALL_AMENITIES.find(
+                                      (a) => a.label === amenityLabel
+                                    );
                                     if (!amenityObj) return null;
                                     return (
                                       <span
@@ -1037,7 +1045,12 @@ export default function ListingDetails() {
                                             : 'bg-slate-50 border-slate-100 text-slate-500'
                                         }`}
                                       >
-                                        <amenityObj.icon size={9} className={isSelected ? 'text-emerald-500' : 'text-slate-400'} />
+                                        <amenityObj.icon
+                                          size={9}
+                                          className={
+                                            isSelected ? 'text-emerald-500' : 'text-slate-400'
+                                          }
+                                        />
                                         {amenityLabel}
                                       </span>
                                     );
@@ -1051,18 +1064,27 @@ export default function ListingDetails() {
                               )}
 
                               {/* Divider */}
-                              <div className={`h-px w-full my-3 ${isSelected ? 'bg-emerald-100' : 'bg-slate-100'}`} />
+                              <div
+                                className={`h-px w-full my-3 ${isSelected ? 'bg-emerald-100' : 'bg-slate-100'}`}
+                              />
 
                               {/* Price + CTA row */}
                               <div className="flex items-center justify-between gap-4 mt-auto">
                                 <div>
-                                  <div className={`text-2xl font-black leading-none transition-colors ${isSelected ? 'text-emerald-700' : 'text-slate-900'}`}>
+                                  <div
+                                    className={`text-2xl font-black leading-none transition-colors ${isSelected ? 'text-emerald-700' : 'text-slate-900'}`}
+                                  >
                                     ₹{v.price.toLocaleString()}
                                   </div>
-                                  <div className="text-[11px] font-semibold text-slate-400 mt-0.5">per night · excl. taxes</div>
+                                  <div className="text-[11px] font-semibold text-slate-400 mt-0.5">
+                                    per night · excl. taxes
+                                  </div>
                                 </div>
                                 <button
-                                  onClick={(e) => { e.stopPropagation(); setSelectedVariant(i); }}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedVariant(i);
+                                  }}
                                   className={`h-10 px-5 rounded-xl font-bold text-sm transition-all duration-200 active:scale-95 ${
                                     isSelected
                                       ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20'
@@ -1080,7 +1102,6 @@ export default function ListingDetails() {
                   </div>
                 </div>
               )}
-
 
               {/* Reviews */}
               <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-sm">

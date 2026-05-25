@@ -1290,7 +1290,9 @@ export default function PartnerProperty() {
                 </div>
                 {listing.variants?.length > 0 && (
                   <span className="px-3 py-1.5 bg-emerald-50 border border-emerald-100 text-emerald-700 text-xs font-bold rounded-lg">
-                    {listing.variants.filter((v) => v.available !== false).length} of {listing.variants.length} Available
+                    {listing.variants.filter((v) => v.available !== false).length}
+                    {' of '}
+                    {listing.variants.length} Available
                   </span>
                 )}
               </div>
