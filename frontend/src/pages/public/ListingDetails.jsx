@@ -941,56 +941,99 @@ export default function ListingDetails() {
               {/* Variants (stays only) */}
               {!isVehicle && listing.variants?.length > 0 && (
                 <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-sm">
-                  <div className="flex items-center gap-2 mb-6">
-                    <div className="h-0.5 w-6 bg-slate-300 rounded-full" />
-                    <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">
-                      Room Options
-                    </h2>
+                  {/* Section heading */}
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-2">
+                      <div className="h-0.5 w-6 bg-emerald-500 rounded-full" />
+                      <h2 className="text-xs font-bold text-emerald-600 uppercase tracking-widest">
+                        Room Options
+                      </h2>
+                    </div>
+                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                      {listing.variants.length} {listing.variants.length === 1 ? 'type' : 'types'} available
+                    </span>
                   </div>
-                  <div className="space-y-3">
-                    {listing.variants.map((v, i) => (
-                      <div
-                        key={i}
-                        onClick={() => setSelectedVariant(i)}
-                        className={`p-5 rounded-2xl border-2 transition-all cursor-pointer flex justify-between items-center gap-4 ${
-                          selectedVariant === i
-                            ? 'border-emerald-500 bg-emerald-50/40'
-                            : 'border-slate-200 hover:border-emerald-200 bg-slate-50/50'
-                        }`}
-                      >
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-sm font-bold text-slate-900 mb-1">{v.name}</h3>
-                          <p className="text-xs text-slate-400 font-medium">
-                            {v.desc || 'Executive level residency'}
-                          </p>
-                          {v.amenities && v.amenities.length > 0 && (
-                            <div className="flex flex-wrap gap-1.5 mt-2">
-                              {v.amenities.slice(0, 4).map((amenityLabel, idx) => {
-                                const amenityObj = ALL_AMENITIES.find(
-                                  (a) => a.label === amenityLabel
-                                );
-                                if (!amenityObj) return null;
-                                return (
-                                  <span
-                                    key={idx}
-                                    className="inline-flex items-center gap-1 px-2 py-1 bg-white border border-slate-100 rounded-md text-[10px] font-semibold text-slate-500"
-                                  >
-                                    <amenityObj.icon size={9} className="text-emerald-500" />
-                                    {amenityLabel}
-                                  </span>
-                                );
-                              })}
+
+                  <div className="space-y-4">
+                    {listing.variants.map((v, i) => {
+                      const isSelected = selectedVariant === i;
+                      return (
+                        <div
+                          key={i}
+                          onClick={() => setSelectedVariant(i)}
+                          className={`group relative rounded-2xl border-2 transition-all duration-200 cursor-pointer overflow-hidden flex flex-col sm:flex-row ${
+                            isSelected
+                              ? 'border-emerald-500 shadow-md shadow-emerald-500/10'
+                              : 'border-slate-100 hover:border-emerald-200 hover:shadow-sm'
+                          }`}
+                        >
+                          {/* Room image */}
+                          {v.image && (
+                            <div className="relative w-full sm:w-40 h-36 sm:h-auto shrink-0 overflow-hidden">
+                              <img
+                                src={fixImg(v.image)}
+                                alt={v.name}
+                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              />
+                              {isSelected && (
+                                <div className="absolute inset-0 bg-emerald-900/20" />
+                              )}
                             </div>
                           )}
+
+                          {/* Content */}
+                          <div className={`flex-1 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 sm:p-5 ${isSelected ? 'bg-emerald-50/50' : 'bg-white group-hover:bg-slate-50/60'} transition-colors`}>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <h3 className={`text-sm font-bold transition-colors ${isSelected ? 'text-emerald-700' : 'text-slate-900'}`}>
+                                  {v.name}
+                                </h3>
+                                {isSelected && (
+                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-500 text-white text-[9px] font-black uppercase tracking-widest rounded-full">
+                                    <CheckCircle size={9} /> Selected
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-xs text-slate-400 font-medium leading-relaxed mb-2">
+                                {v.desc || 'Executive level residency'}
+                              </p>
+                              {v.amenities && v.amenities.length > 0 && (
+                                <div className="flex flex-wrap gap-1.5">
+                                  {v.amenities.slice(0, 4).map((amenityLabel, idx) => {
+                                    const amenityObj = ALL_AMENITIES.find(
+                                      (a) => a.label === amenityLabel
+                                    );
+                                    if (!amenityObj) return null;
+                                    return (
+                                      <span
+                                        key={idx}
+                                        className="inline-flex items-center gap-1 px-2 py-1 bg-white border border-slate-100 rounded-md text-[10px] font-semibold text-slate-500"
+                                      >
+                                        <amenityObj.icon size={9} className="text-emerald-500" />
+                                        {amenityLabel}
+                                      </span>
+                                    );
+                                  })}
+                                  {v.amenities.length > 4 && (
+                                    <span className="px-2 py-1 bg-slate-50 border border-slate-100 rounded-md text-[10px] font-semibold text-slate-400">
+                                      +{v.amenities.length - 4} more
+                                    </span>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Price */}
+                            <div className="text-right shrink-0 self-center">
+                              <p className={`text-2xl font-black leading-none transition-colors ${isSelected ? 'text-emerald-700' : 'text-slate-900'}`}>
+                                ₹{v.price.toLocaleString()}
+                              </p>
+                              <p className="text-[11px] text-slate-400 font-medium mt-1">/ night</p>
+                            </div>
+                          </div>
                         </div>
-                        <div className="text-right shrink-0">
-                          <p className="text-xl font-black text-slate-900">
-                            ₹{v.price.toLocaleString()}
-                          </p>
-                          <p className="text-[11px] text-slate-400 font-medium">/ night</p>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               )}
