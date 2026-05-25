@@ -1272,29 +1272,37 @@ export default function PartnerProperty() {
               </form>
             </motion.div>
 
-            {/* VARIANTS LIST */}
-            <div className="xl:col-span-2 space-y-6">
-              <div className="bg-white p-6 border border-slate-200 rounded-3xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
-                    <Database size={24} />
+            {/* VARIANTS LIST — REDESIGNED */}
+            <div className="xl:col-span-2 space-y-5">
+              {/* Section header */}
+              <div className="bg-white p-5 border border-slate-200 rounded-2xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
+                    <Database size={20} />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-slate-900">Current Variants</h3>
-                    <p className="text-sm text-slate-500">
-                      {listing.variants?.length || 0} active variants managing inventory
+                    <h3 className="text-base font-bold text-slate-900">Room Inventory</h3>
+                    <p className="text-xs text-slate-500">
+                      {listing.variants?.length || 0}{' '}
+                      {listing.variants?.length === 1 ? 'room type' : 'room types'} configured
                     </p>
                   </div>
                 </div>
+                {listing.variants?.length > 0 && (
+                  <span className="px-3 py-1.5 bg-emerald-50 border border-emerald-100 text-emerald-700 text-xs font-bold rounded-lg">
+                    {listing.variants.filter((v) => v.available !== false).length} of {listing.variants.length} Available
+                  </span>
+                )}
               </div>
 
               {!listing.variants || listing.variants.length === 0 ? (
-                <div className="bg-white border text-center border-slate-200 border-dashed rounded-3xl py-24 px-6 flex flex-col items-center justify-center">
-                  <Database className="text-slate-300 mb-4" size={48} />
-                  <h3 className="text-xl font-bold text-slate-900 mb-2">No Variants found</h3>
-                  <p className="text-sm text-slate-500 max-w-sm">
-                    You haven't added any specific rooms, tiers, or options. Add your first variant
-                    using the panel on the left.
+                <div className="bg-white border border-dashed border-slate-200 rounded-3xl py-24 px-6 flex flex-col items-center justify-center text-center">
+                  <div className="w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center mb-4">
+                    <Database className="text-emerald-300" size={28} />
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-900 mb-1">No rooms yet</h3>
+                  <p className="text-sm text-slate-500 max-w-xs">
+                    Use the form on the left to add your first room type, tier, or option.
                   </p>
                 </div>
               ) : (
@@ -1304,50 +1312,86 @@ export default function PartnerProperty() {
                       <motion.div
                         key={i}
                         layout
-                        initial={{ opacity: 0, scale: 0.98 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.98 }}
-                        className={`bg-white rounded-2xl border border-slate-200 transition-all overflow-hidden flex flex-col md:flex-row ${!v.available ? 'opacity-70' : 'shadow-sm hover:border-emerald-200'}`}
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.96 }}
+                        transition={{ duration: 0.25, delay: i * 0.04 }}
+                        className={`group relative rounded-2xl overflow-hidden border transition-all duration-300 ${
+                          !v.available
+                            ? 'border-slate-200 opacity-60'
+                            : 'border-slate-200 hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/8'
+                        }`}
                       >
-                        <div className="w-full md:w-64 h-48 md:h-auto shrink-0 relative">
-                          <img
-                            src={fixImg(v.image)}
-                            className="w-full h-full object-cover"
-                            alt={v.name}
-                          />
-                          <div className="absolute top-4 left-4">
-                            <div className="bg-slate-900/90 backdrop-blur-md px-3 py-1.5 rounded-lg text-white font-bold text-xs uppercase shadow-md">
-                              {v.type}
-                            </div>
-                          </div>
-                          {!v.available && (
-                            <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-[2px] flex items-center justify-center">
-                              <div className="bg-rose-500 text-white px-3 py-1 rounded-full font-bold text-xs">
-                                UNAVAILABLE
-                              </div>
-                            </div>
-                          )}
-                        </div>
+                        {/* Emerald top accent on hover */}
+                        <div className="absolute inset-x-0 top-0 h-[2px] bg-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                        <div className="p-6 flex-1 flex flex-col justify-between">
-                          <div className="space-y-2 mb-6">
-                            <div className="flex justify-between items-start gap-4">
-                              <h4 className="text-xl font-bold text-slate-900">{v.name}</h4>
-                              <div className="text-right">
-                                <div className="text-xl font-bold text-emerald-600">
+                        <div className="flex flex-col sm:flex-row">
+                          {/* Image */}
+                          <div className="relative w-full sm:w-56 h-48 sm:h-auto shrink-0 overflow-hidden">
+                            <img
+                              src={fixImg(v.image)}
+                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              alt={v.name}
+                            />
+                            {/* Gradient overlay on image */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+
+                            {/* Type badge */}
+                            <div className="absolute top-3 left-3">
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-sm text-white text-[10px] font-black uppercase tracking-widest shadow">
+                                {v.type}
+                              </span>
+                            </div>
+
+                            {/* Unavailable overlay */}
+                            {!v.available && (
+                              <div className="absolute inset-0 bg-slate-900/30 backdrop-blur-[2px] flex items-center justify-center">
+                                <span className="px-3 py-1.5 bg-rose-500/90 backdrop-blur-sm text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg">
+                                  Hidden
+                                </span>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Content */}
+                          <div className="flex-1 flex flex-col p-5">
+                            {/* Top row: name + price */}
+                            <div className="flex items-start justify-between gap-3 mb-3">
+                              <div>
+                                <h4 className="text-lg font-bold text-slate-900 leading-tight group-hover:text-emerald-700 transition-colors duration-200">
+                                  {v.name}
+                                </h4>
+                                {v.baseFloorPrice !== undefined && v.baseFloorPrice > 0 && (
+                                  <p className="text-[11px] text-slate-400 font-medium mt-0.5">
+                                    Floor price: ₹{v.baseFloorPrice.toLocaleString()}
+                                  </p>
+                                )}
+                              </div>
+                              <div className="text-right shrink-0">
+                                <div className="text-2xl font-black text-slate-900 leading-none">
                                   ₹{v.price.toLocaleString()}
                                 </div>
-                                <div className="text-xs font-semibold text-slate-500">/ night</div>
+                                <div className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mt-1">
+                                  per night
+                                </div>
                               </div>
                             </div>
-                            <p className="text-sm text-slate-600 leading-relaxed line-clamp-2">
-                              {v.desc || (
-                                <span className="text-slate-400">No description provided.</span>
-                              )}
-                            </p>
+
+                            {/* Description */}
+                            {v.desc ? (
+                              <p className="text-sm text-slate-500 leading-relaxed line-clamp-2 mb-3">
+                                {v.desc}
+                              </p>
+                            ) : (
+                              <p className="text-xs italic text-slate-300 mb-3">
+                                No description provided.
+                              </p>
+                            )}
+
+                            {/* Amenity pills */}
                             {v.amenities && v.amenities.length > 0 && (
-                              <div className="flex flex-wrap gap-1 mt-3">
-                                {v.amenities.map((amenityLabel, idx) => {
+                              <div className="flex flex-wrap gap-1.5 mb-4">
+                                {v.amenities.slice(0, 6).map((amenityLabel, idx) => {
                                   const amenityObj = ALL_AMENITIES.find(
                                     (a) => a.label === amenityLabel
                                   );
@@ -1355,52 +1399,63 @@ export default function PartnerProperty() {
                                   return (
                                     <span
                                       key={idx}
-                                      className="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-50 border border-slate-100 rounded-lg text-[10px] font-bold text-slate-500 uppercase tracking-wider"
+                                      className="inline-flex items-center gap-1 px-2 py-1 bg-slate-50 border border-slate-100 rounded-lg text-[10px] font-bold text-slate-500 uppercase tracking-wide"
                                     >
-                                      <amenityObj.icon size={10} className="text-emerald-500" />
+                                      <amenityObj.icon size={9} className="text-emerald-500" />
                                       {amenityLabel}
                                     </span>
                                   );
                                 })}
+                                {v.amenities.length > 6 && (
+                                  <span className="px-2 py-1 bg-slate-100 rounded-lg text-[10px] font-bold text-slate-400">
+                                    +{v.amenities.length - 6} more
+                                  </span>
+                                )}
                               </div>
                             )}
-                          </div>
 
-                          <div className="flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-slate-100 gap-4 mt-auto">
-                            <label className="flex items-center gap-3 cursor-pointer">
-                              <div className="relative">
-                                <input
-                                  type="checkbox"
-                                  className="hidden"
-                                  checked={v.available !== false}
-                                  onChange={() => toggleAvailable(i, v.available !== false)}
-                                />
-                                <div
-                                  className={`w-10 h-5 rounded-full transition-colors flex items-center px-0.5 ${v.available ? 'bg-emerald-500' : 'bg-slate-300'}`}
-                                >
-                                  <div
-                                    className={`w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${v.available ? 'translate-x-5' : 'translate-x-0'}`}
+                            {/* Footer: toggle + actions */}
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-3 border-t border-slate-100 mt-auto">
+                              {/* Availability toggle */}
+                              <label className="flex items-center gap-2.5 cursor-pointer group/toggle">
+                                <div className="relative">
+                                  <input
+                                    type="checkbox"
+                                    className="hidden"
+                                    checked={v.available !== false}
+                                    onChange={() => toggleAvailable(i, v.available !== false)}
                                   />
+                                  <div
+                                    className={`w-9 h-5 rounded-full transition-colors duration-200 flex items-center px-0.5 ${v.available !== false ? 'bg-emerald-500' : 'bg-slate-200'}`}
+                                  >
+                                    <div
+                                      className={`w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${v.available !== false ? 'translate-x-4' : 'translate-x-0'}`}
+                                    />
+                                  </div>
                                 </div>
-                              </div>
-                              <span className="text-sm font-semibold text-slate-700">
-                                {v.available ? 'Available' : 'Hidden'}
-                              </span>
-                            </label>
+                                <span
+                                  className={`text-xs font-bold uppercase tracking-widest transition-colors ${v.available !== false ? 'text-emerald-600' : 'text-slate-400'}`}
+                                >
+                                  {v.available !== false ? 'Available' : 'Hidden'}
+                                </span>
+                              </label>
 
-                            <div className="flex items-center gap-2">
-                              <button
-                                onClick={() => startEdit(v, i)}
-                                className="h-9 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-semibold text-xs flex items-center gap-2 transition-colors"
-                              >
-                                <Edit2 size={14} /> Edit
-                              </button>
-                              <button
-                                onClick={() => remove(i)}
-                                className="h-9 w-9 bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white rounded-lg flex items-center justify-center transition-colors"
-                              >
-                                <Trash2 size={16} />
-                              </button>
+                              {/* Action buttons */}
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => startEdit(v, i)}
+                                  className="h-8 px-4 bg-slate-100 hover:bg-slate-900 hover:text-white text-slate-600 rounded-lg font-bold text-xs flex items-center gap-1.5 transition-all duration-200 active:scale-95"
+                                >
+                                  <Edit2 size={12} />
+                                  Edit
+                                </button>
+                                <button
+                                  onClick={() => remove(i)}
+                                  className="h-8 w-8 bg-rose-50 text-rose-400 hover:bg-rose-500 hover:text-white rounded-lg flex items-center justify-center transition-all duration-200 active:scale-95"
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                              </div>
                             </div>
                           </div>
                         </div>
