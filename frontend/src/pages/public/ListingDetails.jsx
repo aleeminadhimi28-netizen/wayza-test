@@ -941,94 +941,137 @@ export default function ListingDetails() {
               {/* Variants (stays only) */}
               {!isVehicle && listing.variants?.length > 0 && (
                 <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-sm">
-                  {/* Section heading */}
+                  {/* Heading */}
                   <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                       <div className="h-0.5 w-6 bg-emerald-500 rounded-full" />
-                      <h2 className="text-xs font-bold text-emerald-600 uppercase tracking-widest">
-                        Room Options
-                      </h2>
+                      <div>
+                        <h2 className="text-xs font-bold text-emerald-600 uppercase tracking-widest">
+                          Choose Your Room
+                        </h2>
+                        <p className="text-[11px] text-slate-400 font-medium mt-0.5">
+                          {listing.variants.length} room {listing.variants.length === 1 ? 'type' : 'types'} · select to update pricing
+                        </p>
+                      </div>
                     </div>
-                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                      {listing.variants.length} {listing.variants.length === 1 ? 'type' : 'types'} available
-                    </span>
+                    {selectedVariant !== null && (
+                      <span className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border border-emerald-100 text-emerald-700 text-[11px] font-bold rounded-xl">
+                        <CheckCircle size={12} />
+                        {listing.variants[selectedVariant]?.name}
+                      </span>
+                    )}
                   </div>
 
-                  <div className="space-y-4">
+                  <div className="grid grid-cols-1 gap-5">
                     {listing.variants.map((v, i) => {
                       const isSelected = selectedVariant === i;
                       return (
                         <div
                           key={i}
                           onClick={() => setSelectedVariant(i)}
-                          className={`group relative rounded-2xl border-2 transition-all duration-200 cursor-pointer overflow-hidden flex flex-col sm:flex-row ${
+                          className={`group relative rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 border-2 ${
                             isSelected
-                              ? 'border-emerald-500 shadow-md shadow-emerald-500/10'
-                              : 'border-slate-100 hover:border-emerald-200 hover:shadow-sm'
+                              ? 'border-emerald-500 shadow-lg shadow-emerald-500/10'
+                              : 'border-slate-100 hover:border-slate-200 hover:shadow-md'
                           }`}
                         >
-                          {/* Room image */}
-                          {v.image && (
-                            <div className="relative w-full sm:w-40 h-36 sm:h-auto shrink-0 overflow-hidden">
-                              <img
-                                src={fixImg(v.image)}
-                                alt={v.name}
-                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                              />
-                              {isSelected && (
-                                <div className="absolute inset-0 bg-emerald-900/20" />
-                              )}
+                          {/* Selected ribbon */}
+                          {isSelected && (
+                            <div className="absolute top-4 right-4 z-10 flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg">
+                              <CheckCircle size={10} /> Selected
                             </div>
                           )}
 
-                          {/* Content */}
-                          <div className={`flex-1 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 sm:p-5 ${isSelected ? 'bg-emerald-50/50' : 'bg-white group-hover:bg-slate-50/60'} transition-colors`}>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-1">
-                                <h3 className={`text-sm font-bold transition-colors ${isSelected ? 'text-emerald-700' : 'text-slate-900'}`}>
-                                  {v.name}
-                                </h3>
-                                {isSelected && (
-                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-500 text-white text-[9px] font-black uppercase tracking-widest rounded-full">
-                                    <CheckCircle size={9} /> Selected
-                                  </span>
-                                )}
-                              </div>
-                              <p className="text-xs text-slate-400 font-medium leading-relaxed mb-2">
-                                {v.desc || 'Executive level residency'}
-                              </p>
-                              {v.amenities && v.amenities.length > 0 && (
-                                <div className="flex flex-wrap gap-1.5">
-                                  {v.amenities.slice(0, 4).map((amenityLabel, idx) => {
-                                    const amenityObj = ALL_AMENITIES.find(
-                                      (a) => a.label === amenityLabel
-                                    );
-                                    if (!amenityObj) return null;
-                                    return (
-                                      <span
-                                        key={idx}
-                                        className="inline-flex items-center gap-1 px-2 py-1 bg-white border border-slate-100 rounded-md text-[10px] font-semibold text-slate-500"
-                                      >
-                                        <amenityObj.icon size={9} className="text-emerald-500" />
-                                        {amenityLabel}
-                                      </span>
-                                    );
-                                  })}
-                                  {v.amenities.length > 4 && (
-                                    <span className="px-2 py-1 bg-slate-50 border border-slate-100 rounded-md text-[10px] font-semibold text-slate-400">
-                                      +{v.amenities.length - 4} more
+                          <div className="flex flex-col md:flex-row">
+                            {/* Room image — tall on mobile, fixed width on desktop */}
+                            <div className="relative w-full md:w-64 h-52 md:h-auto shrink-0 overflow-hidden bg-slate-100">
+                              {v.image ? (
+                                <>
+                                  <img
+                                    src={fixImg(v.image)}
+                                    alt={v.name}
+                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                  />
+                                  {/* Bottom scrim */}
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/5 to-transparent" />
+                                  {/* Room type badge on image */}
+                                  <div className="absolute bottom-3 left-3">
+                                    <span className="px-2.5 py-1 bg-black/60 backdrop-blur-sm text-white text-[10px] font-black uppercase tracking-widest rounded-lg">
+                                      {v.type || 'Room'}
                                     </span>
-                                  )}
+                                  </div>
+                                </>
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-slate-300">
+                                  <Star size={32} />
                                 </div>
                               )}
                             </div>
 
-                            {/* Price */}
-                            <div className="text-right shrink-0 self-center">
-                              <p className={`text-2xl font-black leading-none transition-colors ${isSelected ? 'text-emerald-700' : 'text-slate-900'}`}>
-                                ₹{v.price.toLocaleString()}
-                              </p>
-                              <p className="text-[11px] text-slate-400 font-medium mt-1">/ night</p>
+                            {/* Content area */}
+                            <div className={`flex-1 flex flex-col p-5 md:p-6 transition-colors duration-200 ${isSelected ? 'bg-emerald-50/40' : 'bg-white group-hover:bg-slate-50/50'}`}>
+                              {/* Name row */}
+                              <div className="mb-2">
+                                <h3 className={`text-lg font-black leading-tight transition-colors duration-200 ${isSelected ? 'text-emerald-700' : 'text-slate-900 group-hover:text-slate-800'}`}>
+                                  {v.name}
+                                </h3>
+                                {v.desc && (
+                                  <p className="text-sm text-slate-500 font-medium leading-relaxed mt-1.5 line-clamp-2">
+                                    {v.desc}
+                                  </p>
+                                )}
+                              </div>
+
+                              {/* Amenity chips */}
+                              {v.amenities && v.amenities.length > 0 && (
+                                <div className="flex flex-wrap gap-1.5 my-3">
+                                  {v.amenities.slice(0, 5).map((amenityLabel, idx) => {
+                                    const amenityObj = ALL_AMENITIES.find(a => a.label === amenityLabel);
+                                    if (!amenityObj) return null;
+                                    return (
+                                      <span
+                                        key={idx}
+                                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold border transition-colors ${
+                                          isSelected
+                                            ? 'bg-white border-emerald-100 text-emerald-700'
+                                            : 'bg-slate-50 border-slate-100 text-slate-500'
+                                        }`}
+                                      >
+                                        <amenityObj.icon size={9} className={isSelected ? 'text-emerald-500' : 'text-slate-400'} />
+                                        {amenityLabel}
+                                      </span>
+                                    );
+                                  })}
+                                  {v.amenities.length > 5 && (
+                                    <span className="px-2.5 py-1 bg-slate-100 border border-slate-100 rounded-lg text-[10px] font-semibold text-slate-400">
+                                      +{v.amenities.length - 5} more
+                                    </span>
+                                  )}
+                                </div>
+                              )}
+
+                              {/* Divider */}
+                              <div className={`h-px w-full my-3 ${isSelected ? 'bg-emerald-100' : 'bg-slate-100'}`} />
+
+                              {/* Price + CTA row */}
+                              <div className="flex items-center justify-between gap-4 mt-auto">
+                                <div>
+                                  <div className={`text-2xl font-black leading-none transition-colors ${isSelected ? 'text-emerald-700' : 'text-slate-900'}`}>
+                                    ₹{v.price.toLocaleString()}
+                                  </div>
+                                  <div className="text-[11px] font-semibold text-slate-400 mt-0.5">per night · excl. taxes</div>
+                                </div>
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); setSelectedVariant(i); }}
+                                  className={`h-10 px-5 rounded-xl font-bold text-sm transition-all duration-200 active:scale-95 ${
+                                    isSelected
+                                      ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20'
+                                      : 'bg-slate-900 text-white hover:bg-emerald-600'
+                                  }`}
+                                >
+                                  {isSelected ? '✓ Selected' : 'Select Room'}
+                                </button>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -1037,6 +1080,7 @@ export default function ListingDetails() {
                   </div>
                 </div>
               )}
+
 
               {/* Reviews */}
               <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-sm">

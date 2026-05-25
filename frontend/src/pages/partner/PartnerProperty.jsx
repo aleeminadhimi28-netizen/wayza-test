@@ -1021,13 +1021,13 @@ export default function PartnerProperty() {
             </div>
           </div>
         ) : (
-          /* ── ROOM: original grid with add-form on the left ── */
+          /* ── ROOM: dark redesign ── */
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
-            {/* FORM PANEL */}
+            {/* FORM PANEL — dark glass */}
             <motion.div
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
-              className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden sticky top-32 z-20"
+              className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden sticky top-32 z-20 backdrop-blur-sm"
             >
               <header className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
                 <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
