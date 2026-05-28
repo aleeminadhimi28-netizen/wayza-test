@@ -596,12 +596,21 @@ export default function ListingDetails() {
         breadcrumb={seoBreadcrumb}
       />
 
-      <div className="bg-slate-50 min-h-screen font-sans pb-24 lg:pb-0">
+      <div className="bg-[#f7f9f8] min-h-screen font-sans pb-32 lg:pb-0">
         {/* ══════════════════════════════════════════════════════════
             GALLERY HERO — full-bleed, cinematic title overlay
         ══════════════════════════════════════════════════════════ */}
         <div className="relative">
-          {/* Floating breadcrumb pill — top left */}
+          {/* Mobile: back arrow — top left */}
+          <button
+            onClick={() => navigate(-1)}
+            className="absolute top-4 left-4 z-20 md:hidden w-9 h-9 bg-black/45 backdrop-blur-md border border-white/15 rounded-full flex items-center justify-center text-white active:scale-90 transition-all"
+            aria-label="Go back"
+          >
+            <ChevronRight size={16} className="rotate-180" />
+          </button>
+
+          {/* Desktop: breadcrumb pill — top left */}
           <div className="absolute top-4 left-4 z-20 hidden md:flex items-center gap-1.5 bg-black/40 backdrop-blur-md border border-white/10 rounded-full px-4 py-2">
             <button
               onClick={() => navigate('/')}
@@ -650,36 +659,36 @@ export default function ListingDetails() {
           <ListingGallery images={images} title={listing.title} priority />
 
           {/* Title + meta — overlaid on gallery bottom via gradient scrim */}
-          <div className="absolute bottom-0 left-0 right-0 z-10 bg-gradient-to-t from-black/88 via-black/40 to-transparent px-5 md:px-10 pb-8 pt-36 pointer-events-none">
+          <div className="absolute bottom-0 left-0 right-0 z-10 px-4 md:px-10 pb-6 md:pb-10 pt-32 md:pt-48 pointer-events-none" style={{background:'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.15) 70%, transparent 100%)'}}>
             {/* Badges */}
-            <div className="flex flex-wrap items-center gap-2 mb-3">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-[10px] font-bold uppercase tracking-widest text-white">
+            <div className="flex flex-wrap items-center gap-1.5 md:gap-2 mb-2.5 md:mb-4">
+              <div className="inline-flex items-center gap-1 md:gap-1.5 px-2.5 md:px-3 py-1 md:py-1.5 bg-white/15 backdrop-blur-md border border-white/25 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-[0.15em] text-white shadow-sm">
                 {listing.category || 'Stay'}
               </div>
               {listing.price > 8000 && (
-                <div className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-400/20 backdrop-blur-sm border border-amber-300/30 rounded-lg text-[10px] font-bold text-amber-300 uppercase tracking-widest">
-                  <Sparkles size={10} /> Priority Asset
+                <div className="inline-flex items-center gap-1 md:gap-1.5 px-2.5 md:px-3 py-1 md:py-1.5 backdrop-blur-md border border-amber-300/40 rounded-full text-[9px] md:text-[10px] font-black text-amber-300 uppercase tracking-[0.15em] shadow-sm" style={{background:'rgba(245,158,11,0.18)'}}>
+                  <Sparkles size={8} /> Priority
                 </div>
               )}
               {listing.approved && (
-                <div className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-400/20 backdrop-blur-sm border border-emerald-300/30 rounded-lg text-[10px] font-bold text-emerald-300 uppercase tracking-widest">
-                  <Shield size={10} /> Verified
+                <div className="inline-flex items-center gap-1 md:gap-1.5 px-2.5 md:px-3 py-1 md:py-1.5 backdrop-blur-md border border-emerald-300/40 rounded-full text-[9px] md:text-[10px] font-black text-emerald-300 uppercase tracking-[0.15em] shadow-sm" style={{background:'rgba(16,185,129,0.18)'}}>
+                  <Shield size={8} /> Verified
                 </div>
               )}
             </div>
 
             {/* Title */}
-            <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight mb-3 drop-shadow-lg">
+            <h1 className="text-2xl md:text-[3.2rem] font-black text-white leading-[1.1] mb-2.5 md:mb-4" style={{textShadow:'0 2px 20px rgba(0,0,0,0.4)', letterSpacing:'-0.02em'}}>
               {listing.title}
             </h1>
 
             {/* Meta row */}
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pointer-events-auto">
+            <div className="flex flex-wrap items-center gap-x-3 md:gap-x-5 gap-y-1.5 md:gap-y-2 pointer-events-auto">
               {/* Rating */}
-              <div className="flex items-center gap-1.5">
-                <Star size={13} className="fill-amber-400 text-amber-400" />
-                <span className="text-sm font-bold text-white">{avgRating || 'New'}</span>
-                <span className="text-white/60 text-sm">
+              <div className="flex items-center gap-1">
+                <Star size={11} className="fill-amber-400 text-amber-400" />
+                <span className="text-xs md:text-sm font-bold text-white">{avgRating || 'New'}</span>
+                <span className="text-white/60 text-xs md:text-sm">
                   {reviews.length > 0
                     ? `· ${reviews.length} review${reviews.length !== 1 ? 's' : ''}`
                     : `· ${getCategoryNewLabel()}`}
@@ -691,23 +700,23 @@ export default function ListingDetails() {
                   href={`https://www.google.com/maps?q=${listing.latitude},${listing.longitude}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 text-sm text-white/80 hover:text-white font-medium transition-colors"
+                  className="flex items-center gap-1 text-xs md:text-sm text-white/80 hover:text-white font-medium transition-colors"
                 >
-                  <MapPin size={13} className="text-emerald-400 shrink-0" />
+                  <MapPin size={11} className="text-emerald-400 shrink-0" />
                   {listing.location || 'Kerala'} ·{' '}
-                  <span className="text-emerald-400">View map ↗</span>
+                  <span className="text-emerald-400">Map ↗</span>
                 </a>
               ) : (
-                <div className="flex items-center gap-1.5 text-sm text-white/80">
-                  <MapPin size={13} className="text-emerald-400 shrink-0" />
+                <div className="flex items-center gap-1 text-xs md:text-sm text-white/80">
+                  <MapPin size={11} className="text-emerald-400 shrink-0" />
                   <span>{listing.location || 'Kerala'}</span>
                 </div>
               )}
-              {/* WiFi */}
+              {/* WiFi — hidden on tiny phones */}
               {listing.wifiSpeed > 0 && (
-                <div className="flex items-center gap-1.5 text-sm text-white/80">
-                  <Wifi size={13} className="text-emerald-400" />
-                  <span className="font-semibold">{listing.wifiSpeed} Mbps Wi-Fi</span>
+                <div className="hidden sm:flex items-center gap-1 text-xs md:text-sm text-white/80">
+                  <Wifi size={11} className="text-emerald-400" />
+                  <span className="font-semibold">{listing.wifiSpeed} Mbps</span>
                 </div>
               )}
             </div>
@@ -745,22 +754,22 @@ export default function ListingDetails() {
         {/* ══════════════════════════════════════════════════════════
             MAIN CONTENT GRID
         ══════════════════════════════════════════════════════════ */}
-        <div className="max-w-[1280px] mx-auto px-5 md:px-10 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="max-w-[1280px] mx-auto px-4 md:px-10 py-5 md:py-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-8 items-start">
             {/* ────────────────────────────────────────────────────
                 LEFT COLUMN — Details (7/12)
             ──────────────────────────────────────────────────── */}
-            <div className="lg:col-span-7 space-y-5">
+            <div className="lg:col-span-7 space-y-3 md:space-y-5">
               {/* ── ABOUT ── */}
-              <div className="bg-white rounded-3xl p-7 md:p-9 border border-slate-100 shadow-sm">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="h-px flex-1 bg-slate-100" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 shrink-0 px-1">
+              <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-9 border border-slate-100/80 shadow-sm hover:shadow-md transition-shadow duration-300">
+                <div className="flex items-center gap-3 mb-4 md:mb-6">
+                  <div className="h-px flex-1" style={{background:'linear-gradient(90deg,transparent,rgba(16,185,129,0.3),transparent)'}} />
+                  <span className="text-[9px] font-black uppercase tracking-[0.25em] shrink-0 px-1" style={{color:'#10b981'}}>
                     About This Property
                   </span>
-                  <div className="h-px flex-1 bg-slate-100" />
+                  <div className="h-px flex-1" style={{background:'linear-gradient(90deg,transparent,rgba(16,185,129,0.3),transparent)'}} />
                 </div>
-                <p className="text-[1.05rem] text-slate-600 leading-relaxed font-medium">
+                <p className="text-[0.95rem] md:text-[1.05rem] text-slate-600 leading-[1.75] md:leading-[1.8] font-medium italic">
                   &ldquo;
                   {listing.description ||
                     'An extraordinary sanctuary where serene architecture meets the rhythm of the coast, designed for those who seek more than just a place to rest.'}
@@ -769,87 +778,48 @@ export default function ListingDetails() {
               </div>
 
               {/* ── QUICK FACTS STRIP ── */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {/* Check-in time */}
-                <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex items-center gap-3 hover:border-emerald-200 hover:shadow-md transition-all group">
-                  <div className="w-10 h-10 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 shrink-0 group-hover:scale-110 transition-transform">
-                    <Calendar size={16} />
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                      Check-in
-                    </p>
-                    <p className="text-sm font-bold text-slate-900">2:00 PM</p>
-                  </div>
-                </div>
-                {/* Check-out time */}
-                <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex items-center gap-3 hover:border-emerald-200 hover:shadow-md transition-all group">
-                  <div className="w-10 h-10 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 shrink-0 group-hover:scale-110 transition-transform">
-                    <Calendar size={16} />
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                      Check-out
-                    </p>
-                    <p className="text-sm font-bold text-slate-900">11:00 AM</p>
-                  </div>
-                </div>
-                {/* WiFi */}
-                {listing.wifiSpeed > 0 && (
-                  <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex items-center gap-3 hover:border-emerald-200 hover:shadow-md transition-all group">
-                    <div className="w-10 h-10 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 shrink-0 group-hover:scale-110 transition-transform">
-                      <Wifi size={16} />
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 md:gap-3">
+                {[
+                  { label: 'Check-in', value: '2:00 PM', icon: Calendar },
+                  { label: 'Check-out', value: '11:00 AM', icon: Calendar },
+                  ...(listing.wifiSpeed > 0 ? [{ label: 'Wi-Fi Speed', value: `${listing.wifiSpeed} Mbps`, icon: Wifi }] : []),
+                  ...(listing.location ? [{ label: 'Location', value: listing.location, icon: MapPin }] : []),
+                  ...(listing.approved ? [{ label: 'Status', value: 'Wayzza Verified', icon: Shield, accent: true }] : []),
+                ].map(({ label, value, icon: Icon, accent }) => (
+                  <div
+                    key={label}
+                    className="group relative bg-white rounded-2xl p-3 md:p-4 flex items-center gap-2.5 md:gap-3 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg cursor-default overflow-hidden"
+                    style={{ border: '1px solid rgba(226,232,240,0.9)', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}
+                  >
+                    {/* Subtle hover accent */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" style={{background:'linear-gradient(135deg,rgba(16,185,129,0.04) 0%,transparent 100%)'}} />
+                    <div
+                      className="w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300"
+                      style={accent
+                        ? { background: 'linear-gradient(135deg,rgba(16,185,129,0.15),rgba(52,211,153,0.1))', border: '1px solid rgba(16,185,129,0.2)' }
+                        : { background: 'linear-gradient(135deg,rgba(16,185,129,0.08),rgba(16,185,129,0.04))', border: '1px solid rgba(16,185,129,0.12)' }
+                      }
+                    >
+                      <Icon size={13} style={{ color: accent ? '#059669' : '#10b981' }} />
                     </div>
-                    <div>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                        Wi-Fi
-                      </p>
-                      <p className="text-sm font-bold text-slate-900">{listing.wifiSpeed} Mbps</p>
+                    <div className="min-w-0 relative">
+                      <p className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.15em] text-slate-400 mb-0.5">{label}</p>
+                      <p className={`text-xs md:text-sm font-black truncate ${accent ? 'text-emerald-700' : 'text-slate-900'}`}>{value}</p>
                     </div>
                   </div>
-                )}
-                {/* Location */}
-                {listing.location && (
-                  <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex items-center gap-3 hover:border-emerald-200 hover:shadow-md transition-all group">
-                    <div className="w-10 h-10 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 shrink-0 group-hover:scale-110 transition-transform">
-                      <MapPin size={16} />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                        Location
-                      </p>
-                      <p className="text-sm font-bold text-slate-900 truncate">
-                        {listing.location}
-                      </p>
-                    </div>
-                  </div>
-                )}
-                {/* Verified */}
-                {listing.approved && (
-                  <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex items-center gap-3 hover:border-emerald-200 hover:shadow-md transition-all group">
-                    <div className="w-10 h-10 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 shrink-0 group-hover:scale-110 transition-transform">
-                      <Shield size={16} />
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                        Status
-                      </p>
-                      <p className="text-sm font-bold text-emerald-700">Wayzza Verified</p>
-                    </div>
-                  </div>
-                )}
+                ))}
               </div>
 
               {/* ── AMENITIES ── */}
               {listing.amenities && listing.amenities.length > 0 && (
-                <div className="bg-white rounded-3xl p-7 md:p-9 border border-slate-100 shadow-sm">
+                <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-9 border border-slate-100/80 shadow-sm hover:shadow-md transition-shadow duration-300">
                   <div className="flex items-center gap-3 mb-7">
-                    <div className="h-0.5 w-8 bg-emerald-500 rounded-full" />
-                    <h2 className="text-xs font-black uppercase tracking-[0.3em] text-emerald-600">
+                    <div className="h-0.5 w-8 rounded-full" style={{background:'linear-gradient(90deg,#10b981,#34d399)'}} />
+                    <h2 className="text-[9px] font-black uppercase tracking-[0.28em]" style={{color:'#10b981'}}>
                       Amenities &amp; Utilities
                     </h2>
                   </div>
-                  <div className="space-y-8">
+                  <div className="space-y-7">
                     {AMENITY_CATEGORIES.map((category) => {
                       const present = category.amenities.filter((a) =>
                         listing.amenities.includes(a.label)
@@ -857,24 +827,28 @@ export default function ListingDetails() {
                       if (present.length === 0) return null;
                       return (
                         <div key={category.id}>
-                          <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] mb-4">
+                          <p className="text-[9px] font-black uppercase tracking-[0.28em] mb-3.5" style={{color:'rgba(148,163,184,0.9)'}}>
                             {category.label}
                           </p>
-                          <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5">
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                             {present.map((a, i) => (
                               <div
                                 key={i}
-                                className="flex items-center gap-3 p-3.5 bg-slate-50 rounded-2xl border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50/50 hover:shadow-sm transition-all group cursor-default"
+                                className="flex items-center gap-2.5 p-3 rounded-2xl border cursor-default group transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm"
+                                style={{ background: 'rgba(248,250,252,0.9)', borderColor: 'rgba(226,232,240,0.8)' }}
                               >
-                                <div className="w-8 h-8 bg-white rounded-xl border border-slate-200 flex items-center justify-center text-slate-400 group-hover:text-emerald-600 group-hover:border-emerald-200 transition-all shrink-0 shadow-sm">
-                                  <a.icon size={14} />
+                                <div
+                                  className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-110"
+                                  style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.15)' }}
+                                >
+                                  <a.icon size={13} style={{ color: '#10b981' }} />
                                 </div>
                                 <div>
-                                  <span className="text-xs font-semibold text-slate-700 block">
+                                  <span className="text-xs font-semibold text-slate-700 block leading-tight">
                                     {a.label}
                                   </span>
                                   {a.id === 'wifi' && listing.wifiSpeed > 0 && (
-                                    <span className="text-[10px] font-bold text-emerald-600">
+                                    <span className="text-[10px] font-bold" style={{color:'#10b981'}}>
                                       {listing.wifiSpeed} Mbps
                                     </span>
                                   )}
@@ -1059,11 +1033,11 @@ export default function ListingDetails() {
               )}
 
               {/* ── NEIGHBOURHOOD VIBES ── */}
-              <div className="bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm">
+              <div className="bg-white rounded-3xl overflow-hidden border border-slate-100/80 shadow-sm hover:shadow-md transition-shadow duration-300">
                 <div className="px-7 md:px-9 pt-7 pb-0">
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="h-0.5 w-8 bg-slate-200 rounded-full" />
-                    <h2 className="text-xs font-black uppercase tracking-[0.3em] text-slate-400">
+                    <div className="h-0.5 w-8 rounded-full" style={{background:'linear-gradient(90deg,#94a3b8,transparent)'}} />
+                    <h2 className="text-[9px] font-black uppercase tracking-[0.28em] text-slate-400">
                       Neighbourhood
                     </h2>
                   </div>
@@ -1072,20 +1046,20 @@ export default function ListingDetails() {
               </div>
 
               {/* ── REVIEWS ── */}
-              <div className="bg-white rounded-3xl p-7 md:p-9 border border-slate-100 shadow-sm">
+              <div className="bg-white rounded-3xl p-7 md:p-9 border border-slate-100/80 shadow-sm hover:shadow-md transition-shadow duration-300">
                 <ListingReviews reviews={reviews} avgRating={avgRating} />
               </div>
 
               {/* ── LEAVE A REVIEW ── */}
               {canReview && !alreadyReviewed && (
-                <div className="bg-white rounded-3xl p-7 md:p-9 border border-slate-100 shadow-sm">
+                <div className="bg-white rounded-3xl p-7 md:p-9 border border-slate-100/80 shadow-sm">
                   <div className="flex items-center gap-3 mb-5">
-                    <div className="h-0.5 w-8 bg-amber-400 rounded-full" />
-                    <h2 className="text-xs font-black uppercase tracking-[0.3em] text-amber-600">
+                    <div className="h-0.5 w-8 rounded-full" style={{background:'linear-gradient(90deg,#f59e0b,#fbbf24)'}} />
+                    <h2 className="text-[9px] font-black uppercase tracking-[0.28em]" style={{color:'#d97706'}}>
                       Leave a Review
                     </h2>
                   </div>
-                  <h3 className="text-xl font-black text-slate-900 mb-2">
+                  <h3 className="text-xl font-black text-slate-900 mb-1.5">
                     Rate your {getCategoryTerm()}
                   </h3>
                   <p className="text-sm text-slate-400 font-medium mb-5">
@@ -1097,12 +1071,18 @@ export default function ListingDetails() {
                     onChange={(e) => setComment(e.target.value)}
                     placeholder={`Share details about your ${getCategoryTerm()}...`}
                     rows={4}
-                    className="w-full mt-5 bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 transition-all resize-none font-medium"
+                    className="w-full mt-5 rounded-2xl p-4 text-sm outline-none resize-none font-medium transition-all"
+                    style={{ background: 'rgba(248,250,252,0.9)', border: '1.5px solid rgba(226,232,240,0.8)' }}
+                    onFocus={(e) => { e.target.style.borderColor = 'rgba(16,185,129,0.5)'; e.target.style.boxShadow = '0 0 0 3px rgba(16,185,129,0.08)'; }}
+                    onBlur={(e) => { e.target.style.borderColor = 'rgba(226,232,240,0.8)'; e.target.style.boxShadow = 'none'; }}
                   />
                   <button
                     onClick={submitReview}
                     disabled={submitting}
-                    className="mt-4 h-12 px-7 bg-slate-900 text-white rounded-2xl font-bold text-sm hover:bg-emerald-600 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
+                    className="mt-4 h-12 px-7 text-white rounded-2xl font-bold text-sm transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
+                    style={{ background: 'linear-gradient(135deg,#059669,#10b981)' }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = 'linear-gradient(135deg,#047857,#059669)'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = 'linear-gradient(135deg,#059669,#10b981)'}
                   >
                     {submitting ? (
                       <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -1115,9 +1095,9 @@ export default function ListingDetails() {
               )}
 
               {alreadyReviewed && (
-                <div className="flex items-center gap-3 text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-2xl px-5 py-4">
-                  <CheckCircle size={16} />
-                  <span className="text-sm font-semibold">
+                <div className="flex items-center gap-3 rounded-2xl px-5 py-4" style={{background:'rgba(16,185,129,0.08)',border:'1px solid rgba(16,185,129,0.2)'}}>
+                  <CheckCircle size={16} style={{color:'#10b981'}} />
+                  <span className="text-sm font-semibold" style={{color:'#059669'}}>
                     You&apos;ve reviewed this {getCategoryTerm()} — thank you!
                   </span>
                 </div>
@@ -1125,9 +1105,9 @@ export default function ListingDetails() {
             </div>
 
             {/* ────────────────────────────────────────────────────
-                RIGHT COLUMN — Booking Console (5/12)
+                RIGHT COLUMN — Booking Console (5/12) — hidden on mobile
             ──────────────────────────────────────────────────── */}
-            <div className="lg:col-span-5 relative">
+            <div className="hidden lg:block lg:col-span-5 relative">
               <div className="sticky top-24 space-y-4" id="reservation-console">
                 <BookingCard
                   basePrice={basePrice}
@@ -1149,15 +1129,21 @@ export default function ListingDetails() {
                 />
 
                 {/* Direct inquiry card */}
-                <div className="hidden lg:flex bg-white border border-slate-200 rounded-2xl p-5 items-center gap-4 hover:shadow-md transition-all cursor-pointer group">
-                  <div className="w-10 h-10 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform">
-                    <MessageSquare size={18} />
+                <div
+                  className="hidden lg:flex bg-white rounded-2xl p-5 items-center gap-4 transition-all cursor-pointer group hover:-translate-y-0.5 hover:shadow-lg"
+                  style={{ border: '1px solid rgba(226,232,240,0.8)', boxShadow: '0 1px 6px rgba(0,0,0,0.04)' }}
+                >
+                  <div
+                    className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300"
+                    style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.15)' }}
+                  >
+                    <MessageSquare size={17} style={{ color: '#10b981' }} />
                   </div>
                   <div>
                     <p className="text-sm font-bold text-slate-900">Direct Inquiries</p>
                     <p className="text-xs text-slate-400 font-medium">Connect with our Concierge</p>
                   </div>
-                  <ChevronRight size={16} className="ml-auto text-slate-300" />
+                  <ChevronRight size={15} className="ml-auto text-slate-300 group-hover:translate-x-1 transition-transform duration-200" />
                 </div>
               </div>
             </div>
@@ -1168,31 +1154,80 @@ export default function ListingDetails() {
             MOBILE STICKY BAR
         ══════════════════════════════════════════════════════════ */}
         <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[100]">
-          <div className="bg-white/95 backdrop-blur-xl border-t border-slate-200 px-5 py-3.5 flex items-center justify-between shadow-2xl shadow-slate-900/10">
-            <div>
-              <p className="text-lg font-black text-slate-900 leading-none">
-                ₹{basePrice.toLocaleString()}
-                <span className="text-slate-400 font-medium text-sm ml-1">/ night</span>
-              </p>
+          <div
+            className="backdrop-blur-xl"
+            style={{
+              background: 'rgba(255,255,255,0.97)',
+              borderTop: '1.5px solid rgba(16,185,129,0.2)',
+              boxShadow: '0 -12px 50px rgba(0,0,0,0.12), 0 -1px 0 rgba(16,185,129,0.12)',
+            }}
+          >
+            {/* Date picker row */}
+            <div
+              className="grid grid-cols-2 divide-x mx-4 mt-3 mb-2 rounded-2xl overflow-hidden"
+              style={{ border: '1.5px solid rgba(16,185,129,0.22)', background: 'rgba(248,255,252,0.9)', borderBottomColor: 'rgba(16,185,129,0.22)' }}
+            >
+              {/* Pick-up / Check-in */}
+              <div className="relative p-2.5 group" style={{ borderRightColor: 'rgba(16,185,129,0.15)' }}>
+                <label
+                  htmlFor="mob-check-in"
+                  className="block text-[8px] font-black uppercase tracking-[0.15em] mb-0.5 cursor-pointer"
+                  style={{ color: '#10b981' }}
+                >
+                  {isVehicle ? 'Pick-up' : 'Check-in'}
+                </label>
+                <input
+                  id="mob-check-in"
+                  type="date"
+                  value={checkIn}
+                  min={today}
+                  onChange={(e) => setCheckIn(e.target.value)}
+                  className="w-full text-xs font-bold text-slate-800 bg-transparent outline-none cursor-pointer [color-scheme:light] appearance-none"
+                />
+              </div>
+              {/* Drop-off / Check-out */}
+              <div className="relative p-2.5">
+                <label
+                  htmlFor="mob-check-out"
+                  className="block text-[8px] font-black uppercase tracking-[0.15em] mb-0.5 cursor-pointer"
+                  style={{ color: '#10b981' }}
+                >
+                  {isVehicle ? 'Drop-off' : 'Check-out'}
+                </label>
+                <input
+                  id="mob-check-out"
+                  type="date"
+                  value={checkOut}
+                  min={checkIn || today}
+                  onChange={(e) => setCheckOut(e.target.value)}
+                  className="w-full text-xs font-bold text-slate-800 bg-transparent outline-none cursor-pointer [color-scheme:light] appearance-none"
+                />
+              </div>
+            </div>
+
+            {/* Price + CTA row */}
+            <div className="flex items-center justify-between px-4 pb-4 pt-1 gap-3">
+              <div className="min-w-0">
+                <p className="font-black text-slate-900 leading-none" style={{fontSize:'1.2rem'}}>
+                  ₹{basePrice.toLocaleString()}
+                  <span className="text-slate-400 font-medium text-xs ml-1">/{isVehicle ? 'day' : 'night'}</span>
+                </p>
+                {nights > 0 ? (
+                  <p className="text-[11px] font-bold mt-0.5" style={{ color: '#10b981' }}>
+                    {nights} {isVehicle ? (nights > 1 ? 'days' : 'day') : nights > 1 ? 'nights' : 'night'} · ₹{total.toLocaleString()} total
+                  </p>
+                ) : (
+                  <p className="text-[11px] font-medium text-slate-400 mt-0.5">Select dates above</p>
+                )}
+              </div>
               <button
-                onClick={() =>
-                  document
-                    .getElementById('reservation-console')
-                    ?.scrollIntoView({ behavior: 'smooth' })
-                }
-                className="text-xs font-bold text-emerald-600 mt-0.5 block"
+                onClick={handleMobileReserve}
+                className="shrink-0 px-6 py-3 text-white font-black text-[11px] tracking-[0.18em] uppercase rounded-xl active:scale-95 transition-all"
+                style={{ background: 'linear-gradient(135deg,#059669,#10b981)', boxShadow: '0 4px 18px rgba(16,185,129,0.45)' }}
               >
-                {checkIn && checkOut
-                  ? `${nights} night${nights !== 1 ? 's' : ''} selected`
-                  : 'Select dates'}
+                Reserve
               </button>
             </div>
-            <button
-              onClick={handleMobileReserve}
-              className="px-8 py-3.5 bg-slate-900 text-white font-black text-xs tracking-[0.2em] uppercase rounded-2xl shadow-xl active:scale-95 hover:bg-emerald-600 transition-all"
-            >
-              Reserve
-            </button>
           </div>
         </div>
 
