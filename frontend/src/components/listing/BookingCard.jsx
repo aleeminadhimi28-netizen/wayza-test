@@ -163,8 +163,7 @@ export default function BookingCard({
             <>
               <div className="flex justify-between text-sm text-slate-500">
                 <span>
-                  ₹{basePrice.toLocaleString()} ×{' '}
-                  {nights}{' '}
+                  ₹{basePrice.toLocaleString()} × {nights}{' '}
                   {isVehicle ? `day${nights > 1 ? 's' : ''}` : `night${nights > 1 ? 's' : ''}`}
                 </span>
                 <span className="font-semibold text-slate-700">
@@ -201,19 +200,25 @@ export default function BookingCard({
             <div className="w-9 h-9 bg-slate-100 rounded-xl flex items-center justify-center">
               <Shield size={16} className="text-slate-500" />
             </div>
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wide">Secure</span>
+            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wide">
+              Secure
+            </span>
           </div>
           <div className="flex flex-col items-center gap-1.5">
             <div className="w-9 h-9 bg-emerald-50 rounded-xl flex items-center justify-center">
               <CheckCircle size={16} className="text-emerald-500" />
             </div>
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wide">Verified</span>
+            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wide">
+              Verified
+            </span>
           </div>
           <div className="flex flex-col items-center gap-1.5">
             <div className="w-9 h-9 bg-amber-50 rounded-xl flex items-center justify-center">
               <CreditCard size={16} className="text-amber-500" />
             </div>
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wide">Razorpay</span>
+            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wide">
+              Razorpay
+            </span>
           </div>
         </div>
       </div>

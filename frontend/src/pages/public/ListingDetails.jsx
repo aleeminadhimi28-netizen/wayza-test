@@ -18,7 +18,6 @@ import {
   Calendar,
   Car,
   Bike,
-  FileText,
   AlertCircle,
   ArrowRight,
 } from 'lucide-react';
@@ -598,12 +597,10 @@ export default function ListingDetails() {
       />
 
       <div className="bg-slate-50 min-h-screen font-sans pb-24 lg:pb-0">
-
         {/* ══════════════════════════════════════════════════════════
             GALLERY HERO — full-bleed, cinematic title overlay
         ══════════════════════════════════════════════════════════ */}
         <div className="relative">
-
           {/* Floating breadcrumb pill — top left */}
           <div className="absolute top-4 left-4 z-20 hidden md:flex items-center gap-1.5 bg-black/40 backdrop-blur-md border border-white/10 rounded-full px-4 py-2">
             <button
@@ -750,12 +747,10 @@ export default function ListingDetails() {
         ══════════════════════════════════════════════════════════ */}
         <div className="max-w-[1280px] mx-auto px-5 md:px-10 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-
             {/* ────────────────────────────────────────────────────
                 LEFT COLUMN — Details (7/12)
             ──────────────────────────────────────────────────── */}
             <div className="lg:col-span-7 space-y-5">
-
               {/* ── ABOUT ── */}
               <div className="bg-white rounded-3xl p-7 md:p-9 border border-slate-100 shadow-sm">
                 <div className="flex items-center gap-3 mb-6">
@@ -766,8 +761,10 @@ export default function ListingDetails() {
                   <div className="h-px flex-1 bg-slate-100" />
                 </div>
                 <p className="text-[1.05rem] text-slate-600 leading-relaxed font-medium">
-                  &ldquo;{listing.description ||
-                    'An extraordinary sanctuary where serene architecture meets the rhythm of the coast, designed for those who seek more than just a place to rest.'}&rdquo;
+                  &ldquo;
+                  {listing.description ||
+                    'An extraordinary sanctuary where serene architecture meets the rhythm of the coast, designed for those who seek more than just a place to rest.'}
+                  &rdquo;
                 </p>
               </div>
 
@@ -779,7 +776,9 @@ export default function ListingDetails() {
                     <Calendar size={16} />
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Check-in</p>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                      Check-in
+                    </p>
                     <p className="text-sm font-bold text-slate-900">2:00 PM</p>
                   </div>
                 </div>
@@ -789,7 +788,9 @@ export default function ListingDetails() {
                     <Calendar size={16} />
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Check-out</p>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                      Check-out
+                    </p>
                     <p className="text-sm font-bold text-slate-900">11:00 AM</p>
                   </div>
                 </div>
@@ -800,7 +801,9 @@ export default function ListingDetails() {
                       <Wifi size={16} />
                     </div>
                     <div>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Wi-Fi</p>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                        Wi-Fi
+                      </p>
                       <p className="text-sm font-bold text-slate-900">{listing.wifiSpeed} Mbps</p>
                     </div>
                   </div>
@@ -812,8 +815,12 @@ export default function ListingDetails() {
                       <MapPin size={16} />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Location</p>
-                      <p className="text-sm font-bold text-slate-900 truncate">{listing.location}</p>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                        Location
+                      </p>
+                      <p className="text-sm font-bold text-slate-900 truncate">
+                        {listing.location}
+                      </p>
                     </div>
                   </div>
                 )}
@@ -824,7 +831,9 @@ export default function ListingDetails() {
                       <Shield size={16} />
                     </div>
                     <div>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Status</p>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                        Status
+                      </p>
                       <p className="text-sm font-bold text-emerald-700">Wayzza Verified</p>
                     </div>
                   </div>
@@ -893,7 +902,8 @@ export default function ListingDetails() {
                         </h2>
                         <p className="text-[11px] text-slate-400 font-medium mt-0.5">
                           {listing.variants.length} room{' '}
-                          {listing.variants.length === 1 ? 'type' : 'types'} · select to update pricing
+                          {listing.variants.length === 1 ? 'type' : 'types'} · select to update
+                          pricing
                         </p>
                       </div>
                     </div>
@@ -952,7 +962,9 @@ export default function ListingDetails() {
                             {/* Content area */}
                             <div
                               className={`flex-1 flex flex-col p-5 md:p-6 transition-colors duration-200 ${
-                                isSelected ? 'bg-emerald-50/40' : 'bg-white group-hover:bg-slate-50/50'
+                                isSelected
+                                  ? 'bg-emerald-50/40'
+                                  : 'bg-white group-hover:bg-slate-50/50'
                               }`}
                             >
                               <div className="mb-2">
@@ -989,7 +1001,9 @@ export default function ListingDetails() {
                                       >
                                         <amenityObj.icon
                                           size={9}
-                                          className={isSelected ? 'text-emerald-500' : 'text-slate-400'}
+                                          className={
+                                            isSelected ? 'text-emerald-500' : 'text-slate-400'
+                                          }
                                         />
                                         {amenityLabel}
                                       </span>
