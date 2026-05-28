@@ -1,4 +1,4 @@
-import { createContext, useContext, useRef, useState, useEffect } from 'react';
+import { createContext, useContext, useRef, useState, useEffect, useCallback } from 'react';
 
 const ToastContext = createContext();
 
@@ -6,7 +6,7 @@ export function ToastProvider({ children }) {
   const [toast, setToast] = useState(null);
   const timerRef = useRef(null);
 
-  function showToast(message, type = 'info') {
+  const showToast = useCallback((message, type = 'info') => {
     // clear existing timer
     if (timerRef.current) {
       clearTimeout(timerRef.current);
@@ -18,7 +18,7 @@ export function ToastProvider({ children }) {
       setToast(null);
       timerRef.current = null;
     }, 2500);
-  }
+  }, []);
 
   // cleanup on unmount
   useEffect(() => {

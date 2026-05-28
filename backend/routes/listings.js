@@ -253,7 +253,7 @@ router.put("/:id", requireAuth, async (req, res, next) => {
         const updates = {};
         const fields = [
             "title", "location", "description", "category", "latitude", "longitude",
-            "walkthroughVideo", "image", "amenities", "wifiSpeed",
+            "walkthroughVideo", "image", "images", "amenities", "wifiSpeed",
             "licensePlate", "registrationDate", "vehicleType", "registrationCategory",
             "cancellationPolicy", "rcDoc", "insuranceDoc", "pucDoc"
         ];
