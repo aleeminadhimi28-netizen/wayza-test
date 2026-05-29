@@ -238,8 +238,9 @@ export default function Listings() {
 
   const catLabel = CATEGORIES.find((c) => c.id === category)?.label || 'Properties';
 
-  const currentUrl =
-    typeof window !== 'undefined' ? window.location.href : 'https://wayzza.live/listings';
+  // Use a clean canonical URL without query strings — prevents Google from treating
+  // /listings?category=hotel, /listings?sort=price etc. as separate pages
+  const canonicalUrl = 'https://wayzza.live/listings';
 
   return (
     <WayzzaLayout noPadding>
@@ -250,16 +251,17 @@ export default function Listings() {
             ? `Browse verified ${catLabel.toLowerCase()} in ${location} on Wayzza. Best prices for clifftop stays and premium rentals.`
             : `Experience the best of Varkala with verified ${catLabel.toLowerCase()} curated for digital nomads and travelers.`
         }
+        url={canonicalUrl}
         breadcrumb={[
           { name: 'Home', url: 'https://wayzza.live' },
-          { name: catLabel, url: currentUrl },
+          { name: catLabel, url: canonicalUrl },
         ]}
         schema={{
           '@context': 'https://schema.org',
           '@type': 'CollectionPage',
           name: location ? `${catLabel} in ${location}` : `Browse ${catLabel}`,
           description: `Browse verified ${catLabel.toLowerCase()} directly from Wayzza.`,
-          url: currentUrl,
+          url: canonicalUrl,
           mainEntity: {
             '@type': 'ItemList',
             itemListElement: rows.slice(0, 10).map((item, index) => ({

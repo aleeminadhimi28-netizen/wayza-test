@@ -34,7 +34,7 @@
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://wayzza.live/" />
+  <meta property="og:url" content="https://wayzza.live" />
   <meta property="og:title" content="Wayzza — Luxury Clifftop Villas & Royal Enfield Rentals in Varkala" />
   <meta property="og:description"
     content="Discover verified clifftop villas, luxury rentals, and hidden local secrets in Varkala. Wayzza curates premium sanctuaries for the modern explorer." />
@@ -51,8 +51,9 @@
   <meta name="twitter:description" content="Verified clifftop villas and luxury rentals in Varkala. Curated for the modern explorer." />
   <meta name="twitter:image" content="https://wayzza.live/images/varkala_hero.png" />
 
-  <!-- Canonical -->
-  <link rel="canonical" href="https://wayzza.live/" />
+  <!-- NOTE: Canonical is set per-page by react-helmet-async (SEO component).
+       A static canonical here would wrongly apply '/' to ALL SPA routes,
+       causing Google to treat /listings, /experiences etc. as homepage duplicates. -->
 
   <!-- Critical Resource Preloads -->
   <link rel="preload" href="/favicon.svg" as="image" />
