@@ -11,8 +11,9 @@ const SITEMAP_PATH = path.join(PUBLIC_DIR, "sitemap.xml");
 const staticRoutes = [
   { url: "/", priority: "1.0", changefreq: "daily" },
   { url: "/listings", priority: "0.9", changefreq: "daily" },
-  { url: "/listings?category=bike", priority: "0.95", changefreq: "daily" },
-  { url: "/listings?category=car", priority: "0.90", changefreq: "daily" },
+  // NOTE: /listings?category=* query-string URLs are intentionally excluded —
+  // Google treats them as redirects to the canonical /listings page, causing
+  // "Page with redirect" errors in Search Console.
   { url: "/experiences", priority: "0.9", changefreq: "weekly" },
   { url: "/packages", priority: "0.85", changefreq: "weekly" },
   { url: "/ai-trip-planner", priority: "0.8", changefreq: "weekly" },
@@ -21,7 +22,8 @@ const staticRoutes = [
   { url: "/privacy", priority: "0.3", changefreq: "monthly" },
   { url: "/terms", priority: "0.3", changefreq: "monthly" },
   { url: "/compliance", priority: "0.3", changefreq: "monthly" },
-  { url: "/support", priority: "0.6", changefreq: "weekly" },
+  // NOTE: /support is intentionally excluded — it requires login (AuthGuard),
+  // so Googlebot gets JS-redirected to /login, causing "Page with redirect".
 ];
 
 async function generateSitemap() {
