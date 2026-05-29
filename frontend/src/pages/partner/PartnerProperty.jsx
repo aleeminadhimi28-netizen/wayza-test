@@ -138,9 +138,7 @@ export default function PartnerProperty() {
       setMainPucDoc(l.pucDoc || '');
 
       // Seed gallery: use images[] array, or fall back to single image field
-      const existingImgs = (l.images && l.images.length > 0)
-        ? l.images
-        : (l.image ? [l.image] : []);
+      const existingImgs = l.images && l.images.length > 0 ? l.images : l.image ? [l.image] : [];
       setGalleryImages(existingImgs);
       setGalleryNewFiles([]);
 
@@ -528,86 +526,107 @@ export default function PartnerProperty() {
                 </div>
 
                 {/* ── GALLERY PHOTOS ── */}
-              <div className="md:col-span-2 space-y-3 pt-6 border-t border-white/10">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-[11px] font-black uppercase tracking-[0.4em] text-white/40">
-                    Gallery Photos
-                  </h3>
-                  <span className="text-[11px] font-black text-emerald-500 uppercase tracking-widest">
-                    {galleryImages.length + galleryNewFiles.length} / 5
-                  </span>
-                </div>
+                <div className="md:col-span-2 space-y-3 pt-6 border-t border-white/10">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-[11px] font-black uppercase tracking-[0.4em] text-white/40">
+                      Gallery Photos
+                    </h3>
+                    <span className="text-[11px] font-black text-emerald-500 uppercase tracking-widest">
+                      {galleryImages.length + galleryNewFiles.length} / 5
+                    </span>
+                  </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-                  {/* Existing uploaded images */}
-                  {galleryImages.map((img, idx) => (
-                    <div key={img} className="relative group aspect-square rounded-2xl overflow-hidden border border-white/10">
-                      <img
-                        src={img.startsWith('http') ? img : `${BASE_URL}/${img}`}
-                        className="w-full h-full object-cover"
-                        alt={`Gallery ${idx + 1}`}
-                      />
-                      {idx === 0 && (
-                        <div className="absolute top-2 left-2 bg-emerald-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
-                          Cover
-                        </div>
-                      )}
-                      <button
-                        type="button"
-                        onClick={() => setGalleryImages(galleryImages.filter((_, i) => i !== idx))}
-                        className="absolute top-2 right-2 w-7 h-7 bg-rose-500/90 backdrop-blur-md rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-600"
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                    {/* Existing uploaded images */}
+                    {galleryImages.map((img, idx) => (
+                      <div
+                        key={img}
+                        className="relative group aspect-square rounded-2xl overflow-hidden border border-white/10"
                       >
-                        <X size={13} />
-                      </button>
-                    </div>
-                  ))}
-
-                  {/* New files (pending upload) */}
-                  {galleryNewFiles.map((f, idx) => (
-                    <div key={idx} className="relative group aspect-square rounded-2xl overflow-hidden border border-emerald-500/40">
-                      <img
-                        src={URL.createObjectURL(f)}
-                        className="w-full h-full object-cover"
-                        alt="New"
-                      />
-                      <div className="absolute inset-0 bg-emerald-500/10 flex items-end justify-center pb-2">
-                        <span className="text-[9px] font-black text-emerald-300 uppercase tracking-wider bg-black/50 px-2 py-0.5 rounded-full">Pending</span>
+                        <img
+                          src={img.startsWith('http') ? img : `${BASE_URL}/${img}`}
+                          className="w-full h-full object-cover"
+                          alt={`Gallery ${idx + 1}`}
+                        />
+                        {idx === 0 && (
+                          <div className="absolute top-2 left-2 bg-emerald-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                            Cover
+                          </div>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setGalleryImages(galleryImages.filter((_, i) => i !== idx))
+                          }
+                          className="absolute top-2 right-2 w-7 h-7 bg-rose-500/90 backdrop-blur-md rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-600"
+                        >
+                          <X size={13} />
+                        </button>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => setGalleryNewFiles(galleryNewFiles.filter((_, i) => i !== idx))}
-                        className="absolute top-2 right-2 w-7 h-7 bg-rose-500/90 backdrop-blur-md rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-600"
+                    ))}
+
+                    {/* New files (pending upload) */}
+                    {galleryNewFiles.map((f, idx) => (
+                      <div
+                        key={idx}
+                        className="relative group aspect-square rounded-2xl overflow-hidden border border-emerald-500/40"
                       >
-                        <X size={13} />
-                      </button>
-                    </div>
-                  ))}
+                        <img
+                          src={URL.createObjectURL(f)}
+                          className="w-full h-full object-cover"
+                          alt="New"
+                        />
+                        <div className="absolute inset-0 bg-emerald-500/10 flex items-end justify-center pb-2">
+                          <span className="text-[9px] font-black text-emerald-300 uppercase tracking-wider bg-black/50 px-2 py-0.5 rounded-full">
+                            Pending
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setGalleryNewFiles(galleryNewFiles.filter((_, i) => i !== idx))
+                          }
+                          className="absolute top-2 right-2 w-7 h-7 bg-rose-500/90 backdrop-blur-md rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-600"
+                        >
+                          <X size={13} />
+                        </button>
+                      </div>
+                    ))}
 
-                  {/* Add more slot */}
-                  {galleryImages.length + galleryNewFiles.length < 5 && (
-                    <label className="relative aspect-square rounded-2xl border-2 border-dashed border-white/10 hover:border-emerald-500/40 transition-colors flex flex-col items-center justify-center gap-1 cursor-pointer group/add">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                        onChange={(e) => {
-                          const files = Array.from(e.target.files || []);
-                          const remaining = 5 - galleryImages.length - galleryNewFiles.length;
-                          const valid = files.filter(f => f.type.startsWith('image/')).slice(0, remaining);
-                          setGalleryNewFiles([...galleryNewFiles, ...valid]);
-                          e.target.value = '';
-                        }}
-                      />
-                      <Plus size={20} className="text-white/20 group-hover/add:text-emerald-500 transition-colors" />
-                      <span className="text-[9px] font-bold text-white/20 group-hover/add:text-emerald-400 uppercase tracking-wider transition-colors">Add</span>
-                    </label>
-                  )}
+                    {/* Add more slot */}
+                    {galleryImages.length + galleryNewFiles.length < 5 && (
+                      <label className="relative aspect-square rounded-2xl border-2 border-dashed border-white/10 hover:border-emerald-500/40 transition-colors flex flex-col items-center justify-center gap-1 cursor-pointer group/add">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          onChange={(e) => {
+                            const files = Array.from(e.target.files || []);
+                            const remaining = 5 - galleryImages.length - galleryNewFiles.length;
+                            const valid = files
+                              .filter((f) => f.type.startsWith('image/'))
+                              .slice(0, remaining);
+                            setGalleryNewFiles([...galleryNewFiles, ...valid]);
+                            e.target.value = '';
+                          }}
+                        />
+                        <Plus
+                          size={20}
+                          className="text-white/20 group-hover/add:text-emerald-500 transition-colors"
+                        />
+                        <span className="text-[9px] font-bold text-white/20 group-hover/add:text-emerald-400 uppercase tracking-wider transition-colors">
+                          Add
+                        </span>
+                      </label>
+                    )}
+                  </div>
+                  <p className="text-[10px] text-white/20 font-medium">
+                    First photo is the cover image · Max 5 photos · Click a photo to remove it
+                  </p>
                 </div>
-                <p className="text-[10px] text-white/20 font-medium">First photo is the cover image · Max 5 photos · Click a photo to remove it</p>
-              </div>
 
-              <div className="md:col-span-2 space-y-6 pt-6 border-t border-white/10">
+                <div className="md:col-span-2 space-y-6 pt-6 border-t border-white/10">
                   <div className="flex items-center justify-between">
                     <h3 className="text-[11px] font-black uppercase tracking-[0.4em] text-white/40">
                       Available Utilities

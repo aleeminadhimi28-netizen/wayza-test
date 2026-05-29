@@ -1,5 +1,15 @@
 import { useState } from 'react';
-import { Star, Shield, CheckCircle, CreditCard, Minus, Plus, Calendar, Zap, Lock } from 'lucide-react';
+import {
+  Star,
+  Shield,
+  CheckCircle,
+  CreditCard,
+  Minus,
+  Plus,
+  Calendar,
+  Zap,
+  Lock,
+} from 'lucide-react';
 
 export default function BookingCard({
   basePrice,
@@ -86,7 +96,10 @@ export default function BookingCard({
               </div>
               <span className="text-xs font-bold text-slate-700">{avgRating || 'New'}</span>
               <span className="text-xs text-slate-400">
-                · {reviewsCount > 0 ? `${reviewsCount} review${reviewsCount !== 1 ? 's' : ''}` : 'Be the first'}
+                ·{' '}
+                {reviewsCount > 0
+                  ? `${reviewsCount} review${reviewsCount !== 1 ? 's' : ''}`
+                  : 'Be the first'}
               </span>
             </div>
           </div>
@@ -96,12 +109,14 @@ export default function BookingCard({
             <div
               className="flex flex-col items-end gap-0.5 px-3 py-2 rounded-2xl shrink-0"
               style={{
-                background: 'linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(52,211,153,0.08) 100%)',
+                background:
+                  'linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(52,211,153,0.08) 100%)',
                 border: '1px solid rgba(16,185,129,0.2)',
               }}
             >
               <span className="text-[11px] font-black text-emerald-700 leading-none">
-                {nights} {isVehicle ? (nights > 1 ? 'days' : 'day') : nights > 1 ? 'nights' : 'night'}
+                {nights}{' '}
+                {isVehicle ? (nights > 1 ? 'days' : 'day') : nights > 1 ? 'nights' : 'night'}
               </span>
               <span className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest">
                 selected
@@ -113,10 +128,15 @@ export default function BookingCard({
         {/* ── Date pickers ── */}
         <div
           className="rounded-2xl overflow-hidden mb-3"
-          style={{ border: '1.5px solid rgba(16,185,129,0.2)', background: 'rgba(248,255,252,0.8)' }}
+          style={{
+            border: '1.5px solid rgba(16,185,129,0.2)',
+            background: 'rgba(248,255,252,0.8)',
+          }}
         >
-          <div className="grid grid-cols-2 divide-x"
-            style={{ '--tw-divide-opacity': 1, borderColor: 'rgba(16,185,129,0.15)' }}>
+          <div
+            className="grid grid-cols-2 divide-x"
+            style={{ '--tw-divide-opacity': 1, borderColor: 'rgba(16,185,129,0.15)' }}
+          >
             {/* Check-in */}
             <div className="p-4 hover:bg-emerald-50/60 transition-colors cursor-pointer relative group">
               <div className="absolute top-4 left-3.5 text-slate-300 group-hover:text-emerald-500 transition-colors pointer-events-none">
@@ -139,8 +159,10 @@ export default function BookingCard({
               />
             </div>
             {/* Check-out */}
-            <div className="p-4 hover:bg-emerald-50/60 transition-colors cursor-pointer relative group"
-              style={{ borderLeftColor: 'rgba(16,185,129,0.15)' }}>
+            <div
+              className="p-4 hover:bg-emerald-50/60 transition-colors cursor-pointer relative group"
+              style={{ borderLeftColor: 'rgba(16,185,129,0.15)' }}
+            >
               <div className="absolute top-4 left-3.5 text-slate-300 group-hover:text-emerald-500 transition-colors pointer-events-none">
                 <Calendar size={12} />
               </div>
@@ -167,9 +189,15 @@ export default function BookingCard({
         {!isVehicle && (
           <div
             className="rounded-2xl p-4 mb-5 transition-colors"
-            style={{ border: '1.5px solid rgba(16,185,129,0.15)', background: 'rgba(248,255,252,0.8)' }}
+            style={{
+              border: '1.5px solid rgba(16,185,129,0.15)',
+              background: 'rgba(248,255,252,0.8)',
+            }}
           >
-            <label className="block text-[9px] font-black uppercase tracking-[0.15em] mb-2" style={{ color: '#10b981' }}>
+            <label
+              className="block text-[9px] font-black uppercase tracking-[0.15em] mb-2"
+              style={{ color: '#10b981' }}
+            >
               Guests
             </label>
             <div className="flex items-center justify-between">
@@ -182,7 +210,10 @@ export default function BookingCard({
                   disabled={guests <= 1}
                   aria-label="Decrease guest count"
                   className="w-8 h-8 rounded-full flex items-center justify-center text-slate-600 disabled:opacity-25 transition-all hover:scale-110 active:scale-95"
-                  style={{ border: '1.5px solid rgba(16,185,129,0.3)', background: 'rgba(16,185,129,0.05)' }}
+                  style={{
+                    border: '1.5px solid rgba(16,185,129,0.3)',
+                    background: 'rgba(16,185,129,0.05)',
+                  }}
                 >
                   <Minus size={12} />
                 </button>
@@ -192,7 +223,10 @@ export default function BookingCard({
                   disabled={guests >= 16}
                   aria-label="Increase guest count"
                   className="w-8 h-8 rounded-full flex items-center justify-center text-slate-600 disabled:opacity-25 transition-all hover:scale-110 active:scale-95"
-                  style={{ border: '1.5px solid rgba(16,185,129,0.3)', background: 'rgba(16,185,129,0.05)' }}
+                  style={{
+                    border: '1.5px solid rgba(16,185,129,0.3)',
+                    background: 'rgba(16,185,129,0.05)',
+                  }}
                 >
                   <Plus size={12} />
                 </button>
@@ -238,7 +272,10 @@ export default function BookingCard({
             <>
               <div
                 className="rounded-2xl p-4 space-y-2.5"
-                style={{ background: 'rgba(248,250,252,0.8)', border: '1px solid rgba(226,232,240,0.8)' }}
+                style={{
+                  background: 'rgba(248,250,252,0.8)',
+                  border: '1px solid rgba(226,232,240,0.8)',
+                }}
               >
                 <div className="flex justify-between text-sm text-slate-500">
                   <span>
@@ -257,7 +294,9 @@ export default function BookingCard({
                 )}
                 <div className="flex justify-between text-sm text-slate-500">
                   <span>Wayzza service fee</span>
-                  <span className="font-semibold text-slate-700">₹{serviceFee.toLocaleString()}</span>
+                  <span className="font-semibold text-slate-700">
+                    ₹{serviceFee.toLocaleString()}
+                  </span>
                 </div>
                 <div
                   className="flex justify-between font-black text-base pt-2.5"

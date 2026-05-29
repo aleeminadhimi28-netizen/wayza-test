@@ -659,26 +659,41 @@ export default function ListingDetails() {
           <ListingGallery images={images} title={listing.title} priority />
 
           {/* Title + meta — overlaid on gallery bottom via gradient scrim */}
-          <div className="absolute bottom-0 left-0 right-0 z-10 px-4 md:px-10 pb-6 md:pb-10 pt-32 md:pt-48 pointer-events-none" style={{background:'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.15) 70%, transparent 100%)'}}>
+          <div
+            className="absolute bottom-0 left-0 right-0 z-10 px-4 md:px-10 pb-6 md:pb-10 pt-32 md:pt-48 pointer-events-none"
+            style={{
+              background:
+                'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.15) 70%, transparent 100%)',
+            }}
+          >
             {/* Badges */}
             <div className="flex flex-wrap items-center gap-1.5 md:gap-2 mb-2.5 md:mb-4">
               <div className="inline-flex items-center gap-1 md:gap-1.5 px-2.5 md:px-3 py-1 md:py-1.5 bg-white/15 backdrop-blur-md border border-white/25 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-[0.15em] text-white shadow-sm">
                 {listing.category || 'Stay'}
               </div>
               {listing.price > 8000 && (
-                <div className="inline-flex items-center gap-1 md:gap-1.5 px-2.5 md:px-3 py-1 md:py-1.5 backdrop-blur-md border border-amber-300/40 rounded-full text-[9px] md:text-[10px] font-black text-amber-300 uppercase tracking-[0.15em] shadow-sm" style={{background:'rgba(245,158,11,0.18)'}}>
+                <div
+                  className="inline-flex items-center gap-1 md:gap-1.5 px-2.5 md:px-3 py-1 md:py-1.5 backdrop-blur-md border border-amber-300/40 rounded-full text-[9px] md:text-[10px] font-black text-amber-300 uppercase tracking-[0.15em] shadow-sm"
+                  style={{ background: 'rgba(245,158,11,0.18)' }}
+                >
                   <Sparkles size={8} /> Priority
                 </div>
               )}
               {listing.approved && (
-                <div className="inline-flex items-center gap-1 md:gap-1.5 px-2.5 md:px-3 py-1 md:py-1.5 backdrop-blur-md border border-emerald-300/40 rounded-full text-[9px] md:text-[10px] font-black text-emerald-300 uppercase tracking-[0.15em] shadow-sm" style={{background:'rgba(16,185,129,0.18)'}}>
+                <div
+                  className="inline-flex items-center gap-1 md:gap-1.5 px-2.5 md:px-3 py-1 md:py-1.5 backdrop-blur-md border border-emerald-300/40 rounded-full text-[9px] md:text-[10px] font-black text-emerald-300 uppercase tracking-[0.15em] shadow-sm"
+                  style={{ background: 'rgba(16,185,129,0.18)' }}
+                >
                   <Shield size={8} /> Verified
                 </div>
               )}
             </div>
 
             {/* Title */}
-            <h1 className="text-2xl md:text-[3.2rem] font-black text-white leading-[1.1] mb-2.5 md:mb-4" style={{textShadow:'0 2px 20px rgba(0,0,0,0.4)', letterSpacing:'-0.02em'}}>
+            <h1
+              className="text-2xl md:text-[3.2rem] font-black text-white leading-[1.1] mb-2.5 md:mb-4"
+              style={{ textShadow: '0 2px 20px rgba(0,0,0,0.4)', letterSpacing: '-0.02em' }}
+            >
               {listing.title}
             </h1>
 
@@ -687,7 +702,9 @@ export default function ListingDetails() {
               {/* Rating */}
               <div className="flex items-center gap-1">
                 <Star size={11} className="fill-amber-400 text-amber-400" />
-                <span className="text-xs md:text-sm font-bold text-white">{avgRating || 'New'}</span>
+                <span className="text-xs md:text-sm font-bold text-white">
+                  {avgRating || 'New'}
+                </span>
                 <span className="text-white/60 text-xs md:text-sm">
                   {reviews.length > 0
                     ? `· ${reviews.length} review${reviews.length !== 1 ? 's' : ''}`
@@ -703,8 +720,7 @@ export default function ListingDetails() {
                   className="flex items-center gap-1 text-xs md:text-sm text-white/80 hover:text-white font-medium transition-colors"
                 >
                   <MapPin size={11} className="text-emerald-400 shrink-0" />
-                  {listing.location || 'Kerala'} ·{' '}
-                  <span className="text-emerald-400">Map ↗</span>
+                  {listing.location || 'Kerala'} · <span className="text-emerald-400">Map ↗</span>
                 </a>
               ) : (
                 <div className="flex items-center gap-1 text-xs md:text-sm text-white/80">
@@ -763,11 +779,26 @@ export default function ListingDetails() {
               {/* ── ABOUT ── */}
               <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-9 border border-slate-100/80 shadow-sm hover:shadow-md transition-shadow duration-300">
                 <div className="flex items-center gap-3 mb-4 md:mb-6">
-                  <div className="h-px flex-1" style={{background:'linear-gradient(90deg,transparent,rgba(16,185,129,0.3),transparent)'}} />
-                  <span className="text-[9px] font-black uppercase tracking-[0.25em] shrink-0 px-1" style={{color:'#10b981'}}>
+                  <div
+                    className="h-px flex-1"
+                    style={{
+                      background:
+                        'linear-gradient(90deg,transparent,rgba(16,185,129,0.3),transparent)',
+                    }}
+                  />
+                  <span
+                    className="text-[9px] font-black uppercase tracking-[0.25em] shrink-0 px-1"
+                    style={{ color: '#10b981' }}
+                  >
                     About This Property
                   </span>
-                  <div className="h-px flex-1" style={{background:'linear-gradient(90deg,transparent,rgba(16,185,129,0.3),transparent)'}} />
+                  <div
+                    className="h-px flex-1"
+                    style={{
+                      background:
+                        'linear-gradient(90deg,transparent,rgba(16,185,129,0.3),transparent)',
+                    }}
+                  />
                 </div>
                 <p className="text-[0.95rem] md:text-[1.05rem] text-slate-600 leading-[1.75] md:leading-[1.8] font-medium italic">
                   &ldquo;
@@ -782,29 +813,59 @@ export default function ListingDetails() {
                 {[
                   { label: 'Check-in', value: '2:00 PM', icon: Calendar },
                   { label: 'Check-out', value: '11:00 AM', icon: Calendar },
-                  ...(listing.wifiSpeed > 0 ? [{ label: 'Wi-Fi Speed', value: `${listing.wifiSpeed} Mbps`, icon: Wifi }] : []),
-                  ...(listing.location ? [{ label: 'Location', value: listing.location, icon: MapPin }] : []),
-                  ...(listing.approved ? [{ label: 'Status', value: 'Wayzza Verified', icon: Shield, accent: true }] : []),
+                  ...(listing.wifiSpeed > 0
+                    ? [{ label: 'Wi-Fi Speed', value: `${listing.wifiSpeed} Mbps`, icon: Wifi }]
+                    : []),
+                  ...(listing.location
+                    ? [{ label: 'Location', value: listing.location, icon: MapPin }]
+                    : []),
+                  ...(listing.approved
+                    ? [{ label: 'Status', value: 'Wayzza Verified', icon: Shield, accent: true }]
+                    : []),
                 ].map(({ label, value, icon: Icon, accent }) => (
                   <div
                     key={label}
                     className="group relative bg-white rounded-2xl p-3 md:p-4 flex items-center gap-2.5 md:gap-3 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg cursor-default overflow-hidden"
-                    style={{ border: '1px solid rgba(226,232,240,0.9)', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}
+                    style={{
+                      border: '1px solid rgba(226,232,240,0.9)',
+                      boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+                    }}
                   >
                     {/* Subtle hover accent */}
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" style={{background:'linear-gradient(135deg,rgba(16,185,129,0.04) 0%,transparent 100%)'}} />
+                    <div
+                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"
+                      style={{
+                        background:
+                          'linear-gradient(135deg,rgba(16,185,129,0.04) 0%,transparent 100%)',
+                      }}
+                    />
                     <div
                       className="w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300"
-                      style={accent
-                        ? { background: 'linear-gradient(135deg,rgba(16,185,129,0.15),rgba(52,211,153,0.1))', border: '1px solid rgba(16,185,129,0.2)' }
-                        : { background: 'linear-gradient(135deg,rgba(16,185,129,0.08),rgba(16,185,129,0.04))', border: '1px solid rgba(16,185,129,0.12)' }
+                      style={
+                        accent
+                          ? {
+                              background:
+                                'linear-gradient(135deg,rgba(16,185,129,0.15),rgba(52,211,153,0.1))',
+                              border: '1px solid rgba(16,185,129,0.2)',
+                            }
+                          : {
+                              background:
+                                'linear-gradient(135deg,rgba(16,185,129,0.08),rgba(16,185,129,0.04))',
+                              border: '1px solid rgba(16,185,129,0.12)',
+                            }
                       }
                     >
                       <Icon size={13} style={{ color: accent ? '#059669' : '#10b981' }} />
                     </div>
                     <div className="min-w-0 relative">
-                      <p className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.15em] text-slate-400 mb-0.5">{label}</p>
-                      <p className={`text-xs md:text-sm font-black truncate ${accent ? 'text-emerald-700' : 'text-slate-900'}`}>{value}</p>
+                      <p className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.15em] text-slate-400 mb-0.5">
+                        {label}
+                      </p>
+                      <p
+                        className={`text-xs md:text-sm font-black truncate ${accent ? 'text-emerald-700' : 'text-slate-900'}`}
+                      >
+                        {value}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -814,8 +875,14 @@ export default function ListingDetails() {
               {listing.amenities && listing.amenities.length > 0 && (
                 <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-9 border border-slate-100/80 shadow-sm hover:shadow-md transition-shadow duration-300">
                   <div className="flex items-center gap-3 mb-7">
-                    <div className="h-0.5 w-8 rounded-full" style={{background:'linear-gradient(90deg,#10b981,#34d399)'}} />
-                    <h2 className="text-[9px] font-black uppercase tracking-[0.28em]" style={{color:'#10b981'}}>
+                    <div
+                      className="h-0.5 w-8 rounded-full"
+                      style={{ background: 'linear-gradient(90deg,#10b981,#34d399)' }}
+                    />
+                    <h2
+                      className="text-[9px] font-black uppercase tracking-[0.28em]"
+                      style={{ color: '#10b981' }}
+                    >
                       Amenities &amp; Utilities
                     </h2>
                   </div>
@@ -827,7 +894,10 @@ export default function ListingDetails() {
                       if (present.length === 0) return null;
                       return (
                         <div key={category.id}>
-                          <p className="text-[9px] font-black uppercase tracking-[0.28em] mb-3.5" style={{color:'rgba(148,163,184,0.9)'}}>
+                          <p
+                            className="text-[9px] font-black uppercase tracking-[0.28em] mb-3.5"
+                            style={{ color: 'rgba(148,163,184,0.9)' }}
+                          >
                             {category.label}
                           </p>
                           <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
@@ -835,11 +905,17 @@ export default function ListingDetails() {
                               <div
                                 key={i}
                                 className="flex items-center gap-2.5 p-3 rounded-2xl border cursor-default group transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm"
-                                style={{ background: 'rgba(248,250,252,0.9)', borderColor: 'rgba(226,232,240,0.8)' }}
+                                style={{
+                                  background: 'rgba(248,250,252,0.9)',
+                                  borderColor: 'rgba(226,232,240,0.8)',
+                                }}
                               >
                                 <div
                                   className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-110"
-                                  style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.15)' }}
+                                  style={{
+                                    background: 'rgba(16,185,129,0.08)',
+                                    border: '1px solid rgba(16,185,129,0.15)',
+                                  }}
                                 >
                                   <a.icon size={13} style={{ color: '#10b981' }} />
                                 </div>
@@ -848,7 +924,10 @@ export default function ListingDetails() {
                                     {a.label}
                                   </span>
                                   {a.id === 'wifi' && listing.wifiSpeed > 0 && (
-                                    <span className="text-[10px] font-bold" style={{color:'#10b981'}}>
+                                    <span
+                                      className="text-[10px] font-bold"
+                                      style={{ color: '#10b981' }}
+                                    >
                                       {listing.wifiSpeed} Mbps
                                     </span>
                                   )}
@@ -1036,7 +1115,10 @@ export default function ListingDetails() {
               <div className="bg-white rounded-3xl overflow-hidden border border-slate-100/80 shadow-sm hover:shadow-md transition-shadow duration-300">
                 <div className="px-7 md:px-9 pt-7 pb-0">
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="h-0.5 w-8 rounded-full" style={{background:'linear-gradient(90deg,#94a3b8,transparent)'}} />
+                    <div
+                      className="h-0.5 w-8 rounded-full"
+                      style={{ background: 'linear-gradient(90deg,#94a3b8,transparent)' }}
+                    />
                     <h2 className="text-[9px] font-black uppercase tracking-[0.28em] text-slate-400">
                       Neighbourhood
                     </h2>
@@ -1054,8 +1136,14 @@ export default function ListingDetails() {
               {canReview && !alreadyReviewed && (
                 <div className="bg-white rounded-3xl p-7 md:p-9 border border-slate-100/80 shadow-sm">
                   <div className="flex items-center gap-3 mb-5">
-                    <div className="h-0.5 w-8 rounded-full" style={{background:'linear-gradient(90deg,#f59e0b,#fbbf24)'}} />
-                    <h2 className="text-[9px] font-black uppercase tracking-[0.28em]" style={{color:'#d97706'}}>
+                    <div
+                      className="h-0.5 w-8 rounded-full"
+                      style={{ background: 'linear-gradient(90deg,#f59e0b,#fbbf24)' }}
+                    />
+                    <h2
+                      className="text-[9px] font-black uppercase tracking-[0.28em]"
+                      style={{ color: '#d97706' }}
+                    >
                       Leave a Review
                     </h2>
                   </div>
@@ -1072,17 +1160,30 @@ export default function ListingDetails() {
                     placeholder={`Share details about your ${getCategoryTerm()}...`}
                     rows={4}
                     className="w-full mt-5 rounded-2xl p-4 text-sm outline-none resize-none font-medium transition-all"
-                    style={{ background: 'rgba(248,250,252,0.9)', border: '1.5px solid rgba(226,232,240,0.8)' }}
-                    onFocus={(e) => { e.target.style.borderColor = 'rgba(16,185,129,0.5)'; e.target.style.boxShadow = '0 0 0 3px rgba(16,185,129,0.08)'; }}
-                    onBlur={(e) => { e.target.style.borderColor = 'rgba(226,232,240,0.8)'; e.target.style.boxShadow = 'none'; }}
+                    style={{
+                      background: 'rgba(248,250,252,0.9)',
+                      border: '1.5px solid rgba(226,232,240,0.8)',
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = 'rgba(16,185,129,0.5)';
+                      e.target.style.boxShadow = '0 0 0 3px rgba(16,185,129,0.08)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = 'rgba(226,232,240,0.8)';
+                      e.target.style.boxShadow = 'none';
+                    }}
                   />
                   <button
                     onClick={submitReview}
                     disabled={submitting}
                     className="mt-4 h-12 px-7 text-white rounded-2xl font-bold text-sm transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
                     style={{ background: 'linear-gradient(135deg,#059669,#10b981)' }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = 'linear-gradient(135deg,#047857,#059669)'}
-                    onMouseLeave={(e) => e.currentTarget.style.background = 'linear-gradient(135deg,#059669,#10b981)'}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.background = 'linear-gradient(135deg,#047857,#059669)')
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.background = 'linear-gradient(135deg,#059669,#10b981)')
+                    }
                   >
                     {submitting ? (
                       <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -1095,9 +1196,15 @@ export default function ListingDetails() {
               )}
 
               {alreadyReviewed && (
-                <div className="flex items-center gap-3 rounded-2xl px-5 py-4" style={{background:'rgba(16,185,129,0.08)',border:'1px solid rgba(16,185,129,0.2)'}}>
-                  <CheckCircle size={16} style={{color:'#10b981'}} />
-                  <span className="text-sm font-semibold" style={{color:'#059669'}}>
+                <div
+                  className="flex items-center gap-3 rounded-2xl px-5 py-4"
+                  style={{
+                    background: 'rgba(16,185,129,0.08)',
+                    border: '1px solid rgba(16,185,129,0.2)',
+                  }}
+                >
+                  <CheckCircle size={16} style={{ color: '#10b981' }} />
+                  <span className="text-sm font-semibold" style={{ color: '#059669' }}>
                     You&apos;ve reviewed this {getCategoryTerm()} — thank you!
                   </span>
                 </div>
@@ -1131,11 +1238,17 @@ export default function ListingDetails() {
                 {/* Direct inquiry card */}
                 <div
                   className="hidden lg:flex bg-white rounded-2xl p-5 items-center gap-4 transition-all cursor-pointer group hover:-translate-y-0.5 hover:shadow-lg"
-                  style={{ border: '1px solid rgba(226,232,240,0.8)', boxShadow: '0 1px 6px rgba(0,0,0,0.04)' }}
+                  style={{
+                    border: '1px solid rgba(226,232,240,0.8)',
+                    boxShadow: '0 1px 6px rgba(0,0,0,0.04)',
+                  }}
                 >
                   <div
                     className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300"
-                    style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.15)' }}
+                    style={{
+                      background: 'rgba(16,185,129,0.08)',
+                      border: '1px solid rgba(16,185,129,0.15)',
+                    }}
                   >
                     <MessageSquare size={17} style={{ color: '#10b981' }} />
                   </div>
@@ -1143,7 +1256,10 @@ export default function ListingDetails() {
                     <p className="text-sm font-bold text-slate-900">Direct Inquiries</p>
                     <p className="text-xs text-slate-400 font-medium">Connect with our Concierge</p>
                   </div>
-                  <ChevronRight size={15} className="ml-auto text-slate-300 group-hover:translate-x-1 transition-transform duration-200" />
+                  <ChevronRight
+                    size={15}
+                    className="ml-auto text-slate-300 group-hover:translate-x-1 transition-transform duration-200"
+                  />
                 </div>
               </div>
             </div>
@@ -1165,10 +1281,17 @@ export default function ListingDetails() {
             {/* Date picker row */}
             <div
               className="grid grid-cols-2 divide-x mx-4 mt-3 mb-2 rounded-2xl overflow-hidden"
-              style={{ border: '1.5px solid rgba(16,185,129,0.22)', background: 'rgba(248,255,252,0.9)', borderBottomColor: 'rgba(16,185,129,0.22)' }}
+              style={{
+                border: '1.5px solid rgba(16,185,129,0.22)',
+                background: 'rgba(248,255,252,0.9)',
+                borderBottomColor: 'rgba(16,185,129,0.22)',
+              }}
             >
               {/* Pick-up / Check-in */}
-              <div className="relative p-2.5 group" style={{ borderRightColor: 'rgba(16,185,129,0.15)' }}>
+              <div
+                className="relative p-2.5 group"
+                style={{ borderRightColor: 'rgba(16,185,129,0.15)' }}
+              >
                 <label
                   htmlFor="mob-check-in"
                   className="block text-[8px] font-black uppercase tracking-[0.15em] mb-0.5 cursor-pointer"
@@ -1208,22 +1331,34 @@ export default function ListingDetails() {
             {/* Price + CTA row */}
             <div className="flex items-center justify-between px-4 pb-4 pt-1 gap-3">
               <div className="min-w-0">
-                <p className="font-black text-slate-900 leading-none" style={{fontSize:'1.2rem'}}>
+                <p
+                  className="font-black text-slate-900 leading-none"
+                  style={{ fontSize: '1.2rem' }}
+                >
                   ₹{basePrice.toLocaleString()}
-                  <span className="text-slate-400 font-medium text-xs ml-1">/{isVehicle ? 'day' : 'night'}</span>
+                  <span className="text-slate-400 font-medium text-xs ml-1">
+                    /{isVehicle ? 'day' : 'night'}
+                  </span>
                 </p>
                 {nights > 0 ? (
                   <p className="text-[11px] font-bold mt-0.5" style={{ color: '#10b981' }}>
-                    {nights} {isVehicle ? (nights > 1 ? 'days' : 'day') : nights > 1 ? 'nights' : 'night'} · ₹{total.toLocaleString()} total
+                    {nights}{' '}
+                    {isVehicle ? (nights > 1 ? 'days' : 'day') : nights > 1 ? 'nights' : 'night'} ·
+                    ₹{total.toLocaleString()} total
                   </p>
                 ) : (
-                  <p className="text-[11px] font-medium text-slate-400 mt-0.5">Select dates above</p>
+                  <p className="text-[11px] font-medium text-slate-400 mt-0.5">
+                    Select dates above
+                  </p>
                 )}
               </div>
               <button
                 onClick={handleMobileReserve}
                 className="shrink-0 px-6 py-3 text-white font-black text-[11px] tracking-[0.18em] uppercase rounded-xl active:scale-95 transition-all"
-                style={{ background: 'linear-gradient(135deg,#059669,#10b981)', boxShadow: '0 4px 18px rgba(16,185,129,0.45)' }}
+                style={{
+                  background: 'linear-gradient(135deg,#059669,#10b981)',
+                  boxShadow: '0 4px 18px rgba(16,185,129,0.45)',
+                }}
               >
                 Reserve
               </button>

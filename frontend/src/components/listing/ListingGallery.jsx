@@ -59,7 +59,10 @@ export default function ListingGallery({ images, title, priority = false }) {
 
           {/* "View photo" pill — bottom right */}
           <button
-            onClick={(e) => { e.stopPropagation(); openAt(0); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              openAt(0);
+            }}
             className="absolute bottom-4 right-4 flex items-center gap-2 bg-black/60 backdrop-blur-md text-white text-[11px] font-bold px-4 py-2 rounded-full border border-white/15 hover:bg-black/80 transition-all shadow-lg"
           >
             <Camera size={12} />
