@@ -17,7 +17,8 @@ const staticRoutes = [
   { url: "/experiences", priority: "0.9", changefreq: "weekly" },
   { url: "/packages", priority: "0.85", changefreq: "weekly" },
   { url: "/ai-trip-planner", priority: "0.8", changefreq: "weekly" },
-  { url: "/explore-map", priority: "0.75", changefreq: "weekly" },
+  // NOTE: /explore-map is intentionally excluded — it has noindex (map UIs
+  // have no crawlable text content, causing "Crawled - not indexed" in GSC).
   { url: "/about", priority: "0.7", changefreq: "monthly" },
   { url: "/privacy", priority: "0.3", changefreq: "monthly" },
   { url: "/terms", priority: "0.3", changefreq: "monthly" },

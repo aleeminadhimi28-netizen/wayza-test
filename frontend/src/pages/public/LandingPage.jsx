@@ -1073,7 +1073,7 @@ export default function LandingPage() {
                     {[
                       { name: 'Stays', to: '/listings?category=hotel' },
                       { name: 'Mobility', to: '/listings?category=bike' },
-                      { name: 'Activities', to: '/listings?category=activity' },
+                      { name: 'Activities', to: '/experiences' },
                       { name: 'AI Planner', to: '/ai-trip-planner' },
                     ].map((link) => (
                       <li key={link.name}>

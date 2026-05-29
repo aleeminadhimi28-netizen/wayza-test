@@ -216,8 +216,9 @@ export default function ExploreMap() {
       <SEO
         title="Explore Varkala on Map"
         description="Discover and book stays, bikes, and cars in Varkala using our interactive discovery map."
+        noindex={true}
         breadcrumb={[
-          { name: 'Home', url: 'https://wayzza.live' }, // FIX #53: production domain
+          { name: 'Home', url: 'https://wayzza.live' },
           { name: 'Explore Map', url: 'https://wayzza.live/explore-map' },
         ]}
       />
