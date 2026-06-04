@@ -19,6 +19,8 @@ import {
   Globe,
   Star,
   Navigation,
+  Plus,
+  X,
 } from 'lucide-react';
 import { useAuth } from '../../AuthContext.jsx';
 import { useToast } from '../../ToastContext.jsx';
@@ -174,6 +176,7 @@ export default function PartnerOnboarding() {
   const [selectedAmenities, setSelectedAmenities] = useState(() =>
     getSavedField('selectedAmenities', [])
   );
+  const [galleryNewFiles, setGalleryNewFiles] = useState([]);
 
   // Persist step changes to sessionStorage
   const goToStep = (s) => {
@@ -364,6 +367,19 @@ export default function PartnerOnboarding() {
 
     setLoading(true);
     try {
+      let uploadedFilenames = [];
+      if (galleryNewFiles.length > 0) {
+        showToast('Uploading listing photos...', 'info');
+        const fd = new FormData();
+        galleryNewFiles.forEach((f) => fd.append('images', f));
+        const uploadRes = await api.uploadImages(fd);
+        if (uploadRes.ok && uploadRes.filenames) {
+          uploadedFilenames = uploadRes.filenames;
+        } else {
+          throw new Error('Photo upload failed');
+        }
+      }
+
       const payload = {
         email,
         businessName,
@@ -387,6 +403,8 @@ export default function PartnerOnboarding() {
               licensePlate: mainSector === 'vehicles' ? licensePlate : undefined,
               registrationDate: mainSector === 'vehicles' ? registrationDate : undefined,
               amenities: selectedAmenities,
+              image: uploadedFilenames[0] || null,
+              images: uploadedFilenames,
             }
           : null,
       };
@@ -1143,6 +1161,81 @@ export default function PartnerOnboarding() {
                         ))}
                       </div>
                     </div>
+
+                    {/* Listing Photos Upload */}
+                    <div className="space-y-4 pt-6 border-t border-slate-100">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                            Listing Photos
+                          </label>
+                          <p className="text-[11px] text-slate-400 font-semibold mt-1">
+                            Upload up to 5 photos. First photo is the cover image.
+                          </p>
+                        </div>
+                        <span className="text-xs font-bold text-emerald-600 uppercase tracking-widest">
+                          {galleryNewFiles.length} / 5
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                        {/* New files previews */}
+                        {galleryNewFiles.map((f, idx) => (
+                          <div
+                            key={idx}
+                            className="relative group aspect-square rounded-2xl overflow-hidden border border-emerald-500/40"
+                          >
+                            <img
+                              src={URL.createObjectURL(f)}
+                              className="w-full h-full object-cover"
+                              alt={`Preview ${idx + 1}`}
+                            />
+                            {idx === 0 && (
+                              <div className="absolute top-2 left-2 bg-emerald-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                                Cover
+                              </div>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setGalleryNewFiles(galleryNewFiles.filter((_, i) => i !== idx))
+                              }
+                              className="absolute top-2 right-2 w-7 h-7 bg-rose-500/90 backdrop-blur-md rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-600 shadow-md"
+                            >
+                              <X size={13} />
+                            </button>
+                          </div>
+                        ))}
+
+                        {/* Add more slot */}
+                        {galleryNewFiles.length < 5 && (
+                          <label className="relative aspect-square rounded-2xl border-2 border-dashed border-slate-200 hover:border-emerald-500/40 transition-colors flex flex-col items-center justify-center gap-1.5 cursor-pointer group/add bg-slate-50 hover:bg-emerald-50/10">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              multiple
+                              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                              onChange={(e) => {
+                                const files = Array.from(e.target.files || []);
+                                const remaining = 5 - galleryNewFiles.length;
+                                const valid = files
+                                  .filter((f) => f.type.startsWith('image/'))
+                                  .slice(0, remaining);
+                                setGalleryNewFiles([...galleryNewFiles, ...valid]);
+                                e.target.value = '';
+                              }}
+                            />
+                            <Plus
+                              size={20}
+                              className="text-slate-400 group-hover/add:text-emerald-500 transition-colors"
+                            />
+                            <span className="text-[9px] font-bold text-slate-400 group-hover/add:text-emerald-500 uppercase tracking-wider transition-colors">
+                              Upload
+                            </span>
+                          </label>
+                        )}
+                      </div>
+                    </div>
                   </div>
 
                   <div className="flex items-center justify-between pt-4 border-t border-slate-100">
@@ -1243,6 +1336,14 @@ export default function PartnerOnboarding() {
                           label: 'Base Rate',
                           value: price ? `₹${Number(price).toLocaleString()}` : '—',
                           icon: <Wallet size={14} />,
+                        },
+                        {
+                          label: 'Photos',
+                          value:
+                            galleryNewFiles.length > 0
+                              ? `${galleryNewFiles.length} photo${galleryNewFiles.length !== 1 ? 's' : ''}`
+                              : 'No photos uploaded',
+                          icon: <PlusCircle size={14} />,
                         },
                       ].map(({ label, value, icon }) => (
                         <div

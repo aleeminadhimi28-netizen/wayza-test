@@ -41,7 +41,9 @@ const onboardSchema = z.object({
         cancellationPolicy: z.string().optional(),
         licensePlate: z.string().optional(),
         registrationDate: z.string().optional(),
-        amenities: z.array(z.string()).optional()
+        amenities: z.array(z.string()).optional(),
+        image: z.string().optional().nullable(),
+        images: z.array(z.string()).optional()
     }).optional().nullable()
 });
 
@@ -204,6 +206,8 @@ router.post("/onboard", requireAuth, requireRole(["partner"]), async (req, res, 
                 licensePlate: firstListing.licensePlate || "",
                 registrationDate: firstListing.registrationDate || "",
                 amenities: firstListing.amenities || [],
+                image: firstListing.image || null,
+                images: firstListing.images || [],
                 createdAt: new Date()
             });
         }
