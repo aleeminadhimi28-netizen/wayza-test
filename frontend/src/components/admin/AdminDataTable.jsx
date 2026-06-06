@@ -71,6 +71,8 @@ export default function AdminDataTable({
   };
 
   const [createPartnerModal, setCreatePartnerModal] = useState(false);
+  const [viewPartnerModal, setViewPartnerModal] = useState(false);
+  const [selectedPartner, setSelectedPartner] = useState(null);
   const [partnerForm, setPartnerForm] = useState({
     email: '',
     password: '',
@@ -78,6 +80,11 @@ export default function AdminDataTable({
     phone: '',
   });
   const [isCreatingPartner, setIsCreatingPartner] = useState(false);
+
+  const openPartnerDetails = (partner) => {
+    setSelectedPartner(partner);
+    setViewPartnerModal(true);
+  };
 
   const submitCreatePartner = async (e) => {
     e.preventDefault();
@@ -587,6 +594,14 @@ export default function AdminDataTable({
                                 <CheckCircle size={12} strokeWidth={2.5} /> Approve
                               </button>
                             )}
+                          {activeTab === 'partners' && (
+                            <button
+                              onClick={() => openPartnerDetails(item)}
+                              className="h-8 px-3 bg-white/[0.05] border border-white/[0.08] text-white hover:bg-white/[0.1] rounded-lg font-bold text-[10px] uppercase tracking-wider flex items-center gap-1.5 transition-all"
+                            >
+                              <FileText size={12} /> View Details
+                            </button>
+                          )}
                           {activeTab === 'partners' &&
                             !item.onboarded &&
                             !item.onboardingCompleted &&
@@ -741,6 +756,114 @@ export default function AdminDataTable({
                 </button>
               </div>
             </form>
+          </motion.div>
+        </div>
+      )}
+
+      {/* View Partner Details Modal */}
+      {viewPartnerModal && selectedPartner && (
+        <div className="fixed inset-0 bg-[#050a08]/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-[#050a08] border border-white/[0.08] rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]"
+          >
+            <div className="p-6 border-b border-white/[0.05] flex justify-between items-center bg-white/[0.02] shrink-0">
+              <div>
+                <h3 className="text-lg font-black text-white uppercase tracking-tight">
+                  Partner Details
+                </h3>
+                <p className="text-xs text-white/40 font-medium mt-0.5">
+                  Review submitted information for {selectedPartner.businessName || selectedPartner.email}
+                </p>
+              </div>
+              <button
+                onClick={() => setViewPartnerModal(false)}
+                className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/[0.05] text-white/40 hover:bg-white/[0.1] hover:text-white transition-colors"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            
+            <div className="p-6 overflow-y-auto space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white/[0.02] border border-white/[0.05] rounded-xl p-4">
+                  <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-1">Business Name</p>
+                  <p className="text-sm font-bold text-white">{selectedPartner.businessName || '—'}</p>
+                </div>
+                <div className="bg-white/[0.02] border border-white/[0.05] rounded-xl p-4">
+                  <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-1">Email / Phone</p>
+                  <p className="text-sm font-bold text-white">{selectedPartner.email}</p>
+                  <p className="text-xs text-white/60">{selectedPartner.phone || 'No phone'}</p>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-xs font-black text-white uppercase tracking-widest border-b border-white/[0.05] pb-2 mb-3">Legal & Compliance</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-white/[0.02] border border-white/[0.05] rounded-xl p-4">
+                    <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-1">MSME Number</p>
+                    <p className="text-sm font-bold text-white font-mono">{selectedPartner.msmeNumber || '—'}</p>
+                  </div>
+                  <div className="bg-white/[0.02] border border-white/[0.05] rounded-xl p-4">
+                    <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-1">GST Number</p>
+                    <p className="text-sm font-bold text-white font-mono">{selectedPartner.gstNumber || '—'}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-xs font-black text-white uppercase tracking-widest border-b border-white/[0.05] pb-2 mb-3">Bank Details</h4>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                  <div className="bg-white/[0.02] border border-white/[0.05] rounded-xl p-4">
+                    <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-1">Bank Name</p>
+                    <p className="text-sm font-bold text-white truncate" title={selectedPartner.bankName}>{selectedPartner.bankName || '—'}</p>
+                  </div>
+                  <div className="bg-white/[0.02] border border-white/[0.05] rounded-xl p-4">
+                    <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-1">Account Number</p>
+                    <p className="text-sm font-bold text-white font-mono">{selectedPartner.accountNumber || '—'}</p>
+                  </div>
+                  <div className="bg-white/[0.02] border border-white/[0.05] rounded-xl p-4 sm:col-span-1 col-span-2">
+                    <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-1">IFSC Code</p>
+                    <p className="text-sm font-bold text-white font-mono">{selectedPartner.ifscCode || '—'}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-xs font-black text-white uppercase tracking-widest border-b border-white/[0.05] pb-2 mb-3">Location</h4>
+                <div className="bg-white/[0.02] border border-white/[0.05] rounded-xl p-4">
+                  <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-1">Full Address</p>
+                  <p className="text-sm font-medium text-white/80 whitespace-pre-wrap">{selectedPartner.address || 'No address provided'}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 border-t border-white/[0.05] bg-white/[0.01] flex justify-end gap-3 shrink-0">
+              <button
+                onClick={() => setViewPartnerModal(false)}
+                className="px-5 py-2.5 rounded-xl font-bold text-[11px] uppercase tracking-wider text-white/60 hover:bg-white/[0.05] hover:text-white transition-colors"
+              >
+                Close Details
+              </button>
+              {!selectedPartner.onboarded && (selectedPartner.onboardingCompleted || selectedPartner.businessName) && (
+                <button
+                  onClick={() => {
+                    setViewPartnerModal(false);
+                    triggerConfirm({
+                      title: 'Approve Partner',
+                      message: `Approve ${selectedPartner.businessName || selectedPartner.email} as an active partner?`,
+                      confirmText: 'Approve Partner',
+                      confirmVariant: 'emerald',
+                      onConfirm: () => handleApprovePartner(selectedPartner.email),
+                    });
+                  }}
+                  className="px-5 py-2.5 bg-emerald-600 text-[#050a08] rounded-xl font-bold text-[11px] uppercase tracking-wider hover:bg-emerald-500 transition-colors shadow-lg shadow-emerald-500/10 flex items-center gap-1.5"
+                >
+                  <CheckCircle size={14} strokeWidth={2.5} /> Approve Partner
+                </button>
+              )}
+            </div>
           </motion.div>
         </div>
       )}
