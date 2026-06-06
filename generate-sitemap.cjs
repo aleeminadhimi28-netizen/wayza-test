@@ -23,6 +23,7 @@ const staticRoutes = [
   { url: "/privacy", priority: "0.3", changefreq: "monthly" },
   { url: "/terms", priority: "0.3", changefreq: "monthly" },
   { url: "/compliance", priority: "0.3", changefreq: "monthly" },
+  { url: "/faq", priority: "0.5", changefreq: "monthly" },
   // NOTE: /support is intentionally excluded — it requires login (AuthGuard),
   // so Googlebot gets JS-redirected to /login, causing "Page with redirect".
 ];

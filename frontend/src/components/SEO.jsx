@@ -86,6 +86,9 @@ export default function SEO({
       { '@type': 'Place', name: 'Varkala, Kerala, India' },
       { '@type': 'Place', name: 'Edava, Kerala, India' },
       { '@type': 'Place', name: 'Odayam, Kerala, India' },
+      { '@type': 'Place', name: 'Papanasam Beach, Kerala, India' },
+      { '@type': 'Place', name: 'Kappil Beach, Kerala, India' },
+      { '@type': 'Place', name: 'Anjengo, Kerala, India' },
     ],
     knowsAbout: [
       'Varkala',

@@ -28,21 +28,51 @@ import SEO from '../../components/SEO.jsx';
 const DESTINATIONS = [
   {
     name: 'Varkala Cliff',
-    properties: '45+ Properties',
+    tag: 'Most popular',
+    properties: '45+',
+    desc: 'Clifftop luxury with ocean-front villas',
     image: '/images/varkala_cliff.webp',
-    className: 'md:col-span-8 md:row-span-2 h-[300px] md:h-full',
+    span: 'hero', // large hero card
   },
   {
     name: 'Edava',
-    properties: '20+ Properties',
+    tag: 'Serene',
+    properties: '20+',
+    desc: 'Tranquil backwaters meet Arabian Sea',
     image: '/images/varkala_edava.webp',
-    className: 'md:col-span-4 h-[220px] md:h-[284px]',
+    span: 'tall', // tall card
   },
   {
     name: 'Odayam',
-    properties: '15+ Properties',
+    tag: 'Hidden gem',
+    properties: '15+',
+    desc: 'Untouched beach south of the cliff',
     image: '/images/varkala_odayam.webp',
-    className: 'md:col-span-4 h-[220px] md:h-[284px]',
+    span: 'wide', // wide card
+  },
+  {
+    name: 'Papanasam',
+    tag: 'Spiritual',
+    properties: '10+',
+    desc: 'Sacred beach with dramatic red cliffs',
+    image: '/images/varkala_papanasam.webp',
+    span: 'small',
+  },
+  {
+    name: 'Kappil',
+    tag: 'Scenic',
+    properties: '8+',
+    desc: 'Backwaters estuary meets open sea',
+    image: '/images/varkala_kappil.webp',
+    span: 'wide',
+  },
+  {
+    name: 'Anjengo',
+    tag: 'Historic',
+    properties: '5+',
+    desc: 'Colonial fort ruins on a sliver of coast',
+    image: '/images/varkala_anjengo.webp',
+    span: 'small',
   },
 ];
 
@@ -55,6 +85,59 @@ const PROMO_OFFER = {
   button: 'Save on your next trip',
   image: '/images/varkala_cliff.webp',
 };
+
+export const WAYZZA_FAQ = [
+  {
+    question: 'What is Wayzza?',
+    answer:
+      'Wayzza is a premium travel booking platform based in Varkala, Kerala. It offers verified clifftop villas, luxury bike and car rentals, and curated local experiences for digital nomads, solo travellers, and couples exploring Varkala.',
+  },
+  {
+    question: 'Where is Wayzza located?',
+    answer:
+      'Wayzza operates in Varkala, Kerala, India — specifically serving the Varkala North Cliff, Edava, and Odayam areas. Our physical address is Varkala North Cliff, Varkala, Kerala 695141.',
+  },
+  {
+    question: 'What types of stays does Wayzza offer?',
+    answer:
+      'Wayzza offers a curated selection of clifftop villas with ocean views, boutique hotels, and private homestays in Varkala. All properties are verified by the Wayzza team for quality and authenticity.',
+  },
+  {
+    question: 'Can I rent a Royal Enfield in Varkala through Wayzza?',
+    answer:
+      'Yes. Wayzza offers a curated fleet of Royal Enfield motorcycles and other bikes available for daily or multi-day rental in Varkala. You can browse and book bikes directly on the platform.',
+  },
+  {
+    question: 'Does Wayzza offer car rentals in Varkala?',
+    answer:
+      'Yes. Wayzza lists self-drive and chauffeur-driven car rentals available in Varkala and surrounding Kerala regions, including transfers to Trivandrum airport.',
+  },
+  {
+    question: 'How much does it cost to stay in a villa in Varkala?',
+    answer:
+      'Varkala villas on Wayzza start from approximately ₹2,500 per night for budget options and go up to ₹15,000+ per night for premium clifftop properties with ocean views. Prices vary by season and availability.',
+  },
+  {
+    question: 'Is Varkala good for digital nomads?',
+    answer:
+      "Yes. Varkala is one of Kerala's top digital nomad destinations, offering reliable WiFi, a laid-back café culture, co-working spots, and stunning ocean views. Wayzza curates long-stay villa options specifically suited to remote workers.",
+  },
+  {
+    question: 'What is the best time to visit Varkala?',
+    answer:
+      'The best time to visit Varkala is between October and March, when the weather is dry, sunny, and ideal for beach activities and exploration. Wayzza properties are available year-round, including the monsoon season for a lush, quieter experience.',
+  },
+  {
+    question: 'How do I contact Wayzza support?',
+    answer:
+      'You can reach Wayzza support by email at stay@wayzza.live or by phone at +91 80892 22444. Support is available 24/7 for all booking-related enquiries.',
+  },
+  {
+    question: 'Are Wayzza listings verified?',
+    answer:
+      'Yes. Every property, vehicle, and experience listed on Wayzza is manually verified by the Wayzza team to ensure it meets quality, safety, and authenticity standards before being published on the platform.',
+  },
+];
 
 function scrollCarousel(id, dir) {
   const el = document.getElementById(id);
@@ -78,6 +161,7 @@ export default function LandingPage() {
   const moreListingsRef = useRef(null);
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterLoading, setNewsletterLoading] = useState(false);
+  const [openFaqIndex, setOpenFaqIndex] = useState(null);
 
   const handleNewsletterSubmit = async (e) => {
     e.preventDefault();
@@ -179,59 +263,9 @@ export default function LandingPage() {
             },
           ],
         }}
-        faq={[
-          {
-            question: 'What is Wayzza?',
-            answer:
-              'Wayzza is a premium travel booking platform based in Varkala, Kerala. It offers verified clifftop villas, luxury bike and car rentals, and curated local experiences for digital nomads, solo travellers, and couples exploring Varkala.',
-          },
-          {
-            question: 'Where is Wayzza located?',
-            answer:
-              'Wayzza operates in Varkala, Kerala, India — specifically serving the Varkala North Cliff, Edava, and Odayam areas. Our physical address is Varkala North Cliff, Varkala, Kerala 695141.',
-          },
-          {
-            question: 'What types of stays does Wayzza offer?',
-            answer:
-              'Wayzza offers a curated selection of clifftop villas with ocean views, boutique hotels, and private homestays in Varkala. All properties are verified by the Wayzza team for quality and authenticity.',
-          },
-          {
-            question: 'Can I rent a Royal Enfield in Varkala through Wayzza?',
-            answer:
-              'Yes. Wayzza offers a curated fleet of Royal Enfield motorcycles and other bikes available for daily or multi-day rental in Varkala. You can browse and book bikes directly on the platform.',
-          },
-          {
-            question: 'Does Wayzza offer car rentals in Varkala?',
-            answer:
-              'Yes. Wayzza lists self-drive and chauffeur-driven car rentals available in Varkala and surrounding Kerala regions, including transfers to Trivandrum airport.',
-          },
-          {
-            question: 'How much does it cost to stay in a villa in Varkala?',
-            answer:
-              'Varkala villas on Wayzza start from approximately ₹2,500 per night for budget options and go up to ₹15,000+ per night for premium clifftop properties with ocean views. Prices vary by season and availability.',
-          },
-          {
-            question: 'Is Varkala good for digital nomads?',
-            answer:
-              "Yes. Varkala is one of Kerala's top digital nomad destinations, offering reliable WiFi, a laid-back café culture, co-working spots, and stunning ocean views. Wayzza curates long-stay villa options specifically suited to remote workers.",
-          },
-          {
-            question: 'What is the best time to visit Varkala?',
-            answer:
-              'The best time to visit Varkala is between October and March, when the weather is dry, sunny, and ideal for beach activities and exploration. Wayzza properties are available year-round, including the monsoon season for a lush, quieter experience.',
-          },
-          {
-            question: 'How do I contact Wayzza support?',
-            answer:
-              'You can reach Wayzza support by email at stay@wayzza.live or by phone at +91 80892 22444. Support is available 24/7 for all booking-related enquiries.',
-          },
-          {
-            question: 'Are Wayzza listings verified?',
-            answer:
-              'Yes. Every property, vehicle, and experience listed on Wayzza is manually verified by the Wayzza team to ensure it meets quality, safety, and authenticity standards before being published on the platform.',
-          },
-        ]}
+        faq={WAYZZA_FAQ}
       />
+
 
       <div className="bg-white font-sans text-slate-900 selection:bg-emerald-50 selection:text-emerald-900 leading-relaxed antialiased overflow-x-hidden">
         {/* ── HERO ── */}
@@ -716,62 +750,169 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ── DESTINATIONS MASONRY ── */}
-        <section className="py-20 md:py-32 bg-slate-50 px-4 sm:px-6 relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-white to-transparent pointer-events-none" />
-          <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 mb-12 md:mb-20">
-              <div className="space-y-3">
-                <p className="text-emerald-500 font-black uppercase tracking-[0.4em] text-[11px]">
-                  Territories
-                </p>
-                <h2 className="text-3xl md:text-6xl font-bold tracking-tighter text-slate-900">
-                  Where we operate.
+        {/* ── DESTINATIONS BENTO ── */}
+        <section className="py-20 md:py-32 bg-slate-950 px-4 sm:px-6 relative overflow-hidden">
+          {/* Background glows */}
+          <div className="absolute top-[-10%] left-[10%] w-[50%] h-[50%] bg-emerald-500/5 blur-[160px] rounded-full pointer-events-none" />
+          <div className="absolute bottom-[-10%] right-[5%] w-[40%] h-[50%] bg-emerald-700/5 blur-[120px] rounded-full pointer-events-none" />
+
+          <div className="max-w-7xl mx-auto relative z-10">
+            {/* Section header */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 mb-12 md:mb-16"
+            >
+              <div className="space-y-4">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+                  <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-[11px] font-black uppercase tracking-[0.4em] text-emerald-300">Territories</span>
+                </div>
+                <h2 className="text-4xl md:text-7xl font-black tracking-tighter text-white leading-[0.9]">
+                  Where we<br />
+                  <span className="text-emerald-400 italic">operate.</span>
                 </h2>
               </div>
-              <p className="text-slate-400 font-medium max-w-sm text-base md:text-lg leading-relaxed">
-                Our network spans unique ecosystems, each personally verified for soul and security.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8">
-              {DESTINATIONS.map((d, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className={`group cursor-pointer relative rounded-[32px] md:rounded-[56px] overflow-hidden shadow-xl transition-all duration-700 hover:shadow-2xl ${d.className}`}
-                  onClick={() => navigate(`/listings?location=${d.name}`)}
+              <div className="space-y-4 max-w-sm">
+                <p className="text-slate-400 font-medium text-base md:text-lg leading-relaxed">
+                  Our network spans unique ecosystems, each personally verified for soul and security.
+                </p>
+                <button
+                  onClick={() => navigate('/listings')}
+                  className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.35em] text-emerald-400 hover:text-emerald-300 transition-colors border border-emerald-500/30 px-5 py-2.5 rounded-full hover:border-emerald-400/60"
                 >
-                  <img
-                    src={d.image}
-                    alt={d.name}
-                    className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                  <div className="absolute inset-0 bg-emerald-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <div className="absolute bottom-6 md:bottom-12 left-6 md:left-12 right-6 md:right-12 flex justify-between items-end">
-                    <div className="space-y-1 md:space-y-2">
-                      <p className="text-[11px] uppercase font-black tracking-[0.3em] text-emerald-400">
-                        {d.properties}
-                      </p>
-                      <h3 className="font-bold text-2xl md:text-4xl text-white tracking-tight">
-                        {d.name}
-                      </h3>
-                    </div>
-                    <div className="w-12 h-12 md:w-16 md:h-16 rounded-[20px] md:rounded-[24px] bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center group-hover:bg-emerald-500 transition-all duration-500 shrink-0">
-                      <ArrowRight
-                        size={20}
-                        className="text-white group-hover:translate-x-1 transition-transform"
-                      />
+                  Browse all areas <ArrowRight size={13} />
+                </button>
+              </div>
+            </motion.div>
+
+            {/* Bento grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 lg:grid-rows-[320px_240px] gap-3 md:gap-4">
+
+              {/* Hero card — Varkala Cliff */}
+              {DESTINATIONS.filter(d => d.span === 'hero').map((d, i) => (
+                <motion.div
+                  key={d.name}
+                  initial={{ opacity: 0, scale: 0.97 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
+                  onClick={() => navigate(`/listings?location=${encodeURIComponent(d.name)}`)}
+                  className="group cursor-pointer relative rounded-[28px] overflow-hidden lg:col-span-7 lg:row-span-2 h-[380px] lg:h-full"
+                >
+                  <img src={d.image} alt={d.name} className="w-full h-full object-cover transition-transform duration-[2.5s] group-hover:scale-105" loading="lazy" decoding="async" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                  <div className="absolute inset-0 bg-emerald-500/0 group-hover:bg-emerald-500/8 transition-all duration-700" />
+                  {/* Tag */}
+                  <div className="absolute top-5 left-5">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500 rounded-full text-[10px] font-black uppercase tracking-[0.3em] text-slate-950">
+                      <div className="w-1.5 h-1.5 rounded-full bg-slate-950/50" />
+                      {d.tag}
+                    </span>
+                  </div>
+                  {/* Content */}
+                  <div className="absolute bottom-0 left-0 right-0 p-7 md:p-10">
+                    <p className="text-emerald-400 text-[11px] font-black uppercase tracking-[0.35em] mb-2">
+                      {d.properties} Properties
+                    </p>
+                    <h3 className="text-white font-black text-3xl md:text-5xl tracking-tight mb-2 leading-tight">
+                      {d.name}
+                    </h3>
+                    <p className="text-white/50 text-sm font-medium mb-6 max-w-xs">{d.desc}</p>
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center group-hover:bg-emerald-500 group-hover:border-emerald-500 transition-all duration-500">
+                        <ArrowRight size={16} className="text-white group-hover:translate-x-0.5 transition-transform" />
+                      </div>
+                      <span className="text-white/40 text-xs font-black uppercase tracking-[0.3em] group-hover:text-white/70 transition-colors">Explore stays</span>
                     </div>
                   </div>
                 </motion.div>
               ))}
+
+              {/* Tall card — Edava */}
+              {DESTINATIONS.filter(d => d.span === 'tall').map((d, i) => (
+                <motion.div
+                  key={d.name}
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.1, duration: 0.6 }}
+                  onClick={() => navigate(`/listings?location=${encodeURIComponent(d.name)}`)}
+                  className="group cursor-pointer relative rounded-[28px] overflow-hidden lg:col-span-5 lg:row-span-2 h-[320px] lg:h-full"
+                >
+                  <img src={d.image} alt={d.name} className="w-full h-full object-cover transition-transform duration-[2.5s] group-hover:scale-105" loading="lazy" decoding="async" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+                  <div className="absolute top-5 left-5">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/15 backdrop-blur-md border border-white/25 rounded-full text-[10px] font-black uppercase tracking-[0.3em] text-white">
+                      {d.tag}
+                    </span>
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 p-7">
+                    <p className="text-emerald-400 text-[11px] font-black uppercase tracking-[0.35em] mb-1">{d.properties} Properties</p>
+                    <h3 className="text-white font-black text-2xl md:text-3xl tracking-tight mb-1">{d.name}</h3>
+                    <p className="text-white/45 text-sm font-medium mb-4">{d.desc}</p>
+                    <div className="h-9 w-9 rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center group-hover:bg-emerald-500 group-hover:border-emerald-500 transition-all duration-500">
+                      <ArrowRight size={15} className="text-white" />
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+
+              {/* Bottom row — wide + small + wide + small */}
+              {DESTINATIONS.filter(d => d.span === 'wide' || d.span === 'small').map((d, i) => (
+                <motion.div
+                  key={d.name}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.15 + i * 0.08, duration: 0.55 }}
+                  onClick={() => navigate(`/listings?location=${encodeURIComponent(d.name)}`)}
+                  className={`group cursor-pointer relative rounded-[28px] overflow-hidden h-[220px] md:h-[240px] ${d.span === 'wide' ? 'lg:col-span-5' : 'lg:col-span-3'} lg:row-start-3`}
+                  style={{ gridRow: undefined }}
+                >
+                  <img src={d.image} alt={d.name} className="w-full h-full object-cover transition-transform duration-[2.5s] group-hover:scale-108" loading="lazy" decoding="async" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+                  <div className="absolute inset-0 bg-emerald-500/0 group-hover:bg-emerald-500/10 transition-all duration-700" />
+                  <div className="absolute top-4 left-4">
+                    <span className="inline-flex items-center px-2.5 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-[9px] font-black uppercase tracking-[0.3em] text-white/80">
+                      {d.tag}
+                    </span>
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6 flex justify-between items-end">
+                    <div>
+                      <p className="text-emerald-400 text-[10px] font-black uppercase tracking-[0.3em] mb-0.5">{d.properties} Properties</p>
+                      <h3 className="text-white font-black text-lg md:text-xl tracking-tight">{d.name}</h3>
+                      <p className="text-white/40 text-xs font-medium mt-0.5 hidden sm:block">{d.desc}</p>
+                    </div>
+                    <div className="h-9 w-9 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center group-hover:bg-emerald-500 group-hover:border-emerald-500 transition-all duration-500 shrink-0 ml-3">
+                      <ArrowRight size={14} className="text-white" />
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+
             </div>
+
+            {/* Bottom stat strip */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4 }}
+              className="mt-8 grid grid-cols-3 gap-4 border border-white/5 rounded-[24px] bg-white/[0.02] px-6 py-5"
+            >
+              {[
+                { value: '6', label: 'Distinct territories' },
+                { value: '100+', label: 'Verified properties' },
+                { value: '100%', label: 'Personally inspected' },
+              ].map((stat) => (
+                <div key={stat.label} className="text-center">
+                  <p className="text-2xl md:text-3xl font-black text-emerald-400">{stat.value}</p>
+                  <p className="text-white/30 text-[10px] md:text-xs font-black uppercase tracking-[0.3em] mt-1">{stat.label}</p>
+                </div>
+              ))}
+            </motion.div>
           </div>
         </section>
 
@@ -995,6 +1136,63 @@ export default function LandingPage() {
                 </div>
               </div>
             </motion.div>
+          </div>
+        </section>
+
+        {/* ── FAQ SECTION ── */}
+        <section className="py-20 md:py-32 px-4 sm:px-6 bg-slate-50 relative overflow-hidden">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center space-y-4 mb-16">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-full text-[11px] font-black uppercase tracking-[0.3em]">
+                Need help?
+              </div>
+              <h2 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">
+                Frequently Asked Questions
+              </h2>
+            </div>
+
+            <div className="space-y-4">
+              {WAYZZA_FAQ.map((faq, index) => {
+                const isOpen = openFaqIndex === index;
+                return (
+                  <div
+                    key={index}
+                    className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
+                      isOpen ? 'bg-white border-emerald-500 shadow-xl shadow-emerald-500/10' : 'bg-white/50 border-slate-200 hover:border-slate-300 hover:bg-white'
+                    }`}
+                  >
+                    <button
+                      onClick={() => setOpenFaqIndex(isOpen ? null : index)}
+                      className="w-full text-left px-6 py-5 flex items-center justify-between gap-4"
+                    >
+                      <span className={`font-bold text-lg md:text-xl transition-colors ${isOpen ? 'text-emerald-600' : 'text-slate-900'}`}>
+                        {faq.question}
+                      </span>
+                      <div className={`w-8 h-8 rounded-full border flex items-center justify-center shrink-0 transition-all duration-300 ${isOpen ? 'bg-emerald-500 border-emerald-500 text-white rotate-180' : 'bg-slate-50 border-slate-200 text-slate-400'}`}>
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+                    </button>
+                    <motion.div
+                      initial={false}
+                      animate={{ height: isOpen ? 'auto' : 0, opacity: isOpen ? 1 : 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-6 pb-6 text-slate-500 font-medium leading-relaxed">
+                        {faq.answer}
+                      </div>
+                    </motion.div>
+                  </div>
+                );
+              })}
+            </div>
+            
+            <div className="mt-12 text-center">
+              <Link to="/faq" className="text-sm font-bold text-emerald-600 hover:text-emerald-500 uppercase tracking-widest inline-flex items-center gap-2">
+                View all FAQs <ArrowRight size={14} />
+              </Link>
+            </div>
           </div>
         </section>
 

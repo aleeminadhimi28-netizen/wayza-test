@@ -1,9 +1,10 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { WayzzaLayout, WayzzaSkeleton } from '../../WayzzaUI.jsx';
 import MapView from '../../components/MapView.jsx';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Layers, Compass, MapPin, Grid, Activity, Sparkles, Navigation } from 'lucide-react';
+import SEO from '../../components/SEO.jsx';
 
 import { api } from '../../utils/api.js';
 
@@ -27,6 +28,8 @@ export default function SearchMap() {
 
   return (
     <WayzzaLayout noPadding>
+      {/* Map UI has no crawlable text content — noindex prevents GSC "Crawled not indexed" waste */}
+      <SEO title="Map Explorer" noindex={true} />
       <div className="h-screen flex flex-col md:flex-row bg-white overflow-hidden font-sans text-slate-900">
         {/* LEFT SIDE — PROPERTY BROWSER */}
         <div className="w-full md:w-[450px] lg:w-[500px] flex flex-col h-full border-r border-slate-200 bg-white relative z-20 shadow-xl">

@@ -57,9 +57,24 @@
 
   <!-- Critical Resource Preloads -->
   <link rel="preload" href="/favicon.svg" as="image" />
-  <link rel="preconnect" href="https://images.unsplash.com" />
+  <!-- LCP hero image: preloaded before JS parses so browser fetches it instantly -->
+  <link rel="preload" href="/images/varkala_hero.webp" as="image" type="image/webp" />
+
+  <!-- Preconnect to origins used for dynamic content (API + image CDN) -->
+  <link rel="preconnect" href="https://api.wayzza.live" crossorigin />
+  <link rel="dns-prefetch" href="https://api.wayzza.live" />
+  <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
+  <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+  <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+  <link rel="dns-prefetch" href="https://images.unsplash.com" />
+
+  <!-- Google Fonts: Inter — loaded non-blocking with display=swap -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet"
+  />
 
   <!-- Structured Data (JSON-LD) — Static shell schema for crawlers before JS executes -->
   <script type="application/ld+json">

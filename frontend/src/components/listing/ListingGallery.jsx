@@ -165,6 +165,7 @@ export default function ListingGallery({ images, title, priority = false }) {
               alt="Photo 2"
               className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
               loading="lazy"
+              decoding="async"
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
           </div>
@@ -183,6 +184,7 @@ export default function ListingGallery({ images, title, priority = false }) {
               alt="Photo 3"
               className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
               loading="lazy"
+              decoding="async"
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
           </div>
@@ -201,6 +203,7 @@ export default function ListingGallery({ images, title, priority = false }) {
               alt="Photo 4"
               className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
               loading="lazy"
+              decoding="async"
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
           </div>
@@ -217,6 +220,7 @@ export default function ListingGallery({ images, title, priority = false }) {
               alt="Photo 5"
               className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
               loading="lazy"
+              decoding="async"
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
             {/* Show all button */}

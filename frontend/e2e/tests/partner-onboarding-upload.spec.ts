@@ -116,7 +116,10 @@ test.describe('Partner Onboarding with Listing Photo Upload E2E', () => {
     console.log('Submitted onboarding');
 
     // Wait for submission confirmation or redirect
-    await page.waitForURL(url => url.pathname.includes('/partner') || page.locator('text=reviewing your business').isVisible(), { timeout: 20000 });
+    await Promise.any([
+      page.waitForURL(url => url.pathname.includes('/partner'), { timeout: 20000 }),
+      page.locator('text=reviewing your business').waitFor({ state: 'visible', timeout: 20000 })
+    ]);
     console.log('Onboarding process completed successfully!');
 
     // 7. Verify listing in MongoDB via backend script

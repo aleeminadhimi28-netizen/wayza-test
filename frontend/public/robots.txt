@@ -1,7 +1,25 @@
 User-agent: *
 Allow: /
 Disallow: /admin/
+Disallow: /admin-login
 Disallow: /partner/
+Disallow: /partner-login
+Disallow: /partner-onboarding
+Disallow: /partner-register
+Disallow: /login
+Disallow: /signup
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /my-bookings
+Disallow: /wishlist
+Disallow: /profile
+Disallow: /booking/
+Disallow: /booking-success
+Disallow: /payment/
+Disallow: /payment-success
+Disallow: /guest-chat
+Disallow: /support
+Disallow: /map-search
 
 # ── AI & LLM Crawlers ──
 User-agent: GPTBot
