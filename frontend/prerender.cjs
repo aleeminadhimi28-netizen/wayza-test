@@ -108,72 +108,79 @@ const routes = [
   },
 ];
 
-console.log('🚀 Starting static route prerendering...');
+async function runPrerender() {
+  console.log('🚀 Starting static & dynamic route prerendering...');
+  let generatedCount = 0;
 
-let generatedCount = 0;
+  // 1. Prerender core static public pages
+  routes.forEach((route) => {
+    const routeDir = path.join(DIST_DIR, route.path);
+    if (!fs.existsSync(routeDir)) {
+      fs.mkdirSync(routeDir, { recursive: true });
+    }
 
-routes.forEach((route) => {
-  const routeDir = path.join(DIST_DIR, route.path);
-  if (!fs.existsSync(routeDir)) {
-    fs.mkdirSync(routeDir, { recursive: true });
+    let html = baseHtml;
+    html = html.replace(/<title>.*?<\/title>/i, `<title>${route.title}</title>`);
+    html = html.replace(/<meta name="description" content=".*?" \/>/i, `<meta name="description" content="${route.description}" />`);
+    if (route.keywords) {
+      html = html.replace(/<meta name="keywords" content=".*?" \/>/i, `<meta name="keywords" content="${route.keywords}" />`);
+    }
+    html = html.replace(/<meta property="og:title" content=".*?" \/>/i, `<meta property="og:title" content="${route.title}" />`);
+    html = html.replace(/<meta property="og:description" content=".*?" \/>/i, `<meta property="og:description" content="${route.description}" />`);
+    html = html.replace(/<meta name="twitter:title" content=".*?" \/>/i, `<meta name="twitter:title" content="${route.title}" />`);
+    html = html.replace(/<meta name="twitter:description" content=".*?" \/>/i, `<meta name="twitter:description" content="${route.description}" />`);
+
+    const prerenderedBlock = `
+      <article style="max-width:800px;margin:2rem auto;padding:1rem;color:#f0fdf4;">
+        <h1 style="font-size:1.8rem;font-weight:800;color:#34d399;margin-bottom:0.75rem;">${route.heading}</h1>
+        <p style="font-size:1rem;line-height:1.7;color:rgba(255,255,255,0.8);">${route.content}</p>
+      </article>
+    `;
+    html = html.replace('</noscript>', `${prerenderedBlock}\n  </noscript>`);
+
+    const targetFilePath = path.join(routeDir, 'index.html');
+    fs.writeFileSync(targetFilePath, html, 'utf8');
+    generatedCount++;
+    console.log(`  ✅ Generated: dist/${route.path}/index.html`);
+  });
+
+  // 2. Fetch live listings & prerender dynamic /listing/:id pages if API is reachable
+  try {
+    const fetch = (await import('node-fetch')).default || globalThis.fetch;
+    const apiUrl = process.env.VITE_API_URL || 'https://api.wayzza.live/api/v1';
+    const res = await fetch(`${apiUrl}/listings?limit=50`);
+    if (res.ok) {
+      const data = await res.json();
+      const listings = data.listings || data.data || (Array.isArray(data) ? data : []);
+      if (Array.isArray(listings) && listings.length > 0) {
+        listings.forEach((listing) => {
+          if (!listing._id) return;
+          const listingDir = path.join(DIST_DIR, 'listing', listing._id);
+          if (!fs.existsSync(listingDir)) {
+            fs.mkdirSync(listingDir, { recursive: true });
+          }
+
+          let html = baseHtml;
+          const title = `${listing.title} | Wayzza Varkala`;
+          const desc = listing.description ? listing.description.slice(0, 160) : `Book ${listing.title} in Varkala, Kerala on Wayzza.`;
+          
+          html = html.replace(/<title>.*?<\/title>/i, `<title>${title}</title>`);
+          html = html.replace(/<meta name="description" content=".*?" \/>/i, `<meta name="description" content="${desc}" />`);
+          html = html.replace(/<meta property="og:title" content=".*?" \/>/i, `<meta property="og:title" content="${title}" />`);
+          html = html.replace(/<meta property="og:description" content=".*?" \/>/i, `<meta property="og:description" content="${desc}" />`);
+
+          const targetFilePath = path.join(listingDir, 'index.html');
+          fs.writeFileSync(targetFilePath, html, 'utf8');
+          generatedCount++;
+          console.log(`  ✅ Generated dynamic listing: dist/listing/${listing._id}/index.html`);
+        });
+      }
+    }
+  } catch (apiErr) {
+    console.log('ℹ️ Dynamic listing prerendering skipped (API offline at build time).');
   }
 
-  let html = baseHtml;
+  console.log(`✨ Successfully prerendered ${generatedCount} total static & dynamic pages.`);
+}
 
-  // Replace Title
-  html = html.replace(
-    /<title>.*?<\/title>/i,
-    `<title>${route.title}</title>`
-  );
-
-  // Replace Description
-  html = html.replace(
-    /<meta name="description" content=".*?" \/>/i,
-    `<meta name="description" content="${route.description}" />`
-  );
-
-  // Replace Keywords
-  if (route.keywords) {
-    html = html.replace(
-      /<meta name="keywords" content=".*?" \/>/i,
-      `<meta name="keywords" content="${route.keywords}" />`
-    );
-  }
-
-  // Replace OG Title & Description
-  html = html.replace(
-    /<meta property="og:title" content=".*?" \/>/i,
-    `<meta property="og:title" content="${route.title}" />`
-  );
-  html = html.replace(
-    /<meta property="og:description" content=".*?" \/>/i,
-    `<meta property="og:description" content="${route.description}" />`
-  );
-
-  // Replace Twitter Title & Description
-  html = html.replace(
-    /<meta name="twitter:title" content=".*?" \/>/i,
-    `<meta name="twitter:title" content="${route.title}" />`
-  );
-  html = html.replace(
-    /<meta name="twitter:description" content=".*?" \/>/i,
-    `<meta name="twitter:description" content="${route.description}" />`
-  );
-
-  // Inject prerendered static text block into <noscript> for search crawlers
-  const prerenderedBlock = `
-    <article style="max-width:800px;margin:2rem auto;padding:1rem;color:#f0fdf4;">
-      <h1 style="font-size:1.8rem;font-weight:800;color:#34d399;margin-bottom:0.75rem;">${route.heading}</h1>
-      <p style="font-size:1rem;line-height:1.7;color:rgba(255,255,255,0.8);">${route.content}</p>
-    </article>
-  `;
-
-  html = html.replace('</noscript>', `${prerenderedBlock}\n  </noscript>`);
-
-  const targetFilePath = path.join(routeDir, 'index.html');
-  fs.writeFileSync(targetFilePath, html, 'utf8');
-  generatedCount++;
-  console.log(`  ✅ Generated: dist/${route.path}/index.html`);
-});
-
-console.log(`✨ Successfully prerendered ${generatedCount} static pages.`);
+runPrerender();

@@ -134,10 +134,13 @@ const createIndexes = async (db) => {
     await bookings.createIndex({ checkIn: 1 });
     // Compound index for booking overlap detection (race condition prevention)
     await bookings.createIndex({ listingId: 1, variantIndex: 1, status: 1, checkIn: 1, checkOut: 1 });
-    // Location search index for AI planner
+    // Compound search indexes for maximum query speed
+    await listings.createIndex({ category: 1, approved: 1, price: 1 });
+    await listings.createIndex({ location: 1, category: 1, approved: 1 });
+    await listings.createIndex({ coordinates: "2dsphere" });
     await listings.createIndex({ location: 1 });
     await listings.createIndex({ price: 1 });
-    await listings.createIndex({ title: "text", location: "text" });
+    await listings.createIndex({ title: "text", location: "text", description: "text" });
 
     // Safely migrate wishlist index
     await wishlists.dropIndex("userEmail_1").catch(() => {});
