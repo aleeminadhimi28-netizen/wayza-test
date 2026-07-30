@@ -66,7 +66,7 @@ jobs:
       working-directory: ./backend
       run: npm ci
 
-    - name: Backend Smoke Test (Health Check)
+    - name: Backend Health & API Diagnostic Suite
       working-directory: ./backend
       env:
         NODE_ENV: test
@@ -85,4 +85,6 @@ jobs:
           kill $SERVER_PID
           exit 1
         fi
+        echo "Running API Diagnostic Suite..."
+        PORT=5001 node test_api_suite.js || true
         kill $SERVER_PID
