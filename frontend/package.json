@@ -12,11 +12,12 @@
         "format": "prettier --write src/**/*.{js,jsx,json,css,md}"
     },
     "dependencies": {
-        "@capacitor/core": "^6.2.0",
-        "@capacitor/android": "^6.2.0",
-        "@capacitor/ios": "^6.2.0",
-        "@capacitor/status-bar": "^6.0.2",
-        "@capacitor/splash-screen": "^6.0.2",
+        "@capacitor/android": "^8.4.2",
+        "@capacitor/cli": "^8.4.2",
+        "@capacitor/core": "^8.4.2",
+        "@capacitor/ios": "^8.4.2",
+        "@capacitor/splash-screen": "^8.0.2",
+        "@capacitor/status-bar": "^8.0.3",
         "@react-google-maps/api": "^2.20.8",
         "@react-oauth/google": "^0.13.5",
         "@vercel/speed-insights": "^2.0.0",
@@ -40,7 +41,6 @@
         "socket.io-client": "^4.8.3"
     },
     "devDependencies": {
-        "@capacitor/cli": "^6.2.0",
         "@playwright/test": "^1.45.0",
         "@types/node": "^25.9.1",
         "@vitejs/plugin-react": "^4.0.0",
