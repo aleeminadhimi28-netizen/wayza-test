@@ -192,7 +192,6 @@ const createIndexes = async (db) => {
     await withdrawalRequests.createIndex({ requestedAt: -1 });
 
     // TTL: Auto-expire webhook idempotency records after 30 days
-    const webhooks = db.collection("webhooks");
     await webhooks.createIndex({ receivedAt: 1 }, { expireAfterSeconds: 30 * 24 * 60 * 60 });
 
     console.log("✅ Database indexes verified");
