@@ -7,6 +7,7 @@ import { Bell, X, Moon, Sun, Sparkles, ArrowRight } from 'lucide-react';
 import { useCurrency, CURRENCIES } from '../../CurrencyContext.jsx';
 import { useNotifications } from '../../hooks/useNotifications.jsx';
 import { NotificationDropdown } from './NotificationDropdown.jsx';
+import BottomTabBar from '../mobile/BottomTabBar.jsx';
 
 export function Layout({ children, noPadding = false, hideFooter = false }) {
   const navigate = useNavigate();
@@ -590,6 +591,8 @@ export function Layout({ children, noPadding = false, hideFooter = false }) {
           </div>
         </footer>
       )}
+      {/* Mobile Native Bottom Navigation */}
+      <BottomTabBar />
     </div>
   );
 }

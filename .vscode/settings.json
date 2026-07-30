@@ -1,3 +1,8 @@
 {
-  "css.lint.unknownAtRules": "ignore"
+  "github-actions.workflows.pinnedVersion": "warning",
+  "yaml.validate": true,
+  "yaml.customTags": [
+    "!secret scalar",
+    "!include scalar"
+  ]
 }
