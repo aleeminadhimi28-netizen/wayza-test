@@ -15,7 +15,7 @@ import {
   Star,
   HelpCircle,
 } from 'lucide-react';
-import { WAYZZA_FAQ } from './LandingPage.jsx';
+import { WAYZZA_FAQ } from '../../constants/faq.js';
 
 const STATIC_PAGE_META = {
   'Privacy Policy': {

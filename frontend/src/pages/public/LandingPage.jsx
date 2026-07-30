@@ -88,58 +88,7 @@ const DEFAULT_PROMO_OFFER = {
   isActive: true,
 };
 
-export const WAYZZA_FAQ = [
-  {
-    question: 'What is Wayzza?',
-    answer:
-      'Wayzza is a premium travel booking platform based in Varkala, Kerala. It offers verified clifftop villas, luxury bike and car rentals, and curated local experiences for digital nomads, solo travellers, and couples exploring Varkala.',
-  },
-  {
-    question: 'Where is Wayzza located?',
-    answer:
-      'Wayzza operates in Varkala, Kerala, India — specifically serving the Varkala North Cliff, Edava, and Odayam areas. Our physical address is Varkala North Cliff, Varkala, Kerala 695141.',
-  },
-  {
-    question: 'What types of stays does Wayzza offer?',
-    answer:
-      'Wayzza offers a curated selection of clifftop villas with ocean views, boutique hotels, and private homestays in Varkala. All properties are verified by the Wayzza team for quality and authenticity.',
-  },
-  {
-    question: 'Can I rent a Royal Enfield in Varkala through Wayzza?',
-    answer:
-      'Yes. Wayzza offers a curated fleet of Royal Enfield motorcycles and other bikes available for daily or multi-day rental in Varkala. You can browse and book bikes directly on the platform.',
-  },
-  {
-    question: 'Does Wayzza offer car rentals in Varkala?',
-    answer:
-      'Yes. Wayzza lists self-drive and chauffeur-driven car rentals available in Varkala and surrounding Kerala regions, including transfers to Trivandrum airport.',
-  },
-  {
-    question: 'How much does it cost to stay in a villa in Varkala?',
-    answer:
-      'Varkala villas on Wayzza start from approximately ₹2,500 per night for budget options and go up to ₹15,000+ per night for premium clifftop properties with ocean views. Prices vary by season and availability.',
-  },
-  {
-    question: 'Is Varkala good for digital nomads?',
-    answer:
-      "Yes. Varkala is one of Kerala's top digital nomad destinations, offering reliable WiFi, a laid-back café culture, co-working spots, and stunning ocean views. Wayzza curates long-stay villa options specifically suited to remote workers.",
-  },
-  {
-    question: 'What is the best time to visit Varkala?',
-    answer:
-      'The best time to visit Varkala is between October and March, when the weather is dry, sunny, and ideal for beach activities and exploration. Wayzza properties are available year-round, including the monsoon season for a lush, quieter experience.',
-  },
-  {
-    question: 'How do I contact Wayzza support?',
-    answer:
-      'You can reach Wayzza support by email at stay@wayzza.live or directly through our online support center. Our team is available 24/7 for all booking-related enquiries.',
-  },
-  {
-    question: 'Are Wayzza listings verified?',
-    answer:
-      'Yes. Every property, vehicle, and experience listed on Wayzza is manually verified by the Wayzza team to ensure it meets quality, safety, and authenticity standards before being published on the platform.',
-  },
-];
+import { WAYZZA_FAQ } from '../../constants/faq.js';
 
 function scrollCarousel(id, dir) {
   const el = document.getElementById(id);
