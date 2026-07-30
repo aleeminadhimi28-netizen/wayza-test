@@ -182,5 +182,18 @@ const createIndexes = async (db) => {
     const packages = db.collection("packages");
     await packages.createIndex({ active: 1 });
 
+    // TTL: Auto-purge activity logs after 90 days (privacy + storage hygiene)
+    const activityLogs = db.collection("activityLogs");
+    await activityLogs.createIndex({ createdAt: 1 }, { expireAfterSeconds: 90 * 24 * 60 * 60 });
+
+    // Compound index for withdrawal balance checks (email + status queried together on every earnings call)
+    const withdrawalRequests = db.collection("withdrawalRequests");
+    await withdrawalRequests.createIndex({ email: 1, status: 1 });
+    await withdrawalRequests.createIndex({ requestedAt: -1 });
+
+    // TTL: Auto-expire webhook idempotency records after 30 days
+    const webhooks = db.collection("webhooks");
+    await webhooks.createIndex({ receivedAt: 1 }, { expireAfterSeconds: 30 * 24 * 60 * 60 });
+
     console.log("✅ Database indexes verified");
 };

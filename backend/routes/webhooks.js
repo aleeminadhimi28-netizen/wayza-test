@@ -26,11 +26,25 @@ router.post("/razorpay", async (req, res, next) => {
 
         const payload = JSON.parse(req.body.toString());
         const event = payload.event;
-        console.log(`[Webhook] Received Razorpay Event: ${event}`);
+        const eventId = payload.payload?.payment?.entity?.id || payload.event + "-" + Date.now();
+        console.log(`[Webhook] Received Razorpay Event: ${event} | id: ${eventId}`);
+
+        // ─── IDEMPOTENCY GUARD ───
+        // Prevent duplicate processing if Razorpay retries the same webhook.
+        // The `webhooks` collection has a unique index on `eventId` (set up in db.js).
+        const db = getDB();
+        try {
+            await db.collection("webhooks").insertOne({ eventId, event, receivedAt: new Date() });
+        } catch (dupErr) {
+            if (dupErr.code === 11000) {
+                console.log(`[Webhook] Duplicate event ${eventId} — already processed. Acking.`);
+                return res.json({ status: "ok", duplicate: true });
+            }
+            throw dupErr;
+        }
 
         if (event === "order.paid") {
             const { order_id, payment_id } = payload.payload.payment.entity;
-            const db = getDB();
             const bookings = db.collection("bookings");
 
             // Find the pending booking associated with this order

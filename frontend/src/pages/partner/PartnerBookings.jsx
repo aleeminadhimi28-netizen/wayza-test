@@ -275,24 +275,20 @@ export default function PartnerBookings() {
 
   if (loading)
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 bg-[#050a08]">
-        <div className="w-10 h-10 border-2 border-white/10 border-t-emerald-500 rounded-full animate-spin" />
-        <p className="text-sm font-bold text-white/30 uppercase tracking-widest">
-          Loading reservations...
-        </p>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div
+          className="w-8 h-8 border-2 rounded-full animate-spin"
+          style={{ borderColor: 'var(--dash-divider)', borderTopColor: 'var(--dash-accent-500)' }}
+        />
       </div>
     );
 
   return (
-    <div className="min-h-screen bg-[#050a08] font-sans text-white selection:bg-emerald-900/50 selection:text-emerald-200 pb-20">
-      {/* ── Ambient Background ── */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-0 left-0 w-[30%] h-[40%] bg-emerald-500/5 blur-[120px] rounded-full" />
-        <div className="absolute bottom-0 right-0 w-[40%] h-[40%] bg-emerald-700/5 blur-[100px] rounded-full" />
-      </div>
-
-      <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 py-10 space-y-8">
-        {/* CSS for Scanline Animation */}
+    <div
+      className="font-sans pb-16 dash-transition"
+      style={{ background: 'var(--dash-bg)', color: 'var(--dash-text-1)' }}
+    >
+      <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-10 py-6 space-y-6">
         <style>{`
           @keyframes scanline {
             0% { transform: translateY(-100%); opacity: 0; }
@@ -305,15 +301,15 @@ export default function PartnerBookings() {
         `}</style>
 
         {/* HEADER */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white/[0.03] border border-white/[0.08] p-8 rounded-3xl backdrop-blur-xl">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 text-emerald-400 font-black text-[10px] uppercase tracking-[0.4em]">
-              <Sparkles size={12} /> Reservations
-            </div>
-            <h1 className="text-3xl font-black text-white uppercase tracking-tight">
-              Booking <span className="text-emerald-400">Register</span>
-            </h1>
-            <p className="text-white/30 text-sm font-medium">
+        <div className="dash-fade-1 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <p
+              className="text-[10px] font-semibold uppercase tracking-[0.15em] mb-1"
+              style={{ color: 'var(--dash-accent)' }}
+            >
+              Reservations
+            </p>
+            <p className="text-[11px] mt-1" style={{ color: 'var(--dash-text-3)' }}>
               {bookings.length} total {bookings.length === 1 ? 'reservation' : 'reservations'}{' '}
               across your properties.
             </p>

@@ -136,13 +136,7 @@ export default function PartnerDashboard() {
     return matchStatus && matchSearch;
   });
 
-  if (loading)
-    return (
-      <VerificationSpinner
-        message="Synchronizing Partner Network..."
-        subtext="Accessing Management Suite"
-      />
-    );
+  if (loading) return null;
 
   const setPriceField = (id, value) =>
     setPriceEdits((prev) => ({
@@ -337,34 +331,28 @@ export default function PartnerDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#050a08] font-sans text-white selection:bg-emerald-900/50 selection:text-emerald-200 pb-20">
-      {/* ── Ambient Background ── */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-emerald-500/5 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-700/5 blur-[100px] rounded-full" />
-        <div
-          className="absolute inset-0 opacity-[0.015]"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(52,211,153,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(52,211,153,0.6) 1px, transparent 1px)',
-            backgroundSize: '48px 48px',
-          }}
-        />
-      </div>
-
-      <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 py-10 space-y-8">
+    <div
+      className="min-h-screen font-sans pb-20 dash-transition"
+      style={{ background: 'var(--dash-bg)', color: 'var(--dash-text-1)' }}
+    >
+      <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-10 py-8 space-y-6">
         {/* ─── PENDING APPROVAL ALERT ─── */}
         {!dismissedAlert && listings.some((l) => !l.approved) && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-start gap-4 bg-amber-500/5 border border-amber-500/20 rounded-2xl px-6 py-4 backdrop-blur-sm"
+            className="flex items-start gap-4 px-5 py-3.5 rounded-xl"
+            style={{
+              background: 'rgba(251,191,36,0.05)',
+              border: '1px solid rgba(251,191,36,0.15)',
+            }}
           >
-            <div className="w-9 h-9 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-400 shrink-0 mt-0.5">
-              <AlertCircle size={18} />
-            </div>
+            <AlertCircle
+              size={15}
+              style={{ color: 'var(--dash-warning)', marginTop: '2px', flexShrink: 0 }}
+            />
             <div className="flex-1 min-w-0">
-              <p className="font-bold text-amber-200 text-sm">
+              <p className="font-semibold text-[12px]" style={{ color: 'var(--dash-warning)' }}>
                 {listings.filter((l) => !l.approved).length}{' '}
                 {listings.filter((l) => !l.approved).length === 1
                   ? mainSector === 'vehicles'
@@ -375,7 +363,7 @@ export default function PartnerDashboard() {
                     : 'listings'}{' '}
                 pending admin approval
               </p>
-              <p className="text-white/40 text-xs mt-0.5">
+              <p className="text-[11px] mt-0.5" style={{ color: 'var(--dash-text-3)' }}>
                 {mainSector === 'vehicles' ? 'Vehicles' : 'Properties'} must be approved before
                 guests can book them.
                 {listings.some((l) => !l.approved) && (
@@ -389,7 +377,7 @@ export default function PartnerDashboard() {
                           {i > 0 && ', '}
                           <a
                             href={`/partner/property/${l._id}`}
-                            className="underline font-semibold hover:text-amber-400 transition-colors"
+                            className="underline font-semibold hover:opacity-70 transition-opacity"
                           >
                             {l.title}
                           </a>
@@ -403,90 +391,105 @@ export default function PartnerDashboard() {
             <button
               onClick={() => {
                 setDismissedAlert(true);
-                sessionStorage.setItem('pd_alert_dismissed', '1'); // FIX #60
+                sessionStorage.setItem('pd_alert_dismissed', '1');
               }}
-              className="text-white/20 hover:text-white/60 transition-colors shrink-0"
+              style={{ color: 'var(--dash-text-3)' }}
+              className="hover:opacity-60 transition-opacity shrink-0"
             >
-              <X size={16} />
+              <X size={14} />
             </button>
           </motion.div>
         )}
 
         {/* ─── HEADER ─── */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 bg-white/[0.03] border border-white/[0.08] p-8 rounded-3xl backdrop-blur-xl">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 text-emerald-400 font-black text-[10px] uppercase tracking-[0.4em]">
-              <Sparkles size={12} /> Partner Dashboard
-            </div>
-            <h1 className="text-3xl font-black text-white tracking-tight uppercase">
-              Welcome back, {partnerProfile?.businessName || user?.email?.split('@')?.[0]}
+        <div className="dash-fade-1 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <p
+              className="text-[10px] font-semibold uppercase tracking-[0.15em] mb-1"
+              style={{ color: 'var(--dash-accent)' }}
+            >
+              Partner Dashboard
+            </p>
+            <h1
+              className="text-[20px] font-light leading-snug"
+              style={{ color: 'var(--dash-text-1)' }}
+            >
+              Good morning,{' '}
+              <strong className="font-semibold">
+                {partnerProfile?.businessName || user?.email?.split('@')?.[0]}
+              </strong>
             </h1>
-            <p className="text-white/30 text-sm font-medium">
-              Here's what's happening with your{' '}
+            <p className="text-[11px] mt-1" style={{ color: 'var(--dash-text-3)' }}>
+              Here’s what’s happening with your{' '}
               {mainSector === 'vehicles' ? 'vehicles' : 'properties'} today.
             </p>
           </div>
-
           <button
             onClick={() => navigate('/partner/create')}
-            className="h-12 px-6 bg-emerald-500 hover:bg-emerald-600 text-[#050a08] rounded-xl font-black text-[11px] uppercase tracking-[0.2em] flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-lg shadow-emerald-500/20"
+            className="h-9 px-4 rounded-lg font-semibold text-[12px] flex items-center gap-2 transition-all active:scale-[0.98]"
+            style={{ background: 'var(--dash-accent-500)', color: '#050a08' }}
           >
-            <Plus size={16} strokeWidth={3} />
+            <Plus size={14} strokeWidth={2.5} />
             <span>{mainSector === 'vehicles' ? 'Add Vehicle' : 'Add Property'}</span>
           </button>
         </div>
 
         {/* ─── KPI GRID ─── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {kpis.map((c, i) => (
-            <motion.div
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 dash-fade-2">
+          {kpis.map((c) => (
+            <div
               key={c.label}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
-              className="bg-white/[0.03] border border-white/[0.08] p-6 rounded-2xl backdrop-blur-xl hover:bg-white/[0.05] transition-colors flex flex-col justify-between h-36"
+              className="dash-kpi-card p-5 rounded-xl"
+              style={{
+                background: 'var(--dash-card)',
+                border: '1px solid var(--dash-card-border)',
+              }}
             >
-              <div className="flex justify-between items-start">
-                <div
-                  className={`w-10 h-10 rounded-xl ${c.bg} ${c.color} flex items-center justify-center`}
-                >
-                  <c.icon size={20} />
-                </div>
-                <div
-                  className={`flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-wider ${c.up ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}
-                >
-                  {c.up ? (
-                    <ArrowUpRight size={10} strokeWidth={3} />
-                  ) : (
-                    <Clock size={10} strokeWidth={3} />
-                  )}
-                  {c.trend}
-                </div>
-              </div>
-              <div>
-                <p className="text-2xl font-black text-white tracking-tight">{c.value}</p>
-                <h3 className="text-white/30 font-bold text-[10px] uppercase tracking-[0.2em] mt-1">
-                  {c.label}
-                </h3>
-              </div>
-            </motion.div>
+              <p className="text-[10.5px] font-medium mb-2" style={{ color: 'var(--dash-text-3)' }}>
+                {c.label}
+              </p>
+              <div className="h-px mb-2.5" style={{ background: 'var(--dash-divider)' }} />
+              <p
+                className="text-[24px] font-semibold tracking-tight leading-none mb-2"
+                style={{ color: 'var(--dash-text-1)' }}
+              >
+                {c.value}
+              </p>
+              <p
+                className="text-[10px] font-medium"
+                style={{ color: c.up ? 'var(--dash-accent)' : 'var(--dash-warning)' }}
+              >
+                {c.up ? '↑ ' : ''}
+                {c.trend}
+              </p>
+            </div>
           ))}
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 dash-fade-3">
           {/* ─── REVENUE CHART ─── */}
-          <div className="xl:col-span-2 bg-white/[0.03] border border-white/[0.08] rounded-3xl p-8 backdrop-blur-xl">
-            <div className="flex justify-between items-center mb-8">
+          <div
+            className="xl:col-span-2 dash-chart-card p-6 rounded-xl"
+            style={{ background: 'var(--dash-card)', border: '1px solid var(--dash-card-border)' }}
+          >
+            <div className="flex justify-between items-center mb-6">
               <div>
-                <h3 className="text-lg font-black text-white uppercase tracking-tight">
+                <h3 className="text-[13px] font-semibold" style={{ color: 'var(--dash-text-1)' }}>
                   Revenue Overview
                 </h3>
-                <p className="text-sm text-white/30 font-medium">Your total earnings over time</p>
+                <p className="text-[10.5px] mt-0.5" style={{ color: 'var(--dash-text-3)' }}>
+                  Your total earnings over time
+                </p>
               </div>
               <select
                 value={chartFilter}
                 onChange={(e) => setChartFilter(e.target.value)}
-                className="bg-white/[0.05] border border-white/[0.1] rounded-lg px-3 py-1.5 text-xs font-bold text-white outline-none cursor-pointer hover:bg-white/[0.08] transition-colors"
+                className="rounded-lg px-2.5 py-1.5 text-[11px] font-medium outline-none cursor-pointer transition-colors"
+                style={{
+                  background: 'var(--dash-card)',
+                  border: '1px solid var(--dash-divider)',
+                  color: 'var(--dash-text-2)',
+                }}
               >
                 <option value="6m">Last 6 Months</option>
                 <option value="1y">This Year</option>

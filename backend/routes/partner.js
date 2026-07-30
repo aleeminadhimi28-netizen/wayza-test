@@ -56,7 +56,7 @@ const walletSchema = z.object({
 });
 
 const withdrawalSchema = z.object({
-    amount: z.number().positive()
+    amount: z.number().min(100, "Minimum withdrawal amount is ₹100")
 });
 
 const router = express.Router();

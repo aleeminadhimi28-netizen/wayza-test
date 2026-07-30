@@ -22,7 +22,7 @@ export default function AdminLogs() {
 
   useEffect(() => {
     loadLogs();
-    const t = setInterval(loadLogs, 15000); // refresh every 15s
+    const t = setInterval(loadLogs, 15000);
     return () => clearInterval(t);
   }, [loadLogs]);
 
@@ -51,22 +51,21 @@ export default function AdminLogs() {
     if (url.includes('/admin/partners/') && url.includes('/approve'))
       return { text: 'Approved a partner', type: 'system' };
     if (url.includes('/support/tickets')) return { text: 'Managed support ticket', type: 'system' };
-
     return { text: `${method} ${url}`, type: 'other' };
   }
 
-  const typeThemes = {
-    system: 'bg-emerald-50 text-emerald-700 border-emerald-100',
-    business: 'bg-blue-50 text-blue-700 border-blue-100',
-    auth: 'bg-amber-50 text-amber-700 border-amber-100',
-    content: 'bg-purple-50 text-purple-700 border-purple-100',
-    other: 'bg-slate-50 text-slate-600 border-slate-100',
+  const typeBadge = {
+    system: 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/25',
+    business: 'bg-blue-500/15 text-blue-300 border border-blue-500/25',
+    auth: 'bg-amber-500/15 text-amber-300 border border-amber-500/25',
+    content: 'bg-purple-500/15 text-purple-300 border border-purple-500/25',
+    other: 'bg-white/[0.05] text-white/50 border border-white/10',
   };
 
   if (loading)
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="w-8 h-8 border-4 border-slate-200 border-t-emerald-500 rounded-full animate-spin"></div>
+        <div className="w-8 h-8 border-2 border-white/10 border-t-emerald-400 rounded-full animate-spin" />
       </div>
     );
 
@@ -76,61 +75,104 @@ export default function AdminLogs() {
       animate={{ opacity: 1, y: 0 }}
       className="space-y-6"
     >
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-slate-900 text-white rounded-xl flex items-center justify-center shadow-lg">
-              <Activity size={18} />
-            </div>
-            <div>
-              <h2 className="text-lg font-bold text-slate-900">Activity & Audit Logs</h2>
-              <p className="text-sm text-slate-500">
-                Real-time surveillance of all mutations across the platform.
-              </p>
-            </div>
+      <div
+        className="rounded-2xl overflow-hidden"
+        style={{ background: 'var(--dash-card)', border: '1px solid var(--dash-card-border)' }}
+      >
+        {/* Header */}
+        <div
+          className="px-7 py-5 flex items-center gap-4"
+          style={{ borderBottom: '1px solid var(--dash-divider)' }}
+        >
+          <div className="w-10 h-10 bg-emerald-500/15 rounded-xl flex items-center justify-center border border-emerald-500/25">
+            <Activity size={18} className="text-emerald-400" />
+          </div>
+          <div>
+            <h2
+              className="text-base font-black uppercase tracking-tight"
+              style={{ color: 'var(--dash-text-1)' }}
+            >
+              Activity &amp; Audit Logs
+            </h2>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--dash-text-2)' }}>
+              Real-time surveillance of all mutations across the platform.
+            </p>
+          </div>
+          <div className="ml-auto flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">
+              Live
+            </span>
           </div>
         </div>
 
+        {/* Table */}
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-100">
-                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wide">
-                  Timestamp
-                </th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wide">
-                  Originator
-                </th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wide">
-                  Activity
-                </th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wide">
-                  Network Node
-                </th>
+              <tr
+                style={{
+                  borderBottom: '1px solid var(--dash-divider)',
+                  background: 'rgba(128,128,128,0.03)',
+                }}
+              >
+                {['Timestamp', 'Originator', 'Activity', 'Network Node'].map((h) => (
+                  <th
+                    key={h}
+                    className="px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em]"
+                    style={{ color: 'var(--dash-text-3)' }}
+                  >
+                    {h}
+                  </th>
+                ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody>
               {logs.map((log) => {
                 const { text, type } = translateAction(log.method, log.url);
                 const d = new Date(log.createdAt);
-
                 return (
-                  <tr key={log._id} className="hover:bg-slate-50/50 transition-colors">
+                  <tr
+                    key={log._id}
+                    className="transition-colors"
+                    style={{ borderBottom: '1px solid var(--dash-divider)' }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.background = 'rgba(128,128,128,0.04)')
+                    }
+                    onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                  >
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-2 text-slate-500 font-medium whitespace-nowrap">
-                        <Clock size={14} className="text-slate-400" />
-                        <span>{d.toLocaleDateString()}</span>
-                        <span className="text-xs">{d.toLocaleTimeString()}</span>
+                      <div className="flex items-center gap-2 whitespace-nowrap">
+                        <Clock size={13} style={{ color: 'var(--dash-text-3)' }} />
+                        <span
+                          className="text-xs font-semibold"
+                          style={{ color: 'var(--dash-text-2)' }}
+                        >
+                          {d.toLocaleDateString()}
+                        </span>
+                        <span
+                          className="text-[11px] font-mono"
+                          style={{ color: 'var(--dash-text-3)' }}
+                        >
+                          {d.toLocaleTimeString()}
+                        </span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 bg-slate-100 text-slate-600 rounded-lg flex items-center justify-center text-xs font-bold shrink-0">
+                        <div
+                          className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-black shrink-0"
+                          style={{
+                            background: 'rgba(128,128,128,0.1)',
+                            color: 'var(--dash-text-2)',
+                          }}
+                        >
                           {(log.actor || '?').charAt(0).toUpperCase()}
                         </div>
                         <span
-                          className="font-semibold text-sm text-slate-800 truncate max-w-[200px]"
+                          className="text-sm font-semibold truncate max-w-[180px]"
                           title={log.actor}
+                          style={{ color: 'var(--dash-text-1)' }}
                         >
                           {log.actor}
                         </span>
@@ -139,20 +181,29 @@ export default function AdminLogs() {
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-1 items-start">
                         <span
-                          className={`px-2.5 py-1 text-xs font-bold rounded-lg border ${typeThemes[type] || typeThemes.other}`}
+                          className={`px-2.5 py-1 text-[11px] font-bold rounded-lg ${typeBadge[type] || typeBadge.other}`}
                         >
                           {text}
                         </span>
                         {type === 'other' && (
-                          <span className="text-[11px] font-mono text-slate-400 max-w-xs truncate">
+                          <span
+                            className="text-[10px] font-mono truncate max-w-xs"
+                            style={{ color: 'var(--dash-text-3)' }}
+                          >
                             {log.method} {log.url}
                           </span>
                         )}
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500 font-mono bg-slate-50 px-2 py-1 rounded inline-flex">
-                        <Globe size={12} className="text-slate-400" />
+                      <div
+                        className="inline-flex items-center gap-1.5 text-[11px] font-mono font-medium px-2.5 py-1 rounded-lg"
+                        style={{
+                          background: 'rgba(128,128,128,0.08)',
+                          color: 'var(--dash-text-2)',
+                        }}
+                      >
+                        <Globe size={11} style={{ color: 'var(--dash-text-3)' }} />
                         {log.ip || '0.0.0.0'}
                       </div>
                     </td>
@@ -161,11 +212,16 @@ export default function AdminLogs() {
               })}
             </tbody>
           </table>
+
           {logs.length === 0 && (
             <div className="py-20 text-center">
-              <Server size={32} className="text-slate-200 mx-auto mb-3" />
-              <h3 className="text-lg font-bold text-slate-900 mb-1">No Activity Detected</h3>
-              <p className="text-sm text-slate-500">The log buffer is currently empty.</p>
+              <Server size={32} className="mx-auto mb-3" style={{ color: 'var(--dash-text-3)' }} />
+              <h3 className="text-base font-black mb-1" style={{ color: 'var(--dash-text-1)' }}>
+                No Activity Detected
+              </h3>
+              <p className="text-sm" style={{ color: 'var(--dash-text-2)' }}>
+                The log buffer is currently empty.
+              </p>
             </div>
           )}
         </div>

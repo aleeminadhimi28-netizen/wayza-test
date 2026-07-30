@@ -52,6 +52,17 @@
   "rewrites": [
     { "source": "/api/:path*", "destination": "https://wayza-backend.onrender.com/api/:path*" },
     { "source": "/uploads/:path*", "destination": "https://wayza-backend.onrender.com/uploads/:path*" },
+    {
+      "source": "/listing/:id",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(googlebot|bingbot|yandexbot|duckduckbot|slurp|baiduspider|twitterbot|facebookexternalhit|rogerbot|linkedinbot|embedly|quora link preview|showyoubot|outbrain|pinterest|slackbot|vkShare|W3C_Validator|whatsapp).*"
+        }
+      ],
+      "destination": "https://wayza-backend.onrender.com/api/v1/og/:id"
+    },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

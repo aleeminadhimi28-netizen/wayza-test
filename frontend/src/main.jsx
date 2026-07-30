@@ -64,9 +64,7 @@ const AboutUs = lazy(() =>
 const DataCompliance = lazy(() =>
   import('./pages/public/StaticPages.jsx').then((m) => ({ default: m.DataCompliance }))
 );
-const FAQ = lazy(() =>
-  import('./pages/public/StaticPages.jsx').then((m) => ({ default: m.FAQ }))
-);
+const FAQ = lazy(() => import('./pages/public/StaticPages.jsx').then((m) => ({ default: m.FAQ })));
 
 /* ================= PARTNER ================= */
 const PartnerLogin = lazy(() => import('./pages/partner/PartnerLogin.jsx'));

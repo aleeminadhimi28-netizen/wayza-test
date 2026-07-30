@@ -43,14 +43,78 @@ const router = express.Router();
 router.get("/config", async (req, res, next) => {
     try {
         const db = getDB();
-        const config = await db.collection("settings").findOne({ type: "financials" }) || {
+        const config = await db.collection("settings").findOne({ type: "financials" }) || {};
+        const mergedConfig = {
             gstRate: 0.12,
             serviceFee: 99,
-            commissionRate: 0.10
+            commissionRate: 0.10,
+            supportPhone: "",
+            supportWhatsApp: "",
+            supportEmail: "stay@wayzza.live",
+            ...config
         };
-        res.json({ ok: true, data: config });
+        res.json({ ok: true, data: mergedConfig });
     } catch (err) { next(err); }
 });
+
+/* ================= PROMO OFFER ================= */
+
+const DEFAULT_PROMO_OFFER = {
+    title: "Offers",
+    subtitle: "Promotions, deals and special offers for you",
+    label: "No catch. Just getaways.",
+    heading: "Book a Getaway Deal",
+    text: "At least 15% off select stays.",
+    button: "Save on your next trip",
+    image: "/images/varkala_cliff.webp",
+    isActive: true
+};
+
+router.get("/promo-offer", async (req, res, next) => {
+    try {
+        const db = getDB();
+        const doc = await db.collection("settings").findOne({ type: "promoOffer" });
+        if (!doc) {
+            return res.json({ ok: true, data: DEFAULT_PROMO_OFFER });
+        }
+        res.json({ ok: true, data: { ...DEFAULT_PROMO_OFFER, ...doc } });
+    } catch (err) { next(err); }
+});
+
+/* ================= CUSTOM PACKAGE REQUESTS ================= */
+
+const customPackageSchema = z.object({
+    name: z.string().min(1),
+    email: z.string().email(),
+    phone: z.string().min(5),
+    budget: z.number().positive(),
+    duration: z.string().optional(),
+    vibe: z.string().optional(),
+    stay: z.string().optional(),
+    addons: z.array(z.string()).optional(),
+    guests: z.number().min(1).optional(),
+    transport: z.string().optional(),
+    notes: z.string().optional()
+});
+
+router.post("/custom-package-request", async (req, res, next) => {
+    try {
+        const parsed = customPackageSchema.safeParse(req.body);
+        if (!parsed.success) return res.status(400).json({ ok: false, message: "Please enter your name, valid email, phone number, and budget amount.", errors: parsed.error.flatten() });
+
+        const db = getDB();
+        const requestData = {
+            ...parsed.data,
+            status: "pending",
+            createdAt: new Date()
+        };
+
+        await db.collection("customPackageRequests").insertOne(requestData);
+        res.json({ ok: true, message: "Custom package request submitted successfully! Our Varkala concierge will contact you shortly." });
+    } catch (err) { next(err); }
+});
+
+
 
 /* ================= NEWSLETTER ================= */
 
@@ -108,7 +172,38 @@ router.post("/reviews", requireAuth, async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
-/* ================= WISHLIST ================= */
+/* ================= PARTNER REPLY TO REVIEW ================= */
+
+router.patch("/reviews/:id/reply", requireAuth, async (req, res, next) => {
+    try {
+        const { ObjectId } = await import("mongodb");
+        if (!ObjectId.isValid(req.params.id)) return res.status(400).json({ ok: false, message: "Invalid review ID" });
+
+        const parsed = z.object({ reply: z.string().min(1).max(1000) }).safeParse(req.body);
+        if (!parsed.success) return res.status(400).json({ ok: false, message: "Reply text is required (max 1000 characters)" });
+
+        const db = getDB();
+        const review = await db.collection("reviews").findOne({ _id: new ObjectId(req.params.id) });
+        if (!review) return res.status(404).json({ ok: false, message: "Review not found" });
+
+        // Verify the requester owns the listing this review belongs to
+        const listing = await db.collection("listings").findOne({ _id: new ObjectId(review.listingId) }).catch(() => null)
+            || await db.collection("listings").findOne({ _id: review.listingId }).catch(() => null);
+
+        if (!listing || listing.ownerEmail !== req.user.email) {
+            return res.status(403).json({ ok: false, message: "You can only reply to reviews on your own properties" });
+        }
+
+        await db.collection("reviews").updateOne(
+            { _id: new ObjectId(req.params.id) },
+            { $set: { partnerReply: parsed.data.reply, repliedAt: new Date(), repliedBy: req.user.email } }
+        );
+
+        res.json({ ok: true });
+    } catch (err) { next(err); }
+});
+
+
 
 router.get("/wishlist", requireAuth, async (req, res, next) => {
     try {

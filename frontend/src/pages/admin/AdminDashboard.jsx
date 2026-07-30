@@ -15,6 +15,9 @@ import {
   Activity,
   Menu,
   Shield,
+  Sun,
+  Moon,
+  Sparkles,
 } from 'lucide-react';
 
 import { api } from '../../utils/api.js';
@@ -28,6 +31,7 @@ import AdminWithdrawals from './AdminWithdrawals.jsx';
 import AdminSettings from './AdminSettings.jsx';
 import AdminCoupons from './AdminCoupons.jsx';
 import AdminLogs from './AdminLogs.jsx';
+import AdminPackageRequests from './AdminPackageRequests.jsx';
 import AdminDataTable from '../../components/admin/AdminDataTable.jsx';
 
 const TAB_GROUPS = [
@@ -47,11 +51,13 @@ const TAB_GROUPS = [
   {
     label: 'Operations',
     tabs: [
+      { id: 'package-requests', icon: Sparkles, label: 'Package Leads' },
       { id: 'withdrawals', icon: Banknote, label: 'Finance' },
       { id: 'support', icon: MessageSquare, label: 'Support' },
       { id: 'coupons', icon: Tag, label: 'Promotions' },
     ],
   },
+
   {
     label: 'System',
     tabs: [
@@ -68,6 +74,16 @@ export default function AdminDashboard() {
   const { logout, user } = useAuth();
 
   const adminInitials = user?.email ? user.email.split('@')[0].slice(0, 2).toUpperCase() : 'AD';
+
+  // Day / Night theme — persisted to localStorage
+  const [theme, setTheme] = useState(() => localStorage.getItem('wayzzaTheme') || 'dark');
+  useEffect(() => {
+    document.documentElement.classList.toggle('wayzza-light', theme === 'light');
+    localStorage.setItem('wayzzaTheme', theme);
+  }, [theme]);
+  function toggleTheme() {
+    setTheme((t) => (t === 'dark' ? 'light' : 'dark'));
+  }
 
   const [stats, setStats] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
@@ -120,7 +136,17 @@ export default function AdminDashboard() {
   }, [showToast]);
 
   const loadTableData = useCallback(async () => {
-    if (['overview', 'support', 'withdrawals', 'settings', 'coupons', 'logs'].includes(activeTab))
+    if (
+      [
+        'overview',
+        'support',
+        'withdrawals',
+        'settings',
+        'coupons',
+        'logs',
+        'package-requests',
+      ].includes(activeTab)
+    )
       return;
 
     setLoadingData(true);
@@ -384,18 +410,32 @@ export default function AdminDashboard() {
 
   if (errorMsg)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#050a08] font-sans p-6 text-white">
-        <div className="flex flex-col items-center gap-6 max-w-sm text-center p-10 bg-white/[0.03] border border-white/[0.08] rounded-2xl backdrop-blur-xl">
-          <div className="w-14 h-14 bg-rose-500/10 text-rose-400 rounded-2xl flex items-center justify-center">
+      <div
+        className="min-h-screen flex items-center justify-center font-sans p-6"
+        style={{ background: 'var(--dash-bg)', color: 'var(--dash-text-1)' }}
+      >
+        <div
+          className="flex flex-col items-center gap-6 max-w-sm text-center p-10 rounded-2xl"
+          style={{ background: 'var(--dash-card)', border: '1px solid var(--dash-card-border)' }}
+        >
+          <div
+            className="w-14 h-14 rounded-2xl flex items-center justify-center"
+            style={{ background: 'rgba(248,113,113,0.10)', color: 'var(--dash-danger)' }}
+          >
             <Shield size={28} />
           </div>
           <div>
-            <h1 className="text-xl font-black uppercase tracking-tight mb-1">Access Denied</h1>
-            <p className="text-sm text-white/40 font-medium">{errorMsg}</p>
+            <h1 className="text-xl font-semibold mb-1" style={{ color: 'var(--dash-text-1)' }}>
+              Access Denied
+            </h1>
+            <p className="text-sm" style={{ color: 'var(--dash-text-2)' }}>
+              {errorMsg}
+            </p>
           </div>
           <button
             onClick={() => (window.location.href = '/admin-login')}
-            className="h-11 px-6 bg-emerald-600 text-[#050a08] rounded-xl font-bold text-[11px] uppercase tracking-wider hover:bg-emerald-500 transition-colors"
+            className="h-10 px-6 rounded-lg font-semibold text-[12px] transition-colors"
+            style={{ background: 'var(--dash-accent-500)', color: '#fff' }}
           >
             Sign In Again
           </button>
@@ -405,32 +445,30 @@ export default function AdminDashboard() {
 
   if (!stats)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#050a08] text-white">
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ background: 'var(--dash-bg)', color: 'var(--dash-text-1)' }}
+      >
         <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-2 border-white/10 border-t-emerald-500 rounded-full animate-spin" />
-          <p className="text-xs font-bold text-white/30 uppercase tracking-widest">
-            Loading Command Center...
+          <div
+            className="w-9 h-9 border-2 border-t-emerald-500 rounded-full animate-spin"
+            style={{ borderColor: 'var(--dash-divider)', borderTopColor: 'var(--dash-accent-500)' }}
+          />
+          <p
+            className="text-[11px] font-medium uppercase tracking-widest"
+            style={{ color: 'var(--dash-text-3)' }}
+          >
+            Loading Control Panel...
           </p>
         </div>
       </div>
     );
 
   return (
-    <div className="min-h-screen bg-[#050a08] text-white font-sans flex overflow-hidden selection:bg-emerald-950 selection:text-emerald-200">
-      {/* ── Ambient Background ── */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-0 left-[20%] w-[40%] h-[50%] bg-emerald-600/4 blur-[160px] rounded-full" />
-        <div className="absolute bottom-0 right-[10%] w-[35%] h-[40%] bg-teal-600/3 blur-[140px] rounded-full" />
-        {/* Dot grid */}
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: 'radial-gradient(circle, rgba(16,185,129,0.8) 1px, transparent 1px)',
-            backgroundSize: '32px 32px',
-          }}
-        />
-      </div>
-
+    <div
+      className="min-h-screen font-sans flex overflow-hidden dash-transition"
+      style={{ background: 'var(--dash-bg)', color: 'var(--dash-text-1)' }}
+    >
       {/* MOBILE OVERLAY */}
       {mobileMenuOpen && (
         <div
@@ -441,87 +479,143 @@ export default function AdminDashboard() {
 
       {/* SIDEBAR */}
       <aside
-        className={`w-64 h-screen bg-black/40 border-r border-white/[0.04] flex flex-col shrink-0 fixed xl:relative z-50 transition-transform duration-300 backdrop-blur-xl ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full xl:translate-x-0'}`}
+        className={`h-screen flex flex-col shrink-0 fixed xl:relative z-50 transition-transform duration-300 dash-transition ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full xl:translate-x-0'}`}
+        style={{
+          width: '220px',
+          background: 'var(--dash-sidebar)',
+          borderRight: '1px solid var(--dash-divider)',
+        }}
       >
-        <div className="p-6 mb-2">
+        {/* Branding */}
+        <div
+          className="dash-logo-wrap flex items-center gap-2.5 px-4 cursor-pointer shrink-0"
+          style={{ height: '56px', borderBottom: '1px solid var(--dash-divider)' }}
+          onClick={() => setActiveTab('overview')}
+        >
           <div
-            className="flex items-center gap-3 cursor-pointer"
-            onClick={() => setActiveTab('overview')}
+            className="dash-logo-mark w-7 h-7 rounded-[7px] flex items-center justify-center font-bold shrink-0"
+            style={{
+              background: 'var(--dash-accent-500)',
+              color: '#050a08',
+              boxShadow: '0 0 12px rgba(16,185,129,0.22)',
+            }}
           >
-            <div className="w-9 h-9 bg-emerald-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-emerald-600/20">
-              <Shield size={16} />
+            <Shield size={13} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div
+              className="text-[13px] font-bold leading-none"
+              style={{ color: 'var(--dash-text-1)' }}
+            >
+              Wayzza
             </div>
-            <div>
-              <span className="font-black text-white text-base uppercase tracking-tight">
-                Wayzza
-              </span>
-              <p className="text-emerald-400/40 text-[9px] font-bold uppercase tracking-[0.3em] mt-0.5">
-                Control
-              </p>
+            <div
+              className="text-[9px] font-semibold uppercase tracking-[0.14em] mt-0.5"
+              style={{ color: 'var(--dash-accent)' }}
+            >
+              Control
             </div>
           </div>
         </div>
 
-        <nav className="flex-1 px-3 overflow-y-auto space-y-4">
+        {/* Navigation */}
+        <nav className="flex-1 py-3 px-2 overflow-y-auto no-scrollbar">
           {TAB_GROUPS.map((group) => (
-            <div key={group.label}>
+            <div key={group.label} className="mb-4">
               {group.label !== 'Overview' && (
-                <p className="px-3 mb-1.5 text-[10px] font-black text-white/20 uppercase tracking-[0.4em]">
+                <p
+                  className="text-[9px] font-bold uppercase tracking-[0.14em] px-2 mb-1"
+                  style={{ color: 'var(--dash-text-3)' }}
+                >
                   {group.label}
                 </p>
               )}
-              <div className="space-y-0.5">
-                {group.tabs.map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => {
-                      setActiveTab(tab.id);
-                      setSearchQuery('');
-                      setMobileMenuOpen(false);
+              {group.tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                    setSearchQuery('');
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`dash-nav-item${activeTab === tab.id ? ' dash-active' : ''} w-full flex items-center gap-2.5 h-[33px] px-2.5 rounded-[7px] mb-0.5 text-left`}
+                  style={{
+                    background: activeTab === tab.id ? 'var(--dash-accent-dim)' : 'transparent',
+                  }}
+                >
+                  <tab.icon
+                    size={14}
+                    className="dash-nav-icon shrink-0"
+                    style={{
+                      color: activeTab === tab.id ? 'var(--dash-accent)' : 'var(--dash-text-3)',
                     }}
-                    className={`w-full flex items-center gap-3 py-2.5 px-3 rounded-xl font-bold text-[11px] uppercase tracking-wide transition-all ${
-                      activeTab === tab.id
-                        ? 'bg-white/[0.05] text-white border border-white/[0.05]'
-                        : 'text-white/40 hover:bg-white/[0.02] hover:text-white/70 border border-transparent'
-                    }`}
+                  />
+                  <span
+                    className="text-[12px] truncate"
+                    style={{
+                      color: activeTab === tab.id ? 'var(--dash-text-1)' : 'var(--dash-text-2)',
+                      fontWeight: activeTab === tab.id ? 600 : 500,
+                    }}
                   >
-                    <tab.icon
-                      size={14}
-                      className={activeTab === tab.id ? 'text-emerald-400' : 'text-white/20'}
-                    />
                     {tab.label}
-                    {tab.id === 'support' && openTickets > 0 && (
-                      <span className="ml-auto bg-rose-500/20 text-rose-400 text-[10px] font-black px-1.5 py-0.5 rounded-md">
-                        {openTickets}
-                      </span>
-                    )}
-                    {tab.id === 'withdrawals' && pendingWithdrawals > 0 && (
-                      <span className="ml-auto bg-amber-500/20 text-amber-400 text-[10px] font-black px-1.5 py-0.5 rounded-md">
-                        {pendingWithdrawals}
-                      </span>
-                    )}
-                  </button>
-                ))}
-              </div>
+                  </span>
+                  {tab.id === 'support' && openTickets > 0 && (
+                    <span
+                      className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-[4px] dash-badge-pop"
+                      style={{ background: 'rgba(248,113,113,0.12)', color: 'var(--dash-danger)' }}
+                    >
+                      {openTickets}
+                    </span>
+                  )}
+                  {tab.id === 'withdrawals' && pendingWithdrawals > 0 && (
+                    <span
+                      className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-[4px] dash-badge-pop"
+                      style={{ background: 'rgba(251,191,36,0.12)', color: 'var(--dash-warning)' }}
+                    >
+                      {pendingWithdrawals}
+                    </span>
+                  )}
+                </button>
+              ))}
             </div>
           ))}
         </nav>
 
-        <div className="p-4 mt-auto space-y-3">
-          <div className="bg-white/[0.02] rounded-xl p-4 border border-white/[0.04]">
-            <div className="flex items-center gap-2 mb-1">
-              <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse shadow-sm shadow-emerald-400/60" />
-              <span className="text-[10px] font-black text-white uppercase tracking-wide">
-                Secure Link
-              </span>
-            </div>
-            <p className="text-[10px] text-white/20 font-mono tracking-tight">NODE_OK // TLS_1.3</p>
+        {/* Footer */}
+        <div
+          className="px-2 pb-3 pt-2 shrink-0"
+          style={{ borderTop: '1px solid var(--dash-divider)' }}
+        >
+          {/* Secure badge */}
+          <div
+            className="flex items-center gap-2 px-2 py-2 rounded-[7px] mb-1"
+            style={{
+              background: 'rgba(16,185,129,0.05)',
+              border: '1px solid rgba(16,185,129,0.10)',
+            }}
+          >
+            <div
+              className="w-[5px] h-[5px] rounded-full dash-status-dot"
+              style={{ background: 'var(--dash-accent)' }}
+            />
+            <span className="text-[10px] font-medium" style={{ color: 'var(--dash-text-3)' }}>
+              NODE_OK · TLS 1.3
+            </span>
           </div>
           <button
             onClick={handleLogout}
-            className="w-full h-11 flex items-center justify-center gap-2 bg-rose-500/10 border border-rose-500/10 rounded-xl font-bold text-[11px] uppercase tracking-wider text-rose-400 hover:bg-rose-500 hover:text-white transition-all"
+            className="w-full flex items-center justify-center gap-2 py-2 rounded-[7px] text-[11px] font-medium transition-all"
+            style={{ color: 'var(--dash-text-3)' }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(248,113,113,0.08)';
+              e.currentTarget.style.color = 'var(--dash-danger)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.color = 'var(--dash-text-3)';
+            }}
           >
-            <LogOut size={14} /> Sign Out
+            <LogOut size={13} /> Sign out
           </button>
         </div>
       </aside>
@@ -529,56 +623,98 @@ export default function AdminDashboard() {
       {/* MAIN CONTENT */}
       <main className="flex-1 h-screen overflow-y-auto relative z-10">
         {/* HEADER */}
-        <header className="sticky top-0 z-50 bg-[#050a08]/80 backdrop-blur-xl border-b border-white/[0.04] px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setMobileMenuOpen(true)}
-                className="xl:hidden w-10 h-10 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white/60 flex items-center justify-center hover:bg-white/[0.05] transition-colors"
+        <header
+          className="sticky top-0 z-50 backdrop-blur-xl px-6 py-0 flex items-center justify-between dash-transition"
+          style={{
+            height: '56px',
+            background: 'var(--dash-topbar)',
+            borderBottom: '1px solid var(--dash-divider)',
+          }}
+        >
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className="xl:hidden w-9 h-9 rounded-lg flex items-center justify-center transition-colors"
+              style={{
+                background: 'rgba(128,128,128,0.06)',
+                border: '1px solid var(--dash-divider)',
+                color: 'var(--dash-text-2)',
+              }}
+            >
+              <Menu size={16} />
+            </button>
+            <div>
+              <h2
+                className="text-[14px] font-semibold leading-none"
+                style={{ color: 'var(--dash-text-1)' }}
               >
-                <Menu size={18} />
-              </button>
-              <div>
-                <h2 className="text-xl font-black uppercase tracking-tight text-white">
-                  {activeTab === 'overview'
-                    ? 'Dashboard Overview'
-                    : activeTab === 'support'
-                      ? 'Customer Support'
-                      : activeTab === 'withdrawals'
-                        ? 'Financial Operations'
-                        : `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Management`}
-                </h2>
-                <div className="flex items-center gap-2 mt-0.5">
-                  <span className="text-[10px] font-bold text-emerald-400/60 uppercase tracking-widest">
-                    Secure Console
-                  </span>
-                  <span className="text-white/10 font-mono text-[10px]">|</span>
-                  <span className="text-white/20 font-mono text-[10px]">{timeStr}</span>
-                </div>
+                {activeTab === 'overview'
+                  ? 'Dashboard Overview'
+                  : activeTab === 'support'
+                    ? 'Customer Support'
+                    : activeTab === 'withdrawals'
+                      ? 'Financial Operations'
+                      : `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Management`}
+              </h2>
+              <div className="flex items-center gap-1.5 mt-1">
+                <div
+                  className="w-[5px] h-[5px] rounded-full dash-status-dot"
+                  style={{ background: 'var(--dash-accent)' }}
+                />
+                <span className="text-[10px] font-medium" style={{ color: 'var(--dash-text-3)' }}>
+                  Secure Console · {timeStr}
+                </span>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setActiveTab('support')}
-                title="View support tickets"
-                className="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white/40 flex items-center justify-center hover:bg-white/[0.05] hover:text-white transition-all relative"
-              >
-                <Bell size={15} />
-                {openTickets > 0 && (
-                  <span className="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse" />
-                )}
-              </button>
-              <div
-                title={user?.email || 'Admin'}
-                className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-black text-xs shadow-lg shadow-emerald-600/20 cursor-default"
-              >
-                {adminInitials}
-              </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {/* Day / Night toggle */}
+            <button
+              onClick={toggleTheme}
+              className="dash-theme-btn w-8 h-8 rounded-lg flex items-center justify-center"
+              style={{
+                background: 'rgba(128,128,128,0.06)',
+                border: '1px solid var(--dash-divider)',
+                color: 'var(--dash-text-2)',
+              }}
+              title={theme === 'dark' ? 'Switch to Light mode' : 'Switch to Dark mode'}
+              aria-label="Toggle theme"
+            >
+              {theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
+            </button>
+            <button
+              onClick={() => setActiveTab('support')}
+              title="View support tickets"
+              className="dash-avatar w-8 h-8 rounded-lg flex items-center justify-center transition-colors relative"
+              style={{
+                background: 'rgba(128,128,128,0.06)',
+                border: '1px solid var(--dash-divider)',
+                color: 'var(--dash-text-2)',
+              }}
+            >
+              <Bell size={14} />
+              {openTickets > 0 && (
+                <span
+                  className="absolute top-1.5 right-1.5 w-[5px] h-[5px] rounded-full"
+                  style={{ background: 'var(--dash-danger)' }}
+                />
+              )}
+            </button>
+            <div
+              title={user?.email || 'Admin'}
+              className="dash-avatar w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold cursor-default"
+              style={{
+                background: 'var(--dash-accent-dim)',
+                border: '1px solid var(--dash-accent-border)',
+                color: 'var(--dash-accent)',
+              }}
+            >
+              {adminInitials}
             </div>
           </div>
         </header>
 
-        <div className="p-8">
+        <div className="p-6">
           <AnimatePresence mode="wait">
             {/* FIX #53: Added key={activeTab} so AnimatePresence can detect tab changes and animate */}
             {activeTab === 'overview' && (
@@ -605,6 +741,8 @@ export default function AdminDashboard() {
                 loadingData={loadingData}
               />
             )}
+
+            {activeTab === 'package-requests' && <AdminPackageRequests key="package-requests" />}
 
             {activeTab === 'settings' && <AdminSettings key="settings" />}
 

@@ -78,32 +78,27 @@ export default function PartnerEarnings() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#050a08] font-sans text-white selection:bg-emerald-900/50 selection:text-emerald-200 pb-20">
-      {/* ── Ambient Background ── */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-emerald-500/5 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-700/5 blur-[100px] rounded-full" />
-        <div
-          className="absolute inset-0 opacity-[0.015]"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(52,211,153,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(52,211,153,0.6) 1px, transparent 1px)',
-            backgroundSize: '48px 48px',
-          }}
-        />
-      </div>
-
-      <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 py-10 space-y-8">
+    <div
+      className="font-sans pb-16 dash-transition"
+      style={{ background: 'var(--dash-bg)', color: 'var(--dash-text-1)' }}
+    >
+      <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-10 py-6 space-y-6">
         {/* HEADER */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-white/[0.03] border border-white/[0.08] p-8 rounded-3xl backdrop-blur-xl">
+        <div className="dash-fade-1 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <div className="flex items-center gap-2 text-emerald-400 font-black text-[10px] uppercase tracking-[0.4em] mb-1">
-              <TrendingUp size={12} /> Earnings
-            </div>
-            <h1 className="text-3xl font-black text-white tracking-tight uppercase">
+            <p
+              className="text-[10px] font-semibold uppercase tracking-[0.15em] mb-1"
+              style={{ color: 'var(--dash-accent)' }}
+            >
+              Earnings
+            </p>
+            <h1
+              className="text-[20px] font-semibold leading-snug"
+              style={{ color: 'var(--dash-text-1)' }}
+            >
               Revenue Overview
             </h1>
-            <p className="text-sm text-white/30 font-medium">
+            <p className="text-[11px] mt-1" style={{ color: 'var(--dash-text-3)' }}>
               Track your property earnings and payouts.
             </p>
           </div>
@@ -123,7 +118,6 @@ export default function PartnerEarnings() {
                 }));
               if (!rows.length) return;
               const headers = Object.keys(rows[0]);
-              // BUG-021 fix: escape embedded double quotes per RFC 4180 (double them)
               const escapeCSV = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
               const csv = [
                 headers.join(','),
@@ -137,37 +131,43 @@ export default function PartnerEarnings() {
               a.click();
               URL.revokeObjectURL(url);
             }}
-            className="h-11 px-5 bg-white/[0.05] border border-white/[0.1] rounded-xl text-white font-bold text-[11px] uppercase tracking-wider flex items-center gap-2 hover:bg-white/[0.08] transition-colors shadow-sm disabled:opacity-30 disabled:cursor-not-allowed"
-            // FIX #73: hide/disable CSV export when there are no paid bookings to export
+            className="h-9 px-3.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            style={{
+              background: 'rgba(128,128,128,0.06)',
+              border: '1px solid var(--dash-divider)',
+              color: 'var(--dash-text-2)',
+            }}
             disabled={
               bookings.filter((b) => ['paid', 'arrived', 'departed'].includes(b.status)).length ===
               0
             }
           >
-            <Download size={14} /> Export Report
+            <Download size={13} /> Export Report
           </button>
         </div>
 
         {/* KPI CARDS */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
-          {kpis.map((c, i) => (
-            <motion.div
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 dash-fade-2">
+          {kpis.map((c) => (
+            <div
               key={c.label}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.08 }}
-              className="bg-white/[0.03] border border-white/[0.08] p-6 rounded-2xl backdrop-blur-xl hover:bg-white/[0.05] transition-colors"
+              className="dash-kpi-card p-5 rounded-xl"
+              style={{
+                background: 'var(--dash-card)',
+                border: '1px solid var(--dash-card-border)',
+              }}
             >
-              <div
-                className={`w-11 h-11 rounded-xl ${c.bg} ${c.color} flex items-center justify-center mb-4`}
-              >
-                <c.icon size={20} />
-              </div>
-              <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-1">
+              <p className="text-[10.5px] font-medium mb-2" style={{ color: 'var(--dash-text-3)' }}>
                 {c.label}
               </p>
-              <p className="text-2xl font-black text-white tracking-tight">{c.value}</p>
-            </motion.div>
+              <div className="h-px mb-2.5" style={{ background: 'var(--dash-divider)' }} />
+              <p
+                className="text-[22px] font-semibold tracking-tight leading-none mb-1.5"
+                style={{ color: 'var(--dash-text-1)' }}
+              >
+                {c.value}
+              </p>
+            </div>
           ))}
         </div>
 

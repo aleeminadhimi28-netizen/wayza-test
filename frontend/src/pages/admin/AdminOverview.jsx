@@ -87,50 +87,138 @@ export default function AdminOverview({ stats, setActiveTab }) {
       className="space-y-8"
     >
       {/* KPI CARDS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 dash-fade-1">
         {kpiCards.map((card, i) => (
           <div
             key={i}
-            className="bg-white/[0.03] border border-white/[0.08] p-6 rounded-2xl backdrop-blur-xl hover:bg-white/[0.05] transition-colors"
+            className="dash-kpi-card p-5 rounded-xl transition-all hover:border-[var(--dash-accent-border)] hover:shadow-lg"
+            style={{ background: 'var(--dash-card)', border: '1px solid var(--dash-card-border)' }}
           >
-            <div className="flex justify-between items-start mb-4">
-              <div
-                className={`w-11 h-11 rounded-xl ${card.bg} ${card.color} flex items-center justify-center`}
-              >
-                <card.icon size={20} />
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-[10.5px] font-medium" style={{ color: 'var(--dash-text-3)' }}>
+                {card.title}
+              </p>
+              <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${card.bg}`}>
+                <card.icon size={14} className={card.color} />
               </div>
-              <span
-                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide ${card.up ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}`}
-              >
-                {card.up && <ArrowUpRight size={10} strokeWidth={3} />}
-                {card.trend}
-              </span>
             </div>
-            <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-1">
-              {card.title}
+            <div className="h-px mb-2.5" style={{ background: 'var(--dash-divider)' }} />
+            <p
+              className="text-[24px] font-semibold tracking-tight leading-none mb-2"
+              style={{ color: 'var(--dash-text-1)' }}
+            >
+              {card.value}
             </p>
-            <p className="text-2xl font-black text-white tracking-tight">{card.value}</p>
+            <p
+              className="text-[10px] font-medium"
+              style={{ color: card.up ? 'var(--dash-accent)' : 'var(--dash-warning)' }}
+            >
+              {card.up ? '↑ ' : ''}
+              {card.trend}
+            </p>
           </div>
         ))}
       </div>
 
+      {/* QUICK ACTION SHORTCUTS */}
+      <div
+        className="p-4 rounded-xl flex flex-wrap items-center justify-between gap-3"
+        style={{ background: 'var(--dash-card)', border: '1px solid var(--dash-card-border)' }}
+      >
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full" style={{ background: 'var(--dash-accent)' }} />
+          <span
+            className="text-[11px] font-bold uppercase tracking-wider"
+            style={{ color: 'var(--dash-text-2)' }}
+          >
+            Quick Actions:
+          </span>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => setActiveTab('listings')}
+            className="px-3 py-1.5 rounded-lg text-[11px] font-semibold flex items-center gap-1.5 transition-all"
+            style={{
+              background: 'var(--dash-accent-dim)',
+              color: 'var(--dash-accent)',
+              border: '1px solid var(--dash-accent-border)',
+            }}
+          >
+            <CheckCircle size={12} /> Review Inventory ({stats.pendingListings || 0})
+          </button>
+          <button
+            onClick={() => setActiveTab('partners')}
+            className="px-3 py-1.5 rounded-lg text-[11px] font-semibold flex items-center gap-1.5 transition-all"
+            style={{
+              background: 'rgba(128,128,128,0.06)',
+              color: 'var(--dash-text-2)',
+              border: '1px solid var(--dash-card-border)',
+            }}
+          >
+            <Briefcase size={12} /> Manage Partners
+          </button>
+          <button
+            onClick={() => setActiveTab('withdrawals')}
+            className="px-3 py-1.5 rounded-lg text-[11px] font-semibold flex items-center gap-1.5 transition-all"
+            style={{
+              background: 'rgba(128,128,128,0.06)',
+              color: 'var(--dash-text-2)',
+              border: '1px solid var(--dash-card-border)',
+            }}
+          >
+            <Banknote size={12} /> Payout Operations
+          </button>
+          <button
+            onClick={() => setActiveTab('coupons')}
+            className="px-3 py-1.5 rounded-lg text-[11px] font-semibold flex items-center gap-1.5 transition-all"
+            style={{
+              background: 'rgba(128,128,128,0.06)',
+              color: 'var(--dash-text-2)',
+              border: '1px solid var(--dash-card-border)',
+            }}
+          >
+            <Tag size={12} /> Promotions
+          </button>
+        </div>
+      </div>
+
       {/* CHART + ACTIVITY */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 dash-fade-2">
         {/* REVENUE CHART */}
-        <div className="xl:col-span-2 bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6 backdrop-blur-xl">
-          <div className="flex justify-between items-center mb-6">
+        <div
+          className="xl:col-span-2 dash-chart-card p-6 rounded-xl"
+          style={{ background: 'var(--dash-card)', border: '1px solid var(--dash-card-border)' }}
+        >
+          <div className="flex justify-between items-center mb-5">
             <div>
-              <h3 className="text-lg font-black text-white uppercase tracking-tight">
+              <h3 className="text-[13px] font-semibold" style={{ color: 'var(--dash-text-1)' }}>
                 Revenue Overview
               </h3>
-              <p className="text-xs text-white/30 font-medium mt-0.5">Monthly platform earnings</p>
+              <p
+                className="text-[10.5px] font-medium mt-0.5"
+                style={{ color: 'var(--dash-text-3)' }}
+              >
+                Monthly platform earnings
+              </p>
             </div>
           </div>
-          <div className="h-[350px]">
+          <div className="h-[300px]">
             {!stats.monthlyRevenue || stats.monthlyRevenue.length === 0 ? (
-              <div className="w-full h-full flex flex-col items-center justify-center bg-white/[0.01] rounded-xl border border-white/[0.05]">
-                <TrendingUp size={32} className="text-white/10 mb-3" />
-                <p className="text-xs font-bold text-white/30 uppercase tracking-widest">
+              <div
+                className="w-full h-full flex flex-col items-center justify-center rounded-xl"
+                style={{
+                  background: 'rgba(255,255,255,0.01)',
+                  border: '1px solid var(--dash-divider)',
+                }}
+              >
+                <TrendingUp
+                  size={28}
+                  style={{ color: 'var(--dash-text-3)', marginBottom: '8px' }}
+                />
+                <p
+                  className="text-[11px] font-medium uppercase tracking-widest"
+                  style={{ color: 'var(--dash-text-3)' }}
+                >
                   No revenue data yet
                 </p>
               </div>
@@ -139,44 +227,44 @@ export default function AdminOverview({ stats, setActiveTab }) {
                 <AreaChart data={stats.monthlyRevenue}>
                   <defs>
                     <linearGradient id="colorEmerald" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.2} />
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.15} />
                       <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid
                     strokeDasharray="3 3"
                     vertical={false}
-                    stroke="rgba(255,255,255,0.05)"
+                    stroke="var(--dash-divider)"
                   />
                   <XAxis
                     dataKey="name"
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10, fontWeight: 'bold' }}
+                    tick={{ fill: 'var(--dash-text-3)', fontSize: 10, fontWeight: 500 }}
                     dy={10}
                   />
                   <YAxis
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10, fontWeight: 'bold' }}
+                    tick={{ fill: 'var(--dash-text-3)', fontSize: 10, fontWeight: 500 }}
                     tickFormatter={(val) => `₹${val}`}
                   />
                   <RechartsTooltip
                     contentStyle={{
-                      background: '#050a08',
-                      border: '1px solid rgba(255,255,255,0.1)',
-                      borderRadius: '12px',
+                      background: 'var(--dash-sidebar)',
+                      border: '1px solid var(--dash-card-border)',
+                      borderRadius: '8px',
                       fontSize: '11px',
-                      padding: '12px',
-                      color: '#fff',
+                      padding: '10px 14px',
+                      color: 'var(--dash-text-1)',
                     }}
-                    itemStyle={{ color: '#10b981', fontWeight: 'bold' }}
+                    itemStyle={{ color: 'var(--dash-accent)', fontWeight: 600 }}
                   />
                   <Area
                     type="monotone"
                     dataKey="rev"
                     stroke="#10b981"
-                    strokeWidth={3}
+                    strokeWidth={1.5}
                     fillOpacity={1}
                     fill="url(#colorEmerald)"
                   />
@@ -187,38 +275,60 @@ export default function AdminOverview({ stats, setActiveTab }) {
         </div>
 
         {/* RECENT ACTIVITY */}
-        <div className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6 backdrop-blur-xl flex flex-col">
+        <div
+          className="p-6 rounded-xl flex flex-col"
+          style={{ background: 'var(--dash-card)', border: '1px solid var(--dash-card-border)' }}
+        >
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-black text-white uppercase tracking-tight">
+            <h3 className="text-[13px] font-semibold" style={{ color: 'var(--dash-text-1)' }}>
               Recent Activity
             </h3>
             <span
-              className="text-xs font-bold text-emerald-400 hover:text-emerald-300 cursor-pointer transition-colors uppercase tracking-wider"
+              className="text-[10.5px] font-semibold cursor-pointer transition-opacity hover:opacity-70"
+              style={{ color: 'var(--dash-accent)' }}
               onClick={() => setActiveTab('bookings')}
             >
-              View All
+              View all
             </span>
           </div>
-          <div className="space-y-2 flex-1 overflow-y-auto">
+          <div className="space-y-0.5 flex-1 overflow-y-auto">
             {stats.recentBookings?.slice(0, 8).map((b, i) => (
               <div
                 key={i}
-                className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/[0.02] transition-colors"
+                className="flex items-center gap-2.5 py-2.5"
+                style={{ borderBottom: '1px solid var(--dash-divider)' }}
               >
                 <div
-                  className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${b.status === 'paid' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}`}
-                >
-                  {b.status === 'paid' ? <CheckCircle size={14} /> : <Clock size={14} />}
-                </div>
+                  className="w-[6px] h-[6px] rounded-full shrink-0 dash-dot-paid"
+                  style={{
+                    background: b.status === 'paid' ? 'var(--dash-accent)' : 'var(--dash-warning)',
+                  }}
+                />
                 <div className="flex-1 min-w-0">
-                  <p className="font-bold text-white text-sm truncate">{b.title}</p>
-                  <p className="text-xs text-white/30 font-medium truncate">
+                  <p
+                    className="text-[11.5px] font-medium truncate"
+                    style={{ color: 'var(--dash-text-1)' }}
+                  >
+                    {b.title}
+                  </p>
+                  <p
+                    className="text-[10px] truncate mt-0.5"
+                    style={{ color: 'var(--dash-text-3)' }}
+                  >
                     {b.guestEmail?.split('@')?.[0]}
                   </p>
                 </div>
-                <div className="text-right">
-                  <p className="font-black text-sm text-white">₹{b.totalPrice?.toLocaleString()}</p>
-                  <p className="text-[10px] font-bold text-white/20 uppercase tracking-wide capitalize">
+                <div className="text-right shrink-0">
+                  <p
+                    className="text-[11.5px] font-semibold"
+                    style={{ color: 'var(--dash-text-1)' }}
+                  >
+                    ₹{b.totalPrice?.toLocaleString()}
+                  </p>
+                  <p
+                    className="text-[9.5px] capitalize mt-0.5"
+                    style={{ color: 'var(--dash-text-3)' }}
+                  >
                     {b.status}
                   </p>
                 </div>
@@ -226,8 +336,14 @@ export default function AdminOverview({ stats, setActiveTab }) {
             ))}
             {(!stats.recentBookings || stats.recentBookings.length === 0) && (
               <div className="flex flex-col items-center justify-center py-12 text-center">
-                <CalendarCheck size={24} className="text-white/10 mb-2" />
-                <p className="text-xs font-bold text-white/30 uppercase tracking-widest">
+                <CalendarCheck
+                  size={22}
+                  style={{ color: 'var(--dash-text-3)', marginBottom: '8px' }}
+                />
+                <p
+                  className="text-[11px] font-medium uppercase tracking-widest"
+                  style={{ color: 'var(--dash-text-3)' }}
+                >
                   No recent bookings
                 </p>
               </div>

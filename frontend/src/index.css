@@ -13,7 +13,13 @@
 }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
   background-color: var(--brand-bg);
   color: var(--brand-primary);
   overflow-x: hidden;
@@ -195,4 +201,245 @@ video,
 iframe {
   max-width: 100%;
   height: auto;
+}
+
+/* ════════════════════════════════════════════
+   DASHBOARD DESIGN SYSTEM
+   Partner & Admin dashboards — CSS tokens
+════════════════════════════════════════════ */
+
+/* Dark mode tokens (default for dashboards) */
+:root {
+  --dash-bg: #050a08;
+  --dash-sidebar: #070d0a;
+  --dash-card: rgba(255, 255, 255, 0.03);
+  --dash-card-border: rgba(255, 255, 255, 0.07);
+  --dash-divider: rgba(255, 255, 255, 0.06);
+  --dash-accent: #34d399; /* emerald-400 */
+  --dash-accent-500: #10b981; /* emerald-500 — matches main site */
+  --dash-accent-dim: rgba(52, 211, 153, 0.1);
+  --dash-accent-border: rgba(52, 211, 153, 0.18);
+  --dash-text-1: #f0f0ee;
+  --dash-text-2: rgba(240, 240, 238, 0.5);
+  --dash-text-3: rgba(240, 240, 238, 0.25);
+  --dash-danger: #f87171;
+  --dash-warning: #fbbf24;
+  --dash-topbar: rgba(5, 10, 8, 0.8);
+}
+
+/* Light mode overrides — applied via html.wayzza-light */
+html.wayzza-light {
+  --dash-bg: #f8faf9;
+  --dash-sidebar: #ffffff;
+  --dash-card: #ffffff;
+  --dash-card-border: rgba(0, 0, 0, 0.08);
+  --dash-divider: rgba(0, 0, 0, 0.07);
+  --dash-accent: #059669; /* emerald-600 — readable on white */
+  --dash-accent-500: #10b981;
+  --dash-accent-dim: rgba(16, 185, 129, 0.08);
+  --dash-accent-border: rgba(16, 185, 129, 0.2);
+  --dash-text-1: #0f172a; /* slate-900 — matches main site */
+  --dash-text-2: rgba(15, 23, 42, 0.55);
+  --dash-text-3: rgba(15, 23, 42, 0.35);
+  --dash-danger: #dc2626;
+  --dash-warning: #d97706;
+  --dash-topbar: rgba(255, 255, 255, 0.9);
+}
+
+/* ── Micro-animation keyframes ── */
+
+@keyframes dash-fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dash-dotPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(16, 185, 129, 0);
+  }
+}
+
+@keyframes dash-statusRing {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 5px rgba(16, 185, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+@keyframes dash-badgePop {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ── Dashboard utility classes ── */
+
+/* Staggered content fade-in */
+.dash-fade-1 {
+  animation: dash-fadeUp 0.4s ease both;
+}
+.dash-fade-2 {
+  animation: dash-fadeUp 0.4s 0.05s ease both;
+}
+.dash-fade-3 {
+  animation: dash-fadeUp 0.4s 0.1s ease both;
+}
+.dash-fade-4 {
+  animation: dash-fadeUp 0.4s 0.15s ease both;
+}
+
+/* KPI card hover lift */
+.dash-kpi-card {
+  transform: translateY(0);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.15s,
+    background 0.15s;
+}
+.dash-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(16, 185, 129, 0.08);
+}
+html.wayzza-light .dash-kpi-card:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.09);
+}
+
+/* Nav item accent bar */
+.dash-nav-item {
+  position: relative;
+  transition: background 0.12s ease;
+}
+.dash-nav-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2.5px;
+  height: 0;
+  background: var(--dash-accent);
+  border-radius: 0 3px 3px 0;
+  transition: height 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.dash-nav-item.dash-active::before {
+  height: 18px;
+}
+
+/* Nav icon nudge */
+.dash-nav-icon {
+  transition:
+    opacity 0.12s ease,
+    transform 0.18s ease;
+}
+.dash-nav-item:hover .dash-nav-icon {
+  transform: translateX(2px);
+}
+.dash-nav-item.dash-active .dash-nav-icon {
+  transform: translateX(2px);
+}
+
+/* Activity dot pulse */
+.dash-dot-paid {
+  animation: dash-dotPulse 2.5s ease-in-out infinite;
+}
+
+/* Status dot ring */
+.dash-status-dot {
+  animation: dash-statusRing 2s ease-out infinite;
+}
+
+/* Badge pop */
+.dash-badge-pop {
+  animation: dash-badgePop 0.3s ease both;
+}
+
+/* Topbar scroll shadow */
+.dash-topbar-scrolled {
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.18);
+}
+
+/* Logo hover spin */
+.dash-logo-mark {
+  transition:
+    transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.2s ease;
+}
+.dash-logo-wrap:hover .dash-logo-mark {
+  transform: rotate(8deg) scale(1.08);
+  box-shadow: 0 0 18px rgba(16, 185, 129, 0.35);
+}
+
+/* Chart card shimmer top-edge on hover */
+.dash-chart-card {
+  position: relative;
+  overflow: hidden;
+}
+.dash-chart-card::before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 8%;
+  right: 8%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--dash-accent), transparent);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.dash-chart-card:hover::before {
+  opacity: 0.45;
+}
+
+/* Avatar ring on hover */
+.dash-avatar {
+  transition: box-shadow 0.2s ease;
+}
+.dash-avatar:hover {
+  box-shadow: 0 0 0 2px var(--dash-accent);
+}
+
+/* Theme toggle button */
+.dash-theme-btn {
+  transition:
+    transform 0.2s ease,
+    background 0.15s;
+}
+.dash-theme-btn:hover {
+  transform: rotate(12deg);
+}
+.dash-theme-btn:active {
+  transform: rotate(20deg) scale(0.9);
+}
+
+/* Smooth colour transitions on theme switch */
+.dash-transition {
+  transition:
+    color 0.3s,
+    background 0.3s,
+    border-color 0.3s,
+    box-shadow 0.3s;
 }

@@ -45,20 +45,60 @@ router.post("/login", async (req, res, next) => {
 
 router.patch("/config", requireAuth, requireRole(["admin"]), async (req, res, next) => {
     try {
-        const { gstRate, serviceFee, commissionRate } = req.body;
+        const { gstRate, serviceFee, commissionRate, supportPhone, supportWhatsApp, supportEmail } = req.body;
         if (typeof gstRate !== "number" || typeof serviceFee !== "number" || typeof commissionRate !== "number") {
-             return res.status(400).json({ ok: false, message: "Invalid configuration types" });
+             return res.status(400).json({ ok: false, message: "Invalid financial configuration types" });
         }
         
+        const updateDoc = {
+            gstRate,
+            serviceFee,
+            commissionRate,
+            updatedAt: new Date()
+        };
+        if (supportPhone !== undefined) updateDoc.supportPhone = String(supportPhone).trim();
+        if (supportWhatsApp !== undefined) updateDoc.supportWhatsApp = String(supportWhatsApp).replace(/[^0-9]/g, '').trim();
+        if (supportEmail !== undefined) updateDoc.supportEmail = String(supportEmail).trim();
+
         const db = getDB();
         await db.collection("settings").updateOne(
             { type: "financials" },
-            { $set: { gstRate, serviceFee, commissionRate, updatedAt: new Date() } },
+            { $set: updateDoc },
             { upsert: true }
         );
-        res.json({ ok: true, message: "Platform configuration updated safely." });
+        res.json({ ok: true, message: "Platform configuration updated successfully." });
     } catch (err) { next(err); }
 });
+
+router.patch("/promo-offer", requireAuth, requireRole(["admin"]), async (req, res, next) => {
+    try {
+        const { title, subtitle, label, heading, text, button, image, isActive } = req.body;
+        const db = getDB();
+        
+        const updateData = {
+            type: "promoOffer",
+            updatedAt: new Date(),
+            updatedBy: req.user.email
+        };
+
+        if (title !== undefined) updateData.title = String(title);
+        if (subtitle !== undefined) updateData.subtitle = String(subtitle);
+        if (label !== undefined) updateData.label = String(label);
+        if (heading !== undefined) updateData.heading = String(heading);
+        if (text !== undefined) updateData.text = String(text);
+        if (button !== undefined) updateData.button = String(button);
+        if (image !== undefined) updateData.image = String(image);
+        if (isActive !== undefined) updateData.isActive = Boolean(isActive);
+
+        await db.collection("settings").updateOne(
+            { type: "promoOffer" },
+            { $set: updateData },
+            { upsert: true }
+        );
+        res.json({ ok: true, message: "Promo offer banner updated successfully." });
+    } catch (err) { next(err); }
+});
+
 
 router.get("/stats", requireAuth, requireRole(["admin"]), async (req, res, next) => {
     try {
@@ -505,4 +545,33 @@ router.get("/logs", requireAuth, requireRole(["admin"]), async (req, res, next) 
     } catch (err) { next(err); }
 });
 
+// ===== CUSTOM PACKAGE REQUESTS MANAGEMENT =====
+
+router.get("/package-requests", requireAuth, requireRole(["admin"]), async (req, res, next) => {
+    try {
+        const db = getDB();
+        const list = await db.collection("customPackageRequests").find({}).sort({ createdAt: -1 }).toArray();
+        res.json({ ok: true, data: list });
+    } catch (err) { next(err); }
+});
+
+router.patch("/package-requests/:id", requireAuth, requireRole(["admin"]), async (req, res, next) => {
+    try {
+        if (!ObjectId.isValid(req.params.id)) return res.status(400).json({ ok: false, message: "Invalid ID" });
+        const db = getDB();
+        const { status, notes } = req.body;
+        
+        const updateDoc = { updatedAt: new Date(), updatedBy: req.user.email };
+        if (status) updateDoc.status = status;
+        if (notes !== undefined) updateDoc.adminNotes = notes;
+
+        await db.collection("customPackageRequests").updateOne(
+            { _id: new ObjectId(req.params.id) },
+            { $set: updateDoc }
+        );
+        res.json({ ok: true, message: "Package request status updated." });
+    } catch (err) { next(err); }
+});
+
 export default router;
+

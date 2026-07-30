@@ -44,6 +44,7 @@ export default function PartnerAnalytics() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [mainSector, setMainSector] = useState('stays');
+  const [timeframe, setTimeframe] = useState('6m');
 
   useEffect(() => {
     if (!user?.email) return;
@@ -55,10 +56,9 @@ export default function PartnerAnalytics() {
       api.partnerStatus(),
     ])
       .then(([m, e, b, s]) => {
-        if (m.ok) setMonthly(m.data || []);
-        if (e.ok) setEarnings(e);
-        // BUG-014 fix: getPartnerBookings now returns { ok, data } envelope
-        setBookings(Array.isArray(b.data) ? b.data : []);
+        if (m?.ok) setMonthly(m.data || []);
+        if (e?.ok) setEarnings(e);
+        setBookings(Array.isArray(b?.data) ? b.data : Array.isArray(b) ? b : []);
         if (s && s.mainSector) setMainSector(s.mainSector);
         setLoading(false);
       })
@@ -87,7 +87,9 @@ export default function PartnerAnalytics() {
                 : 'Cancelled',
       value,
     }));
-  const occupancy = monthly.map((m) => ({ month: m.month, bookings: m.bookings || 0 }));
+  // Apply timeframe filter to monthly data
+  const filteredMonthly = timeframe === '6m' ? monthly.slice(-6) : monthly.slice(-12);
+  const occupancy = filteredMonthly.map((m) => ({ month: m.month, bookings: m.bookings || 0 }));
 
   // Derived insights
   const totalBookings = bookings.length;
@@ -99,23 +101,23 @@ export default function PartnerAnalytics() {
   const avgBookingValue =
     paidBookings > 0 ? Math.round((earnings?.totalRevenue || 0) / paidBookings) : 0;
   const bestMonth =
-    monthly.length > 0
-      ? monthly.reduce((a, b) => (b.revenue > a.revenue ? b : a), monthly[0])
+    filteredMonthly.length > 0
+      ? filteredMonthly.reduce((a, b) => (b.revenue > a.revenue ? b : a), filteredMonthly[0])
       : null;
 
   // MoM growth
   let momGrowth = null;
-  if (monthly.length >= 2) {
-    const prev = monthly[monthly.length - 2].revenue || 0;
-    const curr = monthly[monthly.length - 1].revenue || 0;
+  if (filteredMonthly.length >= 2) {
+    const prev = filteredMonthly[filteredMonthly.length - 2].revenue || 0;
+    const curr = filteredMonthly[filteredMonthly.length - 1].revenue || 0;
     momGrowth = prev > 0 ? Math.round(((curr - prev) / prev) * 100) : 0;
   }
 
   // Forecast: linear extrapolation of last 2 months
-  const chartData = [...monthly];
-  if (monthly.length >= 2) {
-    const last = monthly[monthly.length - 1];
-    const prev = monthly[monthly.length - 2];
+  const chartData = [...filteredMonthly];
+  if (filteredMonthly.length >= 2) {
+    const last = filteredMonthly[filteredMonthly.length - 1];
+    const prev = filteredMonthly[filteredMonthly.length - 2];
     const delta = (last.revenue || 0) - (prev.revenue || 0);
     chartData.push({
       month: 'Forecast',
@@ -126,8 +128,11 @@ export default function PartnerAnalytics() {
 
   if (loading)
     return (
-      <div className="flex items-center justify-center min-h-[400px] bg-[#050a08]">
-        <div className="w-10 h-10 border-2 border-white/10 border-t-emerald-500 rounded-full animate-spin" />
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div
+          className="w-8 h-8 border-2 rounded-full animate-spin"
+          style={{ borderColor: 'var(--dash-divider)', borderTopColor: 'var(--dash-accent-500)' }}
+        />
       </div>
     );
 
@@ -206,67 +211,77 @@ export default function PartnerAnalytics() {
   ];
 
   const tooltipStyle = {
-    background: '#050a08',
-    border: '1px solid rgba(255,255,255,0.1)',
-    borderRadius: '12px',
-    color: '#fff',
+    background: 'var(--dash-sidebar)',
+    border: '1px solid var(--dash-card-border)',
+    borderRadius: '8px',
+    color: 'var(--dash-text-1)',
     fontSize: '11px',
-    padding: '12px',
+    padding: '10px 14px',
     fontFamily: 'sans-serif',
   };
 
   return (
-    <div className="min-h-screen bg-[#050a08] font-sans text-white selection:bg-emerald-900/50 selection:text-emerald-200 pb-20">
-      {/* ── Ambient Background ── */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-emerald-500/5 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-700/5 blur-[100px] rounded-full" />
-        <div
-          className="absolute inset-0 opacity-[0.015]"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(52,211,153,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(52,211,153,0.6) 1px, transparent 1px)',
-            backgroundSize: '48px 48px',
-          }}
-        />
-      </div>
-
-      <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 py-10 space-y-8">
+    <div
+      className="font-sans pb-16 dash-transition"
+      style={{ background: 'var(--dash-bg)', color: 'var(--dash-text-1)' }}
+    >
+      <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-10 py-6 space-y-6">
         {/* HEADER */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 bg-white/[0.03] border border-white/[0.08] p-8 rounded-3xl backdrop-blur-xl">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 text-emerald-400 font-black text-[10px] uppercase tracking-[0.4em]">
-              <Sparkles size={12} /> Analytics
-            </div>
-            <h1 className="text-3xl font-black text-white tracking-tight uppercase">
-              Business <span className="text-emerald-400">Insights</span>
+        <div className="dash-fade-1 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <p
+              className="text-[10px] font-semibold uppercase tracking-[0.15em] mb-1"
+              style={{ color: 'var(--dash-accent)' }}
+            >
+              Insights
+            </p>
+            <h1
+              className="text-[20px] font-semibold leading-snug"
+              style={{ color: 'var(--dash-text-1)' }}
+            >
+              Growth &amp; Analytics
             </h1>
-            <p className="text-white/30 text-sm font-medium">
-              Performance metrics and revenue analytics for your properties.
+            <p className="text-[11px] mt-1" style={{ color: 'var(--dash-text-3)' }}>
+              Performance insights, forecasting, and revenue metrics.
             </p>
           </div>
+          <select
+            value={timeframe}
+            onChange={(e) => setTimeframe(e.target.value)}
+            className="rounded-lg px-2.5 py-1.5 text-xs font-semibold outline-none cursor-pointer"
+            style={{
+              background: 'var(--dash-card)',
+              border: '1px solid var(--dash-divider)',
+              color: 'var(--dash-text-2)',
+            }}
+          >
+            <option value="6m">Last 6 Months</option>
+            <option value="1y">Last 12 Months</option>
+          </select>
         </div>
 
         {/* KPI CARDS */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
-          {kpis.map((c, i) => (
-            <motion.div
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 dash-fade-2">
+          {kpis.map((c) => (
+            <div
               key={c.label}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.08 }}
-              className="bg-white/[0.03] border border-white/[0.08] p-6 rounded-2xl backdrop-blur-xl hover:bg-white/[0.05] transition-colors"
+              className="dash-kpi-card p-5 rounded-xl"
+              style={{
+                background: 'var(--dash-card)',
+                border: '1px solid var(--dash-card-border)',
+              }}
             >
-              <div
-                className={`w-11 h-11 rounded-xl ${c.bg} ${c.color} flex items-center justify-center mb-4`}
-              >
-                <c.icon size={20} />
-              </div>
-              <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-1">
+              <p className="text-[10.5px] font-medium mb-2" style={{ color: 'var(--dash-text-3)' }}>
                 {c.label}
               </p>
-              <p className="text-2xl font-black text-white tracking-tight">{c.value}</p>
-            </motion.div>
+              <div className="h-px mb-2.5" style={{ background: 'var(--dash-divider)' }} />
+              <p
+                className="text-[22px] font-semibold tracking-tight leading-none mb-1.5"
+                style={{ color: 'var(--dash-text-1)' }}
+              >
+                {c.value}
+              </p>
+            </div>
           ))}
         </div>
 
@@ -355,8 +370,8 @@ export default function PartnerAnalytics() {
                       contentStyle={tooltipStyle}
                       itemStyle={{ color: '#10b981', fontWeight: 'bold' }}
                       formatter={(value, name, props) => [
-                        `₹${value.toLocaleString()}`,
-                        props.payload.forecast ? 'Forecast' : 'Revenue',
+                        `₹${(value || 0).toLocaleString()}`,
+                        props?.payload?.forecast ? 'Forecast' : 'Revenue',
                       ]}
                     />
                     <ReferenceLine
@@ -376,8 +391,8 @@ export default function PartnerAnalytics() {
                       stroke="#10b981"
                       strokeWidth={2.5}
                       dot={(props) => {
-                        const { cx, cy, payload } = props;
-                        return payload.forecast ? (
+                        const { cx, cy, payload } = props || {};
+                        return payload?.forecast ? (
                           <circle
                             key={`dot-${cx}`}
                             cx={cx}

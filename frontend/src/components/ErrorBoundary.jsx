@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Sparkles, RefreshCw, Home } from 'lucide-react';
+import { AlertCircle, RefreshCw, Home } from 'lucide-react';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -9,8 +9,6 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidMount() {
-    // FIX #62: Clear the chunk reload flag on every successful render/mount
-    // so the auto-reload guard fires correctly on subsequent chunk errors
     sessionStorage.removeItem('wayzza_chunk_reload');
   }
 
@@ -21,8 +19,6 @@ class ErrorBoundary extends React.Component {
   componentDidCatch(error, errorInfo) {
     console.error('ErrorBoundary caught an error', error, errorInfo);
 
-    // Treat chunk load errors (failed to fetch dynamically imported module) by automatically reloading
-    // This handles cases where a new version of the site is deployed while the user is actively browsing
     if (
       error?.message?.match(/Failed to fetch dynamically imported module/i) ||
       error?.message?.match(/Importing a module script failed/i)
@@ -37,36 +33,52 @@ class ErrorBoundary extends React.Component {
 
   render() {
     if (this.state.hasError) {
-      // Reset the reload locker so if they get here genuinely, they can still manual reload later
       sessionStorage.removeItem('wayzza_chunk_reload');
       return (
-        <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-8 text-center font-sans">
-          <div className="max-w-md w-full space-y-8 bg-white p-12 rounded-[48px] shadow-2xl border border-slate-100">
-            <div className="inline-flex p-4 bg-rose-50 rounded-3xl text-rose-500">
-              <Sparkles size={32} />
+        <div
+          className="min-h-screen flex flex-col items-center justify-center p-6 text-center font-sans dash-transition"
+          style={{ background: 'var(--dash-bg)', color: 'var(--dash-text-1)' }}
+        >
+          <div
+            className="max-w-md w-full p-8 rounded-2xl border space-y-6"
+            style={{ background: 'var(--dash-card)', borderColor: 'var(--dash-card-border)' }}
+          >
+            <div
+              className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto"
+              style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444' }}
+            >
+              <AlertCircle size={24} />
             </div>
-            <div className="space-y-4">
-              <h1 className="text-4xl font-bold text-slate-900 tracking-tighter uppercase leading-none">
-                Something went <br />
-                <span className="text-rose-500 lowercase">unexpected.</span>
+            <div className="space-y-2">
+              <h1
+                className="text-lg font-semibold tracking-tight"
+                style={{ color: 'var(--dash-text-1)' }}
+              >
+                Something went wrong
               </h1>
-              <p className="text-slate-400 font-bold text-[11px] uppercase tracking-[0.4em] leading-relaxed">
-                &ldquo;The network encountered a synchronization anomaly.&rdquo;
+              <p className="text-xs" style={{ color: 'var(--dash-text-3)' }}>
+                An unexpected error occurred while loading this section.
               </p>
             </div>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3 pt-2">
               <button
                 onClick={() => window.location.reload()}
-                className="w-full h-16 bg-slate-900 text-white rounded-2xl font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-3 hover:bg-emerald-600 transition-all active:scale-95"
+                className="w-full h-10 rounded-lg font-semibold text-xs flex items-center justify-center gap-2 transition-all active:scale-98"
+                style={{ background: 'var(--dash-accent-500)', color: '#050a08' }}
               >
-                <RefreshCw size={18} />
-                Re-Synchronize
+                <RefreshCw size={14} />
+                Reload Page
               </button>
               <Link
                 to="/"
-                className="w-full h-16 bg-slate-50 text-slate-900 border border-slate-100 rounded-2xl font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-3 hover:bg-white transition-all active:scale-95"
+                className="w-full h-10 rounded-lg font-semibold text-xs flex items-center justify-center gap-2 transition-all active:scale-98"
+                style={{
+                  background: 'transparent',
+                  border: '1px solid var(--dash-divider)',
+                  color: 'var(--dash-text-2)',
+                }}
               >
-                <Home size={18} />
+                <Home size={14} />
                 Return Home
               </Link>
             </div>

@@ -98,36 +98,38 @@ export default function PartnerListings() {
 
   if (loading)
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 bg-[#050a08]">
-        <div className="w-10 h-10 border-2 border-white/10 border-t-emerald-500 rounded-full animate-spin" />
-        <p className="text-sm font-bold text-white/30 uppercase tracking-widest">
-          Loading your {mainSector === 'vehicles' ? 'vehicles' : 'properties'}...
-        </p>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div
+          className="w-8 h-8 border-2 rounded-full animate-spin"
+          style={{ borderColor: 'var(--dash-divider)', borderTopColor: 'var(--dash-accent-500)' }}
+        />
       </div>
     );
 
   return (
-    <div className="min-h-screen bg-[#050a08] font-sans text-white selection:bg-emerald-900/50 selection:text-emerald-200 pb-20">
-      {/* ── Ambient Background ── */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-0 left-0 w-[30%] h-[40%] bg-emerald-500/5 blur-[120px] rounded-full" />
-        <div className="absolute bottom-0 right-0 w-[40%] h-[40%] bg-emerald-700/5 blur-[100px] rounded-full" />
-      </div>
-
-      <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 py-10 space-y-8">
+    <div
+      className="font-sans pb-16 dash-transition"
+      style={{ background: 'var(--dash-bg)', color: 'var(--dash-text-1)' }}
+    >
+      <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-10 py-6 space-y-6">
         {/* HEADER */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white/[0.03] border border-white/[0.08] p-8 rounded-3xl backdrop-blur-xl">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 text-emerald-400 font-black text-[10px] uppercase tracking-[0.4em]">
-              <Sparkles size={12} /> {mainSector === 'vehicles' ? 'My Inventory' : 'My Properties'}
-            </div>
-            <h1 className="text-3xl font-black text-white uppercase tracking-tight">
-              {mainSector === 'vehicles' ? 'Vehicle' : 'Property'}{' '}
-              <span className="text-emerald-400">Portfolio</span>
+        <div className="dash-fade-1 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <p
+              className="text-[10px] font-semibold uppercase tracking-[0.15em] mb-1"
+              style={{ color: 'var(--dash-accent)' }}
+            >
+              {mainSector === 'vehicles' ? 'My Inventory' : 'My Properties'}
+            </p>
+            <h1
+              className="text-[20px] font-semibold leading-snug"
+              style={{ color: 'var(--dash-text-1)' }}
+            >
+              {mainSector === 'vehicles' ? 'Vehicle Portfolio' : 'Property Portfolio'}
             </h1>
-            <p className="text-white/30 text-sm font-medium">
+            <p className="text-[11px] mt-1" style={{ color: 'var(--dash-text-3)' }}>
               You are managing{' '}
-              <span className="font-bold text-white">
+              <strong style={{ color: 'var(--dash-text-1)' }}>
                 {listings.length}{' '}
                 {listings.length === 1
                   ? mainSector === 'vehicles'
@@ -136,15 +138,16 @@ export default function PartnerListings() {
                   : mainSector === 'vehicles'
                     ? 'vehicles'
                     : 'properties'}
-              </span>{' '}
+              </strong>{' '}
               on Wayzza.
             </p>
           </div>
           <button
             onClick={() => navigate('/partner/create')}
-            className="h-11 px-6 bg-emerald-500 text-[#050a08] rounded-xl font-bold text-[11px] uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/10 active:scale-95 whitespace-nowrap"
+            className="h-9 px-4 rounded-lg font-semibold text-[12px] flex items-center justify-center gap-2 transition-all active:scale-98 whitespace-nowrap"
+            style={{ background: 'var(--dash-accent-500)', color: '#050a08' }}
           >
-            <Plus size={16} strokeWidth={2.5} />
+            <Plus size={14} strokeWidth={2.5} />
             <span>{mainSector === 'vehicles' ? 'Add New Vehicle' : 'Add New Property'}</span>
           </button>
         </div>

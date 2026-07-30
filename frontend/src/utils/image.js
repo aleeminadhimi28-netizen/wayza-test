@@ -15,6 +15,8 @@ const BASE = BASE_URL;
 export function fixImg(img, fallback = DEFAULT_FALLBACK) {
   if (!img) return fallback;
   if (img.startsWith('http')) return img;
+  if (img.startsWith('/images/')) return img;
+  if (img.startsWith('/uploads/')) return `${BASE}${img}`;
   if (img.startsWith('uploads/')) return `${BASE}/${img}`;
   return `${BASE}/uploads/${img}`;
 }

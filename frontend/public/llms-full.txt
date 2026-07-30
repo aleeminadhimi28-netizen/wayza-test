@@ -77,7 +77,6 @@ The Indian Rupee (INR) is the primary currency. Wayzza's platform supports displ
 ## Contact & Support
 
 - Email: stay@wayzza.live
-- Phone: +91 80892 22444
 - Support hours: 24/7
 - Social media: @wayzza on Instagram, Twitter/X, Facebook
 

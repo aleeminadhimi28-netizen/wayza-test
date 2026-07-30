@@ -365,7 +365,6 @@ export default function ListingDetails() {
         'A verified luxury clifftop villa in Varkala, Kerala. Curated and managed by Wayzza.',
       image: images.slice(0, 5),
       url: canonicalUrl,
-      telephone: '+91 80892 22444',
       email: 'stay@wayzza.live',
       checkinTime: '14:00',
       checkoutTime: '11:00',

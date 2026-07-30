@@ -17,7 +17,12 @@ const limiterInstance = slowDown({
 });
 
 export const speedLimiter = (req, res, next) => {
-  if (process.env.NODE_ENV === "test") {
+  if (
+    process.env.NODE_ENV !== 'production' ||
+    req.ip === '127.0.0.1' ||
+    req.ip === '::1' ||
+    req.ip === '::ffff:127.0.0.1'
+  ) {
     return next();
   }
   return limiterInstance(req, res, next);

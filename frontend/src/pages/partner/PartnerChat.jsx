@@ -110,57 +110,68 @@ export default function PartnerChat() {
 
   if (loading)
     return (
-      <div className="flex items-center justify-center min-h-[400px] bg-[#050a08]">
-        <div className="w-10 h-10 border-2 border-white/10 border-t-emerald-500 rounded-full animate-spin" />
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div
+          className="w-8 h-8 border-2 rounded-full animate-spin"
+          style={{ borderColor: 'var(--dash-divider)', borderTopColor: 'var(--dash-accent-500)' }}
+        />
       </div>
     );
 
   return (
-    <div className="min-h-screen bg-[#050a08] font-sans text-white selection:bg-emerald-900/50 selection:text-emerald-200 pb-20">
-      {/* ── Ambient Background ── */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-emerald-500/5 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-700/5 blur-[100px] rounded-full" />
-        <div
-          className="absolute inset-0 opacity-[0.015]"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(52,211,153,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(52,211,153,0.6) 1px, transparent 1px)',
-            backgroundSize: '48px 48px',
-          }}
-        />
-      </div>
-
-      <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 py-10 flex flex-col h-[calc(100vh-40px)] min-h-[600px]">
+    <div
+      className="font-sans pb-16 dash-transition"
+      style={{ background: 'var(--dash-bg)', color: 'var(--dash-text-1)' }}
+    >
+      <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-10 py-6 flex flex-col h-[calc(100vh-80px)] min-h-[550px]">
         {/* HEADER */}
-        <div className="mb-6">
-          <div className="flex items-center gap-2 text-emerald-400 font-black text-[10px] uppercase tracking-[0.4em] mb-1">
-            <Sparkles size={12} /> Guest Concierge
-          </div>
-          <h1 className="text-3xl font-black text-white tracking-tight uppercase">
+        <div className="dash-fade-1 mb-5">
+          <p
+            className="text-[10px] font-semibold uppercase tracking-[0.15em] mb-1"
+            style={{ color: 'var(--dash-accent)' }}
+          >
+            Guest Concierge
+          </p>
+          <h1
+            className="text-[20px] font-semibold leading-snug"
+            style={{ color: 'var(--dash-text-1)' }}
+          >
             Guest Messages
           </h1>
-          <p className="text-sm text-white/30 font-medium mt-1">
+          <p className="text-[11px] mt-1" style={{ color: 'var(--dash-text-3)' }}>
             Direct communication channel with your confirmed guests.
           </p>
         </div>
 
         {bookings.length === 0 ? (
-          <div className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-12 text-center flex-1 flex flex-col items-center justify-center backdrop-blur-xl">
-            <div className="w-14 h-14 bg-white/[0.05] border border-white/[0.1] rounded-2xl flex items-center justify-center text-white/20 mb-4">
-              <MessageSquare size={24} />
-            </div>
-            <h3 className="text-lg font-black text-white uppercase tracking-tight mb-1">
+          <div
+            className="p-12 text-center flex-1 flex flex-col items-center justify-center rounded-xl"
+            style={{ background: 'var(--dash-card)', border: '1px solid var(--dash-card-border)' }}
+          >
+            <MessageSquare size={28} style={{ color: 'var(--dash-text-3)', marginBottom: '8px' }} />
+            <h3
+              className="text-xs font-semibold uppercase tracking-wider mb-1"
+              style={{ color: 'var(--dash-text-1)' }}
+            >
               No active chats
             </h3>
-            <p className="text-sm text-white/30 font-medium max-w-xs">
+            <p className="text-[11px] max-w-xs" style={{ color: 'var(--dash-text-3)' }}>
               Messaging is available for guests with confirmed bookings.
             </p>
           </div>
         ) : (
-          <div className="flex-1 flex bg-white/[0.03] rounded-2xl border border-white/[0.08] overflow-hidden backdrop-blur-xl min-h-0">
+          <div
+            className="flex-1 flex rounded-xl overflow-hidden min-h-0 dash-fade-2"
+            style={{ background: 'var(--dash-card)', border: '1px solid var(--dash-card-border)' }}
+          >
             {/* CONTACT LIST */}
-            <aside className="w-80 border-r border-white/[0.05] flex flex-col shrink-0 hidden lg:flex bg-white/[0.01]">
+            <aside
+              className="w-80 flex flex-col shrink-0 hidden lg:flex"
+              style={{
+                borderRight: '1px solid var(--dash-divider)',
+                background: 'var(--dash-sidebar)',
+              }}
+            >
               <div className="p-4 border-b border-white/[0.05]">
                 <div className="relative">
                   <Search

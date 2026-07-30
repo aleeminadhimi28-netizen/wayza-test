@@ -89,7 +89,6 @@
       "url": "https://wayzza.live",
       "logo": "https://wayzza.live/favicon.svg",
       "image": "https://wayzza.live/images/varkala_hero.webp",
-      "telephone": "+91 80892 22444",
       "email": "stay@wayzza.live",
       "priceRange": "\u20b9\u20b9\u20b9",
       "currenciesAccepted": "INR, USD, EUR, GBP",
@@ -154,16 +153,140 @@
 </head>
 
 <body style="margin:0;font-family:system-ui">
-  <!-- FIX #119: noscript fallback for JS-disabled browsers -->
+  <!-- =====================================================================
+       NOSCRIPT FALLBACK — Rich branded static page for:
+         • Search engine crawlers that don't execute JS
+         • Screen readers / assistive tech
+         • Browsers with JS disabled
+         • Very slow connections where JS hasn't loaded yet
+       This content is completely invisible to JS-enabled browsers.
+       ===================================================================== -->
   <noscript>
-    <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:system-ui,sans-serif;background:#0a1f14;color:#fff;text-align:center;padding:2rem;">
-      <div>
-        <h1 style="font-size:1.5rem;font-weight:900;margin-bottom:0.5rem;">JavaScript Required</h1>
-        <p style="color:rgba(255,255,255,0.5);font-size:0.875rem;">Wayzza requires JavaScript to run. Please enable it in your browser settings.</p>
+    <style>
+      .ns-body { margin:0; background:#0a1f14; color:#f0fdf4; font-family:'Inter',system-ui,sans-serif; min-height:100vh; }
+      .ns-header { background:rgba(255,255,255,0.04); border-bottom:1px solid rgba(255,255,255,0.08); padding:1rem 2rem; display:flex; align-items:center; gap:0.75rem; }
+      .ns-logo-text { font-size:1.5rem; font-weight:900; letter-spacing:-0.03em; color:#fff; }
+      .ns-logo-dot { color:#34d399; }
+      .ns-hero { max-width:900px; margin:0 auto; padding:3rem 2rem 2rem; text-align:center; }
+      .ns-hero h1 { font-size:clamp(1.75rem,5vw,3rem); font-weight:900; line-height:1.15; margin:0 0 1rem; color:#fff; }
+      .ns-hero h1 span { color:#34d399; }
+      .ns-hero p { color:rgba(255,255,255,0.65); font-size:1.05rem; line-height:1.7; max-width:600px; margin:0 auto 2rem; }
+      .ns-cards { display:flex; flex-wrap:wrap; gap:1rem; justify-content:center; margin:2rem auto; max-width:860px; padding:0 1.5rem; }
+      .ns-card { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:1rem; padding:1.25rem 1.5rem; flex:1; min-width:200px; max-width:260px; text-align:left; }
+      .ns-card-icon { font-size:1.5rem; margin-bottom:0.5rem; }
+      .ns-card h3 { margin:0 0 0.25rem; font-size:1rem; font-weight:700; color:#fff; }
+      .ns-card p { margin:0; font-size:0.85rem; color:rgba(255,255,255,0.55); line-height:1.5; }
+      .ns-cta { display:flex; flex-wrap:wrap; gap:1rem; justify-content:center; padding:1.5rem 2rem 3rem; }
+      .ns-btn { display:inline-flex; align-items:center; gap:0.5rem; padding:0.875rem 1.75rem; border-radius:999px; font-weight:700; font-size:0.95rem; text-decoration:none; transition:opacity .2s; }
+      .ns-btn:hover { opacity:0.85; }
+      .ns-btn-primary { background:#25D366; color:#fff; }
+      .ns-btn-secondary { background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:#fff; }
+      .ns-divider { border:none; border-top:1px solid rgba(255,255,255,0.08); max-width:700px; margin:0 auto; }
+      .ns-info { max-width:700px; margin:2rem auto; padding:0 2rem; }
+      .ns-info h2 { font-size:1.1rem; font-weight:700; color:#34d399; margin:0 0 0.5rem; }
+      .ns-info ul { margin:0 0 1.5rem; padding:0 0 0 1.25rem; color:rgba(255,255,255,0.65); font-size:0.9rem; line-height:1.8; }
+      .ns-footer { text-align:center; padding:1.5rem 2rem; color:rgba(255,255,255,0.3); font-size:0.78rem; border-top:1px solid rgba(255,255,255,0.07); }
+      .ns-footer a { color:#34d399; text-decoration:none; }
+    </style>
+    <div class="ns-body">
+      <header class="ns-header">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="14" cy="14" r="14" fill="#0a2618"/>
+          <path d="M7 14 L14 7 L21 14 L14 21 Z" fill="#34d399" opacity="0.9"/>
+          <path d="M11 14 L14 11 L17 14 L14 17 Z" fill="#fff" opacity="0.95"/>
+        </svg>
+        <span class="ns-logo-text">Wayzza<span class="ns-logo-dot">.</span></span>
+      </header>
+
+      <section class="ns-hero">
+        <h1>Luxury Clifftop Villas &amp;<br><span>Royal Enfield Rentals</span> in Varkala</h1>
+        <p>Wayzza curates verified premium villas, motorcycle &amp; car rentals, and authentic local experiences on the Varkala Cliff — Kerala's most breathtaking coastal destination.</p>
+      </section>
+
+      <div class="ns-cards" role="list">
+        <div class="ns-card" role="listitem">
+          <div class="ns-card-icon">🏡</div>
+          <h3>Clifftop Villas</h3>
+          <p>Verified ocean-view villas on the Varkala North Cliff. Nightly from ₹4,000.</p>
+        </div>
+        <div class="ns-card" role="listitem">
+          <div class="ns-card-icon">🏍️</div>
+          <h3>Royal Enfield Rentals</h3>
+          <p>Classic 350, Thunderbird &amp; Himalayan. Daily hire from ₹800. Self-ride Kerala.</p>
+        </div>
+        <div class="ns-card" role="listitem">
+          <div class="ns-card-icon">🚗</div>
+          <h3>Car &amp; Taxi Hire</h3>
+          <p>Self-drive &amp; chauffeur. Airport transfers from Thiruvananthapuram (TRV).</p>
+        </div>
+        <div class="ns-card" role="listitem">
+          <div class="ns-card-icon">🌊</div>
+          <h3>Curated Experiences</h3>
+          <p>Cliff yoga, Ayurveda, sunset cruises, Kathakali &amp; seafood masterclasses.</p>
+        </div>
       </div>
+
+      <div class="ns-cta">
+        <a href="https://wa.me/917012345678?text=Hi%20Wayzza%2C%20I%27d%20like%20to%20enquire%20about%20a%20stay%20in%20Varkala" class="ns-btn ns-btn-primary" rel="noopener noreferrer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+          WhatsApp Us
+        </a>
+        <a href="mailto:stay@wayzza.live" class="ns-btn ns-btn-secondary">
+          ✉️ Email: stay@wayzza.live
+        </a>
+      </div>
+
+      <hr class="ns-divider" />
+
+      <div class="ns-info">
+        <h2>📍 Where We Are</h2>
+        <ul>
+          <li><strong>Location:</strong> Varkala North Cliff, Kerala, India — PIN 695141</li>
+          <li><strong>Nearest Airport:</strong> Thiruvananthapuram (TRV) — 45 min drive</li>
+          <li><strong>Best Time to Visit:</strong> October to March (dry season)</li>
+        </ul>
+
+        <h2>🔑 Popular Searches</h2>
+        <ul>
+          <li>Varkala luxury clifftop villas with sea view</li>
+          <li>Royal Enfield motorcycle rental Varkala Kerala</li>
+          <li>Clifftop stay Varkala with pool</li>
+          <li>Airport taxi Thiruvananthapuram to Varkala</li>
+          <li>Ayurveda retreat Varkala Cliff</li>
+        </ul>
+      </div>
+
+      <footer class="ns-footer">
+        <p>© 2025 Wayzza — Curated Sanctuaries &amp; Elite Mobility &nbsp;|&nbsp;
+          <a href="https://wa.me/917012345678" rel="noopener noreferrer">WhatsApp</a> &nbsp;|&nbsp;
+          <a href="mailto:stay@wayzza.live">stay@wayzza.live</a>
+        </p>
+        <p style="margin-top:0.5rem;">To experience the full site, please enable JavaScript in your browser settings.</p>
+      </footer>
     </div>
   </noscript>
-  <div id="root"></div>
+
+  <!-- Inline skeleton shown before React hydrates — replaced by React on first render.
+       Prevents the blank-white-screen on slow connections. -->
+  <div id="root">
+    <style>
+      #root:not(:empty) .wz-skeleton { display:none; }
+      .wz-skeleton { position:fixed; inset:0; background:#0a1f14; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1rem; }
+      .wz-sk-logo { font-family:'Inter',system-ui,sans-serif; font-size:2rem; font-weight:900; letter-spacing:-0.04em; color:#fff; opacity:0; animation:wz-fade 0.4s ease 0.1s forwards; }
+      .wz-sk-logo span { color:#34d399; }
+      .wz-sk-bar { width:120px; height:3px; background:rgba(255,255,255,0.08); border-radius:999px; overflow:hidden; opacity:0; animation:wz-fade 0.4s ease 0.2s forwards; }
+      .wz-sk-bar::after { content:''; display:block; height:100%; width:40%; background:#34d399; border-radius:999px; animation:wz-slide 1.4s ease-in-out infinite; }
+      .wz-sk-sub { font-family:system-ui,sans-serif; font-size:0.78rem; color:rgba(255,255,255,0.3); letter-spacing:0.08em; text-transform:uppercase; opacity:0; animation:wz-fade 0.4s ease 0.35s forwards; }
+      @keyframes wz-fade { to { opacity:1; } }
+      @keyframes wz-slide { 0%{transform:translateX(-200%)} 100%{transform:translateX(350%)} }
+    </style>
+    <div class="wz-skeleton" aria-hidden="true">
+      <div class="wz-sk-logo">Wayzza<span>.</span></div>
+      <div class="wz-sk-bar"></div>
+      <div class="wz-sk-sub">Loading your sanctuary…</div>
+    </div>
+  </div>
+
   <script type="module" src="/src/main.jsx"></script>
 </body>
 

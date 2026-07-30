@@ -1,6 +1,8 @@
+import { useState, useEffect } from 'react';
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
 import { motion } from 'framer-motion';
 import SEO from '../../components/SEO.jsx';
+import { api } from '../../utils/api.js';
 import {
   Shield,
   Lock,
@@ -18,19 +20,23 @@ import { WAYZZA_FAQ } from './LandingPage.jsx';
 const STATIC_PAGE_META = {
   'Privacy Policy': {
     url: 'https://wayzza.live/privacy',
-    description: 'Read the Wayzza Privacy Policy. Understand how we collect, use, and protect your personal data when you book stays, vehicles, and experiences in Varkala, Kerala.',
+    description:
+      'Read the Wayzza Privacy Policy. Understand how we collect, use, and protect your personal data when you book stays, vehicles, and experiences in Varkala, Kerala.',
   },
   'Terms of Use & Service': {
     url: 'https://wayzza.live/terms',
-    description: 'Wayzza Terms of Service — booking conditions, cancellation policies, and user conduct guidelines for the Wayzza platform.',
+    description:
+      'Wayzza Terms of Service — booking conditions, cancellation policies, and user conduct guidelines for the Wayzza platform.',
   },
   'Data Compliance': {
     url: 'https://wayzza.live/compliance',
-    description: 'Wayzza Data Compliance — how we adhere to GDPR, India IT Act, and PCI DSS standards to protect your information.',
+    description:
+      'Wayzza Data Compliance — how we adhere to GDPR, India IT Act, and PCI DSS standards to protect your information.',
   },
   'Frequently Asked Questions': {
     url: 'https://wayzza.live/faq',
-    description: 'Find answers to common questions about booking villas, renting Royal Enfields, and planning your Varkala trip with Wayzza.',
+    description:
+      'Find answers to common questions about booking villas, renting Royal Enfields, and planning your Varkala trip with Wayzza.',
   },
 };
 
@@ -530,12 +536,24 @@ export function AboutUs() {
 }
 
 export function FAQ() {
+  const [supportWhatsApp, setSupportWhatsApp] = useState('');
+
+  useEffect(() => {
+    api.getPlatformConfig()
+      .then((res) => {
+        if (res?.ok && res?.data?.supportWhatsApp) {
+          setSupportWhatsApp(res.data.supportWhatsApp.replace(/[^0-9]/g, ''));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <StaticPage title="Frequently Asked Questions" icon={<HelpCircle size={32} />}>
       <p className="text-xl text-slate-900 font-bold mb-10">
         Everything you need to know about the Wayzza experience.
       </p>
-      
+
       <div className="space-y-12">
         {WAYZZA_FAQ.map((faq, index) => (
           <div key={index} className="space-y-3">
@@ -543,25 +561,33 @@ export function FAQ() {
               <span className="text-emerald-500 font-black">Q.</span>
               {faq.question}
             </h3>
-            <div className="pl-7 text-slate-600 leading-relaxed font-medium">
-              {faq.answer}
-            </div>
+            <div className="pl-7 text-slate-600 leading-relaxed font-medium">{faq.answer}</div>
           </div>
         ))}
       </div>
-      
+
       <div className="mt-16 pt-10 border-t border-slate-100">
         <h3 className="text-xl font-bold text-slate-900 mb-4">Still have questions?</h3>
         <p className="mb-6 text-slate-600">
           Our Concierge team is available 24/7 to help you plan your perfect Varkala getaway.
         </p>
-        <div className="flex gap-4">
-          <a href="mailto:stay@wayzza.live" className="inline-flex items-center gap-2 bg-slate-950 text-white px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-[0.2em] hover:bg-emerald-600 transition-all shadow-lg">
+        <div className="flex flex-wrap gap-4">
+          <a
+            href="mailto:stay@wayzza.live"
+            className="inline-flex items-center gap-2 bg-slate-950 text-white px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-[0.2em] hover:bg-emerald-600 transition-all shadow-lg"
+          >
             Email Support
           </a>
-          <a href="https://wa.me/918089222444" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-600 px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-[0.2em] hover:bg-emerald-100 transition-all">
-            WhatsApp Us
-          </a>
+          {supportWhatsApp && (
+            <a
+              href={`https://wa.me/${supportWhatsApp}`}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-600 px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-[0.2em] hover:bg-emerald-100 transition-all"
+            >
+              WhatsApp Us
+            </a>
+          )}
         </div>
       </div>
     </StaticPage>

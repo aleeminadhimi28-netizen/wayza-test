@@ -21,9 +21,9 @@ let memoryCSRFToken = null;
  * Read the CSRF token from the csrf_token cookie
  */
 function getCSRFToken() {
-  if (memoryCSRFToken) return memoryCSRFToken;
   const match = document.cookie.match(/(?:^|;\s*)csrf_token=([^;]*)/);
-  return match ? decodeURIComponent(match[1]) : null;
+  if (match && match[1]) return decodeURIComponent(match[1]);
+  return memoryCSRFToken;
 }
 
 /**
@@ -33,9 +33,9 @@ let csrfPromise = null;
 let csrfTokenExpiry = 0;
 const CSRF_TTL_MS = 23 * 60 * 60 * 1000; // 23h — refresh before the 24h cookie expires
 
-async function ensureCSRFToken() {
-  // Re-fetch if the promise hasn't been set or the token is about to expire
-  if (csrfPromise && Date.now() < csrfTokenExpiry) return csrfPromise;
+async function ensureCSRFToken(force = false) {
+  // Re-fetch if forced, if the promise hasn't been set, or the token is about to expire
+  if (!force && csrfPromise && Date.now() < csrfTokenExpiry) return csrfPromise;
 
   csrfPromise = (async () => {
     try {
@@ -71,9 +71,6 @@ const customFetch = async (url, options = {}) => {
   const method = (options.method || 'GET').toUpperCase();
   const isMutating = !['GET', 'HEAD', 'OPTIONS'].includes(method);
 
-  // Auth is handled exclusively via HttpOnly session cookie (credentials: 'include').
-  // No localStorage token reads — eliminates XSS token-theft risk (BUG-001 fix).
-
   // Attach CSRF token header on mutating requests
   if (isMutating) {
     await ensureCSRFToken();
@@ -86,15 +83,33 @@ const customFetch = async (url, options = {}) => {
     }
   }
 
-  const response = await fetch(url, { ...options, credentials: 'include' });
+  let response = await fetch(url, { ...options, credentials: 'include' });
+
+  // 403 CSRF auto-retry interceptor: if token mismatched/expired, auto-refresh and retry once
+  if (response.status === 403 && isMutating) {
+    try {
+      const clone = response.clone();
+      const body = await clone.json().catch(() => ({}));
+      if (body?.message && String(body.message).toLowerCase().includes('csrf')) {
+        clearCSRFToken();
+        const freshToken = await ensureCSRFToken(true);
+        if (freshToken) {
+          options.headers = {
+            ...options.headers,
+            'X-CSRF-Token': freshToken,
+          };
+          response = await fetch(url, { ...options, credentials: 'include' });
+        }
+      }
+    } catch {
+      // ignore retry failure
+    }
+  }
 
   // 401 auto-logout interceptor
-  // When the server returns 401 (session expired / cookie invalid), clear the
-  // CSRF token cache and fire a global event that AuthContext listens to.
   if (response.status === 401) {
     clearCSRFToken();
 
-    // Avoid triggering on passive auth checks or login/csrf endpoints themselves to prevent redirect loops
     const isPassiveOrAuth =
       url.includes('/auth/login') ||
       url.includes('/auth/csrf') ||
@@ -581,6 +596,13 @@ export const api = {
       body: JSON.stringify(data),
     }).then((r) => r.json()),
 
+  replyToReview: (id, reply) =>
+    customFetch(`${API_URL}/misc/reviews/${id}/reply`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+      body: JSON.stringify({ reply }),
+    }).then((r) => r.json()),
+
   getWishlist: () =>
     customFetch(`${API_URL}/misc/wishlist`, {
       headers: getAuthHeaders(),
@@ -658,6 +680,29 @@ export const api = {
       headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
       body: JSON.stringify(data),
     }).then((r) => r.json()),
+  getPromoOffer: () => customFetch(`${API_URL}/misc/promo-offer`).then((r) => r.json()),
+  updatePromoOffer: (data) =>
+    customFetch(`${API_URL}/admin/promo-offer`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+      body: JSON.stringify(data),
+    }).then((r) => r.json()),
+  submitCustomPackageRequest: (data) =>
+    customFetch(`${API_URL}/misc/custom-package-request`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    }).then((r) => r.json()),
+  adminGetPackageRequests: () =>
+    customFetch(`${API_URL}/admin/package-requests`, {
+      headers: getAuthHeaders(),
+    }).then((r) => r.json()),
+  adminUpdatePackageRequest: (id, data) =>
+    customFetch(`${API_URL}/admin/package-requests/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+      body: JSON.stringify(data),
+    }).then((r) => r.json()),
   subscribeNewsletter: (email) =>
     customFetch(`${API_URL}/misc/newsletter`, {
       method: 'POST',
@@ -690,6 +735,8 @@ export const api = {
       'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80';
     if (!img) return DEFAULT_FALLBACK;
     if (img.startsWith('http')) return img;
+    if (img.startsWith('/images/')) return img;
+    if (img.startsWith('/uploads/')) return `${BASE_URL}${img}`;
     if (img.startsWith('uploads/')) return `${BASE_URL}/${img}`;
     return `${BASE_URL}/uploads/${img}`;
   },

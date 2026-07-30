@@ -18,6 +18,7 @@ import {
   ChevronRight,
   Plus,
   Minus,
+  X,
 } from 'lucide-react';
 
 import { api } from '../../utils/api.js';
@@ -76,7 +77,7 @@ const DESTINATIONS = [
   },
 ];
 
-const PROMO_OFFER = {
+const DEFAULT_PROMO_OFFER = {
   title: 'Offers',
   subtitle: 'Promotions, deals and special offers for you',
   label: 'No catch. Just getaways.',
@@ -84,6 +85,7 @@ const PROMO_OFFER = {
   text: 'At least 15% off select stays.',
   button: 'Save on your next trip',
   image: '/images/varkala_cliff.webp',
+  isActive: true,
 };
 
 export const WAYZZA_FAQ = [
@@ -130,7 +132,7 @@ export const WAYZZA_FAQ = [
   {
     question: 'How do I contact Wayzza support?',
     answer:
-      'You can reach Wayzza support by email at stay@wayzza.live or by phone at +91 80892 22444. Support is available 24/7 for all booking-related enquiries.',
+      'You can reach Wayzza support by email at stay@wayzza.live or directly through our online support center. Our team is available 24/7 for all booking-related enquiries.',
   },
   {
     question: 'Are Wayzza listings verified?',
@@ -153,15 +155,22 @@ export default function LandingPage() {
   const [bikesLoading, setBikesLoading] = useState(true);
   const [cars, setCars] = useState([]);
   const [carsLoading, setCarsLoading] = useState(true);
+  const [promoOffer, setPromoOffer] = useState(DEFAULT_PROMO_OFFER);
   const tab = 'hotel';
   const [search, setSearch] = useState('');
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
   const [guests, setGuests] = useState(1);
   const moreListingsRef = useRef(null);
+  const exampleMockupRef = useRef(null);
+  const [showExampleModal, setShowExampleModal] = useState(false);
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterLoading, setNewsletterLoading] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
+
+  const handleSeeExample = () => {
+    setShowExampleModal(true);
+  };
 
   const handleNewsletterSubmit = async (e) => {
     e.preventDefault();
@@ -182,6 +191,13 @@ export default function LandingPage() {
   };
 
   useEffect(() => {
+    api
+      .getPromoOffer()
+      .then((res) => {
+        if (res.ok && res.data) setPromoOffer(res.data);
+      })
+      .catch(() => {});
+
     setLoading(true);
     api
       .getTrendingListings(8, 'hotel')
@@ -265,7 +281,6 @@ export default function LandingPage() {
         }}
         faq={WAYZZA_FAQ}
       />
-
 
       <div className="bg-white font-sans text-slate-900 selection:bg-emerald-50 selection:text-emerald-900 leading-relaxed antialiased overflow-x-hidden">
         {/* ── HERO ── */}
@@ -444,38 +459,40 @@ export default function LandingPage() {
           className="px-4 sm:px-6 max-w-7xl mx-auto space-y-8 pb-10 pt-6"
         >
           {/* Promo card */}
-          <div className="bg-white rounded-[24px] md:rounded-[32px] border border-slate-200 shadow-sm overflow-hidden">
-            <div className="flex flex-col sm:flex-row items-stretch gap-4 p-5">
-              <div className="flex-1 min-w-0">
-                <p className="text-emerald-500 uppercase tracking-[0.35em] text-[11px] font-black mb-3">
-                  {PROMO_OFFER.title}
-                </p>
-                <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-950 mb-3">
-                  {PROMO_OFFER.heading}
-                </h2>
-                <p className="text-sm text-slate-500 font-medium leading-relaxed mb-4">
-                  {PROMO_OFFER.text}
-                </p>
-                <p className="text-xs uppercase tracking-[0.3em] font-black text-slate-400 mb-4">
-                  {PROMO_OFFER.label}
-                </p>
-                <button
-                  className="inline-flex items-center justify-center rounded-2xl bg-slate-950 text-white px-5 py-3 text-sm font-black uppercase tracking-[0.22em] shadow-lg shadow-slate-950/10 transition hover:bg-emerald-600"
-                  onClick={() => navigate('/listings')}
-                >
-                  {PROMO_OFFER.button}
-                </button>
-              </div>
-              <div className="w-full sm:w-56 h-44 sm:h-auto rounded-[20px] overflow-hidden">
-                <img
-                  src={PROMO_OFFER.image}
-                  alt="Getaway deal"
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                />
+          {promoOffer && promoOffer.isActive !== false && (
+            <div className="bg-white rounded-[24px] md:rounded-[32px] border border-slate-200 shadow-sm overflow-hidden">
+              <div className="flex flex-col sm:flex-row items-stretch gap-4 p-5">
+                <div className="flex-1 min-w-0">
+                  <p className="text-emerald-500 uppercase tracking-[0.35em] text-[11px] font-black mb-3">
+                    {promoOffer.title || 'OFFERS'}
+                  </p>
+                  <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-950 mb-3">
+                    {promoOffer.heading || 'Book a Getaway Deal'}
+                  </h2>
+                  <p className="text-sm text-slate-500 font-medium leading-relaxed mb-4">
+                    {promoOffer.text || 'At least 15% off select stays.'}
+                  </p>
+                  <p className="text-xs uppercase tracking-[0.3em] font-black text-slate-400 mb-4">
+                    {promoOffer.label || 'NO CATCH. JUST GETAWAYS.'}
+                  </p>
+                  <button
+                    className="inline-flex items-center justify-center rounded-2xl bg-slate-950 text-white px-5 py-3 text-sm font-black uppercase tracking-[0.22em] shadow-lg shadow-slate-950/10 transition hover:bg-emerald-600"
+                    onClick={() => navigate('/listings')}
+                  >
+                    {promoOffer.button || 'SAVE ON YOUR NEXT TRIP'}
+                  </button>
+                </div>
+                <div className="w-full sm:w-56 h-44 sm:h-auto rounded-[20px] overflow-hidden">
+                  <img
+                    src={api.fixImg(promoOffer.image)}
+                    alt="Getaway deal"
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Featured listings */}
           <div className="space-y-6">
@@ -604,294 +621,401 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ── BIKES ── */}
-        <section className="px-4 sm:px-6 max-w-7xl mx-auto space-y-8 pb-6 pt-2">
-          {/* Featured Bikes */}
-          <div className="space-y-6">
-            <div className="flex items-center justify-between gap-3 flex-wrap">
-              <div>
-                <h3 className="text-xl md:text-2xl font-black tracking-tight text-slate-950">
-                  Featured Bikes
-                </h3>
-                <p className="text-sm text-slate-500 font-medium">
-                  Top-picked rides curated for your Varkala adventure.
-                </p>
+        {/* ── BIKES & CARS (CLEAN LIGHT AIRBNB STYLE) ── */}
+        <section className="py-16 md:py-24 bg-slate-50/50 px-4 sm:px-6 border-t border-b border-slate-100">
+          <div className="max-w-7xl mx-auto space-y-16">
+            {/* ── BIKES SECTION ── */}
+            <div className="space-y-6">
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div>
+                  <h3 className="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900">
+                    Bikes in Varkala
+                  </h3>
+                  <p className="text-sm text-slate-500 font-medium mt-1">
+                    Royal Enfield, cruisers & scooters for self-drive cliff exploration.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => scrollCarousel('bikes-featured-scroll', -1)}
+                    className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
+                    aria-label="Scroll featured bikes left"
+                  >
+                    <ChevronLeft size={18} />
+                  </button>
+                  <button
+                    onClick={() => scrollCarousel('bikes-featured-scroll', 1)}
+                    className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
+                    aria-label="Scroll featured bikes right"
+                  >
+                    <ChevronRight size={18} />
+                  </button>
+                  <Link
+                    to="/listings?category=bike"
+                    className="hidden sm:block text-xs font-bold uppercase tracking-wider text-emerald-600 hover:text-emerald-700 ml-2 transition-colors"
+                  >
+                    View all bikes →
+                  </Link>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => scrollCarousel('bikes-featured-scroll', -1)}
-                  className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
-                  aria-label="Scroll featured bikes left"
-                >
-                  <ChevronLeft size={18} />
-                </button>
-                <button
-                  onClick={() => scrollCarousel('bikes-featured-scroll', 1)}
-                  className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
-                  aria-label="Scroll featured bikes right"
-                >
-                  <ChevronRight size={18} />
-                </button>
-                <Link
-                  to="/listings?category=bike"
-                  className="hidden sm:block text-xs uppercase font-black tracking-[0.3em] text-slate-400 hover:text-slate-900 ml-2 transition-colors"
-                >
-                  View all
-                </Link>
+
+              <div
+                id="bikes-featured-scroll"
+                className="flex gap-5 overflow-x-auto pb-4 pt-1 no-scrollbar snap-x snap-mandatory scroll-smooth"
+              >
+                {bikesLoading ? (
+                  [1, 2, 3, 4].map((i) => (
+                    <div key={i} className="w-[280px] shrink-0 snap-start">
+                      <WayzzaSkeleton className="h-[340px] rounded-3xl" />
+                    </div>
+                  ))
+                ) : bikes.length === 0 ? (
+                  <div className="w-full py-12 text-center border border-dashed border-slate-200 rounded-3xl bg-white">
+                    <p className="text-slate-400 text-sm font-semibold">No bikes listed yet</p>
+                  </div>
+                ) : (
+                  bikes.map((listing) => (
+                    <div key={listing._id} className="w-[280px] shrink-0 snap-start">
+                      <WayzzaHotelItem
+                        perUnit="day"
+                        hotel={{
+                          id: listing._id,
+                          name: listing.title,
+                          location: listing.location || 'Varkala',
+                          price: listing.price,
+                          image: fixImg(listing.image),
+                          wifiSpeed: 0,
+                          featured: listing.featured || false,
+                          viewCount: listing.viewCount || 0,
+                        }}
+                      />
+                    </div>
+                  ))
+                )}
               </div>
             </div>
-            <div
-              id="bikes-featured-scroll"
-              className="flex gap-4 overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory scroll-smooth"
-            >
-              {bikesLoading ? (
-                [1, 2, 3].map((i) => (
-                  <div key={i} className="w-[280px] shrink-0 snap-start">
-                    <WayzzaSkeleton className="h-[360px] rounded-[32px]" />
+
+            {/* ── CARS SECTION ── */}
+            <div className="space-y-6">
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div>
+                  <h3 className="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900">
+                    Cars in Varkala
+                  </h3>
+                  <p className="text-sm text-slate-500 font-medium mt-1">
+                    Handpicked self-drive & chauffeur cars for seamless Kerala travel.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => scrollCarousel('cars-featured-scroll', -1)}
+                    className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
+                    aria-label="Scroll featured cars left"
+                  >
+                    <ChevronLeft size={18} />
+                  </button>
+                  <button
+                    onClick={() => scrollCarousel('cars-featured-scroll', 1)}
+                    className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
+                    aria-label="Scroll featured cars right"
+                  >
+                    <ChevronRight size={18} />
+                  </button>
+                  <Link
+                    to="/listings?category=car"
+                    className="hidden sm:block text-xs font-bold uppercase tracking-wider text-emerald-600 hover:text-emerald-700 ml-2 transition-colors"
+                  >
+                    View all cars →
+                  </Link>
+                </div>
+              </div>
+
+              <div
+                id="cars-featured-scroll"
+                className="flex gap-5 overflow-x-auto pb-4 pt-1 no-scrollbar snap-x snap-mandatory scroll-smooth"
+              >
+                {carsLoading ? (
+                  [1, 2, 3, 4].map((i) => (
+                    <div key={i} className="w-[280px] shrink-0 snap-start">
+                      <WayzzaSkeleton className="h-[340px] rounded-3xl" />
+                    </div>
+                  ))
+                ) : cars.length === 0 ? (
+                  <div className="w-full py-12 text-center border border-dashed border-slate-200 rounded-3xl bg-white">
+                    <p className="text-slate-400 text-sm font-semibold">No cars listed yet</p>
                   </div>
-                ))
-              ) : bikes.length === 0 ? (
-                <p className="text-slate-300 text-sm font-bold uppercase tracking-widest py-12">
-                  No bikes listed yet
-                </p>
-              ) : (
-                bikes.map((listing) => (
-                  <div key={listing._id} className="w-[280px] shrink-0 snap-start">
-                    <WayzzaHotelItem
-                      perUnit="day"
-                      hotel={{
-                        id: listing._id,
-                        name: listing.title,
-                        location: listing.location || 'Varkala',
-                        price: listing.price,
-                        image: fixImg(listing.image),
-                        wifiSpeed: 0,
-                        featured: listing.featured || false,
-                        viewCount: listing.viewCount || 0,
-                      }}
-                    />
-                  </div>
-                ))
-              )}
+                ) : (
+                  cars.map((listing) => (
+                    <div key={listing._id} className="w-[280px] shrink-0 snap-start">
+                      <WayzzaHotelItem
+                        perUnit="day"
+                        hotel={{
+                          id: listing._id,
+                          name: listing.title,
+                          location: listing.location || 'Varkala',
+                          price: listing.price,
+                          image: fixImg(listing.image),
+                          wifiSpeed: 0,
+                          featured: listing.featured || false,
+                          viewCount: listing.viewCount || 0,
+                        }}
+                      />
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
           </div>
         </section>
 
-        {/* ── CARS ── */}
-        <section className="px-4 sm:px-6 max-w-7xl mx-auto space-y-8 pb-10 pt-2">
-          {/* Featured Cars */}
-          <div className="space-y-6">
-            <div className="flex items-center justify-between gap-3 flex-wrap">
-              <div>
-                <h3 className="text-xl md:text-2xl font-black tracking-tight text-slate-950">
-                  Featured Cars
-                </h3>
-                <p className="text-sm text-slate-500 font-medium">
-                  Handpicked cars for a seamless Kerala drive.
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => scrollCarousel('cars-featured-scroll', -1)}
-                  className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
-                  aria-label="Scroll featured cars left"
-                >
-                  <ChevronLeft size={18} />
-                </button>
-                <button
-                  onClick={() => scrollCarousel('cars-featured-scroll', 1)}
-                  className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-400 transition-all shadow-sm"
-                  aria-label="Scroll featured cars right"
-                >
-                  <ChevronRight size={18} />
-                </button>
-                <Link
-                  to="/listings?category=car"
-                  className="hidden sm:block text-xs uppercase font-black tracking-[0.3em] text-slate-400 hover:text-slate-900 ml-2 transition-colors"
-                >
-                  View all
-                </Link>
-              </div>
-            </div>
-            <div
-              id="cars-featured-scroll"
-              className="flex gap-4 overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory scroll-smooth"
-            >
-              {carsLoading ? (
-                [1, 2, 3].map((i) => (
-                  <div key={i} className="w-[280px] shrink-0 snap-start">
-                    <WayzzaSkeleton className="h-[360px] rounded-[32px]" />
-                  </div>
-                ))
-              ) : cars.length === 0 ? (
-                <p className="text-slate-300 text-sm font-bold uppercase tracking-widest py-12">
-                  No cars listed yet
-                </p>
-              ) : (
-                cars.map((listing) => (
-                  <div key={listing._id} className="w-[280px] shrink-0 snap-start">
-                    <WayzzaHotelItem
-                      perUnit="day"
-                      hotel={{
-                        id: listing._id,
-                        name: listing.title,
-                        location: listing.location || 'Varkala',
-                        price: listing.price,
-                        image: fixImg(listing.image),
-                        wifiSpeed: 0,
-                        featured: listing.featured || false,
-                        viewCount: listing.viewCount || 0,
-                      }}
-                    />
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </section>
-
-        {/* ── DESTINATIONS BENTO ── */}
-        <section className="py-20 md:py-32 bg-slate-950 px-4 sm:px-6 relative overflow-hidden">
-          {/* Background glows */}
-          <div className="absolute top-[-10%] left-[10%] w-[50%] h-[50%] bg-emerald-500/5 blur-[160px] rounded-full pointer-events-none" />
-          <div className="absolute bottom-[-10%] right-[5%] w-[40%] h-[50%] bg-emerald-700/5 blur-[120px] rounded-full pointer-events-none" />
-
+        {/* ── DESTINATIONS BENTO (CLEAN LIGHT AIRBNB STYLE) ── */}
+        <section className="py-20 md:py-28 bg-white px-4 sm:px-6 relative overflow-hidden border-t border-slate-100">
           <div className="max-w-7xl mx-auto relative z-10">
             {/* Section header */}
             <motion.div
-              initial={{ opacity: 0, y: 24 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 mb-12 md:mb-16"
             >
-              <div className="space-y-4">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-                  <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-[11px] font-black uppercase tracking-[0.4em] text-emerald-300">Territories</span>
+              <div className="space-y-3">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-emerald-50 border border-emerald-100 rounded-full">
+                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-[11px] font-extrabold uppercase tracking-widest text-emerald-700">
+                    Territories
+                  </span>
                 </div>
-                <h2 className="text-4xl md:text-7xl font-black tracking-tighter text-white leading-[0.9]">
-                  Where we<br />
-                  <span className="text-emerald-400 italic">operate.</span>
+                <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-slate-900 leading-tight">
+                  Where we <span className="text-emerald-600 italic">operate.</span>
                 </h2>
               </div>
-              <div className="space-y-4 max-w-sm">
-                <p className="text-slate-400 font-medium text-base md:text-lg leading-relaxed">
-                  Our network spans unique ecosystems, each personally verified for soul and security.
+              <div className="space-y-3 max-w-sm">
+                <p className="text-slate-500 font-medium text-sm md:text-base leading-relaxed">
+                  Our network spans unique Varkala ecosystems, each personally verified for comfort
+                  and security.
                 </p>
                 <button
                   onClick={() => navigate('/listings')}
-                  className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.35em] text-emerald-400 hover:text-emerald-300 transition-colors border border-emerald-500/30 px-5 py-2.5 rounded-full hover:border-emerald-400/60"
+                  className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-emerald-600 hover:text-emerald-700 transition-colors border border-emerald-200 px-5 py-2.5 rounded-full hover:border-emerald-400 bg-emerald-50/50"
                 >
                   Browse all areas <ArrowRight size={13} />
                 </button>
               </div>
             </motion.div>
 
-            {/* Bento grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 lg:grid-rows-[320px_240px] gap-3 md:gap-4">
-
-              {/* Hero card — Varkala Cliff */}
-              {DESTINATIONS.filter(d => d.span === 'hero').map((d, i) => (
-                <motion.div
-                  key={d.name}
-                  initial={{ opacity: 0, scale: 0.97 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6 }}
-                  onClick={() => navigate(`/listings?location=${encodeURIComponent(d.name)}`)}
-                  className="group cursor-pointer relative rounded-[28px] overflow-hidden lg:col-span-7 lg:row-span-2 h-[380px] lg:h-full"
-                >
-                  <img src={d.image} alt={d.name} className="w-full h-full object-cover transition-transform duration-[2.5s] group-hover:scale-105" loading="lazy" decoding="async" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-                  <div className="absolute inset-0 bg-emerald-500/0 group-hover:bg-emerald-500/8 transition-all duration-700" />
-                  {/* Tag */}
-                  <div className="absolute top-5 left-5">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500 rounded-full text-[10px] font-black uppercase tracking-[0.3em] text-slate-950">
-                      <div className="w-1.5 h-1.5 rounded-full bg-slate-950/50" />
-                      {d.tag}
-                    </span>
-                  </div>
-                  {/* Content */}
-                  <div className="absolute bottom-0 left-0 right-0 p-7 md:p-10">
-                    <p className="text-emerald-400 text-[11px] font-black uppercase tracking-[0.35em] mb-2">
-                      {d.properties} Properties
-                    </p>
-                    <h3 className="text-white font-black text-3xl md:text-5xl tracking-tight mb-2 leading-tight">
-                      {d.name}
-                    </h3>
-                    <p className="text-white/50 text-sm font-medium mb-6 max-w-xs">{d.desc}</p>
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center group-hover:bg-emerald-500 group-hover:border-emerald-500 transition-all duration-500">
-                        <ArrowRight size={16} className="text-white group-hover:translate-x-0.5 transition-transform" />
-                      </div>
-                      <span className="text-white/40 text-xs font-black uppercase tracking-[0.3em] group-hover:text-white/70 transition-colors">Explore stays</span>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-
-              {/* Tall card — Edava */}
-              {DESTINATIONS.filter(d => d.span === 'tall').map((d, i) => (
-                <motion.div
-                  key={d.name}
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.1, duration: 0.6 }}
-                  onClick={() => navigate(`/listings?location=${encodeURIComponent(d.name)}`)}
-                  className="group cursor-pointer relative rounded-[28px] overflow-hidden lg:col-span-5 lg:row-span-2 h-[320px] lg:h-full"
-                >
-                  <img src={d.image} alt={d.name} className="w-full h-full object-cover transition-transform duration-[2.5s] group-hover:scale-105" loading="lazy" decoding="async" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
-                  <div className="absolute top-5 left-5">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/15 backdrop-blur-md border border-white/25 rounded-full text-[10px] font-black uppercase tracking-[0.3em] text-white">
-                      {d.tag}
-                    </span>
-                  </div>
-                  <div className="absolute bottom-0 left-0 right-0 p-7">
-                    <p className="text-emerald-400 text-[11px] font-black uppercase tracking-[0.35em] mb-1">{d.properties} Properties</p>
-                    <h3 className="text-white font-black text-2xl md:text-3xl tracking-tight mb-1">{d.name}</h3>
-                    <p className="text-white/45 text-sm font-medium mb-4">{d.desc}</p>
-                    <div className="h-9 w-9 rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center group-hover:bg-emerald-500 group-hover:border-emerald-500 transition-all duration-500">
-                      <ArrowRight size={15} className="text-white" />
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-
-              {/* Bottom row — wide + small + wide + small */}
-              {DESTINATIONS.filter(d => d.span === 'wide' || d.span === 'small').map((d, i) => (
+            {/* ── DESKTOP: 3-col asymmetric grid ── */}
+            <div
+              className="hidden md:grid gap-4"
+              style={{ gridTemplateColumns: '1.4fr 1fr 1fr', gridTemplateRows: '420px 260px' }}
+            >
+              {/* Hero — Varkala Cliff: spans 2 rows */}
+              {DESTINATIONS.filter((d) => d.span === 'hero').map((d) => (
                 <motion.div
                   key={d.name}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: 0.15 + i * 0.08, duration: 0.55 }}
+                  transition={{ duration: 0.6 }}
                   onClick={() => navigate(`/listings?location=${encodeURIComponent(d.name)}`)}
-                  className={`group cursor-pointer relative rounded-[28px] overflow-hidden h-[220px] md:h-[240px] ${d.span === 'wide' ? 'lg:col-span-5' : 'lg:col-span-3'} lg:row-start-3`}
-                  style={{ gridRow: undefined }}
+                  className="group cursor-pointer relative rounded-3xl overflow-hidden shadow-md border border-slate-200/80"
+                  style={{ gridRow: 'span 2' }}
                 >
-                  <img src={d.image} alt={d.name} className="w-full h-full object-cover transition-transform duration-[2.5s] group-hover:scale-108" loading="lazy" decoding="async" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
-                  <div className="absolute inset-0 bg-emerald-500/0 group-hover:bg-emerald-500/10 transition-all duration-700" />
-                  <div className="absolute top-4 left-4">
-                    <span className="inline-flex items-center px-2.5 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-[9px] font-black uppercase tracking-[0.3em] text-white/80">
+                  <img
+                    src={d.image}
+                    alt={d.name}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
+                  <div className="absolute top-5 left-5">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500 rounded-full text-[10px] font-extrabold uppercase tracking-wider text-white shadow-md">
                       {d.tag}
                     </span>
                   </div>
-                  <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6 flex justify-between items-end">
-                    <div>
-                      <p className="text-emerald-400 text-[10px] font-black uppercase tracking-[0.3em] mb-0.5">{d.properties} Properties</p>
-                      <h3 className="text-white font-black text-lg md:text-xl tracking-tight">{d.name}</h3>
-                      <p className="text-white/40 text-xs font-medium mt-0.5 hidden sm:block">{d.desc}</p>
+                  <div className="absolute bottom-0 left-0 right-0 p-8">
+                    <p className="text-emerald-400 text-xs font-extrabold uppercase tracking-widest mb-1.5">
+                      {d.properties} Properties
+                    </p>
+                    <h3 className="text-white font-extrabold text-3xl md:text-4xl tracking-tight mb-2">
+                      {d.name}
+                    </h3>
+                    <p className="text-slate-300 text-sm font-medium mb-6 max-w-[260px] leading-relaxed">
+                      {d.desc}
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center group-hover:bg-emerald-500 group-hover:border-emerald-500 transition-all duration-300">
+                        <ArrowRight
+                          size={16}
+                          className="text-white group-hover:translate-x-0.5 transition-transform"
+                        />
+                      </div>
+                      <span className="text-white/80 text-xs font-bold uppercase tracking-wider group-hover:text-white transition-colors">
+                        Explore stays
+                      </span>
                     </div>
-                    <div className="h-9 w-9 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center group-hover:bg-emerald-500 group-hover:border-emerald-500 transition-all duration-500 shrink-0 ml-3">
+                  </div>
+                </motion.div>
+              ))}
+
+              {/* Edava — col 2, row 1 */}
+              {DESTINATIONS.filter((d) => d.span === 'tall').map((d) => (
+                <motion.div
+                  key={d.name}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.1, duration: 0.5 }}
+                  onClick={() => navigate(`/listings?location=${encodeURIComponent(d.name)}`)}
+                  className="group cursor-pointer relative rounded-3xl overflow-hidden shadow-md border border-slate-200/80"
+                >
+                  <img
+                    src={d.image}
+                    alt={d.name}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/20 to-transparent" />
+                  <div className="absolute top-4 left-4">
+                    <span className="inline-flex items-center px-3 py-1 bg-white/20 backdrop-blur-md border border-white/30 rounded-full text-[10px] font-extrabold uppercase tracking-wider text-white">
+                      {d.tag}
+                    </span>
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 p-6">
+                    <p className="text-emerald-400 text-xs font-extrabold uppercase tracking-widest mb-1">
+                      {d.properties} Properties
+                    </p>
+                    <h3 className="text-white font-extrabold text-2xl tracking-tight mb-1">
+                      {d.name}
+                    </h3>
+                    <p className="text-slate-300 text-xs font-medium mb-3 line-clamp-1">{d.desc}</p>
+                    <div className="h-8 w-8 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center group-hover:bg-emerald-500 transition-all">
                       <ArrowRight size={14} className="text-white" />
                     </div>
                   </div>
                 </motion.div>
               ))}
 
+              {/* Odayam — col 3, row 1 */}
+              {DESTINATIONS.filter((d) => d.name === 'Odayam').map((d) => (
+                <motion.div
+                  key={d.name}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.15, duration: 0.5 }}
+                  onClick={() => navigate(`/listings?location=${encodeURIComponent(d.name)}`)}
+                  className="group cursor-pointer relative rounded-3xl overflow-hidden shadow-md border border-slate-200/80"
+                >
+                  <img
+                    src={d.image}
+                    alt={d.name}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/15 to-transparent" />
+                  <div className="absolute top-4 left-4">
+                    <span className="inline-flex items-center px-2.5 py-1 bg-white/20 backdrop-blur-md border border-white/30 rounded-full text-[9px] font-extrabold uppercase tracking-wider text-white">
+                      {d.tag}
+                    </span>
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 p-5 flex justify-between items-end">
+                    <div>
+                      <p className="text-emerald-400 text-xs font-extrabold uppercase tracking-widest mb-0.5">
+                        {d.properties} Properties
+                      </p>
+                      <h3 className="text-white font-extrabold text-xl tracking-tight">{d.name}</h3>
+                    </div>
+                    <div className="h-8 w-8 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center group-hover:bg-emerald-500 transition-all shrink-0">
+                      <ArrowRight size={14} className="text-white" />
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+
+              {/* Bottom row — 3 equal cards: Papanasam, Kappil, Anjengo */}
+              {DESTINATIONS.filter((d) => ['Papanasam', 'Kappil', 'Anjengo'].includes(d.name)).map(
+                (d, i) => (
+                  <motion.div
+                    key={d.name}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.2 + i * 0.08, duration: 0.5 }}
+                    onClick={() => navigate(`/listings?location=${encodeURIComponent(d.name)}`)}
+                    className="group cursor-pointer relative rounded-3xl overflow-hidden shadow-md border border-slate-200/80"
+                  >
+                    <img
+                      src={d.image}
+                      alt={d.name}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/20 to-transparent" />
+                    <div className="absolute top-4 left-4">
+                      <span className="inline-flex items-center px-2.5 py-1 bg-white/20 backdrop-blur-md border border-white/30 rounded-full text-[9px] font-extrabold uppercase tracking-wider text-white">
+                        {d.tag}
+                      </span>
+                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 p-5 flex justify-between items-end">
+                      <div>
+                        <p className="text-emerald-400 text-xs font-extrabold uppercase tracking-widest mb-0.5">
+                          {d.properties} Properties
+                        </p>
+                        <h3 className="text-white font-extrabold text-lg tracking-tight">
+                          {d.name}
+                        </h3>
+                        <p className="text-slate-300 text-[11px] font-medium mt-0.5 line-clamp-1">
+                          {d.desc}
+                        </p>
+                      </div>
+                      <div className="h-8 w-8 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center group-hover:bg-emerald-500 transition-all shrink-0 ml-3">
+                        <ArrowRight size={13} className="text-white" />
+                      </div>
+                    </div>
+                  </motion.div>
+                )
+              )}
+            </div>
+
+            {/* ── MOBILE: horizontal scroll strip ── */}
+            <div className="md:hidden -mx-4 px-4 flex gap-3 overflow-x-auto pb-3 no-scrollbar snap-x snap-mandatory">
+              {DESTINATIONS.map((d, i) => (
+                <motion.div
+                  key={d.name}
+                  initial={{ opacity: 0, scale: 0.97 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.05 }}
+                  onClick={() => navigate(`/listings?location=${encodeURIComponent(d.name)}`)}
+                  className="group cursor-pointer relative rounded-2xl overflow-hidden shrink-0 snap-start shadow-md"
+                  style={{ width: '72vw', height: '250px' }}
+                >
+                  <img
+                    src={d.image}
+                    alt={d.name}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/20 to-transparent" />
+                  <div className="absolute top-4 left-4">
+                    <span className="inline-flex items-center px-2.5 py-1 bg-white/20 backdrop-blur-md border border-white/30 rounded-full text-[9px] font-extrabold uppercase tracking-wider text-white">
+                      {d.tag}
+                    </span>
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 p-5 flex justify-between items-end">
+                    <div>
+                      <p className="text-emerald-400 text-xs font-extrabold uppercase tracking-widest mb-0.5">
+                        {d.properties} Properties
+                      </p>
+                      <h3 className="text-white font-extrabold text-xl tracking-tight">{d.name}</h3>
+                      <p className="text-slate-300 text-xs font-medium mt-0.5">{d.desc}</p>
+                    </div>
+                    <div className="h-8 w-8 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center group-hover:bg-emerald-500 transition-all shrink-0 ml-3">
+                      <ArrowRight size={14} className="text-white" />
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
             </div>
 
             {/* Bottom stat strip */}
@@ -899,8 +1023,8 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.4 }}
-              className="mt-8 grid grid-cols-3 gap-4 border border-white/5 rounded-[24px] bg-white/[0.02] px-6 py-5"
+              transition={{ delay: 0.3 }}
+              className="mt-10 grid grid-cols-3 gap-4 border border-slate-200/80 rounded-2xl bg-slate-50/80 px-6 py-5 shadow-sm"
             >
               {[
                 { value: '6', label: 'Distinct territories' },
@@ -908,58 +1032,62 @@ export default function LandingPage() {
                 { value: '100%', label: 'Personally inspected' },
               ].map((stat) => (
                 <div key={stat.label} className="text-center">
-                  <p className="text-2xl md:text-3xl font-black text-emerald-400">{stat.value}</p>
-                  <p className="text-white/30 text-[10px] md:text-xs font-black uppercase tracking-[0.3em] mt-1">{stat.label}</p>
+                  <p className="text-2xl md:text-3xl font-extrabold text-emerald-600">
+                    {stat.value}
+                  </p>
+                  <p className="text-slate-500 text-[10px] md:text-xs font-extrabold uppercase tracking-wider mt-1">
+                    {stat.label}
+                  </p>
                 </div>
               ))}
             </motion.div>
           </div>
         </section>
 
-        {/* ── TRUST STRIP ── */}
-        <section className="py-20 md:py-32 px-4 sm:px-6 max-w-7xl mx-auto">
+        {/* ── TRUST STRIP (CLEAN LIGHT AIRBNB STYLE) ── */}
+        <section className="py-16 md:py-24 px-4 sm:px-6 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             {[
               {
                 icon: CheckCircle2,
                 title: 'Verified Stays',
-                desc: 'Every property is personally inspected by our team for absolute quality.',
+                desc: 'Every property is personally inspected by our team for absolute quality and safety.',
               },
               {
                 icon: Compass,
                 title: 'Local Secrets',
-                desc: 'Access hidden beaches and cafes curated by our native guides.',
+                desc: 'Access hidden beaches, secret clifftop spots, and cafes curated by native guides.',
               },
               {
                 icon: Sparkles,
                 title: 'Wayzza AI',
-                desc: 'Plan your entire stay + vehicle combination in seconds with our AI engine.',
+                desc: 'Plan your entire stay + vehicle combination in seconds with our intelligence engine.',
               },
             ].map((item, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="group p-8 md:p-10 bg-white border border-slate-100 rounded-[32px] md:rounded-[48px] hover:border-slate-300 hover:shadow-xl transition-all duration-500"
+                transition={{ delay: i * 0.08 }}
+                className="group p-8 md:p-9 bg-white border border-slate-200/80 rounded-3xl hover:border-slate-300 hover:shadow-xl transition-all duration-300 shadow-sm"
               >
-                <div className="w-14 h-14 bg-slate-50 rounded-[20px] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
-                  <item.icon size={26} strokeWidth={1.5} className="text-slate-900" />
+                <div className="w-12 h-12 bg-emerald-50 border border-emerald-100/80 rounded-2xl flex items-center justify-center mb-6 text-emerald-600 group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-300">
+                  <item.icon size={22} strokeWidth={2} />
                 </div>
-                <h3 className="text-xl md:text-2xl font-bold text-slate-900 mb-3 tracking-tight">
+                <h3 className="text-xl font-bold text-slate-900 mb-2 tracking-tight">
                   {item.title}
                 </h3>
-                <p className="text-slate-500 font-medium leading-relaxed">{item.desc}</p>
+                <p className="text-slate-500 font-medium text-sm leading-relaxed">{item.desc}</p>
               </motion.div>
             ))}
           </div>
         </section>
 
-        {/* ── PACKAGES PROMO ── */}
-        <section className="py-16 md:py-24 px-4 sm:px-6 bg-slate-50 relative overflow-hidden">
+        {/* ── PACKAGES PROMO (CLEAN LIGHT AIRBNB STYLE) ── */}
+        <section className="py-16 md:py-20 px-4 sm:px-6 bg-slate-50/60 relative overflow-hidden">
           <div className="max-w-7xl mx-auto">
-            <div className="rounded-[40px] md:rounded-[64px] bg-white border border-slate-100 shadow-sm overflow-hidden">
+            <div className="rounded-3xl md:rounded-[40px] bg-white border border-slate-200/80 shadow-md overflow-hidden">
               <div className="flex flex-col md:flex-row items-center gap-0">
                 {/* Image */}
                 <div className="w-full md:w-1/2 h-64 md:h-80 relative overflow-hidden">
@@ -969,27 +1097,27 @@ export default function LandingPage() {
                     className="w-full h-full object-cover"
                     loading="lazy"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/20 md:to-white/60" />
-                  <div className="absolute top-5 left-5 flex items-center gap-2 px-3 py-1.5 bg-emerald-500 rounded-full text-[10px] font-black uppercase tracking-[0.3em] text-white">
-                    <Sparkles size={10} /> New
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/40 md:to-white/70" />
+                  <div className="absolute top-5 left-5 flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 rounded-full text-[10px] font-extrabold uppercase tracking-widest text-white shadow-md">
+                    <Sparkles size={10} /> Bundled Deals
                   </div>
                 </div>
                 {/* Text */}
-                <div className="flex-1 p-8 md:p-12 lg:p-16 space-y-5">
-                  <p className="text-emerald-500 uppercase tracking-[0.4em] text-[11px] font-black">
+                <div className="flex-1 p-8 md:p-12 space-y-5">
+                  <p className="text-emerald-600 font-extrabold text-xs uppercase tracking-widest">
                     Curated Packages
                   </p>
-                  <h2 className="text-3xl md:text-4xl font-black tracking-tighter text-slate-950 leading-tight">
+                  <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 leading-tight">
                     Stay. Ride. Explore.{' '}
-                    <span className="text-emerald-500 italic">All in one.</span>
+                    <span className="text-emerald-600 italic">All in one.</span>
                   </h2>
-                  <p className="text-slate-500 font-medium leading-relaxed max-w-md">
-                    Skip the planning. Our curated packages combine a premium villa, a vehicle, and
-                    a local experience — at one bundled price.
+                  <p className="text-slate-500 font-medium text-sm leading-relaxed max-w-md">
+                    Skip separate planning. Our curated packages combine a verified villa, a
+                    vehicle, and a local experience — at one bundled price.
                   </p>
                   <Link
                     to="/packages"
-                    className="inline-flex items-center gap-2 bg-slate-950 text-white px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-[0.3em] hover:bg-emerald-600 transition-all duration-300"
+                    className="inline-flex items-center gap-2 bg-slate-900 text-white px-7 py-3.5 rounded-2xl text-xs font-extrabold uppercase tracking-wider hover:bg-emerald-600 transition-all duration-300 shadow-md"
                   >
                     Browse Packages <ArrowRight size={14} />
                   </Link>
@@ -999,29 +1127,24 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ── AI PLANNER ── */}
-        <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-[#06110d] text-white overflow-hidden relative">
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-[-20%] left-[5%] w-[45%] h-[65%] bg-emerald-500/10 blur-[130px] rounded-full" />
-            <div className="absolute bottom-0 right-[12%] w-[38%] h-[45%] bg-emerald-700/10 blur-[110px] rounded-full" />
-          </div>
-
+        {/* ── AI PLANNER (CLEAN LIGHT AIRBNB STYLE) ── */}
+        <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-slate-50/50 text-slate-900 border-t border-b border-slate-100 relative overflow-hidden">
           <div className="max-w-6xl mx-auto relative z-10">
             <motion.div
-              initial={{ opacity: 0, y: 24 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] items-center"
             >
               <div className="space-y-6">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-[11px] uppercase tracking-[0.35em] text-emerald-300 font-black">
-                  <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-emerald-50 border border-emerald-100 rounded-full text-[10px] uppercase tracking-widest text-emerald-700 font-extrabold">
+                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                   Live AI Trip Planner
                 </div>
-                <h2 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight text-white">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight text-slate-900">
                   Plan your perfect getaway in seconds.
                 </h2>
-                <p className="max-w-2xl text-slate-300 text-base sm:text-lg leading-8">
+                <p className="max-w-2xl text-slate-500 font-medium text-base sm:text-lg leading-relaxed">
                   Type your travel mood, budget, and destination. The planner returns a curated
                   stay, vehicle, and local experience package instantly.
                 </p>
@@ -1034,12 +1157,12 @@ export default function LandingPage() {
                   ].map((stat) => (
                     <div
                       key={stat.title}
-                      className="rounded-3xl border border-white/10 bg-white/5 p-4 md:p-5"
+                      className="rounded-2xl border border-slate-200/80 bg-white p-4 md:p-5 shadow-sm"
                     >
-                      <p className="text-[10px] md:text-sm uppercase tracking-[0.35em] text-slate-400 font-semibold">
+                      <p className="text-[10px] md:text-xs uppercase tracking-wider text-slate-400 font-extrabold">
                         {stat.title}
                       </p>
-                      <p className="mt-2 md:mt-3 text-2xl md:text-3xl font-black text-emerald-300">
+                      <p className="mt-1 md:mt-2 text-2xl md:text-3xl font-extrabold text-emerald-600">
                         {stat.value}
                       </p>
                     </div>
@@ -1049,44 +1172,47 @@ export default function LandingPage() {
                 <div className="flex flex-col sm:flex-row gap-3">
                   <button
                     onClick={() => navigate('/ai-trip-planner')}
-                    className="inline-flex items-center justify-center gap-3 rounded-3xl bg-emerald-500 px-6 md:px-8 py-4 text-sm font-black uppercase tracking-[0.35em] text-slate-950 transition hover:bg-emerald-400 shadow-lg shadow-emerald-500/20"
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-900 px-6 md:px-8 py-3.5 text-xs font-extrabold uppercase tracking-wider text-white transition hover:bg-emerald-600 shadow-md"
                   >
                     Open AI Planner
-                    <ArrowRight size={16} />
+                    <ArrowRight size={15} />
                   </button>
                   <button
-                    onClick={() => navigate('/ai-trip-planner')}
-                    className="inline-flex items-center justify-center gap-2 rounded-3xl border border-white/10 bg-white/5 px-6 md:px-8 py-4 text-sm font-bold uppercase tracking-[0.35em] text-white transition hover:border-emerald-400 hover:bg-white/10"
+                    onClick={handleSeeExample}
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-6 md:px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-700 transition hover:bg-slate-50 hover:border-slate-300 shadow-sm"
                   >
                     See an example
-                    <ArrowRight size={16} />
+                    <ArrowRight size={15} />
                   </button>
                 </div>
               </div>
 
               {/* AI terminal mockup */}
-              <div className="relative rounded-[32px] md:rounded-[44px] border border-white/10 bg-slate-900/95 p-5 md:p-6 shadow-[0_35px_100px_rgba(0,0,0,0.45)]">
+              <div
+                ref={exampleMockupRef}
+                className="relative rounded-3xl md:rounded-[36px] border border-slate-200/80 bg-white p-5 md:p-6 shadow-xl"
+              >
                 <div className="absolute top-5 left-5 flex items-center gap-2" aria-hidden="true">
-                  <span className="h-2.5 w-2.5 rounded-full bg-rose-500" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-amber-500" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
                 </div>
-                <div className="rounded-[24px] border border-white/10 bg-slate-950/80 p-4 pt-10">
-                  <div className="text-sm uppercase tracking-[0.35em] text-emerald-300 font-bold mb-4">
+                <div className="rounded-2xl border border-slate-200/60 bg-slate-50/50 p-4 pt-10">
+                  <div className="text-xs uppercase tracking-widest text-emerald-600 font-extrabold mb-3">
                     Wayzza AI Trip Planner
                   </div>
-                  <div className="rounded-[24px] border border-white/10 bg-slate-900/80 p-5 space-y-5">
-                    <div className="bg-slate-950/80 rounded-3xl border border-emerald-500/10 p-4 text-slate-100">
-                      <p className="text-sm font-semibold uppercase tracking-[0.35em] text-emerald-300 mb-2">
+                  <div className="rounded-2xl border border-slate-200/80 bg-white p-4 space-y-4 shadow-sm">
+                    <div className="bg-slate-50 rounded-2xl border border-emerald-100 p-3.5 text-slate-800">
+                      <p className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-600 mb-1">
                         Example prompt
                       </p>
-                      <p className="leading-7 text-slate-200 text-sm">
+                      <p className="leading-relaxed text-slate-700 text-xs font-medium">
                         I want a quiet clifftop villa in Varkala for 3 nights, with a motorbike and
                         tips for hidden cafes. Budget around ₹15,000/night.
                       </p>
                     </div>
 
-                    <div className="grid gap-3 grid-cols-1 sm:grid-cols-3">
+                    <div className="grid gap-2.5 grid-cols-1 sm:grid-cols-3">
                       {[
                         { emoji: '🏠', title: 'Sea Cliff Retreat', detail: '₹12,500 / night' },
                         { emoji: '🏍️', title: 'Royal Enfield 350', detail: '₹850 / day' },
@@ -1094,24 +1220,26 @@ export default function LandingPage() {
                       ].map((item) => (
                         <div
                           key={item.title}
-                          className="rounded-2xl border border-white/10 bg-white/5 p-4"
+                          className="rounded-xl border border-slate-200/80 bg-white p-3 shadow-xs"
                         >
-                          <div className="flex items-center justify-between text-sm text-slate-300 mb-3">
+                          <div className="flex items-center justify-between text-xs text-slate-500 mb-2">
                             <span>{item.emoji}</span>
-                            <span className="rounded-full bg-emerald-500/15 px-2 py-1 text-[10px] uppercase tracking-[0.3em] text-emerald-300">
+                            <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-emerald-700">
                               Live
                             </span>
                           </div>
-                          <p className="font-semibold text-white text-sm">{item.title}</p>
-                          <p className="mt-1 text-xs text-slate-400">{item.detail}</p>
+                          <p className="font-bold text-slate-900 text-xs truncate">{item.title}</p>
+                          <p className="mt-0.5 text-[11px] text-slate-500 font-medium">
+                            {item.detail}
+                          </p>
                         </div>
                       ))}
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-4 rounded-[24px] border border-white/10 bg-white/5 p-4">
-                  <div className="flex flex-wrap gap-2 mb-4">
+                <div className="mt-4 rounded-2xl border border-slate-200/80 bg-slate-50/50 p-4">
+                  <div className="flex flex-wrap gap-2 mb-3">
                     {[
                       'Beachfront villa',
                       'Budget under ₹5k',
@@ -1120,7 +1248,7 @@ export default function LandingPage() {
                     ].map((label) => (
                       <span
                         key={label}
-                        className="rounded-full border border-white/10 bg-slate-950/50 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.3em] text-slate-200"
+                        className="rounded-full border border-slate-200 bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-600 shadow-xs"
                       >
                         {label}
                       </span>
@@ -1128,10 +1256,10 @@ export default function LandingPage() {
                   </div>
                   <button
                     onClick={() => navigate('/ai-trip-planner')}
-                    className="w-full inline-flex items-center justify-center gap-2 rounded-3xl bg-emerald-500 px-6 py-4 text-sm font-black uppercase tracking-[0.35em] text-slate-950 transition hover:bg-emerald-400"
+                    className="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 px-6 py-3 text-xs font-extrabold uppercase tracking-wider text-white transition hover:bg-emerald-700 shadow-sm"
                   >
                     Plan it
-                    <ArrowRight size={16} />
+                    <ArrowRight size={15} />
                   </button>
                 </div>
               </div>
@@ -1139,37 +1267,49 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ── FAQ SECTION ── */}
-        <section className="py-20 md:py-32 px-4 sm:px-6 bg-slate-50 relative overflow-hidden">
-          <div className="max-w-3xl mx-auto">
-            <div className="text-center space-y-4 mb-16">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-full text-[11px] font-black uppercase tracking-[0.3em]">
-                Need help?
+        {/* ── FAQ SECTION (COMPACT & CLEAN) ── */}
+        <section className="py-12 md:py-16 px-4 sm:px-6 bg-slate-50 border-t border-slate-100">
+          <div className="max-w-2xl mx-auto">
+            <div className="text-center space-y-2 mb-8">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-[10px] font-extrabold uppercase tracking-widest">
+                Help & Info
               </div>
-              <h2 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">
+              <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
                 Frequently Asked Questions
               </h2>
             </div>
 
-            <div className="space-y-4">
-              {WAYZZA_FAQ.map((faq, index) => {
+            <div className="space-y-3">
+              {WAYZZA_FAQ.slice(0, 4).map((faq, index) => {
                 const isOpen = openFaqIndex === index;
                 return (
                   <div
                     key={index}
-                    className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
-                      isOpen ? 'bg-white border-emerald-500 shadow-xl shadow-emerald-500/10' : 'bg-white/50 border-slate-200 hover:border-slate-300 hover:bg-white'
+                    className={`rounded-2xl border transition-all duration-200 overflow-hidden ${
+                      isOpen
+                        ? 'bg-white border-emerald-500 shadow-md'
+                        : 'bg-white border-slate-200/80 hover:border-slate-300'
                     }`}
                   >
                     <button
                       onClick={() => setOpenFaqIndex(isOpen ? null : index)}
-                      className="w-full text-left px-6 py-5 flex items-center justify-between gap-4"
+                      className="w-full text-left px-5 py-4 flex items-center justify-between gap-4"
                     >
-                      <span className={`font-bold text-lg md:text-xl transition-colors ${isOpen ? 'text-emerald-600' : 'text-slate-900'}`}>
+                      <span
+                        className={`font-bold text-base transition-colors ${isOpen ? 'text-emerald-700' : 'text-slate-900'}`}
+                      >
                         {faq.question}
                       </span>
-                      <div className={`w-8 h-8 rounded-full border flex items-center justify-center shrink-0 transition-all duration-300 ${isOpen ? 'bg-emerald-500 border-emerald-500 text-white rotate-180' : 'bg-slate-50 border-slate-200 text-slate-400'}`}>
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <div
+                        className={`w-7 h-7 rounded-full border flex items-center justify-center shrink-0 transition-all duration-300 ${isOpen ? 'bg-emerald-600 border-emerald-600 text-white rotate-180' : 'bg-slate-50 border-slate-200 text-slate-400'}`}
+                      >
+                        <svg
+                          className="w-3.5 h-3.5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={3}
+                        >
                           <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
                       </div>
@@ -1179,7 +1319,7 @@ export default function LandingPage() {
                       animate={{ height: isOpen ? 'auto' : 0, opacity: isOpen ? 1 : 0 }}
                       className="overflow-hidden"
                     >
-                      <div className="px-6 pb-6 text-slate-500 font-medium leading-relaxed">
+                      <div className="px-5 pb-4 text-slate-500 text-sm font-medium leading-relaxed">
                         {faq.answer}
                       </div>
                     </motion.div>
@@ -1187,87 +1327,84 @@ export default function LandingPage() {
                 );
               })}
             </div>
-            
-            <div className="mt-12 text-center">
-              <Link to="/faq" className="text-sm font-bold text-emerald-600 hover:text-emerald-500 uppercase tracking-widest inline-flex items-center gap-2">
-                View all FAQs <ArrowRight size={14} />
+
+            <div className="mt-8 text-center">
+              <Link
+                to="/faq"
+                className="text-xs font-extrabold text-emerald-600 hover:text-emerald-700 uppercase tracking-widest inline-flex items-center gap-1.5"
+              >
+                View all FAQs <ArrowRight size={13} />
               </Link>
             </div>
           </div>
         </section>
 
-        {/* ── FOOTER ── */}
-        <footer className="bg-slate-950 pt-20 md:pt-32 pb-12 px-4 sm:px-6 overflow-hidden relative border-t border-white/5">
-          <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-emerald-500/5 blur-[120px] rounded-full pointer-events-none" />
-          <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-emerald-900/5 blur-[100px] rounded-full pointer-events-none" />
-          <div
-            className="absolute -bottom-10 -right-20 text-[18vw] font-black text-white/[0.01] select-none pointer-events-none uppercase tracking-tighter leading-none"
-            aria-hidden="true"
-          >
-            Wayzza
-          </div>
-
-          <div className="max-w-7xl mx-auto relative z-10">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16 mb-16 md:mb-32">
-              {/* Brand column */}
-              <div className="md:col-span-5 space-y-8">
-                <div className="space-y-4">
-                  <Link to="/" className="flex items-center justify-center md:justify-start">
+        {/* ── FOOTER (PREMIUM CLEAN LIGHT AIRBNB STYLE) ── */}
+        <footer className="bg-slate-50 border-t border-slate-200/80 pt-16 pb-12 px-4 sm:px-6 lg:px-8 text-slate-900">
+          <div className="max-w-7xl mx-auto space-y-14">
+            {/* Top Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+              {/* Brand & Newsletter Column */}
+              <div className="lg:col-span-5 space-y-6">
+                <div className="space-y-3">
+                  <Link to="/" className="inline-block">
                     <img
-                      src="/images/logo-dark.svg"
+                      src="/images/logo-light.svg"
                       alt="Wayzza"
-                      className="h-10 md:h-14 w-auto object-contain"
+                      className="h-10 md:h-12 w-auto object-contain"
                       loading="lazy"
                     />
                   </Link>
-                  <p className="text-white/40 text-base font-medium leading-relaxed max-w-sm text-center md:text-left">
+                  <p className="text-slate-500 text-sm font-medium leading-relaxed max-w-sm">
                     Curating verified sanctuaries and high-performance mobility for the modern
-                    explorer.
+                    explorer in Varkala, Kerala.
                   </p>
                 </div>
 
-                {/* Newsletter */}
-                <div className="p-6 md:p-8 bg-white/5 border border-white/10 rounded-[24px] md:rounded-[32px] space-y-5 max-w-md hover:border-emerald-500/30 transition-all duration-500">
-                  <div className="space-y-1">
-                    <p className="text-[11px] font-black uppercase tracking-[0.3em] text-emerald-400">
+                {/* Newsletter Box */}
+                <div className="bg-white border border-slate-200/90 rounded-2xl p-5 md:p-6 shadow-sm space-y-4 max-w-md">
+                  <div>
+                    <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-600 block mb-0.5">
                       The Insider List
-                    </p>
-                    <h4 className="text-lg md:text-xl font-bold text-white">
+                    </span>
+                    <h4 className="text-base font-extrabold text-slate-900">
                       Join the Wayzza circle.
                     </h4>
                   </div>
                   <form onSubmit={handleNewsletterSubmit} className="flex gap-2">
                     <input
                       type="email"
-                      placeholder="Your email"
+                      placeholder="Enter your email address"
                       value={newsletterEmail}
                       onChange={(e) => setNewsletterEmail(e.target.value)}
-                      className="flex-1 min-w-0 bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-500 transition-all"
+                      className="flex-1 min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
                       aria-label="Newsletter email"
                       required
                     />
                     <button
                       type="submit"
                       disabled={newsletterLoading}
-                      className={`bg-emerald-500 text-slate-950 p-3 rounded-2xl transition-all active:scale-95 shadow-lg shadow-emerald-500/20 shrink-0 ${newsletterLoading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-emerald-400'}`}
+                      className={`bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-extrabold text-xs uppercase tracking-wider transition-all active:scale-95 shadow-sm shrink-0 flex items-center gap-1.5 ${newsletterLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
                       aria-label="Subscribe to newsletter"
                     >
-                      <Send size={18} strokeWidth={3} />
+                      <span>Join</span>
+                      <Send size={14} strokeWidth={2.5} />
                     </button>
                   </form>
-                  <p className="text-[11px] text-white/20 font-medium">
+                  <p className="text-[11px] text-slate-400 font-medium">
                     Monthly sanctuaries. Zero spam. Private access.
                   </p>
                 </div>
               </div>
 
-              {/* Links grid */}
-              <div className="md:col-span-7 grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-12">
-                <div className="space-y-6">
-                  <h5 className="text-[11px] font-black uppercase tracking-[0.4em] text-white/20">
+              {/* Navigation Grid */}
+              <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-8 lg:gap-12 pt-2">
+                {/* Platform */}
+                <div className="space-y-4">
+                  <h5 className="text-xs font-extrabold uppercase tracking-wider text-slate-900">
                     Platform
                   </h5>
-                  <ul className="space-y-3">
+                  <ul className="space-y-2.5">
                     {[
                       { name: 'Stays', to: '/listings?category=hotel' },
                       { name: 'Mobility', to: '/listings?category=bike' },
@@ -1277,7 +1414,7 @@ export default function LandingPage() {
                       <li key={link.name}>
                         <Link
                           to={link.to}
-                          className="text-sm font-bold text-white/40 hover:text-emerald-400 transition-all hover:translate-x-1 inline-block uppercase tracking-widest"
+                          className="text-xs font-medium text-slate-500 hover:text-emerald-600 transition-colors"
                         >
                           {link.name}
                         </Link>
@@ -1286,11 +1423,12 @@ export default function LandingPage() {
                   </ul>
                 </div>
 
-                <div className="space-y-6">
-                  <h5 className="text-[11px] font-black uppercase tracking-[0.4em] text-white/20">
+                {/* Company */}
+                <div className="space-y-4">
+                  <h5 className="text-xs font-extrabold uppercase tracking-wider text-slate-900">
                     Company
                   </h5>
-                  <ul className="space-y-3">
+                  <ul className="space-y-2.5">
                     {[
                       { name: 'Our Story', to: '/about' },
                       { name: 'Partners', to: '/partner-register' },
@@ -1300,7 +1438,7 @@ export default function LandingPage() {
                       <li key={link.name}>
                         <Link
                           to={link.to}
-                          className="text-sm font-bold text-white/40 hover:text-emerald-400 transition-all hover:translate-x-1 inline-block uppercase tracking-widest"
+                          className="text-xs font-medium text-slate-500 hover:text-emerald-600 transition-colors"
                         >
                           {link.name}
                         </Link>
@@ -1309,11 +1447,12 @@ export default function LandingPage() {
                   </ul>
                 </div>
 
-                <div className="col-span-2 md:col-span-1 space-y-6">
-                  <h5 className="text-[11px] font-black uppercase tracking-[0.4em] text-white/20">
+                {/* Connect */}
+                <div className="col-span-2 sm:col-span-1 space-y-4">
+                  <h5 className="text-xs font-extrabold uppercase tracking-wider text-slate-900">
                     Connect
                   </h5>
-                  <div className="flex gap-3">
+                  <div className="flex gap-2">
                     {[
                       {
                         Icon: Instagram,
@@ -1329,19 +1468,19 @@ export default function LandingPage() {
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={label}
-                        className="w-11 h-11 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white/40 hover:text-emerald-400 hover:border-emerald-500/50 hover:-translate-y-1 transition-all"
+                        className="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-emerald-600 hover:border-emerald-300 hover:bg-emerald-50 transition-all shadow-xs"
                       >
-                        <Icon size={18} />
+                        <Icon size={16} />
                       </a>
                     ))}
                   </div>
-                  <div className="space-y-1">
-                    <p className="text-[11px] text-white/20 font-black uppercase tracking-widest">
+                  <div className="pt-2">
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-0.5">
                       General Enquiries
-                    </p>
+                    </span>
                     <a
                       href="mailto:hello@wayzza.live"
-                      className="text-sm font-bold text-white hover:text-emerald-400 transition-colors"
+                      className="text-xs font-bold text-slate-800 hover:text-emerald-600 transition-colors block"
                     >
                       hello@wayzza.live
                     </a>
@@ -1350,41 +1489,116 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Bottom bar */}
-            <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
-              <div className="flex flex-wrap justify-center gap-6 text-[11px] font-black uppercase tracking-[0.3em] text-white/20">
+            {/* Bottom Bar */}
+            <div className="pt-8 border-t border-slate-200/80 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs">
+              <div className="flex items-center gap-4 text-slate-500 font-medium flex-wrap justify-center">
                 <span>Wayzza © 2026</span>
-                <Link to="/privacy" className="hover:text-white transition-colors">
-                  Privacy
+                <span className="text-slate-300">•</span>
+                <Link to="/privacy" className="hover:text-slate-900 transition-colors">
+                  Privacy Policy
                 </Link>
-                <Link to="/terms" className="hover:text-white transition-colors">
-                  Terms
+                <span className="text-slate-300">•</span>
+                <Link to="/terms" className="hover:text-slate-900 transition-colors">
+                  Terms of Service
                 </Link>
               </div>
-              <div className="flex items-center gap-4 flex-wrap justify-center">
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  className="px-5 py-2.5 bg-white/[0.03] border border-white/5 rounded-full flex items-center gap-2"
-                >
-                  <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/40">
-                    Made with <span className="text-rose-500">❤️</span> in Varkala
-                  </span>
-                </motion.div>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+              <div className="flex items-center gap-3">
+                <span className="text-slate-400 font-medium text-xs">
+                  Made with <span className="text-rose-500">❤️</span> in Varkala
+                </span>
+                <button
                   onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                  className="flex items-center gap-3 text-white/40 text-[11px] font-black uppercase tracking-widest bg-white/5 px-4 py-2 rounded-xl border border-white/5 hover:border-emerald-500/30 transition-all"
+                  className="flex items-center gap-1.5 text-slate-600 bg-white px-3 py-1.5 rounded-full border border-slate-200 hover:border-slate-300 hover:text-slate-900 transition-all text-xs font-bold shadow-xs"
                   aria-label="Back to top"
                 >
-                  <Globe size={13} className="text-emerald-500" />
-                  <span>Global Gateway</span>
-                </motion.button>
+                  <Globe size={13} className="text-emerald-600" />
+                  <span>Back to top</span>
+                </button>
               </div>
             </div>
           </div>
         </footer>
       </div>
+
+      {/* ── Sample AI Trip Itinerary Modal ── */}
+      {showExampleModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4 overflow-y-auto">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="bg-white rounded-[32px] p-6 sm:p-8 max-w-xl w-full text-slate-900 shadow-2xl relative border border-slate-100 my-8"
+          >
+            <button
+              onClick={() => setShowExampleModal(false)}
+              className="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-colors"
+            >
+              <X size={16} />
+            </button>
+
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[10px] uppercase font-black tracking-widest mb-3">
+              <Sparkles size={12} /> Sample AI Generated Package
+            </div>
+
+            <h3 className="text-2xl font-black text-slate-950 tracking-tight">
+              Varkala Clifftop Dream Package
+            </h3>
+            <p className="text-xs text-slate-500 mt-1 font-medium">
+              3 Nights / 4 Days • Target Budget: ₹15,000 / night • Vibe: Relax & Unwind
+            </p>
+
+            {/* Itinerary Timeline */}
+            <div className="mt-6 space-y-3.5 text-xs">
+              <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1.5">
+                <div className="font-extrabold text-emerald-600 uppercase tracking-wider text-[10px]">
+                  Day 1 • Arrival & Coastal Mobility
+                </div>
+                <div className="font-bold text-slate-900 text-sm">Check-in at Sea Cliff Retreat</div>
+                <p className="text-slate-600 leading-relaxed">
+                  Pickup Royal Enfield Classic 350 at Trivandrum. Check into ocean-view clifftop villa, relax with welcome coconut drink.
+                </p>
+              </div>
+
+              <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1.5">
+                <div className="font-extrabold text-emerald-600 uppercase tracking-wider text-[10px]">
+                  Day 2 • Secret Cafes & Sunset Surf
+                </div>
+                <div className="font-bold text-slate-900 text-sm">Cliff Cafe Trail & Black Beach Surf</div>
+                <p className="text-slate-600 leading-relaxed">
+                  Guided 2-hr surfing lesson at Black Beach, followed by lunch at hidden clifftop cafes. Evening sunset ride along North Cliff.
+                </p>
+              </div>
+
+              <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1.5">
+                <div className="font-extrabold text-emerald-600 uppercase tracking-wider text-[10px]">
+                  Day 3 • Rejuvenation & Sunset Cruise
+                </div>
+                <div className="font-bold text-slate-900 text-sm">Ayurvedic Spa & Catamaran Cruise</div>
+                <p className="text-slate-600 leading-relaxed">
+                  2-hour full body authentic Kerala Ayurvedic massage treatment. Private Catamaran sunset cruise with fresh canapes.
+                </p>
+              </div>
+            </div>
+
+            {/* Included breakdown */}
+            <div className="mt-6 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex flex-wrap items-center justify-between gap-3 text-xs">
+              <div>
+                <span className="text-slate-500 block text-[10px] uppercase font-bold">Estimated Total</span>
+                <span className="text-emerald-700 font-black text-lg">₹42,500 <span className="text-xs font-normal text-slate-500">all-inclusive</span></span>
+              </div>
+              <button
+                onClick={() => {
+                  setShowExampleModal(false);
+                  navigate('/ai-trip-planner');
+                }}
+                className="bg-emerald-600 hover:bg-emerald-500 text-white font-black px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all shadow-md active:scale-95"
+              >
+                Customize Your Own Package →
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </WayzzaLayout>
   );
 }

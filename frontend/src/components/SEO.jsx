@@ -64,7 +64,6 @@ export default function SEO({
     image: defaultImage,
     description:
       'Wayzza is a curated booking platform for premium clifftop villas, Royal Enfield bike rentals, luxury cars, and authentic local experiences in Varkala, Kerala, India.',
-    telephone: '+91 99955 55444',
     email: 'stay@wayzza.live',
     priceRange: '₹₹₹',
     currenciesAccepted: 'INR, USD, EUR, GBP, AED',

@@ -85,7 +85,12 @@ export default function PartnerWallet() {
 
   async function handleWithdraw(e) {
     e.preventDefault();
-    if (!withdrawAmount || Number(withdrawAmount) <= 0) return;
+    const amount = Number(withdrawAmount);
+    if (!amount || amount <= 0) return;
+    if (amount < 100) {
+      setWithdrawMsg({ type: 'error', text: 'Minimum withdrawal amount is ₹100.' });
+      return;
+    }
     if (!wallet?.accountNumber) {
       setWithdrawMsg({ type: 'error', text: 'Please save your bank details first.' });
       return;
@@ -93,7 +98,7 @@ export default function PartnerWallet() {
     setWithdrawing(true);
     setWithdrawMsg(null);
     try {
-      const d = await api.requestWithdrawal(Number(withdrawAmount));
+      const d = await api.requestWithdrawal(amount);
       if (d.ok) {
         setWithdrawMsg({
           type: 'success',
@@ -127,8 +132,11 @@ export default function PartnerWallet() {
 
   if (loading)
     return (
-      <div className="flex items-center justify-center min-h-[400px] bg-[#050a08]">
-        <div className="w-10 h-10 border-2 border-white/10 border-t-emerald-500 rounded-full animate-spin" />
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div
+          className="w-8 h-8 border-2 rounded-full animate-spin"
+          style={{ borderColor: 'var(--dash-divider)', borderTopColor: 'var(--dash-accent-500)' }}
+        />
       </div>
     );
 
@@ -169,101 +177,115 @@ export default function PartnerWallet() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#050a08] font-sans text-white selection:bg-emerald-900/50 selection:text-emerald-200 pb-20">
-      {/* ── Ambient Background ── */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-emerald-500/5 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-700/5 blur-[100px] rounded-full" />
-        <div
-          className="absolute inset-0 opacity-[0.015]"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(52,211,153,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(52,211,153,0.6) 1px, transparent 1px)',
-            backgroundSize: '48px 48px',
-          }}
-        />
-      </div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 py-10 space-y-8"
-      >
+    <div
+      className="font-sans pb-16 dash-transition"
+      style={{ background: 'var(--dash-bg)', color: 'var(--dash-text-1)' }}
+    >
+      <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-10 py-6 space-y-6">
         {/* ─── HEADER ─── */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 bg-white/[0.03] border border-white/[0.08] p-8 rounded-3xl backdrop-blur-xl">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 text-emerald-400 font-black text-[10px] uppercase tracking-[0.4em] mb-1">
-              <Wallet size={14} /> Partner Wallet
-            </div>
-            <h1 className="text-3xl font-black text-white tracking-tight uppercase">
+        <div className="dash-fade-1 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <p
+              className="text-[10px] font-semibold uppercase tracking-[0.15em] mb-1"
+              style={{ color: 'var(--dash-accent)' }}
+            >
+              Partner Wallet
+            </p>
+            <h1
+              className="text-[20px] font-semibold leading-snug"
+              style={{ color: 'var(--dash-text-1)' }}
+            >
               Wallet &amp; Payouts
             </h1>
-            <p className="text-white/30 text-sm font-medium">
+            <p className="text-[11px] mt-1" style={{ color: 'var(--dash-text-3)' }}>
               Manage your bank details and request withdrawals.
             </p>
           </div>
         </div>
 
         {/* ─── BALANCE CARDS ─── */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
-          {balanceCards.map((c, i) => (
-            <motion.div
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 dash-fade-2">
+          {balanceCards.map((c) => (
+            <div
               key={c.label}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.07 }}
-              className={`bg-gradient-to-br ${c.bg} rounded-2xl p-6 text-white shadow-lg relative overflow-hidden`}
+              className="dash-kpi-card p-5 rounded-xl"
+              style={{
+                background: 'var(--dash-card)',
+                border: '1px solid var(--dash-card-border)',
+              }}
             >
-              <div className="absolute -top-4 -right-4 w-20 h-20 bg-white/10 rounded-full blur-xl" />
-              <div className="relative z-10">
-                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mb-4">
-                  <c.icon size={20} />
-                </div>
-                <p className="text-white/70 text-xs font-semibold mb-1">{c.label}</p>
-                <p className="text-2xl font-bold">₹{Math.round(c.value).toLocaleString()}</p>
-                <p className="text-white/50 text-[11px] font-medium uppercase tracking-widest mt-1">
-                  {c.desc}
-                </p>
-              </div>
-            </motion.div>
+              <p className="text-[10.5px] font-medium mb-2" style={{ color: 'var(--dash-text-3)' }}>
+                {c.label}
+              </p>
+              <div className="h-px mb-2.5" style={{ background: 'var(--dash-divider)' }} />
+              <p
+                className="text-[22px] font-semibold tracking-tight leading-none mb-1.5"
+                style={{ color: 'var(--dash-text-1)' }}
+              >
+                ₹{Math.round(c.value).toLocaleString()}
+              </p>
+              <p className="text-[10px] font-medium" style={{ color: 'var(--dash-accent)' }}>
+                {c.desc}
+              </p>
+            </div>
           ))}
         </div>
 
         {/* ─── MAIN GRID ─── */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 dash-fade-3">
           {/* ─── WITHDRAW ─── */}
-          <div className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-8 backdrop-blur-xl">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center">
-                <ArrowDownCircle size={20} />
+          <div
+            className="p-6 rounded-xl"
+            style={{ background: 'var(--dash-card)', border: '1px solid var(--dash-card-border)' }}
+          >
+            <div className="flex items-center gap-3 mb-5">
+              <div
+                className="w-9 h-9 rounded-lg flex items-center justify-center"
+                style={{ background: 'var(--dash-accent-dim)', color: 'var(--dash-accent)' }}
+              >
+                <ArrowDownCircle size={18} />
               </div>
               <div>
-                <h2 className="text-lg font-black text-white uppercase tracking-tight">
+                <h2 className="text-[13px] font-semibold" style={{ color: 'var(--dash-text-1)' }}>
                   Request Withdrawal
                 </h2>
-                <p className="text-xs text-white/30 font-medium">
+                <p className="text-[10.5px]" style={{ color: 'var(--dash-text-3)' }}>
                   Transfer available balance to your bank
                 </p>
               </div>
             </div>
 
             {/* Available balance pill */}
-            <div className="flex items-center justify-between bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-5 py-4 mb-6">
+            <div
+              className="flex items-center justify-between rounded-xl px-4 py-3.5 mb-5"
+              style={{
+                background: 'var(--dash-accent-dim)',
+                border: '1px solid var(--dash-accent-border)',
+              }}
+            >
               <div>
-                <p className="text-xs font-bold text-emerald-400 uppercase tracking-wide">
+                <p
+                  className="text-[10px] font-semibold uppercase tracking-wide"
+                  style={{ color: 'var(--dash-accent)' }}
+                >
                   Available Balance
                 </p>
-                <p className="text-2xl font-black text-emerald-300 mt-0.5">
+                <p className="text-xl font-bold mt-0.5" style={{ color: 'var(--dash-text-1)' }}>
                   ₹{Math.round(available).toLocaleString()}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center">
-                <Zap size={22} className="text-emerald-400" />
-              </div>
+              <Zap size={20} style={{ color: 'var(--dash-accent)' }} />
             </div>
 
             {!wallet?.accountNumber && (
-              <div className="flex items-start gap-2 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3 mb-5 text-xs text-amber-400 font-medium">
+              <div
+                className="flex items-start gap-2 rounded-xl px-3.5 py-2.5 mb-4 text-[11px] font-medium"
+                style={{
+                  background: 'rgba(251,191,36,0.08)',
+                  border: '1px solid rgba(251,191,36,0.18)',
+                  color: 'var(--dash-warning)',
+                }}
+              >
                 <AlertCircle size={14} className="shrink-0 mt-0.5" />
                 Please add your bank details below before requesting a withdrawal.
               </div>
@@ -271,21 +293,32 @@ export default function PartnerWallet() {
 
             <form onSubmit={handleWithdraw} className="space-y-4">
               <div>
-                <label className="text-xs font-bold text-white/40 uppercase tracking-wide block mb-1.5">
+                <label
+                  className="text-[11px] font-medium block mb-1.5"
+                  style={{ color: 'var(--dash-text-2)' }}
+                >
                   Withdrawal Amount (₹)
                 </label>
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 font-bold text-sm">
+                  <span
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 font-semibold text-sm"
+                    style={{ color: 'var(--dash-text-3)' }}
+                  >
                     ₹
                   </span>
                   <input
                     type="number"
-                    min="1"
+                    min="100"
                     max={Math.round(available)}
                     value={withdrawAmount}
                     onChange={(e) => setWithdrawAmount(e.target.value)}
                     placeholder={`Max ₹${Math.round(available).toLocaleString()}`}
-                    className="w-full h-12 bg-white/[0.03] border border-white/[0.08] rounded-xl pl-9 pr-4 text-sm font-bold focus:bg-white/[0.05] focus:border-emerald-500 transition-all outline-none text-white placeholder:text-white/20"
+                    className="w-full h-10 rounded-lg pl-8 pr-4 text-sm font-semibold transition-all outline-none"
+                    style={{
+                      background: 'var(--dash-card)',
+                      border: '1px solid var(--dash-card-border)',
+                      color: 'var(--dash-text-1)',
+                    }}
                   />
                 </div>
                 <div className="flex gap-2 mt-2">
@@ -294,7 +327,12 @@ export default function PartnerWallet() {
                       key={pct}
                       type="button"
                       onClick={() => setWithdrawAmount(Math.round((available * pct) / 100))}
-                      className="flex-1 h-8 text-xs font-bold bg-white/[0.05] hover:bg-emerald-500/10 hover:text-emerald-400 text-white/30 rounded-lg transition-colors border border-white/[0.05] hover:border-emerald-500/20"
+                      className="flex-1 h-7 text-[11px] font-medium rounded-md transition-colors"
+                      style={{
+                        background: 'rgba(128,128,128,0.06)',
+                        border: '1px solid var(--dash-card-border)',
+                        color: 'var(--dash-text-2)',
+                      }}
                     >
                       {pct}%
                     </button>
@@ -323,12 +361,13 @@ export default function PartnerWallet() {
               <button
                 type="submit"
                 disabled={withdrawing || !withdrawAmount || available <= 0}
-                className="w-full h-12 bg-emerald-500 hover:bg-emerald-600 text-[#050a08] rounded-xl font-black text-sm flex items-center justify-center gap-2 transition-all shadow-md shadow-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
+                className="w-full h-10 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50 active:scale-98"
+                style={{ background: 'var(--dash-accent-500)', color: '#050a08' }}
               >
                 {withdrawing ? (
-                  <RefreshCcw size={16} className="animate-spin" />
+                  <RefreshCcw size={15} className="animate-spin" />
                 ) : (
-                  <Send size={16} />
+                  <Send size={15} />
                 )}
                 {withdrawing ? 'Submitting...' : 'Request Withdrawal'}
               </button>
@@ -336,19 +375,30 @@ export default function PartnerWallet() {
           </div>
 
           {/* ─── BANK DETAILS ─── */}
-          <div className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-8 backdrop-blur-xl">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-blue-500/10 text-blue-400 rounded-xl flex items-center justify-center">
-                <Landmark size={20} />
+          <div
+            className="p-6 rounded-xl"
+            style={{ background: 'var(--dash-card)', border: '1px solid var(--dash-card-border)' }}
+          >
+            <div className="flex items-center gap-3 mb-5">
+              <div
+                className="w-9 h-9 rounded-lg flex items-center justify-center"
+                style={{ background: 'var(--dash-accent-dim)', color: 'var(--dash-accent)' }}
+              >
+                <Landmark size={18} />
               </div>
               <div>
-                <h2 className="text-lg font-black text-white uppercase tracking-tight">
+                <h2 className="text-[13px] font-semibold" style={{ color: 'var(--dash-text-1)' }}>
                   Bank Details
                 </h2>
-                <p className="text-xs text-white/30 font-medium">Your payout destination account</p>
+                <p className="text-[10.5px]" style={{ color: 'var(--dash-text-3)' }}>
+                  Your payout destination account
+                </p>
               </div>
               {wallet?.accountNumber && (
-                <span className="ml-auto flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
+                <span
+                  className="ml-auto flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-[4px]"
+                  style={{ background: 'var(--dash-accent-dim)', color: 'var(--dash-accent)' }}
+                >
                   <ShieldCheck size={10} /> Verified
                 </span>
               )}
@@ -382,35 +432,52 @@ export default function PartnerWallet() {
                 },
               ].map((f) => (
                 <div key={f.key}>
-                  <label className="text-xs font-bold text-white/40 uppercase tracking-wide block mb-1.5">
+                  <label
+                    className="text-[11px] font-medium block mb-1"
+                    style={{ color: 'var(--dash-text-2)' }}
+                  >
                     {f.label}
                   </label>
                   <div className="relative">
                     <f.icon
-                      size={14}
-                      className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/20"
+                      size={13}
+                      className="absolute left-3 top-1/2 -translate-y-1/2"
+                      style={{ color: 'var(--dash-text-3)' }}
                     />
                     <input
                       type="text"
                       value={form[f.key]}
                       onChange={(e) => setForm((p) => ({ ...p, [f.key]: e.target.value }))}
                       placeholder={f.placeholder}
-                      className="w-full h-11 bg-white/[0.03] border border-white/[0.08] rounded-xl pl-9 pr-4 text-sm font-medium focus:bg-white/[0.05] focus:border-emerald-500 transition-all outline-none text-white placeholder:text-white/20"
+                      className="w-full h-9 rounded-lg pl-8 pr-3 text-xs font-medium outline-none transition-all"
+                      style={{
+                        background: 'var(--dash-card)',
+                        border: '1px solid var(--dash-card-border)',
+                        color: 'var(--dash-text-1)',
+                      }}
                     />
                   </div>
                 </div>
               ))}
 
               <div>
-                <label className="text-xs font-bold text-white/40 uppercase tracking-wide block mb-1.5">
-                  UPI ID <span className="text-white/20 normal-case font-normal">(optional)</span>
+                <label
+                  className="text-[11px] font-medium block mb-1"
+                  style={{ color: 'var(--dash-text-2)' }}
+                >
+                  UPI ID <span style={{ color: 'var(--dash-text-3)' }}>(optional)</span>
                 </label>
                 <input
                   type="text"
                   value={form.upiId}
                   onChange={(e) => setForm((p) => ({ ...p, upiId: e.target.value }))}
                   placeholder="e.g. yourname@upi"
-                  className="w-full h-11 bg-white/[0.03] border border-white/[0.08] rounded-xl px-4 text-sm font-medium focus:bg-white/[0.05] focus:border-emerald-500 transition-all outline-none text-white placeholder:text-white/20"
+                  className="w-full h-9 rounded-lg px-3 text-xs font-medium outline-none transition-all"
+                  style={{
+                    background: 'var(--dash-card)',
+                    border: '1px solid var(--dash-card-border)',
+                    color: 'var(--dash-text-1)',
+                  }}
                 />
               </div>
 
@@ -420,7 +487,15 @@ export default function PartnerWallet() {
                     initial={{ opacity: 0, y: -8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
-                    className={`flex items-center gap-2 text-xs font-semibold px-4 py-3 rounded-xl ${saveMsg.type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-rose-50 text-rose-700 border border-rose-100'}`}
+                    className="flex items-center gap-2 text-xs font-semibold px-3 py-2 rounded-lg"
+                    style={{
+                      background:
+                        saveMsg.type === 'success'
+                          ? 'var(--dash-accent-dim)'
+                          : 'rgba(248,113,113,0.10)',
+                      color:
+                        saveMsg.type === 'success' ? 'var(--dash-accent)' : 'var(--dash-danger)',
+                    }}
                   >
                     {saveMsg.type === 'success' ? (
                       <CheckCircle size={14} />
@@ -435,12 +510,13 @@ export default function PartnerWallet() {
               <button
                 type="submit"
                 disabled={saving}
-                className="w-full h-12 bg-white text-[#050a08] hover:bg-emerald-400 rounded-xl font-black text-sm flex items-center justify-center gap-2 transition-all shadow-md disabled:opacity-50 active:scale-95"
+                className="w-full h-10 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50 active:scale-98"
+                style={{ background: 'var(--dash-text-1)', color: 'var(--dash-bg)' }}
               >
                 {saving ? (
-                  <RefreshCcw size={16} className="animate-spin" />
+                  <RefreshCcw size={15} className="animate-spin" />
                 ) : (
-                  <ShieldCheck size={16} />
+                  <ShieldCheck size={15} />
                 )}
                 {saving ? 'Saving...' : 'Save Bank Details'}
               </button>
@@ -449,64 +525,85 @@ export default function PartnerWallet() {
         </div>
 
         {/* ─── WITHDRAWAL HISTORY ─── */}
-        <div className="bg-white/[0.03] border border-white/[0.08] rounded-3xl backdrop-blur-xl overflow-hidden">
-          <div className="p-6 border-b border-white/[0.05] flex items-center justify-between">
+        <div
+          className="table-card rounded-xl overflow-hidden dash-fade-4"
+          style={{ background: 'var(--dash-card)', border: '1px solid var(--dash-card-border)' }}
+        >
+          <div
+            className="p-5 flex items-center justify-between"
+            style={{ borderBottom: '1px solid var(--dash-divider)' }}
+          >
             <div>
-              <h3 className="text-lg font-black text-white uppercase tracking-tight">
+              <h3 className="text-[13px] font-semibold" style={{ color: 'var(--dash-text-1)' }}>
                 Withdrawal History
               </h3>
-              <p className="text-xs text-white/30 font-medium">All your past payout requests</p>
+              <p className="text-[10.5px]" style={{ color: 'var(--dash-text-3)' }}>
+                All your past payout requests
+              </p>
             </div>
-            <span className="text-[11px] font-bold uppercase tracking-widest text-blue-400 bg-blue-500/10 px-2.5 py-1 rounded-lg border border-blue-500/20 flex items-center gap-1.5">
-              <ShieldCheck size={10} /> Merchant Protected
-            </span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-white/[0.05] bg-white/[0.01]">
-                  <th className="px-6 py-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">
+                <tr style={{ borderBottom: '1px solid var(--dash-divider)' }}>
+                  <th
+                    className="px-5 py-3 text-[9.5px] font-semibold uppercase tracking-wider"
+                    style={{ color: 'var(--dash-text-3)' }}
+                  >
                     Date
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">
+                  <th
+                    className="px-5 py-3 text-[9.5px] font-semibold uppercase tracking-wider"
+                    style={{ color: 'var(--dash-text-3)' }}
+                  >
                     Amount
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">
+                  <th
+                    className="px-5 py-3 text-[9.5px] font-semibold uppercase tracking-wider"
+                    style={{ color: 'var(--dash-text-3)' }}
+                  >
                     Status
                   </th>
-                  <th className="px-6 py-4 text-right text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">
+                  <th
+                    className="px-5 py-3 text-right text-[9.5px] font-semibold uppercase tracking-wider"
+                    style={{ color: 'var(--dash-text-3)' }}
+                  >
                     Reference
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/[0.03]">
+              <tbody>
                 {requests.map((r, i) => (
-                  <motion.tr
-                    key={r._id || i}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: i * 0.04 }}
-                    className="hover:bg-white/[0.01] transition-colors"
-                  >
-                    <td className="px-6 py-4 text-sm font-medium text-white/70">
+                  <tr key={r._id || i} style={{ borderBottom: '1px solid var(--dash-divider)' }}>
+                    <td
+                      className="px-5 py-3 text-xs font-medium"
+                      style={{ color: 'var(--dash-text-2)' }}
+                    >
                       {new Date(r.requestedAt).toLocaleDateString('en-IN', {
                         day: '2-digit',
                         month: 'short',
                         year: 'numeric',
                       })}
                     </td>
-                    <td className="px-6 py-4 font-bold text-sm text-white">
+                    <td
+                      className="px-5 py-3 text-xs font-semibold"
+                      style={{ color: 'var(--dash-text-1)' }}
+                    >
                       ₹{Number(r.amount).toLocaleString()}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-5 py-3">
                       <span
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider border ${
-                          r.status === 'completed' || r.status === 'paid'
-                            ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
-                            : r.status === 'rejected'
-                              ? 'bg-rose-50 text-rose-700 border-rose-100'
-                              : 'bg-amber-50 text-amber-700 border-amber-100'
-                        }`}
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider"
+                        style={{
+                          background:
+                            r.status === 'completed' || r.status === 'paid'
+                              ? 'var(--dash-accent-dim)'
+                              : 'rgba(251,191,36,0.12)',
+                          color:
+                            r.status === 'completed' || r.status === 'paid'
+                              ? 'var(--dash-accent)'
+                              : 'var(--dash-warning)',
+                        }}
                       >
                         {r.status === 'completed' || r.status === 'paid' ? (
                           <CheckCircle size={10} />
@@ -516,19 +613,28 @@ export default function PartnerWallet() {
                         {r.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right text-xs font-bold text-white/30 font-mono">
+                    <td
+                      className="px-5 py-3 text-right text-[11px] font-mono"
+                      style={{ color: 'var(--dash-text-3)' }}
+                    >
                       #{(r._id || '').slice(-8).toUpperCase()}
                     </td>
-                  </motion.tr>
+                  </tr>
                 ))}
                 {requests.length === 0 && (
                   <tr>
-                    <td colSpan={4} className="py-20 text-center">
-                      <Wallet size={32} className="text-white/10 mx-auto mb-3" />
-                      <p className="text-sm font-black text-white/30 uppercase tracking-widest mb-1">
+                    <td colSpan={4} className="py-12 text-center">
+                      <Wallet
+                        size={28}
+                        style={{ color: 'var(--dash-text-3)', margin: '0 auto 8px' }}
+                      />
+                      <p
+                        className="text-xs font-semibold uppercase tracking-wider mb-1"
+                        style={{ color: 'var(--dash-text-3)' }}
+                      >
                         No withdrawal requests yet
                       </p>
-                      <p className="text-xs text-white/20 font-medium">
+                      <p className="text-[11px]" style={{ color: 'var(--dash-text-3)' }}>
                         Your payout history will appear here once you submit a request.
                       </p>
                     </td>
@@ -538,7 +644,7 @@ export default function PartnerWallet() {
             </table>
           </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }

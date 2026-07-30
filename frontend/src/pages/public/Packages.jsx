@@ -7,11 +7,20 @@ import SEO from '../../components/SEO.jsx';
 import { Home, Bike, Sparkles, ArrowRight, CheckCircle2, Package, MapPin } from 'lucide-react';
 
 const SOUTH_KERALA_LOCATIONS = [
-  { name: 'Munroe Island', img: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=800&q=80' },
-  { name: 'Kaveri Elephant Park', img: 'https://images.unsplash.com/photo-1588336142586-36aff1c9e5e7?auto=format&fit=crop&w=800&q=80' },
-  { name: 'Jatayu Earth Center', img: 'https://images.unsplash.com/photo-1643193498967-df1fb4284d72?auto=format&fit=crop&w=800&q=80' },
+  {
+    name: 'Munroe Island',
+    img: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=800&q=80',
+  },
+  {
+    name: 'Kaveri Elephant Park',
+    img: 'https://images.unsplash.com/photo-1588336142586-36aff1c9e5e7?auto=format&fit=crop&w=800&q=80',
+  },
+  {
+    name: 'Jatayu Earth Center',
+    img: 'https://images.unsplash.com/photo-1643193498967-df1fb4284d72?auto=format&fit=crop&w=800&q=80',
+  },
   { name: 'Varkala Cliff', img: '/images/varkala_cliff.webp' },
-  { name: 'Kappil Beach', img: '/images/varkala_hero.webp' }
+  { name: 'Kappil Beach', img: '/images/varkala_hero.webp' },
 ];
 
 function PackageCard({ pkg, index }) {
@@ -199,62 +208,70 @@ export default function Packages() {
       {/* South Kerala Escape Featured Section */}
       <div className="bg-slate-50 py-20 px-4 sm:px-6 relative overflow-hidden border-b border-slate-200">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          
           {/* Left Text Content */}
           <div className="space-y-8">
             <div className="space-y-2">
               <p className="text-slate-500 font-bold tracking-[0.4em] uppercase text-sm">South</p>
               <h2 className="text-6xl md:text-8xl font-black text-slate-900 tracking-tighter leading-none">
                 Kerala <br />
-                <span className="text-amber-500 italic font-serif font-medium text-5xl md:text-7xl">Escape</span>
+                <span className="text-amber-500 italic font-serif font-medium text-5xl md:text-7xl">
+                  Escape
+                </span>
               </h2>
             </div>
-            
+
             <div className="w-12 h-1 bg-slate-900 rounded-full" />
-            
+
             <div>
-              <p className="text-slate-900 font-black tracking-[0.2em] uppercase text-sm mb-2">Five Experiences.</p>
-              <p className="text-amber-600 font-bold tracking-[0.1em] uppercase text-sm">One unforgettable journey.</p>
+              <p className="text-slate-900 font-black tracking-[0.2em] uppercase text-sm mb-2">
+                Five Experiences.
+              </p>
+              <p className="text-amber-600 font-bold tracking-[0.1em] uppercase text-sm">
+                One unforgettable journey.
+              </p>
             </div>
-            
+
             <div className="pt-8">
               <h3 className="text-3xl md:text-4xl font-serif italic text-slate-800 leading-tight mb-6">
-                From backwaters<br />
+                From backwaters
+                <br />
                 to cliffside sunsets,
               </h3>
               <p className="text-slate-500 text-lg md:text-xl font-medium">
-                every stop has<br />a story to tell.
+                every stop has
+                <br />a story to tell.
               </p>
               <div className="w-16 h-1 bg-amber-500 rounded-full mt-8 opacity-60" />
             </div>
           </div>
-          
+
           {/* Right Image Stack */}
           <div className="relative space-y-4">
             {SOUTH_KERALA_LOCATIONS.map((loc, i) => (
-              <motion.div 
+              <motion.div
                 key={loc.name}
                 initial={{ opacity: 0, x: 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
+                viewport={{ once: true, margin: '-50px' }}
                 transition={{ delay: i * 0.15, duration: 0.6 }}
                 className="relative h-32 sm:h-40 lg:h-44 w-full rounded-2xl overflow-hidden shadow-xl group border-2 border-white"
               >
-                <img 
-                  src={loc.img} 
-                  alt={loc.name} 
+                <img
+                  src={loc.img}
+                  alt={loc.name}
                   className="w-full h-full object-cover transition-transform duration-[3s] group-hover:scale-105"
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                 <div className="absolute bottom-4 left-4 flex items-center gap-2">
                   <MapPin size={18} className="text-white" />
-                  <span className="text-white font-serif italic text-xl md:text-2xl tracking-wide">{loc.name}</span>
+                  <span className="text-white font-serif italic text-xl md:text-2xl tracking-wide">
+                    {loc.name}
+                  </span>
                 </div>
               </motion.div>
             ))}
           </div>
-
         </div>
       </div>
 

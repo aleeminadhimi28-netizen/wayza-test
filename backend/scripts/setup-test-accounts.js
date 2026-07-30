@@ -15,21 +15,24 @@ async function setupAccounts() {
 
         const passwordHash = await bcrypt.hash("12345678", 10);
 
-        // Setup Admin
-        await users.updateOne(
-            { email: "admin@wayzza.com" },
-            {
-                $set: {
-                    password: passwordHash,
-                    role: "admin",
-                    createdAt: new Date(),
-                    name: "Admin User",
-                    status: "approved"
-                }
-            },
-            { upsert: true }
-        );
-        console.log("Admin account setup: admin@wayzza.com");
+        // Setup Admin accounts
+        const adminEmails = ["admin@wayzza.com", "admin@wayza.in", "admin@wayzza.live"];
+        for (const adminEmail of adminEmails) {
+            await users.updateOne(
+                { email: adminEmail },
+                {
+                    $set: {
+                        password: passwordHash,
+                        role: "admin",
+                        createdAt: new Date(),
+                        name: "Admin User",
+                        status: "approved"
+                    }
+                },
+                { upsert: true }
+            );
+            console.log(`Admin account setup: ${adminEmail}`);
+        }
 
         // Setup Partner
         await users.updateOne(

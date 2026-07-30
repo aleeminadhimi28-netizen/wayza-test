@@ -2,8 +2,18 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../AuthContext.jsx';
 import { useToast } from '../../ToastContext.jsx';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  ArrowLeft,
+  Sparkles,
+  ShieldCheck,
+  CheckCircle2,
+} from 'lucide-react';
 import VerificationSpinner from '../../components/VerificationSpinner.jsx';
 
 import { api } from '../../utils/api.js';
@@ -51,7 +61,7 @@ export default function PartnerLogin() {
   }
 
   return (
-    <div className="min-h-screen bg-white font-sans flex flex-col md:flex-row overflow-hidden selection:bg-emerald-100 selection:text-emerald-900">
+    <div className="min-h-screen bg-[#050a08] font-sans flex flex-col md:flex-row overflow-hidden selection:bg-emerald-900/50 selection:text-emerald-200">
       <AnimatePresence>
         {loading && (
           <VerificationSpinner
@@ -61,140 +71,151 @@ export default function PartnerLogin() {
         )}
       </AnimatePresence>
 
-      {/* LEFT: BRAND EXCELLENCE */}
-      <div className="hidden md:flex md:w-[45%] bg-slate-950 text-white p-20 flex-col justify-between relative overflow-hidden border-r border-white/5">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1920&q=80')] bg-cover bg-center transition-transform duration-[20s] hover:scale-110 opacity-20 grayscale" />
+      {/* LEFT: BRAND & COMMUNITY PANEL */}
+      <div className="hidden md:flex md:w-[46%] bg-[#070d0a] text-white p-12 lg:p-16 flex-col justify-between relative overflow-hidden border-r border-white/10">
+        {/* Subtle ambient gradient glow */}
+        <div className="absolute top-0 left-0 w-96 h-96 bg-emerald-500/10 blur-[130px] rounded-full pointer-events-none" />
+        <div className="absolute bottom-0 right-0 w-80 h-80 bg-emerald-700/10 blur-[120px] rounded-full pointer-events-none" />
 
-        {/* Mesh Gradient Overlay */}
-        <div className="absolute inset-0 opacity-40">
-          <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-emerald-500/20 blur-[120px] rounded-full animate-pulse" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/10 blur-[100px] rounded-full" />
-        </div>
-
+        {/* Top Logo Header */}
         <div className="relative z-10">
-          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-            <Link to="/" className="flex items-center gap-2 group">
-              <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:scale-110 transition-transform">
-                <Sparkles size={20} className="text-white" />
-              </div>
-              <span className="text-3xl font-black tracking-tighter uppercase">
-                Wayzza<span className="text-emerald-500">Pro.</span>
-              </span>
-            </Link>
-          </motion.div>
-        </div>
-
-        <div className="relative z-10 max-w-xl">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <div className="mb-12 inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10 text-[11px] font-black uppercase tracking-[0.3em] text-emerald-400">
-              Management Suite V2.5
+          <Link to="/" className="inline-flex items-center gap-3 group">
+            <div className="w-9 h-9 bg-emerald-500 rounded-xl flex items-center justify-center text-[#050a08] font-bold text-base shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+              W
             </div>
-            <h1 className="text-7xl md:text-9xl font-black tracking-tighter uppercase leading-[0.8] mb-12">
-              Partner <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-600 lowercase pr-4">
-                suite.
-              </span>
-            </h1>
-            <p className="text-white/40 text-2xl font-medium leading-relaxed max-w-lg border-l-2 border-emerald-500/30 pl-8">
-              "Orchestrate your hospitality portfolio with precision. Real-time analytics meets
-              world-class design."
-            </p>
-          </motion.div>
+            <span className="text-xl font-bold text-white tracking-tight">
+              Wayzza<span className="text-emerald-400">Pro</span>
+            </span>
+          </Link>
         </div>
 
-        <div className="relative z-10 flex items-center gap-12">
-          <div className="flex -space-x-4">
+        {/* Center Hero Information */}
+        <div className="relative z-10 max-w-md my-auto space-y-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-semibold uppercase tracking-wider text-emerald-400">
+            <Sparkles size={12} /> Partner Suite
+          </div>
+
+          <h1 className="text-3xl lg:text-4xl font-semibold text-white tracking-tight leading-tight">
+            Manage your hospitality business with confidence.
+          </h1>
+
+          <p className="text-white/50 text-sm font-normal leading-relaxed">
+            Real-time booking management, dynamic pricing tools, and automated payouts — built
+            specifically for hosts in Varkala and Kerala.
+          </p>
+
+          <div className="space-y-3 pt-2">
+            {[
+              'Real-time performance tracking & revenue insights',
+              'Direct guest messaging & instant booking alerts',
+              'Transparent 100% verified settlement payouts',
+            ].map((text, i) => (
+              <div key={i} className="flex items-center gap-3 text-xs font-medium text-white/70">
+                <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
+                <span>{text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Footer Community Badge */}
+        <div className="relative z-10 pt-6 border-t border-white/10 flex items-center gap-4">
+          <div className="flex -space-x-2">
             {[1, 2, 3, 4].map((i) => (
               <div
                 key={i}
-                className="w-12 h-12 rounded-full border-2 border-slate-900 bg-slate-800 overflow-hidden shadow-xl"
+                className="w-8 h-8 rounded-full border-2 border-[#070d0a] bg-slate-800 overflow-hidden shadow-md"
               >
                 <img
-                  src={`https://i.pravatar.cc/150?u=${i + 10}`}
-                  alt="Partner"
-                  className="w-full h-full object-cover grayscale opacity-50"
+                  src={`https://i.pravatar.cc/150?u=${i + 20}`}
+                  alt="Partner Host"
+                  className="w-full h-full object-cover"
                 />
               </div>
             ))}
-            <div className="w-12 h-12 rounded-full border-2 border-slate-900 bg-emerald-500 flex items-center justify-center text-[11px] font-bold shadow-xl">
-              +500
-            </div>
           </div>
-          <span className="text-[11px] font-bold text-white/20 uppercase tracking-[0.2em]">
-            Trusted by elite hosts worldwide
-          </span>
+          <div className="text-xs">
+            <p className="font-semibold text-white">500+ Active Hosts</p>
+            <p className="text-white/40 text-[11px]">Varkala & Kerala Stays</p>
+          </div>
         </div>
       </div>
 
-      {/* RIGHT: AUTH INTERFACE */}
-      <div className="flex-1 flex items-center justify-center p-8 md:px-24 relative bg-white">
-        {/* Background Decor */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-50/50 blur-[100px] rounded-full pointer-events-none" />
-
-        <div className="max-w-md w-full relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-16"
-          >
-            <header className="space-y-8">
-              <div className="flex items-center gap-4">
-                <span className="h-px w-12 bg-emerald-500/20" />
-                <span className="text-[11px] font-black uppercase tracking-[0.5em] text-emerald-600">
-                  Access Key Req.
+      {/* RIGHT: AUTH FORM */}
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-12 md:p-16 relative bg-white">
+        <div className="max-w-md w-full">
+          <div className="space-y-8">
+            {/* Header */}
+            <div>
+              <Link to="/" className="md:hidden inline-flex items-center gap-2 mb-6">
+                <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center text-[#050a08] font-bold text-sm">
+                  W
+                </div>
+                <span className="text-lg font-bold text-slate-900">
+                  Wayzza<span className="text-emerald-600">Pro</span>
                 </span>
-              </div>
-              <h2 className="text-6xl md:text-8xl font-black tracking-tighter text-slate-900 uppercase leading-[0.85]">
-                Authorized <br />
-                <span className="text-emerald-500 lowercase">SignIn.</span>
-              </h2>
-            </header>
+              </Link>
 
-            <form onSubmit={login} className="space-y-8">
-              <div className="space-y-3 group/field">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 text-[11px] font-semibold mb-3">
+                <ShieldCheck size={13} /> Partner Access
+              </div>
+
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+                Welcome back
+              </h2>
+              <p className="text-slate-500 text-sm mt-1">
+                Enter your credentials to access your partner dashboard.
+              </p>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={login} className="space-y-5">
+              {/* Email */}
+              <div className="space-y-1.5">
                 <label
                   htmlFor="partner-login-email"
-                  className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] ml-2 group-focus-within/field:text-emerald-600 transition-colors"
+                  className="text-xs font-semibold text-slate-700"
                 >
-                  Credential Email
+                  Email Address
                 </label>
                 <div className="relative">
-                  <div className="absolute left-6 top-1/2 -translate-y-1/2 w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center group-focus-within/field:bg-emerald-50 transition-colors">
-                    <Mail
-                      className="text-slate-300 group-focus-within/field:text-emerald-500 transition-colors"
-                      size={20}
-                    />
-                  </div>
+                  <Mail
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                    size={18}
+                  />
                   <input
                     type="email"
                     required
                     id="partner-login-email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="partner@wayzza.com"
-                    className="w-full h-22 bg-slate-50/50 border border-slate-100 rounded-[28px] pl-20 pr-10 font-bold text-xl tracking-tighter text-slate-900 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all placeholder:text-slate-200"
+                    placeholder="partner@example.com"
+                    className="w-full h-11 bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all placeholder:text-slate-400"
                   />
                 </div>
               </div>
 
-              <div className="space-y-3 group/field">
-                <label
-                  htmlFor="partner-login-password"
-                  className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] ml-2 group-focus-within/field:text-emerald-600 transition-colors"
-                >
-                  Access Password
-                </label>
+              {/* Password */}
+              <div className="space-y-1.5">
+                <div className="flex justify-between items-center">
+                  <label
+                    htmlFor="partner-login-password"
+                    className="text-xs font-semibold text-slate-700"
+                  >
+                    Password
+                  </label>
+                  <Link
+                    to="/forgot-password"
+                    className="text-xs font-medium text-emerald-600 hover:text-emerald-700 transition-colors"
+                  >
+                    Forgot Password?
+                  </Link>
+                </div>
                 <div className="relative">
-                  <div className="absolute left-6 top-1/2 -translate-y-1/2 w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center group-focus-within/field:bg-emerald-50 transition-colors">
-                    <Lock
-                      className="text-slate-300 group-focus-within/field:text-emerald-500 transition-colors"
-                      size={20}
-                    />
-                  </div>
+                  <Lock
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                    size={18}
+                  />
                   <input
                     type={show ? 'text' : 'password'}
                     required
@@ -202,70 +223,56 @@ export default function PartnerLogin() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••••••"
-                    className="w-full h-22 bg-slate-50/50 border border-slate-100 rounded-[28px] pl-20 pr-10 font-bold text-xl tracking-[0.2em] text-slate-900 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all placeholder:text-slate-200"
+                    className="w-full h-11 bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-11 text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all placeholder:text-slate-400"
                   />
                   <button
                     type="button"
                     onClick={() => setShow(!show)}
                     aria-label="Toggle password visibility"
-                    className="absolute right-8 top-1/2 -translate-y-1/2 text-slate-300 hover:text-emerald-600 transition-colors"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                   >
-                    {show ? <EyeOff size={20} /> : <Eye size={20} />}
+                    {show ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
               </div>
 
-              <div className="flex justify-end pr-2">
-                <Link
-                  to="/forgot-password"
-                  className="text-[11px] font-bold text-slate-400 uppercase tracking-widest hover:text-emerald-600 transition-colors"
-                >
-                  Forgot Password?
-                </Link>
-              </div>
-
+              {/* Submit Button */}
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full h-22 bg-slate-950 text-white rounded-[32px] font-black uppercase text-xs tracking-[0.5em] transition-all hover:bg-emerald-600 shadow-2xl shadow-slate-900/20 active:scale-[0.98] flex items-center justify-center gap-6 disabled:opacity-20"
+                className="w-full h-11 bg-slate-950 hover:bg-emerald-600 text-white rounded-xl font-semibold text-sm transition-all shadow-md shadow-slate-900/10 active:scale-[0.99] flex items-center justify-center gap-2 disabled:opacity-50 mt-2"
               >
                 {loading ? (
-                  <div className="w-6 h-6 border-4 border-white/20 border-t-white rounded-full animate-spin" />
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
                   <>
-                    <span>Initialize Suite</span>
-                    <ArrowRight size={20} />
+                    <span>Sign In to Dashboard</span>
+                    <ArrowRight size={16} />
                   </>
                 )}
               </button>
             </form>
 
-            <div className="pt-12 flex flex-col items-center gap-8 text-center border-t border-slate-100">
-              <div className="space-y-3">
-                <p className="text-slate-300 font-bold text-[11px] uppercase tracking-widest leading-relaxed">
-                  Don't have a professional portfolio?
-                </p>
+            {/* Footer Links */}
+            <div className="pt-6 border-t border-slate-100 flex flex-col items-center gap-4 text-center">
+              <p className="text-xs text-slate-500">
+                Don't have a partner account?{' '}
                 <Link
                   to="/partner-register"
-                  className="inline-flex items-center gap-4 text-emerald-600 font-black text-[11px] uppercase tracking-[0.5em] hover:text-emerald-700 transition-all group"
+                  className="font-semibold text-emerald-600 hover:text-emerald-700 transition-colors"
                 >
-                  Establish Residency{' '}
-                  <ArrowRight
-                    size={16}
-                    className="group-hover:translate-x-1 transition-transform"
-                  />
+                  Register as a Partner
                 </Link>
-              </div>
+              </p>
 
               <Link
-                to="/login"
-                className="inline-flex items-center gap-4 text-slate-300 font-bold text-[11px] uppercase tracking-[0.4em] hover:text-slate-950 transition-colors pt-6 group"
+                to="/"
+                className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-700 transition-colors"
               >
-                <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />{' '}
-                Back to Guest Access
+                <ArrowLeft size={14} /> Back to Guest Access
               </Link>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </div>

@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 import { WayzzaLayout } from '../../WayzzaUI.jsx';
 import SEO from '../../components/SEO.jsx';
+import { api } from '../../utils/api.js';
+import { useToast } from '../../ToastContext.jsx';
 import {
   MapPin,
   Clock,
@@ -26,6 +27,13 @@ import {
   Bike,
   Coffee,
   Music,
+  IndianRupee,
+  User,
+  Mail,
+  Send,
+  MessageSquare,
+  Sparkles,
+  X,
 } from 'lucide-react';
 
 // ── Data ───────────────────────────────────────────────────────────────────────
@@ -36,16 +44,15 @@ const VARKALA = {
   sub: 'Clifftop & Beach',
   icon: Waves,
   img: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=1600&q=80',
-  base: 4500,
 };
 
 const DESTINATIONS = [VARKALA];
 
 const DURATIONS = [
-  { id: '2n3d', label: '2N / 3D', nights: 2, mult: 1 },
-  { id: '3n4d', label: '3N / 4D', nights: 3, mult: 1.45 },
-  { id: '4n5d', label: '4N / 5D', nights: 4, mult: 1.85 },
-  { id: '7n8d', label: '7N / 8D', nights: 7, mult: 3.1 },
+  { id: '2n3d', label: '2N / 3D', nights: 2 },
+  { id: '3n4d', label: '3N / 4D', nights: 3 },
+  { id: '4n5d', label: '4N / 5D', nights: 4 },
+  { id: '7n8d', label: '7N / 8D', nights: 7 },
 ];
 
 const VIBES = [
@@ -53,7 +60,6 @@ const VIBES = [
     id: 'relax',
     label: 'Relax & Unwind',
     icon: Moon,
-    add: 0,
     color: 'from-blue-500/20 to-teal-500/20',
     border: 'border-teal-400',
   },
@@ -61,7 +67,6 @@ const VIBES = [
     id: 'adventure',
     label: 'Adventure',
     icon: Zap,
-    add: 1200,
     color: 'from-orange-500/20 to-red-500/20',
     border: 'border-orange-400',
   },
@@ -69,7 +74,6 @@ const VIBES = [
     id: 'romance',
     label: 'Romance',
     icon: Heart,
-    add: 2000,
     color: 'from-pink-500/20 to-rose-500/20',
     border: 'border-pink-400',
   },
@@ -77,7 +81,6 @@ const VIBES = [
     id: 'culture',
     label: 'Cultural',
     icon: Coffee,
-    add: 800,
     color: 'from-amber-500/20 to-yellow-500/20',
     border: 'border-amber-400',
   },
@@ -85,7 +88,6 @@ const VIBES = [
     id: 'luxury',
     label: 'Luxury',
     icon: Star,
-    add: 3500,
     color: 'from-purple-500/20 to-violet-500/20',
     border: 'border-purple-400',
   },
@@ -93,7 +95,6 @@ const VIBES = [
     id: 'wellness',
     label: 'Wellness',
     icon: Sun,
-    add: 1500,
     color: 'from-green-500/20 to-emerald-500/20',
     border: 'border-emerald-400',
   },
@@ -115,7 +116,7 @@ const ADDONS = [
     price: 1200,
     desc: 'Local chef, 3 dishes',
   },
-  { id: 'bike', label: 'Bike Rental', icon: Bike, price: 800, desc: '3 days, helmet included' },
+  { id: 'bike', label: 'Bike Rental', icon: Bike, price: 800, desc: 'Royal Enfield / Scooter' },
   { id: 'photo', label: 'Photo Session', icon: Camera, price: 3500, desc: '2-hr pro photographer' },
   {
     id: 'music',
@@ -127,20 +128,22 @@ const ADDONS = [
 ];
 
 const STAY_TYPES = [
-  { id: 'budget', label: 'Budget', sub: 'Guesthouses & hostels', mult: 0.7, icon: Home },
-  { id: 'standard', label: 'Standard', sub: 'Comfortable homestays', mult: 1, icon: Home },
-  { id: 'premium', label: 'Premium', sub: 'Boutique villas', mult: 1.6, icon: Home },
-  { id: 'luxury', label: 'Luxury', sub: 'Clifftop suites', mult: 2.4, icon: Home },
+  { id: 'budget', label: 'Budget', sub: 'Guesthouses & hostels', icon: Home },
+  { id: 'standard', label: 'Standard', sub: 'Comfortable homestays', icon: Home },
+  { id: 'premium', label: 'Premium', sub: 'Boutique villas', icon: Home },
+  { id: 'luxury', label: 'Luxury', sub: 'Clifftop suites', icon: Home },
 ];
 
 const TRANSPORT = [
-  { id: 'none', label: 'No Transfer', price: 0, icon: Car },
-  { id: 'shared', label: 'Shared Cab', price: 800, icon: Car },
-  { id: 'private', label: 'Private Car', price: 2200, icon: Car },
-  { id: 'suv', label: 'Luxury SUV', price: 4000, icon: Car },
+  { id: 'none', label: 'No Transfer', icon: Car },
+  { id: 'shared', label: 'Shared Cab', icon: Car },
+  { id: 'private', label: 'Private Car', icon: Car },
+  { id: 'suv', label: 'Luxury SUV', icon: Car },
 ];
 
-const STEPS = ['Duration', 'Vibe', 'Stay', 'Add-ons', 'Guests'];
+const BUDGET_PRESETS = [5000, 10000, 15000, 25000, 50000];
+
+const STEPS = ['Duration', 'Vibe', 'Stay', 'Add-ons', 'Budget & Contact'];
 
 // ── Step Components ─────────────────────────────────────────────────────────────
 
@@ -183,9 +186,6 @@ function StepVibe({ value, onChange }) {
           >
             <Icon size={20} className={sel ? 'text-slate-800' : 'text-slate-500'} />
             <div className="font-black text-slate-900 mt-2 text-sm">{v.label}</div>
-            {v.add > 0 && (
-              <div className="text-xs text-slate-500 mt-0.5">+₹{v.add.toLocaleString('en-IN')}</div>
-            )}
             {sel && (
               <div className="mt-2 text-[10px] font-bold text-emerald-600 uppercase tracking-widest">
                 Selected ✓
@@ -245,11 +245,6 @@ function StepAddons({ value, onChange }) {
               <div className="font-bold text-slate-900 text-sm">{a.label}</div>
               <div className="text-xs text-slate-500">{a.desc}</div>
             </div>
-            <div
-              className={`text-sm font-black flex-shrink-0 ${sel ? 'text-emerald-600' : 'text-slate-400'}`}
-            >
-              +₹{a.price.toLocaleString('en-IN')}
-            </div>
           </button>
         );
       })}
@@ -257,80 +252,172 @@ function StepAddons({ value, onChange }) {
   );
 }
 
-function StepGuests({ guests, setGuests, transport, setTransport }) {
+function StepBudgetAndContact({
+  budget,
+  setBudget,
+  guests,
+  setGuests,
+  transport,
+  setTransport,
+  contact,
+  setContact,
+}) {
   return (
     <div className="space-y-6">
-      <div>
-        <div className="text-sm font-bold text-slate-700 mb-3">Number of Travellers</div>
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => setGuests(Math.max(1, guests - 1))}
-            className="w-11 h-11 rounded-full border-2 border-slate-200 flex items-center justify-center text-xl font-black text-slate-700 hover:border-emerald-400 transition-colors"
-          >
-            −
-          </button>
-          <div className="text-center">
-            <div className="text-4xl font-black text-slate-900">{guests}</div>
-            <div className="text-xs text-slate-400">{guests === 1 ? 'person' : 'people'}</div>
-          </div>
-          <button
-            onClick={() => setGuests(Math.min(12, guests + 1))}
-            className="w-11 h-11 rounded-full border-2 border-slate-200 flex items-center justify-center text-xl font-black text-slate-700 hover:border-emerald-400 transition-colors"
-          >
-            +
-          </button>
+      {/* Budget Selector */}
+      <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200/80 space-y-4">
+        <div>
+          <label className="block text-xs font-extrabold uppercase tracking-widest text-slate-700 mb-1">
+            Your Preferred Budget Limit (₹)
+          </label>
+          <p className="text-xs text-slate-500">
+            Tell us how much you plan to spend. We will curate stays, mobility & activities to
+            match.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 bg-white border border-slate-300 rounded-xl px-4 py-3 shadow-inner focus-within:border-emerald-500 transition-all">
+          <IndianRupee size={18} className="text-emerald-600 shrink-0" />
+          <input
+            type="number"
+            value={budget}
+            onChange={(e) => {
+              const val = e.target.value;
+              setBudget(val === '' ? '' : Math.max(0, parseInt(val) || 0));
+            }}
+            placeholder="Enter budget (e.g. 15000)"
+            className="w-full font-black text-xl text-slate-900 outline-none bg-transparent"
+          />
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          {BUDGET_PRESETS.map((p) => (
+            <button
+              key={p}
+              type="button"
+              onClick={() => setBudget(p)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all border ${
+                budget === p
+                  ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
+                  : 'bg-white text-slate-600 border-slate-200 hover:border-slate-400'
+              }`}
+            >
+              ₹{p.toLocaleString('en-IN')}
+            </button>
+          ))}
         </div>
       </div>
-      <div>
-        <div className="text-sm font-bold text-slate-700 mb-3">Airport Transfer</div>
-        <div className="grid grid-cols-2 gap-2">
-          {TRANSPORT.map((t) => {
-            const Icon = t.icon;
-            const sel = transport === t.id;
-            return (
-              <button
-                key={t.id}
-                onClick={() => setTransport(t.id)}
-                className={`rounded-xl border-2 p-3 text-left transition-all ${sel ? 'border-emerald-500 bg-emerald-50' : 'border-slate-200 hover:border-slate-300 bg-white'}`}
-              >
-                <div className="font-bold text-sm text-slate-900">{t.label}</div>
-                <div
-                  className={`text-xs mt-0.5 font-semibold ${sel ? 'text-emerald-600' : 'text-slate-400'}`}
-                >
-                  {t.price === 0 ? 'Free' : `+₹${t.price.toLocaleString('en-IN')}`}
-                </div>
-              </button>
-            );
-          })}
+
+      {/* Guest & Transport */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-xs font-extrabold uppercase tracking-widest text-slate-700 mb-2">
+            Number of Travellers
+          </label>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setGuests(Math.max(1, guests - 1))}
+              className="w-10 h-10 rounded-full border-2 border-slate-200 flex items-center justify-center text-lg font-black text-slate-700 hover:border-emerald-400"
+            >
+              −
+            </button>
+            <span className="font-black text-xl text-slate-900 w-8 text-center">{guests}</span>
+            <button
+              type="button"
+              onClick={() => setGuests(Math.min(12, guests + 1))}
+              className="w-10 h-10 rounded-full border-2 border-slate-200 flex items-center justify-center text-lg font-black text-slate-700 hover:border-emerald-400"
+            >
+              +
+            </button>
+          </div>
         </div>
+
+        <div>
+          <label className="block text-xs font-extrabold uppercase tracking-widest text-slate-700 mb-2">
+            Airport Transfer
+          </label>
+          <select
+            value={transport}
+            onChange={(e) => setTransport(e.target.value)}
+            className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-900 outline-none"
+          >
+            {TRANSPORT.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* Contact Details */}
+      <div className="space-y-3 pt-2">
+        <label className="block text-xs font-extrabold uppercase tracking-widest text-slate-700">
+          Your Contact Details
+        </label>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="relative">
+            <User size={15} className="absolute left-3.5 top-3.5 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Your Full Name *"
+              value={contact.name}
+              onChange={(e) => setContact({ ...contact, name: e.target.value })}
+              className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-900 outline-none focus:border-emerald-500"
+            />
+          </div>
+          <div className="relative">
+            <Phone size={15} className="absolute left-3.5 top-3.5 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Phone / WhatsApp Number *"
+              value={contact.phone}
+              onChange={(e) => setContact({ ...contact, phone: e.target.value })}
+              className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-900 outline-none focus:border-emerald-500"
+            />
+          </div>
+        </div>
+
+        <div className="relative">
+          <Mail size={15} className="absolute left-3.5 top-3.5 text-slate-400" />
+          <input
+            type="email"
+            placeholder="Email Address *"
+            value={contact.email}
+            onChange={(e) => setContact({ ...contact, email: e.target.value })}
+            className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-900 outline-none focus:border-emerald-500"
+          />
+        </div>
+
+        <textarea
+          rows={2}
+          placeholder="Special requests or preferences (e.g. ocean view villa, Royal Enfield bike preference...)"
+          value={contact.notes}
+          onChange={(e) => setContact({ ...contact, notes: e.target.value })}
+          className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-900 outline-none focus:border-emerald-500"
+        />
       </div>
     </div>
   );
 }
 
-// ── Price Calculator ─────────────────────────────────────────────────────────────
-
-function calcPrice({ destination, duration, vibe, stay, addons, guests, transport }) {
-  const dest = DESTINATIONS.find((d) => d.id === destination);
-  const dur = DURATIONS.find((d) => d.id === duration);
-  const vib = VIBES.find((v) => v.id === vibe);
-  const sty = STAY_TYPES.find((s) => s.id === stay);
-  const trans = TRANSPORT.find((t) => t.id === transport);
-  if (!dest || !dur || !vib || !sty) return 0;
-  const basePerPerson = dest.base * dur.mult * sty.mult + vib.add;
-  const addonsTotal = addons.reduce((sum, id) => {
-    const a = ADDONS.find((x) => x.id === id);
-    return sum + (a ? a.price : 0);
-  }, 0);
-  const transTotal = trans ? trans.price : 0;
-  return Math.round((basePerPerson + addonsTotal) * guests + transTotal);
-}
-
 // ── Main Component ───────────────────────────────────────────────────────────────
 
 export default function TourPackager() {
-  const navigate = useNavigate();
+  const { showToast } = useToast();
   const [step, setStep] = useState(0);
+  const [supportWhatsApp, setSupportWhatsApp] = useState('');
+
+  useEffect(() => {
+    api.getPlatformConfig()
+      .then((res) => {
+        if (res?.ok && res?.data?.supportWhatsApp) {
+          setSupportWhatsApp(res.data.supportWhatsApp.replace(/[^0-9]/g, ''));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const destination = 'varkala';
   const [duration, setDuration] = useState('3n4d');
@@ -339,9 +426,11 @@ export default function TourPackager() {
   const [addons, setAddons] = useState([]);
   const [guests, setGuests] = useState(2);
   const [transport, setTransport] = useState('private');
-  const [submitted, setSubmitted] = useState(false);
+  const [budget, setBudget] = useState(15000);
+  const [contact, setContact] = useState({ name: '', phone: '', email: '', notes: '' });
 
-  const totalPrice = calcPrice({ destination, duration, vibe, stay, addons, guests, transport });
+  const [submitting, setSubmitting] = useState(false);
+  const [successModal, setSuccessModal] = useState(false);
 
   const stepContent = [
     {
@@ -365,14 +454,18 @@ export default function TourPackager() {
       component: <StepAddons value={addons} onChange={setAddons} />,
     },
     {
-      title: 'Finalize your trip',
-      sub: 'Travellers and transport preferences',
+      title: 'Set Budget & Contact Info',
+      sub: 'Enter your preferred budget limit and contact details for our concierge team',
       component: (
-        <StepGuests
+        <StepBudgetAndContact
+          budget={budget}
+          setBudget={setBudget}
           guests={guests}
           setGuests={setGuests}
           transport={transport}
           setTransport={setTransport}
+          contact={contact}
+          setContact={setContact}
         />
       ),
     },
@@ -381,38 +474,49 @@ export default function TourPackager() {
   const dest = DESTINATIONS.find((d) => d.id === destination);
   const dur = DURATIONS.find((d) => d.id === duration);
   const vib = VIBES.find((v) => v.id === vibe);
+  const sty = STAY_TYPES.find((s) => s.id === stay);
 
-  const mountedRef = useRef(true);
-  useEffect(() => {
-    return () => {
-      mountedRef.current = false;
-    };
-  }, []);
+  const handleSubmitRequest = async () => {
+    if (!contact.name || !contact.phone || !contact.email) {
+      setStep(4);
+      showToast('Please complete your name, phone and email address.', 'error');
+      return;
+    }
 
-  const handleBook = () => {
-    setSubmitted(true);
-    // FIX #76: Check mountedRef before navigating to prevent state update on unmounted component
-    setTimeout(() => {
-      if (!mountedRef.current) return;
-      navigate(`/listings?location=${encodeURIComponent(dest?.label || 'Varkala')}`, {
-        state: {
-          fromPackage: {
-            name: `Custom ${dest?.label} Package`,
-            price: totalPrice,
-            guests,
-            vibe: vib?.label,
-            duration: dur?.label,
-          },
-        },
-      });
-    }, 1200);
+    setSubmitting(true);
+    try {
+      const payload = {
+        name: contact.name,
+        phone: contact.phone,
+        email: contact.email,
+        budget: parseFloat(budget) || 15000,
+        destination: dest?.label || 'Varkala',
+        duration: dur?.label || '3N / 4D',
+        vibe: vib?.label || 'Relax & Unwind',
+        stay: sty?.label || 'Standard',
+        addons: addons.map((id) => ADDONS.find((a) => a.id === id)?.label || id),
+        guests,
+        transport,
+        notes: contact.notes,
+      };
+
+      const res = await api.submitCustomPackageRequest(payload);
+      if (res.ok) {
+        setSuccessModal(true);
+      } else {
+        showToast(res.message || 'Failed to submit request.', 'error');
+      }
+    } catch {
+      showToast('Network error. Please try again.', 'error');
+    }
+    setSubmitting(false);
   };
 
   return (
     <WayzzaLayout noPadding>
       <SEO
-        title="Build Your Custom Kerala Tour Package — Wayzza"
-        description="Design your perfect Kerala trip with Wayzza. Choose destination, duration, vibe, stay type, and experiences. Get an instant quote and book in minutes."
+        title="Wayzza Concierge — Custom Varkala Package Builder"
+        description="Tell us your budget and travel preferences. Our Varkala Concierge team will curate a verified stay, bike, and local experience package within your budget limit."
       />
 
       {/* ── Hero ── */}
@@ -427,7 +531,7 @@ export default function TourPackager() {
             animate={{ opacity: 1, y: 0 }}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 text-emerald-300 text-[11px] uppercase tracking-widest font-black mb-5"
           >
-            <MapPin size={12} /> Varkala, Kerala
+            <Sparkles size={12} /> Wayzza Concierge • Varkala
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 16 }}
@@ -447,8 +551,8 @@ export default function TourPackager() {
             transition={{ delay: 0.1 }}
             className="mt-4 text-slate-300 text-base sm:text-lg max-w-xl leading-relaxed"
           >
-            Choose your destination, vibe, stay, and experiences. Get an instant price — then book
-            it all in one click.
+            Set your target budget, vibe, stay and add-ons. Our local experts will craft an instant
+            custom package matching your exact budget.
           </motion.p>
         </div>
       </header>
@@ -514,46 +618,83 @@ export default function TourPackager() {
                 </button>
               ) : (
                 <button
-                  onClick={handleBook}
-                  disabled={submitted}
+                  onClick={handleSubmitRequest}
+                  disabled={submitting}
                   className="flex items-center gap-2 bg-emerald-500 text-slate-950 text-sm font-black px-6 py-2.5 rounded-2xl hover:bg-emerald-400 transition-all active:scale-95 disabled:opacity-60"
                 >
-                  {submitted ? 'Redirecting…' : 'Book This Package'} <ArrowRight size={16} />
+                  <Send size={15} />
+                  {submitting ? 'Submitting…' : 'Submit Package Request'}
                 </button>
               )}
             </div>
           </div>
 
-          {/* Right: Live summary */}
+          {/* Right: Live Budget & Package Summary */}
           <div className="space-y-4 lg:sticky lg:top-24">
-            {/* Price card */}
-            <div className="bg-slate-950 text-white rounded-[24px] p-6">
+            {/* Target Budget Card */}
+            <div className="bg-slate-950 text-white rounded-[24px] p-6 shadow-xl">
               <div className="text-xs uppercase tracking-widest text-slate-400 font-bold mb-1">
-                Your Package
+                Your Target Budget
               </div>
-              <div className="text-4xl font-black text-emerald-400 mt-2">
-                ₹{totalPrice.toLocaleString('en-IN')}
-              </div>
-              <div className="text-slate-400 text-xs mt-1">
-                total for {guests} {guests === 1 ? 'person' : 'people'}
+              <div className="mt-2 flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-2xl px-3.5 py-2 focus-within:border-emerald-500 transition-all">
+                <IndianRupee size={24} className="text-emerald-400 shrink-0" />
+                <input
+                  type="number"
+                  value={budget}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setBudget(val === '' ? '' : Math.max(0, parseInt(val) || 0));
+                  }}
+                  placeholder="50000"
+                  className="w-full bg-transparent text-emerald-400 font-black text-2xl sm:text-3xl outline-none p-0 border-none placeholder:text-emerald-400/30"
+                  aria-label="Target budget amount"
+                />
               </div>
 
-              <div className="mt-5 space-y-2.5 border-t border-white/10 pt-4">
-                {[
-                  { label: 'Destination', value: dest?.label },
-                  { label: 'Duration', value: dur?.label },
-                  { label: 'Vibe', value: vib?.label },
-                  { label: 'Travellers', value: `${guests} ${guests === 1 ? 'person' : 'people'}` },
-                ].map(({ label, value }) => (
-                  <div key={label} className="flex items-center justify-between text-sm">
-                    <span className="text-slate-400">{label}</span>
-                    <span className="font-bold text-white">{value}</span>
-                  </div>
+              <p className="text-slate-400 text-xs mt-1.5 leading-relaxed">
+                Budget limit for {guests} {guests === 1 ? 'person' : 'people'}
+              </p>
+
+              {/* Quick Presets */}
+              <div className="mt-4 flex flex-wrap gap-1.5">
+                {BUDGET_PRESETS.map((p) => (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => setBudget(p)}
+                    className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all border ${
+                      budget === p
+                        ? 'bg-emerald-500 text-slate-950 border-emerald-500'
+                        : 'bg-white/5 text-slate-300 border-white/10 hover:border-white/30'
+                    }`}
+                  >
+                    ₹{(p / 1000).toFixed(0)}k
+                  </button>
                 ))}
+              </div>
+
+              {/* Selected Options Summary */}
+              <div className="mt-5 space-y-2.5 border-t border-white/10 pt-4 text-xs">
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-400">Destination</span>
+                  <span className="font-bold text-white">{dest?.label}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-400">Duration</span>
+                  <span className="font-bold text-white">{dur?.label}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-400">Vibe</span>
+                  <span className="font-bold text-white">{vib?.label}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-400">Stay Tier</span>
+                  <span className="font-bold text-white">{sty?.label}</span>
+                </div>
                 {addons.length > 0 && (
-                  <div className="flex items-start justify-between text-sm">
+                  <div className="flex items-start justify-between">
                     <span className="text-slate-400">Add-ons</span>
-                    <span className="font-bold text-white text-right max-w-[140px]">
+                    <span className="font-bold text-white text-right max-w-[130px]">
                       {addons.map((id) => ADDONS.find((a) => a.id === id)?.label).join(', ')}
                     </span>
                   </div>
@@ -561,45 +702,121 @@ export default function TourPackager() {
               </div>
 
               <button
-                onClick={handleBook}
-                disabled={submitted}
-                className="mt-6 w-full bg-emerald-500 text-slate-950 font-black py-3 rounded-2xl hover:bg-emerald-400 transition-all active:scale-95 disabled:opacity-60"
+                onClick={() => {
+                  if (step < 4) setStep(4);
+                  else handleSubmitRequest();
+                }}
+                disabled={submitting}
+                className="mt-6 w-full bg-emerald-500 text-slate-950 font-black py-3 rounded-2xl hover:bg-emerald-400 transition-all active:scale-95 disabled:opacity-60 flex items-center justify-center gap-2 text-xs uppercase tracking-wider"
               >
-                {submitted ? 'Redirecting…' : 'Book Now →'}
+                <Send size={14} />
+                {step < 4
+                  ? 'Enter Contact Info →'
+                  : submitting
+                    ? 'Submitting…'
+                    : 'Request Package →'}
               </button>
             </div>
 
             {/* Trust badges */}
             <div className="bg-white rounded-[20px] border border-slate-100 p-4 space-y-3">
               {[
-                { icon: Shield, label: 'Verified properties only' },
-                { icon: Phone, label: '24/7 travel concierge' },
+                { icon: Shield, label: 'Custom curated to your budget' },
+                { icon: Phone, label: '24/7 Wayzza Travel Concierge' },
                 { icon: Check, label: 'Free cancellation (48h)' },
               ].map(({ icon: Icon, label }) => (
                 <div
                   key={label}
-                  className="flex items-center gap-3 text-sm text-slate-600 font-medium"
+                  className="flex items-center gap-3 text-xs text-slate-600 font-medium"
                 >
-                  <div className="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center flex-shrink-0">
-                    <Icon size={14} className="text-emerald-500" />
+                  <div className="w-7 h-7 rounded-xl bg-emerald-50 flex items-center justify-center flex-shrink-0">
+                    <Icon size={13} className="text-emerald-500" />
                   </div>
                   {label}
                 </div>
               ))}
             </div>
 
-            {/* FIX #78: Replace with real Wayzza WhatsApp number before go-live */}
-            <a
-              href="https://wa.me/91XXXXXXXXXX?text=Hi%2C%20I%27d%20like%20help%20with%20a%20custom%20Kerala%20package"
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center justify-center gap-2 w-full border-2 border-slate-200 rounded-[20px] py-3 text-sm font-bold text-slate-700 hover:border-emerald-400 hover:text-emerald-600 transition-all"
-            >
-              <Phone size={14} /> Talk to a Travel Expert
-            </a>
+            {supportWhatsApp && (
+              <a
+                href={`https://wa.me/${supportWhatsApp}?text=${encodeURIComponent('Hi Wayzza Concierge, I need help with a custom Varkala package')}`}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center justify-center gap-2 w-full border-2 border-slate-200 rounded-[20px] py-3 text-xs font-bold text-slate-700 hover:border-emerald-400 hover:text-emerald-600 transition-all"
+              >
+                <MessageSquare size={14} className="text-emerald-500" /> Chat With Concierge
+              </a>
+            )}
           </div>
         </div>
       </main>
+
+      {/* ── Success Modal ── */}
+      {successModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-[32px] p-6 sm:p-8 max-w-md w-full text-center space-y-5 shadow-2xl relative border border-slate-100"
+          >
+            <button
+              onClick={() => setSuccessModal(false)}
+              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-900"
+            >
+              <X size={16} />
+            </button>
+
+            <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
+              <Check size={32} strokeWidth={3} />
+            </div>
+
+            <div>
+              <h3 className="text-2xl font-black text-slate-950">Request Received!</h3>
+              <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+                Thank you, <strong className="text-slate-900">{contact.name}</strong>! Our Wayzza
+                Varkala experts are preparing your custom package for{' '}
+                <strong>₹{budget.toLocaleString('en-IN')}</strong>.
+              </p>
+            </div>
+
+            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 text-left text-xs space-y-1.5 text-slate-600">
+              <div>
+                📍 <strong>Destination:</strong> {dest?.label} ({dur?.label})
+              </div>
+              <div>
+                ✨ <strong>Vibe:</strong> {vib?.label}
+              </div>
+              <div>
+                💰 <strong>Target Budget:</strong> ₹{budget.toLocaleString('en-IN')}
+              </div>
+              <div>
+                📱 <strong>Contact:</strong> {contact.phone}
+              </div>
+            </div>
+
+            <div className="space-y-2 pt-2">
+              {supportWhatsApp && (
+                <a
+                  href={`https://wa.me/${supportWhatsApp}?text=${encodeURIComponent(`Hi Wayzza Concierge! I just submitted a package request for Varkala (${dur?.label}, Budget: ₹${budget}). My name is ${contact.name}.`)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-full inline-flex items-center justify-center gap-2 bg-emerald-600 text-white font-black py-3.5 rounded-2xl text-xs uppercase tracking-wider hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-600/20"
+                >
+                  <MessageSquare size={16} /> Chat Instantly on WhatsApp
+                </a>
+              )}
+
+              <button
+                type="button"
+                onClick={() => setSuccessModal(false)}
+                className="w-full py-2.5 text-xs font-bold text-slate-400 hover:text-slate-700"
+              >
+                Close & Return
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </WayzzaLayout>
   );
 }

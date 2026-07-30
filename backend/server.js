@@ -34,6 +34,7 @@ import communicationRoutes from "./routes/communication.js";
 import payRoutes from "./routes/pay.js";
 import webhookRoutes from "./routes/webhooks.js";
 import packageRoutes from "./routes/packages.js";
+import ogRoutes from "./routes/og.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -72,6 +73,8 @@ connectDB();
 // 3. SECURE HEADERS (CSP)
 app.use(helmet({
   crossOriginResourcePolicy: false,
+  // Explicit Referrer-Policy: only send origin on cross-origin requests, full URL on same-origin
+  referrerPolicy: { policy: "strict-origin-when-cross-origin" },
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
@@ -162,6 +165,10 @@ app.use("/api/v1/misc", miscRoutes);
 app.use("/api/v1/packages", packageRoutes);
 app.use("/api/v1/comm", communicationRoutes);
 app.use("/api/v1/payments", paymentLimiter, payRoutes);
+
+// OG snapshot route — public, no auth, serves minimal HTML for crawlers/bots
+// Real browsers hitting /api/v1/og/:id are JS-redirected to /listing/:id
+app.use("/api/v1/og", ogRoutes);
 
 // Webhook routes (raw body parser was registered above, before express.json)
 app.use("/api/v1/webhooks", webhookRoutes);
